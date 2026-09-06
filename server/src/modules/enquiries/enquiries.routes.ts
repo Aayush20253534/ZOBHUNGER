@@ -1,5 +1,7 @@
 import { Router } from "express";
-import { pendingImplementation } from "./enquiries.controller.js";
+import { validate } from "../../middlewares/validate.middleware.js";
+import { createEnquiryController } from "./enquiries.controller.js";
+import { createEnquirySchema } from "./enquiries.schema.js";
 
 export const enquiriesRouter = Router();
-enquiriesRouter.post("/", pendingImplementation);
+enquiriesRouter.post("/", validate({ body: createEnquirySchema }), createEnquiryController);

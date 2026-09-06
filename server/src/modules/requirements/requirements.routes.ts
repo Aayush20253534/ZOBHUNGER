@@ -1,5 +1,7 @@
 import { Router } from "express";
-import { pendingImplementation } from "./requirements.controller.js";
+import { validate } from "../../middlewares/validate.middleware.js";
+import { createRequirementController } from "./requirements.controller.js";
+import { createRequirementSchema } from "./requirements.schema.js";
 
 export const requirementsRouter = Router();
-requirementsRouter.post("/", pendingImplementation);
+requirementsRouter.post("/", validate({ body: createRequirementSchema }), createRequirementController);

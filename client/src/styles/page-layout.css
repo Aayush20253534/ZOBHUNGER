@@ -791,3 +791,46 @@
     font-size: 0.92rem;
   }
 }
+
+/* Insights hero: keep the editorial card substantial without letting it push the copy down. */
+@media (min-width: 960px) {
+  .zb-page-content .zb-editorial-hero {
+    align-items: start;
+    grid-template-columns: minmax(0, 1.28fr) minmax(27rem, 0.92fr);
+    gap: clamp(2.25rem, 3.8vw, 4rem);
+  }
+  .zb-page-content .zb-editorial-hero .zb-page-heading {
+    padding-top: 0.35rem;
+  }
+  .zb-page-content .zb-insights-hero-card {
+    align-self: start;
+    justify-self: end;
+    width: 100%;
+    max-width: 38rem;
+    padding: 1.55rem;
+  }
+  .zb-insights-hero-card .zb-premium-card-header h2 {
+    font-size: clamp(1.45rem, 1.75vw, 1.75rem);
+    line-height: 1.16;
+  }
+  .zb-insights-hero-card .zb-insights-topic-cloud {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+  .zb-insights-hero-card .zb-insights-topic-cloud a {
+    justify-content: center;
+    min-width: 0;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.65rem;
+    text-align: center;
+  }
+  .zb-insights-hero-card .zb-insights-feature-strip {
+    margin-top: 0.9rem;
+    padding: 0.8rem 0.9rem;
+  }
+  .zb-insights-hero-card > .zb-action-link[data-variant="text"] {
+    margin-top: 0.5rem;
+  }
+}
