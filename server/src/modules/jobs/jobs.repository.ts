@@ -15,6 +15,7 @@ const publicJobSelect = {
   responsibilities: true,
   requirements: true,
   compensation: true,
+  isDemo: true,
   publishedAt: true,
   createdAt: true,
   updatedAt: true,
