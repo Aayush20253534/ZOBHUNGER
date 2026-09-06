@@ -2,6 +2,8 @@ import Link from "next/link";
 import {
   ArrowUpRight,
   BriefcaseBusiness,
+  Building2,
+  MapPin,
   Megaphone,
   Store,
   Users,
@@ -9,7 +11,6 @@ import {
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
-import { IntroPanel } from "@/components/common/IntroPanel";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Card } from "@/components/ui/card";
@@ -50,21 +51,43 @@ export function ForBusiness() {
             </>
           }
         />
-        <IntroPanel
-          id="business-summary-title"
-          icon={<BriefcaseBusiness />}
-          eyebrow="Start with your brief"
-          title="What needs to happen on the ground?"
-          description="A role, a team or a campaign. Define the requirement before choosing the delivery plan."
-          items={[
-            { label: "Scope", value: "People, responsibilities and outcomes" },
-            { label: "Location", value: "One site or a plan across cities" },
-            {
-              label: "Engagement",
-              value: "Ongoing, seasonal or project based",
-            },
-          ]}
-        />
+        <aside className="zb-premium-hero-card zb-business-hero-card" aria-labelledby="business-summary-title">
+          <div className="zb-premium-card-header">
+            <span className="zb-premium-card-icon" aria-hidden="true">
+              <BriefcaseBusiness />
+            </span>
+            <div>
+              <span className="zb-eyebrow">Business brief</span>
+              <h2 id="business-summary-title">Shape the requirement before the deployment.</h2>
+            </div>
+          </div>
+          <p className="zb-premium-card-copy">
+            Bring the role, geography and delivery model into one clear operating brief.
+          </p>
+          <div className="zb-premium-stat-grid">
+            <article>
+              <Users aria-hidden="true" />
+              <span>Workforce</span>
+              <strong>Roles &amp; team size</strong>
+            </article>
+            <article>
+              <MapPin aria-hidden="true" />
+              <span>Coverage</span>
+              <strong>Site, city or multi-city</strong>
+            </article>
+            <article>
+              <Building2 aria-hidden="true" />
+              <span>Model</span>
+              <strong>Ongoing or project based</strong>
+            </article>
+          </div>
+          <div className="zb-premium-card-footer">
+            <span>One brief. Multiple execution needs.</span>
+            <ActionLink href="/hire-workforce" variant="text">
+              Start the brief <ArrowUpRight aria-hidden="true" className="size-4" />
+            </ActionLink>
+          </div>
+        </aside>
       </div>
 
       <section

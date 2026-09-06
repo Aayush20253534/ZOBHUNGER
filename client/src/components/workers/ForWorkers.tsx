@@ -4,15 +4,16 @@ import {
   BriefcaseBusiness,
   ClipboardList,
   Headphones,
+  MapPin,
   Megaphone,
   Search,
   Store,
+  UserRoundCheck,
   Users,
 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
-import { IntroPanel } from "@/components/common/IntroPanel";
 import { ProcessFlow } from "@/components/common/ProcessFlow";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
@@ -62,26 +63,44 @@ export function ForWorkers() {
             </p>
           )}
         </PageShell>
-        <IntroPanel
-          id="worker-start-title"
-          icon={<Search />}
-          eyebrow="Choose your starting point"
-          title="Find the role that fits the way you work."
-          items={[
-            {
-              label: "Your skills",
-              value: "The work you know or want to learn",
-            },
-            {
-              label: "Your location",
-              value: "The city or area where you want to work",
-            },
-            {
-              label: "Your availability",
-              value: "An engagement that fits your plans",
-            },
-          ]}
-        />
+        <aside className="zb-premium-hero-card zb-worker-hero-card" aria-labelledby="worker-start-title">
+          <div className="zb-premium-card-header">
+            <span className="zb-premium-card-icon" aria-hidden="true">
+              <Search />
+            </span>
+            <div>
+              <span className="zb-eyebrow">Your next role</span>
+              <h2 id="worker-start-title">Start with what works for you.</h2>
+            </div>
+          </div>
+          <div className="zb-worker-highlight-list">
+            <article>
+              <BriefcaseBusiness aria-hidden="true" />
+              <div>
+                <span>Role</span>
+                <strong>Sales, field, promoter &amp; operations</strong>
+              </div>
+            </article>
+            <article>
+              <MapPin aria-hidden="true" />
+              <div>
+                <span>Location</span>
+                <strong>Choose the city or area that suits you</strong>
+              </div>
+            </article>
+            <article>
+              <UserRoundCheck aria-hidden="true" />
+              <div>
+                <span>Availability</span>
+                <strong>Match work with your current plans</strong>
+              </div>
+            </article>
+          </div>
+          <ActionLink href="/jobs" className="zb-premium-card-action">
+            {isPreview ? "Browse example roles" : "Browse open roles"}
+            <ArrowUpRight aria-hidden="true" className="size-4" />
+          </ActionLink>
+        </aside>
       </div>
 
       <section

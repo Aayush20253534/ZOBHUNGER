@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { BookOpen, Search } from "lucide-react";
+import { ArrowUpRight, BookOpen, Search, Sparkles } from "lucide-react";
 import { ActionButton } from "@/components/common/ActionButton";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
-import { IntroPanel } from "@/components/common/IntroPanel";
 import { PageShell } from "@/components/common/PageShell";
 import { ArticleResults } from "@/components/blog/ArticleResults";
 import { Input } from "@/components/ui/input";
@@ -62,26 +61,36 @@ export default async function BlogPage({
             </p>
           )}
         </PageShell>
-        <IntroPanel
-          id="insights-intro-title"
-          icon={<BookOpen />}
-          eyebrow="From planning to delivery"
-          title="Bring a clearer plan to your next conversation."
-          items={[
-            {
-              label: "Build the team",
-              value: "Hiring briefs, roles and workforce planning",
-            },
-            {
-              label: "Organise the work",
-              value: "Assignments, coordination and work updates",
-            },
-            {
-              label: "Support execution",
-              value: "Retail, campaigns and industry context",
-            },
-          ]}
-        />
+        <aside className="zb-premium-hero-card zb-insights-hero-card" aria-labelledby="insights-intro-title">
+          <div className="zb-premium-card-header">
+            <span className="zb-premium-card-icon" aria-hidden="true">
+              <BookOpen />
+            </span>
+            <div>
+              <span className="zb-eyebrow">Explore the thinking</span>
+              <h2 id="insights-intro-title">Ideas organised around the work you actually do.</h2>
+            </div>
+          </div>
+          <div className="zb-insights-topic-cloud" aria-label="Featured insight topics">
+            {articleCategories.map((category) => (
+              <Link
+                key={category}
+                href={articlesHref({ category }) + "#insights-search"}
+              >
+                {category}
+              </Link>
+            ))}
+          </div>
+          <div className="zb-insights-feature-strip">
+            <Sparkles aria-hidden="true" />
+            <p>
+              <strong>Practical, not theoretical.</strong> Hiring, workforce and execution guidance for real operating decisions.
+            </p>
+          </div>
+          <ActionLink href="#insights-search" variant="text">
+            Search all insights <ArrowUpRight aria-hidden="true" className="size-4" />
+          </ActionLink>
+        </aside>
       </div>
       <section
         className="zb-insights-controls"
