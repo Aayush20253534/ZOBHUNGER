@@ -1,13 +1,22 @@
-import Link from "next/link";
-import { PageShell } from "@/components/common/PageShell";
-import { industries } from "@/data/industries";
+import type { Metadata } from "next";
+import { IndustriesOverview } from "@/components/industries/IndustriesOverview";
+import { industriesOverview } from "@/data/industry-details";
+import { site } from "@/data/site";
+
+export const metadata: Metadata = {
+  title: "Industries We Serve",
+  description: industriesOverview.description,
+  alternates: { canonical: `${site.url}/industries` },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: site.name,
+    title: `Industries We Serve | ${site.name}`,
+    description: industriesOverview.description,
+    url: `${site.url}/industries`,
+  },
+};
 
 export default function Page() {
-  return (
-    <PageShell title="Industries We Serve">
-      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {industries.map((item) => <li key={item.slug}><Link href={`/industries/${item.slug}`}>{item.title}</Link></li>)}
-      </ul>
-    </PageShell>
-  );
+  return <IndustriesOverview />;
 }

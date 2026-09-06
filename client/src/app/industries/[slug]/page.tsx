@@ -1,14 +1,30 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { PageShell } from "@/components/common/PageShell";
+import { IndustryDetail } from "@/components/industries/IndustryDetail";
 import { industries } from "@/data/industries";
+import {
+  getIndustryContent,
+  getIndustryMetadata,
+} from "@/lib/industry-content";
+
+type IndustryPageProps = { params: Promise<{ slug: string }> };
+
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return industries.map(({ slug }) => ({ slug }));
 }
 
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({
+  params,
+}: IndustryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const industry = industries.find((item) => item.slug === slug);
-  if (!industry) notFound();
-  return <PageShell title={`${industry.title} Solutions`} />;
+  const content = getIndustryContent(slug);
+  if (!content) notFound();
+  return getIndustryMetadata(content.industry.slug);
+}
+
+export default async function Page({ params }: IndustryPageProps) {
+  const { slug } = await params;
+  return <IndustryDetail slug={slug} />;
 }

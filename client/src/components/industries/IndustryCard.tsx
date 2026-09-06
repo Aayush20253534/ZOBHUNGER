@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowUpRight, Building2 } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { IndustryIcon } from "@/components/industries/IndustryIcon";
 import { Card } from "@/components/ui/card";
 import type { IndustrySummary } from "@/types/catalog.types";
 
@@ -11,7 +12,7 @@ export function IndustryCard({ industry }: { industry: IndustrySummary }) {
       aria-label={`Explore ${industry.title} solutions`}
     >
       <Card className="zb-card">
-        <Building2 className="zb-card-icon" aria-hidden="true" />
+        <IndustryIcon slug={industry.slug} className="zb-card-icon" />
         <h3 className="zb-card-title">{industry.title}</h3>
         <p className="zb-card-copy">
           {industry.description ??
