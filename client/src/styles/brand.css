@@ -650,6 +650,7 @@ body > main[class] {
 .zb-form-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  align-items: start;
   gap: 1.25rem;
 }
 .zb-form-full {

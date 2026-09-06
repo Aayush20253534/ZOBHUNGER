@@ -731,3 +731,63 @@
     font-size: 0.82rem;
   }
 }
+
+
+/* For Workers hero: mirror the compact, top-aligned business hero treatment. */
+@media (min-width: 960px) {
+  .zb-page-content .zb-workers-hero {
+    align-items: start;
+    grid-template-columns: minmax(0, 1.28fr) minmax(25rem, 0.92fr);
+    gap: clamp(2.25rem, 3.8vw, 4rem);
+  }
+  .zb-page-content .zb-workers-hero .zb-page-heading {
+    padding-top: 0.35rem;
+  }
+  .zb-page-content .zb-worker-hero-card {
+    align-self: start;
+    justify-self: end;
+    width: 100%;
+    max-width: 39rem;
+    padding: 1.55rem;
+  }
+  .zb-worker-hero-card .zb-premium-card-header {
+    gap: 1rem;
+  }
+  .zb-worker-hero-card .zb-premium-card-icon {
+    width: 3.25rem;
+    height: 3.25rem;
+    flex-basis: 3.25rem;
+  }
+  .zb-worker-hero-card .zb-premium-card-header h2 {
+    font-size: clamp(1.45rem, 1.75vw, 1.75rem);
+    line-height: 1.16;
+  }
+  .zb-worker-hero-card .zb-worker-highlight-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+    margin-top: 1.15rem;
+  }
+  .zb-worker-hero-card .zb-worker-highlight-list article {
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.95rem;
+  }
+  .zb-worker-hero-card .zb-worker-highlight-list article > svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  .zb-worker-hero-card .zb-worker-highlight-list span {
+    font-size: 0.7rem;
+  }
+  .zb-worker-hero-card .zb-worker-highlight-list strong {
+    font-size: 0.84rem;
+    line-height: 1.4;
+  }
+  .zb-worker-hero-card .zb-premium-card-action {
+    min-height: 3rem;
+    margin-top: 1rem;
+    font-size: 0.92rem;
+  }
+}
