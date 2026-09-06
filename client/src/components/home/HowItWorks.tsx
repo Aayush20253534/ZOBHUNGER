@@ -15,8 +15,8 @@ export function HowItWorks() {
         title={home.process.title}
         description={home.process.description}
         action={
-          <ActionLink href="/hire-workforce" variant="text">
-            Start with your requirement
+          <ActionLink href="/how-it-works" variant="text">
+            See the full process
           </ActionLink>
         }
       />

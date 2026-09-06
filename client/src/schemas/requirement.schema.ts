@@ -23,7 +23,7 @@ export const requirementSchema = z.object({
     ),
   serviceRequired: serviceSchema,
   workforceCount: z
-    .number()
+    .number({ error: "Enter the number of people you need." })
     .int("Use a whole number.")
     .min(1, "Enter at least one person.")
     .max(100000),

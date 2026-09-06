@@ -37,7 +37,7 @@
   text-underline-offset: 0.25rem;
 }
 .zb-industries .zb-breadcrumbs [aria-current="page"] {
-  color: var(--zb-forest);
+  color: var(--zb-ink);
   font-weight: 650;
 }
 .zb-industries a:focus-visible {
@@ -79,9 +79,9 @@
 }
 .zb-industry-context {
   padding: clamp(1.5rem, 2.8vw, 2rem);
-  border: 1px solid var(--zb-forest);
+  border: 1px solid var(--zb-panel);
   border-radius: var(--zb-radius);
-  background: var(--zb-forest);
+  background: var(--zb-panel);
   color: #fff;
 }
 .zb-industry-context > svg {
@@ -99,7 +99,7 @@
 }
 .zb-industry-context > p {
   margin: -0.5rem 0 1.5rem;
-  color: #d6e3d9;
+  color: var(--zb-on-panel-muted);
   font-size: 1rem;
   line-height: 1.8;
 }
@@ -142,8 +142,8 @@
   gap: 1.25rem;
 }
 .zb-industry-catalog-help {
-  background: #edf2df;
-  border-color: #d2ddbe;
+  background: var(--zb-soft);
+  border-color: var(--zb-soft-border);
 }
 .zb-industry-catalog-help .zb-action-link {
   align-self: start;
@@ -181,7 +181,7 @@
 }
 .zb-industry-service-card {
   gap: 0.75rem;
-  border-top: 3px solid #c4d3b7;
+  border-top: 3px solid var(--zb-soft-border);
 }
 .zb-industry-service-card h3 {
   margin: 0;
@@ -235,8 +235,8 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 2rem;
   padding: clamp(1.5rem, 3.5vw, 2.75rem);
-  background: #edf2df;
-  border: 1px solid #d2ddbe;
+  background: var(--zb-soft);
+  border: 1px solid var(--zb-soft-border);
   border-radius: var(--zb-radius);
 }
 .zb-industry-brief-intro > svg {
@@ -268,7 +268,7 @@
 }
 .zb-industry-brief > dl > div {
   min-width: 0;
-  border-top: 1px solid #c8d5b8;
+  border-top: 1px solid var(--zb-soft-border);
   padding-top: 1rem;
 }
 .zb-industry-brief dt {

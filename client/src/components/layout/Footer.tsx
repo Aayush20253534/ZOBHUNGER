@@ -34,6 +34,9 @@ export function Footer() {
                 <Link href="/for-business">Work with ZOBHUNGER</Link>
               </li>
               <li>
+                <Link href="/how-it-works">How it works</Link>
+              </li>
+              <li>
                 <Link href="/industries">Industries we serve</Link>
               </li>
               <li>
@@ -49,6 +52,9 @@ export function Footer() {
             <ul>
               <li>
                 <Link href="/about">About us</Link>
+              </li>
+              <li>
+                <Link href="/technology">Our technology vision</Link>
               </li>
               <li>
                 <Link href="/for-workers">For workers</Link>

@@ -40,6 +40,9 @@ installation, running server, database or credentials are required for mock mode
 
 ## Design system
 
+The original palette below is superseded by the client-requested red-and-white
+theme in Part 5. Use `src/styles/brand.css` and `PART5.md` for the current colours.
+
 | Role               | Value     |
 | ------------------ | --------- |
 | Page background    | `#F7F8F4` |

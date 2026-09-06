@@ -112,13 +112,13 @@
   overflow: hidden;
   border: 1px solid var(--zb-border);
   border-radius: var(--zb-radius);
-  background: var(--zb-forest);
+  background: var(--zb-panel);
 }
 .zb-home-hero-image {
   position: relative;
   aspect-ratio: 6 / 5;
   overflow: hidden;
-  background: #d5d9cd;
+  background: var(--zb-border);
 }
 .zb-home-hero-image img {
   object-fit: cover;
@@ -143,7 +143,7 @@
 }
 .zb-home-hero-figure figcaption p {
   margin: 0.25rem 0 0;
-  color: #d6e3d9;
+  color: var(--zb-on-panel-muted);
   font-size: 0.8125rem;
   line-height: 1.6;
 }
@@ -182,8 +182,8 @@
   margin-top: 0;
 }
 .zb-home-solution-help .zb-card {
-  background: #edf2df;
-  border-color: #d2ddbe;
+  background: var(--zb-soft);
+  border-color: var(--zb-soft-border);
   justify-content: flex-start;
 }
 .zb-home-solution-help .zb-card-icon {
@@ -198,7 +198,7 @@
   gap: 2.5rem;
   padding: clamp(1.5rem, 4.5vw, 3.5rem);
   border-radius: var(--zb-radius);
-  background: var(--zb-forest);
+  background: var(--zb-panel);
   color: #fff;
 }
 .zb-home-why-intro .zb-eyebrow {
@@ -216,7 +216,7 @@
 .zb-home-why-intro > p:not(.zb-eyebrow) {
   margin: 1.3rem 0 1.75rem;
   max-width: 34rem;
-  color: #d6e3d9;
+  color: var(--zb-on-panel-muted);
   font-size: 1rem;
   line-height: 1.8;
 }
@@ -254,7 +254,7 @@
 }
 .zb-home-benefits p {
   margin: 0.45rem 0 0;
-  color: #d6e3d9;
+  color: var(--zb-on-panel-muted);
   font-size: 1rem;
   line-height: 1.75;
 }
@@ -280,7 +280,7 @@
   place-items: center;
   width: 3rem;
   height: 3rem;
-  border: 1px solid #afc2af;
+  border: 1px solid var(--zb-strong-border);
   border-radius: 50%;
   background: var(--zb-page);
   color: var(--zb-action);
@@ -352,8 +352,8 @@
   margin-top: 0.3rem;
 }
 .zb-home-industry-help {
-  background: #edf2df;
-  border-color: #d2ddbe;
+  background: var(--zb-soft);
+  border-color: var(--zb-soft-border);
 }
 .zb-home-audiences {
   display: grid;
@@ -371,8 +371,8 @@
   background: var(--zb-surface);
 }
 .zb-home-audience-card[data-audience="worker"] {
-  background: #eaf0d8;
-  border-color: #d2ddbe;
+  background: var(--zb-soft);
+  border-color: var(--zb-soft-border);
 }
 .zb-home-audience-label {
   display: flex;
@@ -440,7 +440,7 @@
   gap: 1.25rem;
 }
 .zb-home-technology-card {
-  border-top: 3px solid #a4b99b;
+  border-top: 3px solid var(--zb-action);
 }
 .zb-home-technology-card ul {
   display: grid;

@@ -73,8 +73,8 @@ The homepage reuses Part 1's `ActionLink`, `SectionHeading`, `SolutionCard`,
 server components; there is no homepage state store or extra client-side data
 request. Interactive navigation remains provided by Part 1.
 
-The visual layout uses the existing forest/green palette, warm background and
-Manrope typeface. Desktop has a split hero, four-column solution catalogue,
+The original forest/green palette is replaced by the shared red-and-white theme
+in Part 5; the Manrope typeface remains. Desktop has a split hero, four-column solution catalogue,
 horizontal process, compact industry cards and two audience panels. Smaller
 screens switch to fewer columns and a vertical process. Styles inherit the shared
 focus and reduced-motion behaviour. The photograph reserves space before loading

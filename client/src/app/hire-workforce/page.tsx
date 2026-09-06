@@ -1,8 +1,18 @@
-import type { Metadata } from "next";
-import { PageShell } from "@/components/common/PageShell";
+import { RequirementPageContent } from "@/components/company/RequirementPageContent";
+import { getFormSelection, type FormSearchParams } from "@/lib/form-selection";
+import { getPageMetadata } from "@/lib/page-metadata";
 
-export const metadata: Metadata = { title: "Tell Us Your Workforce Requirement" };
+export const metadata = getPageMetadata(
+  "Share Your Workforce Requirement",
+  "Tell ZOBHUNGER the service, team size, locations and timeline your business needs. Share a workforce or business execution requirement.",
+  "/hire-workforce",
+);
 
-export default function Page() {
-  return <PageShell title="Tell Us Your Workforce Requirement" />;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<FormSearchParams>;
+}) {
+  const selection = getFormSelection(await searchParams);
+  return <RequirementPageContent {...selection} />;
 }

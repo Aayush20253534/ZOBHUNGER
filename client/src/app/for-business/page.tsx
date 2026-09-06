@@ -1,8 +1,12 @@
-import type { Metadata } from "next";
-import { PageShell } from "@/components/common/PageShell";
+import { ForBusiness } from "@/components/company/ForBusiness";
+import { getPageMetadata } from "@/lib/page-metadata";
 
-export const metadata: Metadata = { title: "Build Your Team With ZOBHUNGER" };
+export const metadata = getPageMetadata(
+  "Build and Manage Your Team",
+  "Recruitment, sales teams, promoters and market execution. Shape a workforce solution around your business requirement.",
+  "/for-business",
+);
 
 export default function Page() {
-  return <PageShell title="Build Your Team With ZOBHUNGER" />;
+  return <ForBusiness />;
 }

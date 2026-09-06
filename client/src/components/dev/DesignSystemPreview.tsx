@@ -32,14 +32,14 @@ import type { JobList } from "@/types/job.types";
 // The preview always uses an isolated mock, including when the app is in API mode.
 const previewAdapter = createMockAdapter({ latencyMs: 700 });
 const colours = [
-  ["Page", "#F7F8F4"],
+  ["Page", "#FAF9F9"],
   ["Surface", "#FFFFFF"],
-  ["Forest", "#173D31"],
-  ["Action", "#146C54"],
-  ["Accent", "#DDEAAD"],
-  ["Muted text", "#5B6B62"],
-  ["Border", "#DDE5DE"],
-  ["Error", "#B42318"],
+  ["Text", "#272126"],
+  ["Burgundy panel", "#461820"],
+  ["Red action", "#C8202F"],
+  ["Soft accent", "#FFE2E5"],
+  ["Muted text", "#685E64"],
+  ["Border", "#E7DFE2"],
 ] as const;
 
 type JobPreviewState =
@@ -363,12 +363,12 @@ function EnquiryFormPreview() {
 export function DesignSystemPreview() {
   return (
     <PageShell
-      eyebrow="Part 1 / Frontend foundation"
+      eyebrow="Frontend design system"
       title="Built for business. Ready for the field."
-      description="A working review of the ZOBHUNGER colour system, typography, navigation, cards and form behaviour. Full page layouts follow in the next parts."
+      description="A working review of the ZOBHUNGER colour system, typography, navigation, cards and form behaviour. The red-and-white palette applies across the public website."
       actions={
         <ActionLink href="/" variant="secondary">
-          View the site shell{" "}
+          View the homepage{" "}
           <ArrowUpRight className="size-4" aria-hidden="true" />
         </ActionLink>
       }
@@ -381,7 +381,7 @@ export function DesignSystemPreview() {
         <SectionHeading
           id="preview-brand-heading"
           eyebrow="01 / Brand system"
-          title="Warm surfaces. A confident green."
+          title="White surfaces. A clear red accent."
           description="Manrope typography, restrained borders, 12px card corners and practical spacing. Colour supports the hierarchy while the content does the explaining."
         />
         <dl className="zb-colours">
@@ -405,7 +405,7 @@ export function DesignSystemPreview() {
           id="preview-actions-heading"
           eyebrow="02 / Actions"
           title="One clear next step"
-          description="Green for the primary action, an outline for supporting actions, and simple links for navigation."
+          description="Red for the primary action, an outline for supporting actions, and simple links for navigation."
         />
         <div className="zb-preview-panel">
           <div className="zb-preview-controls">

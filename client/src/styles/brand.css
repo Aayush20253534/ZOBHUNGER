@@ -1,4 +1,4 @@
-/* ZOBHUNGER Part 1. Kept separate from the generated shadcn stylesheet. */
+/* Shared ZOBHUNGER theme. Part 5: client-requested red and white. */
 @font-face {
   font-family: "Zobhunger Manrope";
   src: url("/fonts/manrope-latin.woff2") format("woff2");
@@ -10,37 +10,59 @@
 html:root,
 html:root.dark {
   color-scheme: light;
-  --zb-page: #f7f8f4;
+  --zb-page: #faf9f9;
   --zb-surface: #ffffff;
-  --zb-forest: #173d31;
-  --zb-action: #146c54;
-  --zb-action-hover: #105640;
-  --zb-highlight: #ddeaad;
-  --zb-muted: #5b6b62;
-  --zb-border: #dde5de;
-  --zb-danger: #b42318;
+  --zb-ink: #272126;
+  --zb-panel: #461820;
+  --zb-on-panel: #ffffff;
+  --zb-on-panel-muted: #efdde1;
+  --zb-action: #c8202f;
+  --zb-action-hover: #a61826;
+  --zb-highlight: #ffe2e5;
+  --zb-soft: #fff1f2;
+  --zb-soft-border: #f0c8ce;
+  --zb-muted: #685e64;
+  --zb-border: #e7dfe2;
+  --zb-strong-border: #9c8d95;
+  --zb-danger: #a11924;
+  --zb-danger-border: #d76d78;
+  --zb-shadow: #27212612;
+  --zb-shadow-subtle: #2721260a;
   --zb-radius: 0.75rem;
   --zb-transition: 180ms ease;
   --background: var(--zb-page);
-  --foreground: var(--zb-forest);
+  --foreground: var(--zb-ink);
   --card: var(--zb-surface);
-  --card-foreground: var(--zb-forest);
+  --card-foreground: var(--zb-ink);
   --popover: var(--zb-surface);
-  --popover-foreground: var(--zb-forest);
+  --popover-foreground: var(--zb-ink);
   --primary: var(--zb-action);
   --primary-foreground: #ffffff;
-  --secondary: #eaf0e9;
-  --secondary-foreground: var(--zb-forest);
-  --muted: #edf1eb;
+  --secondary: var(--zb-soft);
+  --secondary-foreground: var(--zb-ink);
+  --muted: #f3f1f2;
   --muted-foreground: var(--zb-muted);
-  --accent: #eaf0e9;
-  --accent-foreground: var(--zb-forest);
+  --accent: var(--zb-soft);
+  --accent-foreground: var(--zb-ink);
   --destructive: var(--zb-danger);
   --destructive-foreground: #ffffff;
   --border: var(--zb-border);
-  --input: #a4b3a8;
+  --input: var(--zb-strong-border);
   --ring: var(--zb-action);
   --radius: 0.75rem;
+  --chart-1: var(--zb-action);
+  --chart-2: var(--zb-panel);
+  --chart-3: #d7838e;
+  --chart-4: var(--zb-muted);
+  --chart-5: var(--zb-highlight);
+  --sidebar: var(--zb-surface);
+  --sidebar-foreground: var(--zb-ink);
+  --sidebar-primary: var(--zb-action);
+  --sidebar-primary-foreground: var(--zb-on-panel);
+  --sidebar-accent: var(--zb-soft);
+  --sidebar-accent-foreground: var(--zb-ink);
+  --sidebar-border: var(--zb-border);
+  --sidebar-ring: var(--zb-action);
 }
 
 html {
@@ -51,7 +73,7 @@ html body[class] {
   font-size: 1rem;
   line-height: 1.65;
   background: var(--zb-page);
-  color: var(--zb-forest);
+  color: var(--zb-ink);
 }
 body > main[class] {
   max-width: 75rem;
@@ -59,7 +81,7 @@ body > main[class] {
 }
 ::selection {
   background: var(--zb-highlight);
-  color: var(--zb-forest);
+  color: var(--zb-ink);
 }
 .zb-container {
   width: 100%;
@@ -77,7 +99,7 @@ body > main[class] {
   z-index: 100;
   transform: translateY(-180%);
   border-radius: 0.375rem;
-  background: var(--zb-forest);
+  background: var(--zb-panel);
   color: white;
   padding: 0.75rem 1rem;
   font-weight: 600;
@@ -99,7 +121,7 @@ body > main[class] {
 .zb-wordmark {
   display: inline-flex;
   align-items: center;
-  color: var(--zb-forest);
+  color: var(--zb-ink);
   font-size: 1.2rem;
   line-height: 1;
   font-weight: 800;
@@ -174,7 +196,7 @@ body > main[class] {
   background: var(--zb-surface);
   border: 1px solid var(--zb-border);
   border-radius: 0 0 var(--zb-radius) var(--zb-radius);
-  box-shadow: 0 12px 28px #173d3112;
+  box-shadow: 0 12px 28px var(--zb-shadow);
 }
 .zb-nav-panel-top {
   display: flex;
@@ -283,7 +305,7 @@ body > main[class] {
   margin-top: 1.5rem;
 }
 .zb-footer {
-  background: var(--zb-forest);
+  background: var(--zb-panel);
   color: #fff;
   margin-top: clamp(3rem, 6vw, 6rem);
 }
@@ -302,7 +324,7 @@ body > main[class] {
 }
 .zb-footer-intro p {
   margin: 1.1rem 0 1.5rem;
-  color: #d6e3d9;
+  color: var(--zb-on-panel-muted);
   font-size: 0.9375rem;
   line-height: 1.8;
 }
@@ -323,7 +345,7 @@ body > main[class] {
   display: inline-flex;
   align-items: center;
   min-height: 2rem;
-  color: #e0e9e2;
+  color: var(--zb-on-panel-muted);
   font-size: 0.875rem;
   text-decoration: none;
 }
@@ -339,7 +361,7 @@ body > main[class] {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 0.75rem 2rem;
-  color: #d6e3d9;
+  color: var(--zb-on-panel-muted);
   font-size: 0.8125rem;
 }
 .zb-footer-bottom p {
@@ -382,8 +404,8 @@ body > main[class] {
 }
 .zb-action-link[data-variant="secondary"] {
   background: var(--zb-surface);
-  border-color: #a4b3a8;
-  color: var(--zb-forest);
+  border-color: var(--zb-strong-border);
+  color: var(--zb-ink);
 }
 .zb-action-link[data-variant="secondary"]:hover {
   background: var(--muted);
@@ -391,10 +413,10 @@ body > main[class] {
 }
 .zb-action-link[data-variant="light"] {
   background: var(--zb-highlight);
-  color: var(--zb-forest);
+  color: var(--zb-ink);
 }
 .zb-action-link[data-variant="light"]:hover {
-  background: #edf5cf;
+  background: var(--zb-surface);
 }
 .zb-action-link[data-variant="text"] {
   min-height: 2.75rem;
@@ -490,8 +512,8 @@ body > main[class] {
     box-shadow var(--zb-transition);
 }
 .zb-card-link:hover .zb-card {
-  border-color: #97afa0;
-  box-shadow: 0 8px 20px #173d310a;
+  border-color: var(--zb-action);
+  box-shadow: 0 8px 20px var(--zb-shadow-subtle);
 }
 .zb-card-top {
   display: flex;
@@ -536,7 +558,7 @@ body > main[class] {
 }
 .zb-chip[data-tone="accent"] {
   background: var(--zb-highlight);
-  color: var(--zb-forest);
+  color: var(--zb-ink);
 }
 .zb-card-cta {
   display: flex;
@@ -556,7 +578,7 @@ body > main[class] {
   gap: 2rem;
   padding: clamp(1.5rem, 4vw, 3rem);
   border-radius: var(--zb-radius);
-  background: var(--zb-forest);
+  background: var(--zb-panel);
   color: #fff;
 }
 .zb-cta h2 {
@@ -570,7 +592,7 @@ body > main[class] {
 .zb-cta p {
   max-width: 36rem;
   margin: 0.8rem 0 0;
-  color: #d6e3d9;
+  color: var(--zb-on-panel-muted);
   font-size: 1rem;
 }
 .zb-cta-actions {
@@ -584,7 +606,7 @@ body > main[class] {
   min-width: 0;
 }
 .zb-field label {
-  color: var(--zb-forest);
+  color: var(--zb-ink);
   font-size: 0.875rem;
   font-weight: 650;
   line-height: 1.5;
@@ -593,7 +615,7 @@ body > main[class] {
   width: 100%;
   min-height: 2.875rem;
   background: var(--zb-surface);
-  border-color: #a4b3a8;
+  border-color: var(--zb-strong-border);
   border-radius: 0.375rem;
   font-size: 1rem;
   line-height: 1.5;
@@ -638,12 +660,12 @@ body > main[class] {
 }
 .zb-feedback[data-tone="error"] {
   color: var(--zb-danger);
-  background: #fff4f2;
-  border-color: #efc3be;
+  background: var(--zb-soft);
+  border-color: var(--zb-danger-border);
 }
 .zb-feedback[data-tone="success"] {
-  color: var(--zb-forest);
-  background: #edf4e8;
+  color: var(--zb-ink);
+  background: var(--muted);
 }
 .zb-feedback svg {
   flex-shrink: 0;
@@ -668,7 +690,7 @@ body > main[class] {
   padding: 2.5rem 1.5rem;
   text-align: center;
   background: var(--zb-surface);
-  border: 1px dashed #a4b3a8;
+  border: 1px dashed var(--zb-strong-border);
   border-radius: var(--zb-radius);
 }
 .zb-empty h3 {
@@ -777,18 +799,20 @@ body > main[class] {
   }
 }
 @media (min-width: 1100px) {
-  .zb-desktop-nav {
-    display: flex;
-  }
-  .zb-mobile-trigger {
-    display: none;
-  }
   .zb-card-grid[data-columns="3"] {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .zb-footer-grid {
     grid-template-columns: 1.35fr 1.1fr 0.9fr 0.8fr;
     gap: 2.5rem;
+  }
+}
+@media (min-width: 1200px) {
+  .zb-desktop-nav {
+    display: flex;
+  }
+  .zb-mobile-trigger {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {

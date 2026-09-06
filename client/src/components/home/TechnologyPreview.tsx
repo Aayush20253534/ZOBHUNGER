@@ -28,6 +28,11 @@ export function TechnologyPreview() {
         eyebrow={home.technology.eyebrow}
         title={home.technology.title}
         description={home.technology.description}
+        action={
+          <ActionLink href="/technology" variant="text">
+            Explore our technology vision
+          </ActionLink>
+        }
       />
       <div className="zb-home-technology-grid">
         {home.technology.portals.map((portal) => {

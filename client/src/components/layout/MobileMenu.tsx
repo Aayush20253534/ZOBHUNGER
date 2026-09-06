@@ -20,7 +20,7 @@ import { solutions } from "@/data/solutions";
 export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 1100px)");
+    const desktop = window.matchMedia("(min-width: 1200px)");
     const closeOnDesktop = (event: MediaQueryListEvent) => {
       if (event.matches) setOpen(false);
     };
