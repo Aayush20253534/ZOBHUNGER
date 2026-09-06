@@ -1,0 +1,438 @@
+/* Shared public-page proportions. Content stays in normal flow: no fixed hero
+   heights, clipping, or type reductions tied to a visitor's screen height. */
+.zb-page-content
+  :is(
+    .zb-solution-hero,
+    .zb-industry-hero,
+    .zb-company-hero,
+    .zb-workers-hero,
+    .zb-editorial-hero
+  ) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 1.75rem;
+}
+.zb-page-content
+  :is(
+    .zb-solution-hero,
+    .zb-industry-hero,
+    .zb-company-hero,
+    .zb-workers-hero,
+    .zb-editorial-hero
+  )
+  > * {
+  min-width: 0;
+}
+.zb-page-content .zb-page-heading {
+  max-width: 62rem;
+}
+.zb-page-content .zb-page-heading h1 {
+  max-width: none;
+  font-size: var(--zb-intro-title-size);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+  text-wrap: pretty;
+}
+.zb-page-content
+  :is(
+    .zb-solution-hero,
+    .zb-industry-hero,
+    .zb-company-hero,
+    .zb-workers-hero,
+    .zb-editorial-hero
+  )
+  .zb-page-heading {
+  margin-bottom: 0;
+}
+.zb-page-content .zb-page-description {
+  max-width: 52rem;
+  margin-top: 1.25rem;
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+.zb-page-content .zb-page-actions {
+  margin-top: 1.5rem;
+  gap: 0.75rem;
+}
+.zb-page-content .zb-page-heading > .zb-eyebrow {
+  margin-bottom: 1rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.065em;
+}
+.zb-page-content .zb-section-heading {
+  margin-bottom: 1.5rem;
+}
+.zb-page-content .zb-section-heading h2 {
+  max-width: 30ch;
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+  line-height: 1.18;
+  font-weight: 750;
+}
+.zb-page-content .zb-section-heading p {
+  font-size: 1.125rem;
+  line-height: 1.65;
+  max-width: 46rem;
+}
+.zb-page-content :is(.zb-action-link, .zb-button) {
+  min-height: 3.125rem;
+  height: auto;
+  font-size: 1rem;
+  white-space: normal;
+}
+.zb-page-content .zb-action-link[data-variant="text"] {
+  min-height: 2.75rem;
+}
+.zb-page-content .zb-card-title {
+  font-size: 1.35rem;
+}
+.zb-page-content .zb-card-copy {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+.zb-page-content .zb-card-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0.6rem;
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 0.65rem;
+  background: var(--zb-soft);
+}
+.zb-page-content .zb-card-cta {
+  min-height: 2.75rem;
+  font-size: 0.9375rem;
+}
+.zb-page-content .zb-card-link:focus-visible .zb-card {
+  border-color: var(--zb-action);
+}
+.zb-page-content .zb-breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.55rem;
+  padding: 0;
+  margin: 0 0 1rem;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--zb-muted);
+}
+.zb-page-content .zb-breadcrumbs li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.zb-page-content .zb-breadcrumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+.zb-page-content .zb-breadcrumbs svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+.zb-page-content .zb-breadcrumbs [aria-current="page"] {
+  color: var(--zb-ink);
+}
+.zb-intro-panel {
+  min-width: 0;
+  padding: clamp(1.4rem, 2.8vw, 2rem);
+  border: 1px solid var(--zb-border);
+  border-top: 3px solid var(--zb-action);
+  border-radius: 1rem;
+  background: var(--zb-surface);
+  box-shadow: 0 8px 30px var(--zb-shadow-subtle);
+}
+.zb-intro-panel-top {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+.zb-intro-panel-top .zb-eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+.zb-icon-tile {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: 0.65rem;
+  background: var(--zb-soft);
+  color: var(--zb-action);
+}
+.zb-icon-tile svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+.zb-intro-panel h2 {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+  line-height: 1.25;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+}
+.zb-intro-panel-description {
+  margin: 0.85rem 0 0;
+  color: var(--zb-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.zb-intro-panel dl {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1.25rem 0 0;
+}
+.zb-intro-panel dl > div {
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.6rem;
+  background: var(--zb-page);
+}
+.zb-intro-panel dt {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 1rem;
+  font-weight: 750;
+}
+.zb-intro-fact-number {
+  color: var(--zb-action);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.zb-intro-panel dd {
+  margin: 0.25rem 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--zb-muted);
+}
+.zb-inline-notice {
+  margin: 1rem 0 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--zb-soft-border);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--zb-muted);
+}
+.zb-page-content .zb-company-statement {
+  align-content: center;
+  align-self: stretch;
+  gap: 1.4rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 1rem;
+}
+.zb-page-content .zb-company-statement > p {
+  max-width: none;
+  font-size: clamp(2.5rem, 4vw, 3.4rem);
+  line-height: 1.12;
+}
+.zb-page-content .zb-company-statement h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 1.2;
+}
+.zb-page-content .zb-company-statement > span:last-child {
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+.zb-page-content :is(.zb-solution-jump-nav, .zb-industry-jump-nav) {
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.75rem;
+  background: var(--zb-surface);
+}
+.zb-page-content :is(.zb-solution-jump-nav, .zb-industry-jump-nav) a {
+  padding: 0.65rem 1rem;
+  border-radius: 0.4rem;
+  font-size: 0.9375rem;
+}
+.zb-page-content :is(.zb-solution-jump-nav, .zb-industry-jump-nav) a:hover {
+  background: var(--zb-soft);
+}
+.zb-page-content :is(.zb-solution-service-card, .zb-industry-service-card) h3 {
+  font-size: 1.25rem;
+}
+.zb-page-content :is(.zb-solution-service-card, .zb-industry-service-card) p {
+  font-size: 1.0625rem;
+}
+.zb-page-content
+  :is(
+    .zb-company-principle,
+    .zb-industry-scenario-grid article,
+    .zb-solution-focus-grid > li
+  ) {
+  padding: 1.5rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.75rem;
+  background: var(--zb-surface);
+}
+.zb-page-content
+  :is(
+    .zb-company-principle,
+    .zb-industry-scenario-grid article,
+    .zb-solution-focus-grid > li
+  )
+  h3 {
+  font-size: 1.2rem;
+}
+.zb-page-content .zb-company-faq details {
+  margin-top: 0.75rem;
+  padding-inline: 1rem;
+  background: var(--zb-surface);
+  border: 1px solid var(--zb-border);
+  border-radius: 0.65rem;
+}
+.zb-page-content .zb-company-faq summary {
+  font-size: 1.0625rem;
+}
+.zb-page-content :is(.zb-company-brief dl > div, .zb-industry-brief dl > div) {
+  padding: 1rem 1.15rem;
+  background: var(--zb-surface);
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 0.6rem;
+}
+.zb-page-content :is(.zb-company-brief, .zb-industry-brief) :is(dt, dd) {
+  font-size: 1rem;
+}
+.zb-page-content .zb-technology-card li {
+  font-size: 1rem;
+}
+.zb-page-content .zb-technology-audience {
+  font-size: 0.875rem;
+}
+.zb-page-content .zb-jobs-demo-note {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+}
+.zb-page-content .zb-jobs-heading .zb-page-heading {
+  margin-bottom: 1rem;
+}
+.zb-page-content .zb-job-filters {
+  margin-top: 1rem;
+  border-top: 3px solid var(--zb-action);
+  box-shadow: 0 4px 20px var(--zb-shadow-subtle);
+}
+.zb-page-content .zb-job-detail-heading {
+  margin-bottom: 1.5rem;
+}
+.zb-page-content :is(.zb-company-form-panel, .zb-job-application) {
+  border-top: 3px solid var(--zb-action);
+  box-shadow: 0 4px 20px var(--zb-shadow-subtle);
+}
+.zb-page-content .zb-field label {
+  font-size: 1rem;
+}
+.zb-page-content .zb-form-section legend {
+  font-size: 1.125rem;
+}
+.zb-page-content .zb-home-hero h1 {
+  font-weight: 800;
+  text-wrap: pretty;
+}
+.zb-page-content .zb-home-hero-copy {
+  align-self: center;
+}
+.zb-page-content .zb-home-hero-description {
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+.zb-page-content .zb-home-worker-link {
+  margin-top: 0.6rem;
+  font-size: 1rem;
+}
+.zb-page-content .zb-home-hero-figure {
+  align-self: center;
+  box-shadow: 0 8px 30px var(--zb-shadow-subtle);
+  border-radius: 1rem;
+}
+.zb-page-content .zb-home-hero-figure figcaption {
+  padding: 1.25rem;
+}
+.zb-page-content .zb-home-hero-figure figcaption strong {
+  font-size: 1.0625rem;
+}
+.zb-page-content .zb-home-hero-figure figcaption p {
+  font-size: 0.9375rem;
+}
+.zb-page-content .zb-home-hero-footer {
+  display: grid;
+  gap: 1rem;
+  border: 0;
+  padding-top: 0;
+}
+.zb-page-content .zb-home-engagements {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.zb-page-content .zb-home-engagements li {
+  display: block;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.65rem;
+  background: var(--zb-surface);
+}
+.zb-page-content .zb-home-engagements li::before {
+  display: none;
+}
+.zb-home-engagements strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 750;
+  color: var(--zb-ink);
+}
+.zb-home-engagements span {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+.zb-page-content .zb-home-scroll-link {
+  justify-self: end;
+  font-size: 0.9375rem;
+}
+.zb-page-content .zb-home-benefits li {
+  padding: 1rem;
+  border: 1px solid #ffffff26;
+  border-radius: 0.6rem;
+}
+.zb-page-content .zb-site-status {
+  padding-block: clamp(1.5rem, 4vw, 3rem);
+}
+@media (min-width: 700px) {
+  .zb-page-content .zb-home-engagements {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (min-width: 960px) {
+  .zb-page-content
+    :is(
+      .zb-solution-hero,
+      .zb-industry-hero,
+      .zb-company-hero,
+      .zb-workers-hero,
+      .zb-editorial-hero
+    ) {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: clamp(1.75rem, 3vw, 2.75rem);
+  }
+  .zb-page-content .zb-home-hero-footer {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+@media (max-width: 599px) {
+  .zb-page-content :is(.zb-page-actions, .zb-home-hero-actions) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .zb-page-content .zb-home-engagements li {
+    padding: 0.85rem;
+  }
+}

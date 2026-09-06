@@ -9,6 +9,7 @@ import {
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
+import { IntroPanel } from "@/components/common/IntroPanel";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Card } from "@/components/ui/card";
@@ -49,33 +50,21 @@ export function ForBusiness() {
             </>
           }
         />
-        <aside
-          className="zb-company-summary"
-          aria-labelledby="business-summary-title"
-        >
-          <span className="zb-eyebrow">Start with your brief</span>
-          <h2 id="business-summary-title">
-            What needs to happen on the ground?
-          </h2>
-          <p>
-            A role, a team or a campaign. Define the requirement before choosing
-            the delivery plan.
-          </p>
-          <dl>
-            <div>
-              <dt>Scope</dt>
-              <dd>People, responsibilities and outcomes</dd>
-            </div>
-            <div>
-              <dt>Location</dt>
-              <dd>One site or a plan across cities</dd>
-            </div>
-            <div>
-              <dt>Engagement</dt>
-              <dd>Ongoing, seasonal or project based</dd>
-            </div>
-          </dl>
-        </aside>
+        <IntroPanel
+          id="business-summary-title"
+          icon={<BriefcaseBusiness />}
+          eyebrow="Start with your brief"
+          title="What needs to happen on the ground?"
+          description="A role, a team or a campaign. Define the requirement before choosing the delivery plan."
+          items={[
+            { label: "Scope", value: "People, responsibilities and outcomes" },
+            { label: "Location", value: "One site or a plan across cities" },
+            {
+              label: "Engagement",
+              value: "Ongoing, seasonal or project based",
+            },
+          ]}
+        />
       </div>
 
       <section

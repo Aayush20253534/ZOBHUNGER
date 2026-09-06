@@ -60,7 +60,13 @@ export function Footer() {
                 <Link href="/for-workers">For workers</Link>
               </li>
               <li>
-                <Link href="/jobs">Explore jobs</Link>
+                <Link href="/jobs">Careers & jobs</Link>
+              </li>
+              <li>
+                <Link href="/blog">Blog & insights</Link>
+              </li>
+              <li>
+                <Link href="/login">Portal access</Link>
               </li>
               <li>
                 <Link href="/contact">Contact</Link>

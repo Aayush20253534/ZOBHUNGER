@@ -1,5 +1,8 @@
 # Larger homepage text and consistent page introductions
 
+> This update is a prerequisite for Part 7. Part 7 replaces its compact styles
+> with larger page introductions and fuller cards. See `PART7.md` after applying it.
+
 Apply this patch after **Part 6 and the Zod compatibility correction**. Leave
 those changes applied; this is an additional layout update.
 
@@ -47,10 +50,10 @@ npm run dev:client
 
 ## Files
 
-| File | Purpose |
-| --- | --- |
-| `src/styles/brand.css` | Shared intro sizing, header height, main padding and typography |
-| `src/styles/home.css` | Larger home heading and description; removal of the fixed 32px cap |
+| File                        | Purpose                                                             |
+| --------------------------- | ------------------------------------------------------------------- |
+| `src/styles/brand.css`      | Shared intro sizing, header height, main padding and typography     |
+| `src/styles/home.css`       | Larger home heading and description; removal of the fixed 32px cap  |
 | `src/styles/page-intro.css` | Shared public-page openings, compact context cards and job controls |
 
 The red-and-white theme, images, page copy, form validation and mock flows are

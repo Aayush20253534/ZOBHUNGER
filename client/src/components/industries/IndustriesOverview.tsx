@@ -2,6 +2,7 @@ import { ArrowUpRight, ClipboardList, MessagesSquare } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
+import { IntroPanel } from "@/components/common/IntroPanel";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { IndustryCard } from "@/components/industries/IndustryCard";
@@ -33,33 +34,26 @@ export function IndustriesOverview() {
             </>
           }
         />
-        <aside
-          className="zb-industry-context"
-          aria-labelledby="industry-overview-context-heading"
-        >
-          <ClipboardList aria-hidden="true" />
-          <h2 id="industry-overview-context-heading">
-            Your industry is the starting point.
-          </h2>
-          <p>
-            The right team depends on the work, where it happens and how long
-            you need support.
-          </p>
-          <dl>
-            <div>
-              <dt>The work</dt>
-              <dd>Roles, activities and responsibilities</dd>
-            </div>
-            <div>
-              <dt>The coverage</dt>
-              <dd>Locations, outlets or remote teams</dd>
-            </div>
-            <div>
-              <dt>The engagement</dt>
-              <dd>People, dates and working schedules</dd>
-            </div>
-          </dl>
-        </aside>
+        <IntroPanel
+          id="industry-overview-context-heading"
+          icon={<ClipboardList />}
+          title="Your industry is the starting point."
+          description="The right team depends on the work, where it happens and how long you need support."
+          items={[
+            {
+              label: "The work",
+              value: "Roles, activities and responsibilities",
+            },
+            {
+              label: "The coverage",
+              value: "Locations, outlets or remote teams",
+            },
+            {
+              label: "The engagement",
+              value: "People, dates and working schedules",
+            },
+          ]}
+        />
       </div>
       <section
         id="industry-catalogue"

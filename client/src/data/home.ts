@@ -6,7 +6,12 @@ export const home = {
     emphasis: "All in one platform.",
     description:
       "ZOBHUNGER helps businesses hire, deploy and manage workforce, sales teams, promoters, field executives, marketing teams and business operations across India.",
-    engagements: ["Permanent", "Contract", "Project-based", "On-demand"],
+    engagements: [
+      { title: "Permanent", description: "Build your core team" },
+      { title: "Contract", description: "Support a defined period" },
+      { title: "Project-based", description: "Deliver a specific brief" },
+      { title: "On-demand", description: "Plan for changing needs" },
+    ],
     image: {
       src: "/images/home/workforce-team-1280.webp",
       srcSet:
@@ -86,26 +91,31 @@ export const home = {
         title: "Share your requirement",
         description:
           "Tell us the roles, team size, locations, duration and work you need done.",
+        checkpoint: "A clear requirement brief",
       },
       {
         title: "We source & screen",
         description:
           "We identify candidates and screen them against the agreed role requirements.",
+        checkpoint: "Candidates aligned with the role",
       },
       {
         title: "Hire & deploy",
         description:
           "Confirm the team, coordinate onboarding and prepare people for the assignment.",
+        checkpoint: "A team ready for the assignment",
       },
       {
         title: "Manage & track",
         description:
           "Coordinate the work and review attendance and activity against the project plan.",
+        checkpoint: "An agreed set of work updates",
       },
       {
         title: "Performance & reporting",
         description:
           "Review progress, share updates and discuss what the next stage needs.",
+        checkpoint: "Reporting and a plan for the next stage",
       },
     ],
   },

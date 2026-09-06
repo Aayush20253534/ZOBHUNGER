@@ -37,7 +37,7 @@ export function Hero() {
             alt={home.hero.image.alt}
             width={2400}
             height={1600}
-            sizes="(min-width: 1200px) 500px, (min-width: 900px) 43vw, (min-width: 640px) 560px, calc(100vw - 40px)"
+            sizes="(min-width: 1200px) 420px, (min-width: 900px) 35vw, (min-width: 640px) 560px, calc(100vw - 40px)"
             loading="eager"
             fetchPriority="high"
             decoding="async"
@@ -57,7 +57,10 @@ export function Hero() {
           aria-label="Workforce engagement types"
         >
           {home.hero.engagements.map((engagement) => (
-            <li key={engagement}>{engagement}</li>
+            <li key={engagement.title}>
+              <strong>{engagement.title}</strong>
+              <span>{engagement.description}</span>
+            </li>
           ))}
         </ul>
         <a className="zb-home-scroll-link" href="#home-solutions">

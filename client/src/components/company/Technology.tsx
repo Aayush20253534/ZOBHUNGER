@@ -32,10 +32,15 @@ export function Technology() {
           title="Technology that helps businesses manage better."
           description="We're building toward connected tools for business teams, workers and the people coordinating delivery. One place to understand the requirement, the assignment and the progress."
           actions={
-            <ActionLink href="/contact">
-              Discuss your workflow{" "}
-              <ArrowUpRight aria-hidden="true" className="size-4" />
-            </ActionLink>
+            <>
+              <ActionLink href="/contact">
+                Discuss your workflow{" "}
+                <ArrowUpRight aria-hidden="true" className="size-4" />
+              </ActionLink>
+              <ActionLink href="/login" variant="secondary">
+                Portal access
+              </ActionLink>
+            </>
           }
         />
         <aside

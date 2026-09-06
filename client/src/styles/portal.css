@@ -1,0 +1,119 @@
+.zb-portal-page {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+.zb-portal-heading {
+  margin-bottom: 1.75rem;
+}
+.zb-portal-status {
+  display: flex;
+  align-items: start;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background: var(--zb-soft);
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 0.65rem;
+  color: var(--zb-muted);
+  font-size: 1rem;
+}
+.zb-portal-status svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex-shrink: 0;
+  color: var(--zb-action);
+  margin-top: 0.2rem;
+}
+.zb-portal-status strong {
+  color: var(--zb-ink);
+}
+.zb-portal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+}
+.zb-portal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: clamp(1.4rem, 2.5vw, 1.85rem);
+  border: 1px solid var(--zb-border);
+  border-top: 3px solid var(--zb-action);
+  border-radius: 0.85rem;
+  background: var(--zb-surface);
+  box-shadow: 0 4px 20px var(--zb-shadow-subtle);
+}
+.zb-portal-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.zb-portal-card h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  letter-spacing: -0.035em;
+  font-weight: 750;
+  line-height: 1.2;
+}
+.zb-portal-card > p {
+  margin: 0;
+  color: var(--zb-muted);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+.zb-portal-card > .zb-eyebrow {
+  color: var(--zb-action);
+  font-size: 0.75rem;
+}
+.zb-portal-card ul {
+  display: grid;
+  gap: 0.65rem;
+  list-style: disc;
+  padding-left: 1.1rem;
+  margin: 0 0 auto;
+  font-size: 1rem;
+}
+.zb-portal-card li::marker {
+  color: var(--zb-action);
+}
+.zb-portal-card .zb-portal-unavailable {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--zb-border);
+  font-size: 0.875rem;
+}
+.zb-portal-unavailable svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+.zb-portal-help {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.75rem;
+  background: var(--zb-surface);
+}
+.zb-portal-help h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 750;
+}
+.zb-portal-help p {
+  margin: 0.5rem 0 0;
+  color: var(--zb-muted);
+}
+@media (min-width: 1000px) {
+  .zb-portal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

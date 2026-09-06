@@ -14,6 +14,8 @@ import {
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
+import { IntroPanel } from "@/components/common/IntroPanel";
+import { ProcessFlow } from "@/components/common/ProcessFlow";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { SolutionCard } from "@/components/solutions/SolutionCard";
@@ -71,22 +73,13 @@ export function SolutionDetail({ slug }: { slug: string }) {
             </>
           }
         />
-        <aside
-          className="zb-solution-brief"
-          aria-labelledby="solution-brief-heading"
-        >
-          <Icon aria-hidden="true" />
-          <h2 id="solution-brief-heading">Built for your requirement</h2>
-          <p>{detail.bestFor}</p>
-          <dl>
-            {detail.facts.map((fact) => (
-              <div key={fact.label}>
-                <dt>{fact.label}</dt>
-                <dd>{fact.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </aside>
+        <IntroPanel
+          id="solution-brief-heading"
+          icon={<Icon />}
+          title="Built for your requirement"
+          description={detail.bestFor}
+          items={detail.facts}
+        />
       </div>
       <nav
         className="zb-solution-jump-nav"
@@ -157,23 +150,11 @@ export function SolutionDetail({ slug }: { slug: string }) {
           title={detail.process.heading}
           description={detail.process.description}
         />
-        <ol
-          className="zb-solution-process"
-          role="list"
-          data-count={detail.process.steps.length}
-        >
-          {detail.process.steps.map((step, index) => (
-            <li key={step.title}>
-              <span aria-hidden="true">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.description}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
+        <ProcessFlow
+          steps={detail.process.steps}
+          label={`${solution.label} delivery steps`}
+          action={{ href: requirementHref, label: detail.cta.label }}
+        />
       </section>
       <section
         id="solution-industries"

@@ -2,7 +2,7 @@
 
 /* Part 5 pages use the shared red-and-white theme. */
 .zb-company {
-  --zb-company-space: clamp(3.5rem, 7vw, 6rem);
+  --zb-company-space: clamp(2.5rem, 4vw, 3.75rem);
   min-width: 0;
   overflow-wrap: break-word;
 }
@@ -49,60 +49,8 @@
 .zb-company .zb-cta a:focus-visible {
   outline-color: var(--zb-highlight);
 }
-.zb-company-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: start;
-  gap: 2rem;
-}
-.zb-company-hero .zb-page-heading {
-  margin-bottom: 0;
-}
-.zb-company-hero h1 {
-  max-width: 19ch;
-}
 .zb-company-section {
   margin-top: var(--zb-company-space);
-}
-.zb-company-summary {
-  padding: clamp(1.5rem, 3vw, 2rem);
-  background: var(--zb-panel);
-  color: var(--zb-on-panel);
-  border: 1px solid var(--zb-panel);
-  border-radius: var(--zb-radius);
-}
-.zb-company-summary .zb-eyebrow {
-  color: var(--zb-highlight);
-}
-.zb-company-summary h2 {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 700;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-}
-.zb-company-summary p {
-  color: var(--zb-on-panel-muted);
-  margin: 0.8rem 0 1.5rem;
-  font-size: 0.9375rem;
-}
-.zb-company-summary dl {
-  display: grid;
-  gap: 1rem;
-  margin: 0;
-}
-.zb-company-summary dl > div {
-  border-top: 1px solid #ffffff26;
-  padding-top: 0.8rem;
-}
-.zb-company-summary dt {
-  color: var(--zb-highlight);
-  font-size: 0.75rem;
-  font-weight: 650;
-}
-.zb-company-summary dd {
-  margin: 0.2rem 0 0;
-  font-size: 0.875rem;
 }
 .zb-company-grid {
   display: grid;
@@ -331,60 +279,6 @@
   margin-top: 0.25rem;
   color: var(--zb-action);
 }
-.zb-company-process {
-  list-style: none;
-  padding: 0;
-  margin: 3rem 0 0;
-}
-.zb-company-process > li {
-  display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr);
-  gap: 0.9rem 1.3rem;
-  padding-block: 2rem;
-  border-top: 1px solid var(--zb-border);
-}
-.zb-company-process > li:last-child {
-  border-bottom: 1px solid var(--zb-border);
-}
-.zb-process-number {
-  font-size: 1.5rem;
-  font-weight: 750;
-  color: var(--zb-action);
-  font-variant-numeric: tabular-nums;
-}
-.zb-company-process h2 {
-  font-size: 1.2rem;
-  line-height: 1.4;
-  font-weight: 700;
-  margin: 0.15rem 0 0.75rem;
-}
-.zb-company-process p {
-  margin: 0;
-  color: var(--zb-muted);
-}
-.zb-process-checkpoint {
-  grid-column: 2;
-  padding: 0.85rem 1rem;
-  border-radius: 0.4rem;
-  background: var(--zb-soft);
-}
-.zb-process-checkpoint span {
-  display: block;
-  margin-bottom: 0.35rem;
-  color: var(--zb-action);
-  font-size: 0.75rem;
-  font-weight: 650;
-}
-.zb-process-checkpoint p {
-  color: var(--zb-ink);
-  font-size: 0.875rem;
-}
-.zb-company-form-page .zb-page-heading {
-  max-width: 48rem;
-}
-.zb-company-form-page .zb-page-heading h1 {
-  font-size: clamp(2.1rem, 4.6vw, 3.1rem);
-}
 .zb-company-form-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -516,24 +410,12 @@
   }
 }
 @media (min-width: 940px) {
-  .zb-company-hero {
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-    gap: clamp(2rem, 4vw, 3.5rem);
-  }
   .zb-company-brief {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 3rem;
   }
   .zb-company-grid[data-columns="3"] {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .zb-company-process > li {
-    grid-template-columns: 3rem minmax(0, 1fr) minmax(12rem, 0.5fr);
-    align-items: start;
-    gap: 2rem;
-  }
-  .zb-process-checkpoint {
-    grid-column: auto;
   }
   .zb-company-form-layout {
     grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.43fr);

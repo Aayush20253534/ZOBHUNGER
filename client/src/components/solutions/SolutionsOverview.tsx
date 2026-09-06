@@ -2,6 +2,7 @@ import { ArrowUpRight, Layers3, MessagesSquare } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
+import { IntroPanel } from "@/components/common/IntroPanel";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { SolutionCard } from "@/components/solutions/SolutionCard";
@@ -32,33 +33,26 @@ export function SolutionsOverview() {
             </>
           }
         />
-        <aside
-          className="zb-solution-brief zb-solutions-overview-brief"
-          aria-labelledby="solutions-brief-heading"
-        >
-          <Layers3 aria-hidden="true" />
-          <h2 id="solutions-brief-heading">
-            Start with the work you need done.
-          </h2>
-          <p>
-            One requirement can bring several services together. We’ll help you
-            work through the roles and execution needs.
-          </p>
-          <dl>
-            <div>
-              <dt>Build a team</dt>
-              <dd>Recruitment, staffing and sales roles</dd>
-            </div>
-            <div>
-              <dt>Reach your customers</dt>
-              <dd>Promoters, retail and brand activation</dd>
-            </div>
-            <div>
-              <dt>Support the work</dt>
-              <dd>Business operations and gig workforce</dd>
-            </div>
-          </dl>
-        </aside>
+        <IntroPanel
+          id="solutions-brief-heading"
+          icon={<Layers3 />}
+          title="Start with the work you need done."
+          description="One requirement can bring several services together. Connect the roles with the execution your business needs."
+          items={[
+            {
+              label: "Build a team",
+              value: "Recruitment, staffing and sales roles",
+            },
+            {
+              label: "Reach your customers",
+              value: "Promoters, retail and brand activation",
+            },
+            {
+              label: "Support the work",
+              value: "Business operations and gig workforce",
+            },
+          ]}
+        />
       </div>
       <section
         id="solution-catalogue"

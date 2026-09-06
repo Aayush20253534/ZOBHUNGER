@@ -3,6 +3,25 @@ import type { SiteDataAdapter } from "@/types/data.types";
 
 /** Expected API contracts for the later backend integration. Never selected implicitly. */
 export const httpAdapter: SiteDataAdapter = {
+  listArticles(filters = {}, options) {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== "") params.set(key, String(value));
+    });
+    return apiFetch(`/articles${params.size ? `?${params}` : ""}`, {
+      signal: options?.signal,
+    });
+  },
+  async getArticle(slug, options) {
+    try {
+      return await apiFetch(`/articles/${encodeURIComponent(slug)}`, {
+        signal: options?.signal,
+      });
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return null;
+      throw error;
+    }
+  },
   listJobs(filters = {}, options) {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {

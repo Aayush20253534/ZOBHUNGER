@@ -1,7 +1,7 @@
 @import "./forms.css";
 
 .zb-work {
-  --zb-work-space: clamp(3rem, 6vw, 5rem);
+  --zb-work-space: clamp(2.5rem, 4vw, 3.75rem);
   min-width: 0;
   overflow-wrap: break-word;
 }
@@ -48,9 +48,6 @@
 .zb-work .zb-cta a:focus-visible {
   outline-color: var(--zb-highlight);
 }
-.zb-work .zb-card-copy {
-  font-size: 1rem;
-}
 .zb-work .zb-card-top {
   flex-wrap: wrap;
 }
@@ -60,60 +57,6 @@
 }
 .zb-work-section {
   margin-top: var(--zb-work-space);
-}
-.zb-workers-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: start;
-  gap: 2rem;
-}
-.zb-workers-hero .zb-page-heading {
-  margin-bottom: 0;
-}
-.zb-workers-hero h1 {
-  max-width: 18ch;
-}
-.zb-worker-start {
-  padding: clamp(1.5rem, 3vw, 2rem);
-  border: 1px solid var(--zb-panel);
-  border-radius: var(--zb-radius);
-  background: var(--zb-panel);
-  color: var(--zb-on-panel);
-}
-.zb-worker-start > svg {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--zb-highlight);
-  margin-bottom: 1.1rem;
-}
-.zb-worker-start .zb-eyebrow {
-  color: var(--zb-highlight);
-}
-.zb-worker-start h2 {
-  font-size: 1.35rem;
-  font-weight: 700;
-  line-height: 1.4;
-  margin: 0;
-  letter-spacing: -0.025em;
-}
-.zb-worker-start dl {
-  display: grid;
-  gap: 1rem;
-  margin: 1.4rem 0 0;
-}
-.zb-worker-start dl > div {
-  padding-top: 0.9rem;
-  border-top: 1px solid #ffffff26;
-}
-.zb-worker-start dt {
-  color: var(--zb-highlight);
-  font-size: 0.875rem;
-  font-weight: 650;
-}
-.zb-worker-start dd {
-  margin: 0.3rem 0 0;
-  color: var(--zb-on-panel-muted);
-  font-size: 0.875rem;
 }
 .zb-jobs-demo-note {
   display: flex;
@@ -141,34 +84,6 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
 }
-.zb-worker-journey {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.zb-worker-journey li {
-  padding: 1.25rem 0;
-  border-top: 2px solid var(--zb-soft-border);
-}
-.zb-worker-journey li > span {
-  color: var(--zb-action);
-  font-size: 0.875rem;
-  font-weight: 750;
-  font-variant-numeric: tabular-nums;
-}
-.zb-worker-journey h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin: 0.75rem 0 0.5rem;
-}
-.zb-worker-journey p {
-  font-size: 1rem;
-  color: var(--zb-muted);
-  margin: 0;
-}
 .zb-worker-portal-note {
   margin: 1.25rem 0 0;
   padding: 1rem 1.2rem;
@@ -184,10 +99,6 @@
 }
 .zb-jobs-heading h1 {
   font-size: clamp(2rem, 3.5vw, 2.8rem);
-}
-.zb-jobs-heading .zb-page-description {
-  font-size: 1rem;
-  margin-top: 0.75rem;
 }
 .zb-job-filters {
   border: 1px solid var(--zb-border);
@@ -387,7 +298,6 @@
 }
 @media (min-width: 640px) {
   .zb-worker-category-grid,
-  .zb-worker-journey,
   .zb-job-filter-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -406,19 +316,15 @@
   }
 }
 @media (min-width: 940px) {
-  .zb-workers-hero {
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    gap: 3rem;
-  }
-  .zb-worker-journey {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   .zb-job-detail-layout {
     grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.4fr);
   }
 }
 @media (min-width: 1100px) {
   .zb-worker-category-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .zb-worker-browse-card {
+    grid-column: span 2;
   }
 }

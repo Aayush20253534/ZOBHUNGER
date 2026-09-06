@@ -1,4 +1,5 @@
 import { ActionLink } from "@/components/common/ActionLink";
+import { ProcessFlow } from "@/components/common/ProcessFlow";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { home } from "@/data/home";
 
@@ -20,19 +21,10 @@ export function HowItWorks() {
           </ActionLink>
         }
       />
-      <ol className="zb-home-process">
-        {home.process.steps.map((step, index) => (
-          <li key={step.title}>
-            <span className="zb-home-step-number" aria-hidden="true">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <div>
-              <h3>{step.title}</h3>
-              <p>{step.description}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+      <ProcessFlow
+        steps={home.process.steps}
+        label="Five steps from brief to delivery"
+      />
     </section>
   );
 }

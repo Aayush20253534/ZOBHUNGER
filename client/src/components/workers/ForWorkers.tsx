@@ -12,6 +12,8 @@ import {
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
+import { IntroPanel } from "@/components/common/IntroPanel";
+import { ProcessFlow } from "@/components/common/ProcessFlow";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Card } from "@/components/ui/card";
@@ -45,7 +47,7 @@ export function ForWorkers() {
           actions={
             <>
               <ActionLink href="/jobs">
-                {isPreview ? "Explore demo jobs" : "Explore jobs"}
+                {isPreview ? "Explore example jobs" : "Explore jobs"}
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </ActionLink>
               <ActionLink href="#worker-journey" variant="secondary">
@@ -53,38 +55,35 @@ export function ForWorkers() {
               </ActionLink>
             </>
           }
+        >
+          {isPreview && (
+            <p className="zb-inline-notice">
+              Example roles · Applications are not sent to employers yet.
+            </p>
+          )}
+        </PageShell>
+        <IntroPanel
+          id="worker-start-title"
+          icon={<Search />}
+          eyebrow="Choose your starting point"
+          title="Find the role that fits the way you work."
+          items={[
+            {
+              label: "Your skills",
+              value: "The work you know or want to learn",
+            },
+            {
+              label: "Your location",
+              value: "The city or area where you want to work",
+            },
+            {
+              label: "Your availability",
+              value: "An engagement that fits your plans",
+            },
+          ]}
         />
-        <aside className="zb-worker-start" aria-labelledby="worker-start-title">
-          <Search aria-hidden="true" />
-          <span className="zb-eyebrow">Choose your starting point</span>
-          <h2 id="worker-start-title">
-            Find the role that fits the way you work.
-          </h2>
-          <dl>
-            <div>
-              <dt>Your skills</dt>
-              <dd>The kind of work you know or want to learn.</dd>
-            </div>
-            <div>
-              <dt>Your location</dt>
-              <dd>The city or area where you want to work.</dd>
-            </div>
-            <div>
-              <dt>Your availability</dt>
-              <dd>The type of engagement that fits your plans.</dd>
-            </div>
-          </dl>
-        </aside>
       </div>
-      {isPreview && (
-        <div className="zb-jobs-demo-note">
-          <span className="zb-chip">Frontend preview</span>
-          <p>
-            Jobs shown here are examples. Applications are previews and are not
-            sent to an employer.
-          </p>
-        </div>
-      )}
+
       <section
         className="zb-work-section"
         aria-labelledby="worker-categories-title"
@@ -116,6 +115,21 @@ export function ForWorkers() {
               </Link>
             );
           })}
+          <Link className="zb-card-link zb-worker-browse-card" href="/jobs">
+            <Card className="zb-card">
+              <Search className="zb-card-icon" aria-hidden="true" />
+              <h3 className="zb-card-title">Still exploring your options?</h3>
+              <p className="zb-card-copy">
+                Compare roles across the full catalogue. Read the
+                responsibilities and choose the kind of work that fits your
+                skills.
+              </p>
+              <span className="zb-card-cta">
+                View all roles
+                <ArrowUpRight className="size-4" aria-hidden="true" />
+              </span>
+            </Card>
+          </Link>
         </div>
       </section>
       <section
@@ -129,15 +143,15 @@ export function ForWorkers() {
           title="From finding a role to starting work."
           description="This is the journey ZOBHUNGER is building toward. Profile creation, selection updates and earnings tools are planned for the worker portal."
         />
-        <ol className="zb-worker-journey">
-          {workerJourney.map((step, index) => (
-            <li key={step.title}>
-              <span aria-hidden="true">0{index + 1}</span>
-              <h3>{step.title}</h3>
-              <p>{step.description}</p>
-            </li>
-          ))}
-        </ol>
+        <ProcessFlow
+          steps={workerJourney}
+          label="The six planned worker journey steps"
+          planned
+          action={{
+            href: "/jobs",
+            label: isPreview ? "Explore example jobs" : "Explore jobs",
+          }}
+        />
         <p className="zb-worker-portal-note">
           Worker accounts are not open yet.{" "}
           {isPreview
@@ -150,7 +164,7 @@ export function ForWorkers() {
           title="Start with the kind of work you want."
           description="Explore the roles, read the responsibilities and check the location before applying."
           href="/jobs"
-          label={isPreview ? "Browse demo jobs" : "Browse jobs"}
+          label={isPreview ? "Browse example jobs" : "Browse jobs"}
         />
       </div>
     </div>

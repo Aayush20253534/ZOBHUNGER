@@ -1,21 +1,11 @@
 /* Homepage layouts use the shared red-and-white theme. */
 .zb-home {
-  --zb-home-space: clamp(3.5rem, 7vw, 6.5rem);
+  --zb-home-space: clamp(2.5rem, 4vw, 3.75rem);
   padding-top: 0;
   overflow-wrap: break-word;
 }
 .zb-home-section {
   margin-top: var(--zb-home-space);
-}
-.zb-home .zb-section-heading h2 {
-  max-width: 24ch;
-  font-size: clamp(1.9rem, 3vw, 2.65rem);
-}
-.zb-home .zb-section-heading p {
-  max-width: 43rem;
-}
-.zb-home .zb-card-copy {
-  font-size: 1rem;
 }
 .zb-home .zb-chip {
   font-size: 0.8125rem;
@@ -42,9 +32,9 @@
   max-width: 40rem;
 }
 .zb-home-hero h1 {
-  max-width: 21ch;
+  max-width: none;
   margin: 0;
-  font-size: clamp(2.25rem, 5.4vw, 3.25rem);
+  font-size: clamp(2.4rem, 5.4vw, 3.5rem);
   line-height: 1.1;
   font-weight: 750;
   letter-spacing: -0.045em;
@@ -57,7 +47,7 @@
 .zb-home-hero-description {
   max-width: 38rem;
   margin: 1rem 0 0;
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   line-height: 1.6;
   color: var(--zb-muted);
 }
@@ -185,7 +175,7 @@
   gap: 0.75rem;
 }
 .zb-home-solutions-grid .zb-card-title {
-  font-size: 1.15rem;
+  font-size: 1.35rem;
 }
 .zb-home-solutions-grid .zb-card-meta {
   margin-top: auto;
@@ -268,57 +258,6 @@
 .zb-home-benefits p {
   margin: 0.45rem 0 0;
   color: var(--zb-on-panel-muted);
-  font-size: 1rem;
-  line-height: 1.75;
-}
-.zb-home-process {
-  list-style: none;
-  margin: 2.5rem 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.75rem;
-}
-.zb-home-process li {
-  position: relative;
-  display: grid;
-  grid-template-columns: 3rem minmax(0, 1fr);
-  gap: 1.2rem;
-  min-width: 0;
-}
-.zb-home-step-number {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 3rem;
-  height: 3rem;
-  border: 1px solid var(--zb-strong-border);
-  border-radius: 50%;
-  background: var(--zb-page);
-  color: var(--zb-action);
-  font-size: 0.9375rem;
-  font-weight: 750;
-  font-variant-numeric: tabular-nums;
-}
-.zb-home-process li:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 3rem;
-  bottom: -1.75rem;
-  left: calc(1.5rem - 0.5px);
-  width: 1px;
-  background: var(--zb-border);
-}
-.zb-home-process h3 {
-  margin: 0.25rem 0 0.6rem;
-  font-size: 1rem;
-  font-weight: 750;
-  line-height: 1.5;
-}
-.zb-home-process p {
-  margin: 0;
-  color: var(--zb-muted);
   font-size: 1rem;
   line-height: 1.75;
 }
@@ -510,13 +449,13 @@
 }
 @media (min-width: 900px) {
   .zb-home-hero {
-    grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.94fr);
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.9fr);
     align-items: center;
     gap: 1.5rem clamp(1.5rem, 3vw, 2.5rem);
   }
   .zb-home-hero h1 {
-    max-width: 22ch;
-    font-size: clamp(2.5rem, min(4.4vw, 7.4svh), 3.5rem);
+    max-width: none;
+    font-size: clamp(3rem, 4.8vw, 4rem);
   }
   .zb-home-hero-figure {
     max-width: 31.25rem;
@@ -524,24 +463,6 @@
   .zb-home-technology-grid,
   .zb-home-industries-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .zb-home-process {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 1.25rem;
-  }
-  .zb-home-process li {
-    display: block;
-  }
-  .zb-home-process li:not(:last-child)::after {
-    top: 1.5rem;
-    left: 3rem;
-    right: -1.25rem;
-    bottom: auto;
-    width: auto;
-    height: 1px;
-  }
-  .zb-home-process h3 {
-    margin-top: 1.25rem;
   }
 }
 @media (min-width: 1100px) {
@@ -552,7 +473,10 @@
 }
 @media (min-width: 1180px) {
   .zb-home-solutions-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .zb-home-solution-help {
+    grid-column: span 2;
   }
 }
 @media (max-width: 380px) {
@@ -562,26 +486,5 @@
   .zb-home-industry-card {
     gap: 0.75rem;
     padding: 1.15rem;
-  }
-}
-
-/* Compact laptop windows, including common display scaling. Keep readable text;
-   the hero grows naturally instead of hiding content at large text zoom. */
-@media (min-width: 900px) and (max-height: 660px) {
-  .zb-home-hero {
-    gap: 1rem 1.75rem;
-  }
-  .zb-home-hero .zb-eyebrow {
-    margin-bottom: 0.5rem;
-  }
-  .zb-home-hero-description {
-    margin-top: 0.75rem;
-    line-height: 1.55;
-  }
-  .zb-home-hero-actions {
-    margin-top: 0.85rem;
-  }
-  .zb-home-worker-link {
-    margin-top: 0;
   }
 }

@@ -2,6 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
+import { ProcessFlow } from "@/components/common/ProcessFlow";
 import { PageShell } from "@/components/common/PageShell";
 import { briefChecklist, deliverySteps } from "@/data/company";
 import "@/styles/company.css";
@@ -23,26 +24,13 @@ export function HowItWorks() {
           </ActionLink>
         }
       />
-      <ol
-        className="zb-company-process"
-        aria-label="Six steps from requirement to execution"
-      >
-        {deliverySteps.map((step, index) => (
-          <li key={step.title}>
-            <span className="zb-process-number" aria-hidden="true">
-              0{index + 1}
-            </span>
-            <div>
-              <h2>{step.title}</h2>
-              <p>{step.description}</p>
-            </div>
-            <div className="zb-process-checkpoint">
-              <span>Working toward</span>
-              <p>{step.checkpoint}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+      <section aria-label="The delivery process">
+        <h2 className="sr-only">The delivery process</h2>
+        <ProcessFlow
+          steps={deliverySteps}
+          label="Six steps from requirement to execution"
+        />
+      </section>
       <section
         className="zb-company-section zb-company-brief"
         aria-labelledby="process-brief-title"

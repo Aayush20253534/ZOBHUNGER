@@ -1,6 +1,6 @@
 /* Part 4: sector catalogue and industry pages using the existing brand tokens. */
 .zb-industries {
-  --zb-industry-space: clamp(3rem, 6vw, 5.5rem);
+  --zb-industry-space: clamp(2.5rem, 4vw, 3.75rem);
   overflow-wrap: break-word;
 }
 .zb-industries .zb-breadcrumbs {
@@ -47,93 +47,8 @@
 .zb-industries .zb-action-link {
   max-width: 100%;
 }
-.zb-industries .zb-card-copy {
-  font-size: 1rem;
-}
-.zb-industry-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 2rem;
-  align-items: start;
-}
-.zb-industry-hero .zb-page-heading {
-  margin: 0;
-  max-width: none;
-}
-.zb-industry-hero .zb-page-heading h1 {
-  max-width: 20ch;
-  font-size: clamp(2.25rem, 4.1vw, 3.4rem);
-  line-height: 1.15;
-  letter-spacing: -0.04em;
-}
-.zb-industry-hero .zb-page-description {
-  margin-top: 1.4rem;
-  line-height: 1.85;
-}
-.zb-industry-hero .zb-page-actions {
-  margin-top: 1.75rem;
-}
-.zb-industry-hero .zb-eyebrow {
-  font-size: 0.8125rem;
-  letter-spacing: 0.065em;
-}
-.zb-industry-context {
-  padding: clamp(1.5rem, 2.8vw, 2rem);
-  border: 1px solid var(--zb-panel);
-  border-radius: var(--zb-radius);
-  background: var(--zb-panel);
-  color: #fff;
-}
-.zb-industry-context > svg {
-  width: 1.7rem;
-  height: 1.7rem;
-  color: var(--zb-highlight);
-  margin-bottom: 1.2rem;
-}
-.zb-industry-context h2 {
-  margin: 0 0 1.25rem;
-  font-size: 1.15rem;
-  line-height: 1.5;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-.zb-industry-context > p {
-  margin: -0.5rem 0 1.5rem;
-  color: var(--zb-on-panel-muted);
-  font-size: 1rem;
-  line-height: 1.8;
-}
-.zb-industry-context dl {
-  display: grid;
-  gap: 1rem;
-  margin: 0;
-}
-.zb-industry-context dl > div {
-  border-top: 1px solid #ffffff26;
-  padding-top: 1rem;
-}
-.zb-industry-context dt {
-  color: var(--zb-highlight);
-  font-size: 0.8125rem;
-  font-weight: 650;
-  line-height: 1.5;
-}
-.zb-industry-context dd {
-  margin: 0.4rem 0 0;
-  font-size: 0.9375rem;
-  line-height: 1.7;
-}
 .zb-industry-section {
   margin-top: var(--zb-industry-space);
-}
-.zb-industries .zb-section-heading h2 {
-  max-width: 28ch;
-  font-size: clamp(1.85rem, 2.8vw, 2.5rem);
-  line-height: 1.25;
-}
-.zb-industries .zb-section-heading p {
-  max-width: 44rem;
-  line-height: 1.8;
 }
 .zb-industries-catalog,
 .zb-industry-services-grid {
@@ -296,10 +211,6 @@
   }
 }
 @media (min-width: 940px) {
-  .zb-industry-hero {
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-    gap: 3rem;
-  }
   .zb-industry-scenario-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -312,10 +223,5 @@
   .zb-industry-brief {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr);
     gap: 3rem;
-  }
-}
-@media (max-width: 380px) {
-  .zb-industry-hero .zb-page-actions > a {
-    width: 100%;
   }
 }

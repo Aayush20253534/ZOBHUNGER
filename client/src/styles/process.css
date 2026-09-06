@@ -1,0 +1,219 @@
+/* Native buttons keep every step reachable by keyboard without custom tab semantics. */
+.zb-process-flow {
+  border: 1px solid var(--zb-border);
+  border-radius: 1rem;
+  background: var(--zb-surface);
+  box-shadow: 0 8px 30px var(--zb-shadow-subtle);
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+.zb-process-toolbar,
+.zb-process-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+.zb-process-toolbar {
+  margin-bottom: 1.5rem;
+}
+.zb-process-toolbar p {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+}
+.zb-process-toolbar > span,
+.zb-process-controls > p {
+  margin: 0;
+  color: var(--zb-muted);
+  font-size: 0.875rem;
+}
+.zb-process-track {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zb-process-track li {
+  position: relative;
+  min-width: 0;
+}
+.zb-process-track button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  text-align: left;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.65rem;
+  background: var(--zb-page);
+  color: var(--zb-ink);
+  cursor: pointer;
+}
+.zb-process-track button:hover {
+  border-color: var(--zb-action);
+}
+.zb-process-track button[aria-pressed="true"] {
+  border-color: var(--zb-action);
+  background: var(--zb-soft);
+  box-shadow: inset 0 0 0 1px var(--zb-action);
+}
+.zb-process-track button:focus-visible {
+  outline: 3px solid var(--zb-action);
+  outline-offset: 4px;
+}
+.zb-process-marker {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: 0.6rem;
+  background: var(--zb-surface);
+  border: 1px solid var(--zb-border);
+  color: var(--zb-action);
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+[aria-pressed="true"] .zb-process-marker {
+  background: var(--zb-action);
+  color: #fff;
+  border-color: var(--zb-action);
+}
+.zb-process-step-title {
+  font-size: 1rem;
+  font-weight: 750;
+  line-height: 1.4;
+}
+.zb-process-step-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--zb-muted);
+  margin-bottom: 0.2rem;
+}
+.zb-process-step-arrow {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--zb-action);
+}
+.zb-process-detail {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background: var(--zb-panel);
+  color: #fff;
+  border-radius: 0.75rem;
+}
+.zb-process-detail-copy .zb-eyebrow {
+  color: var(--zb-highlight);
+}
+.zb-process-detail-copy h3 {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.7vw, 2.15rem);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+.zb-process-detail-copy > p {
+  max-width: 42rem;
+  margin: 1rem 0 0;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--zb-on-panel-muted);
+}
+.zb-process-outcome {
+  display: grid;
+  align-content: start;
+  grid-template-columns: 1.1rem minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border: 1px solid #ffffff40;
+  border-radius: 0.65rem;
+  background: #ffffff09;
+}
+.zb-process-outcome > svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.2rem;
+  color: var(--zb-highlight);
+}
+.zb-process-outcome > span {
+  font-size: 0.875rem;
+  color: var(--zb-on-panel-muted);
+}
+.zb-process-outcome > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+.zb-process-outcome .zb-process-outcome-note {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: start;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+}
+.zb-process-outcome-note svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+.zb-process-controls {
+  margin-top: 1.25rem;
+}
+.zb-process-controls > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.zb-process-controls svg {
+  width: 1rem;
+  height: 1rem;
+}
+@media (min-width: 600px) and (max-width: 959px) {
+  .zb-process-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 800px) {
+  .zb-process-detail:has(.zb-process-outcome) {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: center;
+  }
+}
+@media (min-width: 960px) {
+  .zb-process-track {
+    grid-template-columns: repeat(var(--zb-step-count), minmax(0, 1fr));
+    gap: 0.875rem;
+  }
+  .zb-process-track li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 2.4rem;
+    width: 0.875rem;
+    height: 2px;
+    background: var(--zb-soft-border);
+  }
+  .zb-process-track button {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1rem 0.875rem;
+  }
+  .zb-process-step-arrow {
+    display: none;
+  }
+}

@@ -1,5 +1,8 @@
 # ZOBHUNGER — Part 6: worker/job flow and compact homepage hero
 
+> Part 7 supersedes the compact layout described here and adds the remaining
+> Insights and portal-entry pages. See `PART7.md` for the current Phase 1 status.
+
 Apply **after `zobhunger-part5.patch`**. Part 6 completes the worker landing page,
 job search, role details and application preview. It also replaces the homepage
 photo and resizes the top section for laptop windows. The red-and-white theme

@@ -4,6 +4,7 @@ import { ArrowUpRight, Check, ClipboardList } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
+import { IntroPanel } from "@/components/common/IntroPanel";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { IndustryIcon } from "@/components/industries/IndustryIcon";
@@ -41,21 +42,12 @@ export function IndustryDetail({ slug }: { slug: string }) {
             </>
           }
         />
-        <aside
-          className="zb-industry-context"
-          aria-labelledby="industry-context-heading"
-        >
-          <IndustryIcon slug={industry.slug} />
-          <h2 id="industry-context-heading">Your industry, in focus.</h2>
-          <dl>
-            {detail.context.map((item) => (
-              <div key={item.label}>
-                <dt>{item.label}</dt>
-                <dd>{item.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </aside>
+        <IntroPanel
+          id="industry-context-heading"
+          icon={<IndustryIcon slug={industry.slug} />}
+          title="Your industry, in focus."
+          items={detail.context}
+        />
       </div>
       <nav
         className="zb-industry-jump-nav"

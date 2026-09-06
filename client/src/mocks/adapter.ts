@@ -67,6 +67,58 @@ export function createMockAdapter({
   };
 
   return {
+    async listArticles(filters = {}, options) {
+      await prepare(options);
+      const { mockArticles } = await import("@/mocks/articles");
+      const normalise = (value?: string) =>
+        value?.trim().toLocaleLowerCase("en-IN") ?? "";
+      const query = normalise(filters.query);
+      const category = normalise(filters.category);
+      const articles =
+        options?.scenario === "empty"
+          ? []
+          : mockArticles.filter(
+              (article) =>
+                article.isPublished &&
+                (!query ||
+                  normalise(
+                    `${article.title} ${article.excerpt} ${article.category}`,
+                  ).includes(query)) &&
+                (!category || normalise(article.category) === category),
+            );
+      const pageSize = positiveInteger(filters.pageSize, 6, 100);
+      const totalPages = Math.ceil(articles.length / pageSize);
+      const page = Math.min(
+        positiveInteger(filters.page, 1, 100000),
+        Math.max(1, totalPages),
+      );
+      return {
+        items: articles
+          .slice((page - 1) * pageSize, page * pageSize)
+          .map((article) => ({
+            slug: article.slug,
+            title: article.title,
+            excerpt: article.excerpt,
+            category: article.category,
+            readingMinutes: article.readingMinutes,
+            isPublished: article.isPublished,
+            isSample: article.isSample,
+          })),
+        total: articles.length,
+        page,
+        pageSize,
+        totalPages,
+      };
+    },
+    async getArticle(slug, options) {
+      await prepare(options);
+      if (options?.scenario === "empty") return null;
+      const { mockArticles } = await import("@/mocks/articles");
+      const article = mockArticles.find(
+        (item) => item.slug === slug && item.isPublished,
+      );
+      return article ? structuredClone(article) : null;
+    },
     async listJobs(filters = {}, options) {
       await prepare(options);
       const normalise = (value?: string) =>

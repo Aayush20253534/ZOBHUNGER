@@ -110,6 +110,13 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
           )}
           <div className="zb-mobile-actions">
             <ActionLink
+              href="/login"
+              variant="secondary"
+              onClick={() => setOpen(false)}
+            >
+              Portal access
+            </ActionLink>
+            <ActionLink
               href={site.primaryAction.href}
               onClick={() => setOpen(false)}
             >

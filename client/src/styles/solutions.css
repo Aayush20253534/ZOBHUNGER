@@ -1,6 +1,6 @@
 /* Part 3: a shared service catalogue and product-page layout. */
 .zb-solutions {
-  --zb-solution-space: clamp(3rem, 6vw, 5.5rem);
+  --zb-solution-space: clamp(2.5rem, 4vw, 3.75rem);
   overflow-wrap: break-word;
 }
 .zb-solutions .zb-breadcrumbs {
@@ -47,113 +47,11 @@
 .zb-solutions .zb-action-link {
   max-width: 100%;
 }
-.zb-solutions .zb-card-copy {
-  font-size: 1rem;
-}
 .zb-solutions .zb-chip {
   font-size: 0.8125rem;
 }
-.zb-solution-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 2rem;
-  align-items: start;
-}
-.zb-solution-hero .zb-page-heading {
-  margin: 0;
-  max-width: none;
-}
-.zb-solution-hero .zb-page-heading h1 {
-  max-width: 18ch;
-  font-size: clamp(2.3rem, 4.2vw, 3.5rem);
-  line-height: 1.13;
-  letter-spacing: -0.045em;
-}
-.zb-solution-hero .zb-page-description {
-  margin-top: 1.4rem;
-  font-size: 1.0625rem;
-  line-height: 1.85;
-}
-.zb-solution-hero .zb-page-actions {
-  margin-top: 1.75rem;
-}
-.zb-solution-hero .zb-eyebrow {
-  font-size: 0.8125rem;
-  letter-spacing: 0.07em;
-}
-.zb-solution-brief {
-  border: 1px solid var(--zb-panel);
-  border-radius: var(--zb-radius);
-  background: var(--zb-panel);
-  color: white;
-  padding: clamp(1.5rem, 2.75vw, 2rem);
-}
-.zb-solution-brief > svg {
-  width: 1.75rem;
-  height: 1.75rem;
-  color: var(--zb-highlight);
-  margin-bottom: 1.2rem;
-}
-.zb-solution-brief h2 {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-  line-height: 1.5;
-  letter-spacing: -0.02em;
-}
-.zb-solution-brief > p {
-  margin: 0.65rem 0 1.5rem;
-  color: var(--zb-on-panel-muted);
-  font-size: 1rem;
-  line-height: 1.8;
-}
-.zb-solution-brief dl {
-  display: grid;
-  gap: 1rem;
-  margin: 0;
-}
-.zb-solution-brief dl > div {
-  padding-top: 1rem;
-  border-top: 1px solid #ffffff26;
-}
-.zb-solution-brief dt {
-  color: var(--zb-highlight);
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  font-weight: 650;
-}
-.zb-solution-brief dd {
-  margin: 0.35rem 0 0;
-  font-size: 0.9375rem;
-  line-height: 1.7;
-}
-.zb-solutions-overview-brief {
-  background: var(--zb-surface);
-  color: var(--zb-ink);
-  border-color: var(--zb-border);
-  border-top: 3px solid var(--zb-action);
-}
-.zb-solutions-overview-brief > svg,
-.zb-solutions-overview-brief dt {
-  color: var(--zb-action);
-}
-.zb-solutions-overview-brief > p {
-  color: var(--zb-muted);
-}
-.zb-solutions-overview-brief dl > div {
-  border-color: var(--zb-border);
-}
 .zb-solution-section {
   margin-top: var(--zb-solution-space);
-}
-.zb-solutions .zb-section-heading h2 {
-  max-width: 28ch;
-  font-size: clamp(1.85rem, 2.8vw, 2.5rem);
-  line-height: 1.25;
-}
-.zb-solutions .zb-section-heading p {
-  max-width: 43rem;
-  line-height: 1.8;
 }
 .zb-solutions-catalog,
 .zb-solution-service-grid,
@@ -261,43 +159,6 @@
   font-size: 1rem;
   line-height: 1.8;
 }
-.zb-solution-process {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.5rem;
-}
-.zb-solution-process > li {
-  display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr);
-  align-items: start;
-  gap: 0.75rem;
-  min-width: 0;
-  border-top: 1px solid var(--zb-border);
-  padding-top: 1.25rem;
-}
-.zb-solution-process > li > span {
-  color: var(--zb-action);
-  font-size: 1.5rem;
-  line-height: 1.3;
-  letter-spacing: -0.04em;
-  font-weight: 750;
-  font-variant-numeric: tabular-nums;
-}
-.zb-solution-process h3 {
-  margin: 0.1rem 0 0.6rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  font-weight: 750;
-}
-.zb-solution-process p {
-  margin: 0;
-  color: var(--zb-muted);
-  font-size: 1rem;
-  line-height: 1.8;
-}
 .zb-solution-industries {
   padding-block: 2rem;
   border-block: 1px solid var(--zb-border);
@@ -350,12 +211,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (min-width: 940px) {
-  .zb-solution-hero {
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-    gap: 3rem;
-  }
-}
 @media (min-width: 1100px) {
   .zb-solutions-catalog,
   .zb-solution-service-grid {
@@ -368,28 +223,13 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .zb-solution-focus-grid[data-count="4"] {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .zb-solution-focus-grid[data-count="5"] {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .zb-solution-process {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-  .zb-solution-process[data-count="4"] {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  .zb-solution-process > li {
-    display: block;
-  }
-  .zb-solution-process h3 {
-    margin-top: 1rem;
-  }
 }
 @media (max-width: 380px) {
-  .zb-solution-hero .zb-page-actions > a {
-    width: 100%;
-  }
   .zb-solution-industry-links li {
     width: 100%;
   }
