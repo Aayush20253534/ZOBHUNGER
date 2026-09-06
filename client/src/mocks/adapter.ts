@@ -1,6 +1,7 @@
 import { mockJobs } from "@/mocks/jobs";
 import { enquirySchema } from "@/schemas/enquiry.schema";
 import { requirementSchema } from "@/schemas/requirement.schema";
+import { jobApplicationSchema } from "@/schemas/job-application.schema";
 import type {
   DataRequestOptions,
   SiteDataAdapter,
@@ -45,7 +46,9 @@ function positiveInteger(
     : fallback;
 }
 
-function demoReceipt(kind: "requirement" | "enquiry"): SubmissionReceipt {
+function demoReceipt(
+  kind: "requirement" | "enquiry" | "application",
+): SubmissionReceipt {
   return {
     id: `demo-${kind}-${crypto.randomUUID()}`,
     createdAt: new Date().toISOString(),
@@ -111,6 +114,16 @@ export function createMockAdapter({
         (item) => item.slug === slug && item.isPublished,
       );
       return job ? { ...job } : null;
+    },
+    async submitJobApplication(slug, input, options) {
+      jobApplicationSchema.parse(input);
+      await prepare(options);
+      if (!mockJobs.some((job) => job.slug === slug && job.isPublished)) {
+        throw new Error(
+          "This role is no longer available. Please explore another job.",
+        );
+      }
+      return demoReceipt("application");
     },
     async submitRequirement(input, options) {
       requirementSchema.parse(input);

@@ -22,6 +22,13 @@ export const httpAdapter: SiteDataAdapter = {
       throw error;
     }
   },
+  submitJobApplication(slug, input, options) {
+    return apiFetch(`/jobs/${encodeURIComponent(slug)}/applications`, {
+      method: "POST",
+      body: JSON.stringify(input),
+      signal: options?.signal,
+    });
+  },
   submitRequirement(input, options) {
     return apiFetch("/requirements", {
       method: "POST",

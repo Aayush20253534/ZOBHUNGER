@@ -94,7 +94,7 @@ function JobStatePreview() {
         id="preview-jobs-heading"
         eyebrow="04 / Data states"
         title="Useful cards in every state"
-        description="Search these fictional roles, or simulate an empty result or failed request. The first three matching cards are shown here; job pages arrive in a later part."
+        description="Search these fictional roles, or simulate an empty result or failed request. The first three matching cards are shown here; complete job pages are available under Jobs."
       />
       <form
         className="zb-preview-search"
@@ -163,7 +163,7 @@ function JobStatePreview() {
             </p>
             <div className="zb-card-grid" data-columns="3">
               {state.data.items.map((job) => (
-                <JobCard key={job.id} job={job} href="/jobs" />
+                <JobCard key={job.id} job={job} />
               ))}
             </div>
           </>

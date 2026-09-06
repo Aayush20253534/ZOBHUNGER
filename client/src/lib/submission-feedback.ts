@@ -2,7 +2,7 @@ import type { SubmissionReceipt } from "@/types/data.types";
 
 export function getSubmissionFeedback(
   receipt: SubmissionReceipt,
-  subject: "requirement" | "enquiry",
+  subject: "requirement" | "enquiry" | "application",
 ) {
   if (receipt.mode === "mock")
     return {
@@ -22,8 +22,11 @@ export function getSubmissionFeedback(
     };
   return {
     tone: "success" as const,
-    title:
-      subject === "requirement" ? "Requirement submitted" : "Enquiry submitted",
+    title: {
+      requirement: "Requirement submitted",
+      enquiry: "Enquiry submitted",
+      application: "Application submitted",
+    }[subject],
     message: receipt.message,
   };
 }

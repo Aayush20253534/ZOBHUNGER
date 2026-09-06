@@ -10,6 +10,8 @@ export interface Job {
   createdAt: string;
   updatedAt: string;
   isDemo?: boolean;
+  responsibilities?: readonly string[];
+  requirements?: readonly string[];
 }
 
 export interface JobFilters {

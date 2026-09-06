@@ -1,6 +1,7 @@
 import type { EnquiryInput } from "@/types/enquiry.types";
 import type { Job, JobFilters, JobList } from "@/types/job.types";
 import type { RequirementInput } from "@/types/requirement.types";
+import type { JobApplicationInput } from "@/schemas/job-application.schema";
 
 export type MockScenario = "success" | "empty" | "error";
 
@@ -24,6 +25,11 @@ export interface SiteDataAdapter {
     options?: DataRequestOptions,
   ): Promise<JobList>;
   getJob(slug: string, options?: DataRequestOptions): Promise<Job | null>;
+  submitJobApplication(
+    slug: string,
+    input: JobApplicationInput,
+    options?: DataRequestOptions,
+  ): Promise<SubmissionReceipt>;
   submitRequirement(
     input: RequirementInput,
     options?: DataRequestOptions,

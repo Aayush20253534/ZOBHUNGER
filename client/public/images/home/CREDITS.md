@@ -1,16 +1,19 @@
-# Homepage photograph
+# Homepage photograph — Part 6
 
-- **File:** `workforce-collaboration.webp`
-- **Photographer:** Ivan S
-- **Source:** [A group of people having a meeting in the office](https://www.pexels.com/photo/a-group-of-people-having-a-meeting-in-the-office-8117521/)
+- **Photographer:** Ketut Subiyanto
+- **Source:** [Positive young Indian colleagues using tablet in modern workspace](https://www.pexels.com/photo/positive-young-indian-colleagues-using-tablet-in-modern-workspace-4307874/)
 - **License:** [Pexels License](https://www.pexels.com/license/)
-- **Retrieved:** 6 September 2026
+- **Original:** 5972 × 3981 pixels
+- **Assets:** workforce-team-640.webp, workforce-team-1280.webp, workforce-team-2400.webp
 
-Pexels permits free commercial use and modification of this photograph; attribution
-is optional. The image is illustrative workplace photography. It does not identify
-the people shown as ZOBHUNGER staff or imply their endorsement of ZOBHUNGER.
+Pexels permits free commercial website use, with attribution optional. The image
+is illustrative workplace photography; the people are not identified as ZOBHUNGER
+staff and no endorsement is implied. Do not redistribute it as a stock asset or
+use it as a trademark.
 
-The 4700 × 3135 original was resized to 1600 × 1067 and encoded as WebP at quality
-82 for the website. The hero uses CSS cropping with `object-position: 10% 50%`.
-The image is bundled locally, so rendering does not depend on a third-party image
-host. Retain this credit with the asset when moving or replacing website files.
+Part 6 replaces the earlier Ivan S photograph. The new image is encoded as WebP at
+quality 90 in three widths. Its full landscape composition is retained; no faces
+are cropped. Responsive srcset and sizes select the appropriate file for display
+width and pixel density. The image is loaded eagerly at high priority. These
+local files bypass additional image-optimizer compression and use new filenames
+to avoid reusing a cached copy of the previous hero image.

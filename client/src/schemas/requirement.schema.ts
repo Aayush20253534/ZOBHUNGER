@@ -5,6 +5,7 @@ import {
   phoneSchema,
   serviceSchema,
 } from "@/schemas/common.schema";
+import { isoDateSchema, isoDateTimeSchema } from "@/schemas/date.schema";
 
 export const requirementSchema = z.object({
   companyName: z.string().trim().min(2, "Enter your company name.").max(160),
@@ -23,10 +24,17 @@ export const requirementSchema = z.object({
     ),
   serviceRequired: serviceSchema,
   workforceCount: z
-    .number({ error: "Enter the number of people you need." })
-    .int("Use a whole number.")
-    .min(1, "Enter at least one person.")
-    .max(100000),
+    .custom<number>(
+      (value) => typeof value === "number" && Number.isFinite(value),
+      "Enter the number of people you need.",
+    )
+    .pipe(
+      z
+        .number()
+        .int("Use a whole number.")
+        .min(1, "Enter at least one person.")
+        .max(100000),
+    ),
   locations: z
     .array(z.string().trim().min(2, "Enter a location.").max(120))
     .min(1, "Add at least one location.")
@@ -37,7 +45,7 @@ export const requirementSchema = z.object({
     .min(1, "Specify the project duration.")
     .max(120),
   expectedStartAt: z
-    .union([z.iso.date(), z.iso.datetime(), z.literal("")])
+    .union([isoDateSchema, isoDateTimeSchema, z.literal("")])
     .optional(),
   details: z
     .string()

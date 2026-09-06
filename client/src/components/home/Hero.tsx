@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ArrowDown, ArrowUpRight, ClipboardList } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { home } from "@/data/home";
@@ -27,23 +26,21 @@ export function Hero() {
             Find work
           </ActionLink>
         </p>
-        <ul
-          className="zb-home-engagements"
-          aria-label="Workforce engagement types"
-        >
-          {home.hero.engagements.map((engagement) => (
-            <li key={engagement}>{engagement}</li>
-          ))}
-        </ul>
       </div>
       <figure className="zb-home-hero-figure">
         <div className="zb-home-hero-image">
-          <Image
+          {/* Pre-sized local variants avoid a second lossy image conversion. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={home.hero.image.src}
+            srcSet={home.hero.image.srcSet}
             alt={home.hero.image.alt}
-            fill
-            sizes="(min-width: 1200px) 480px, (min-width: 900px) 42vw, (min-width: 600px) 560px, 92vw"
-            preload
+            width={2400}
+            height={1600}
+            sizes="(min-width: 1200px) 500px, (min-width: 900px) 43vw, (min-width: 640px) 560px, calc(100vw - 40px)"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
         <figcaption>
@@ -54,9 +51,19 @@ export function Hero() {
           </div>
         </figcaption>
       </figure>
-      <a className="zb-home-scroll-link" href="#home-solutions">
-        <ArrowDown aria-hidden="true" /> Find your solution
-      </a>
+      <div className="zb-home-hero-footer">
+        <ul
+          className="zb-home-engagements"
+          aria-label="Workforce engagement types"
+        >
+          {home.hero.engagements.map((engagement) => (
+            <li key={engagement}>{engagement}</li>
+          ))}
+        </ul>
+        <a className="zb-home-scroll-link" href="#home-solutions">
+          <ArrowDown aria-hidden="true" /> Find your solution
+        </a>
+      </div>
     </section>
   );
 }

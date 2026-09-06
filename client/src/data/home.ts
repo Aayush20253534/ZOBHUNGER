@@ -8,8 +8,10 @@ export const home = {
       "ZOBHUNGER helps businesses hire, deploy and manage workforce, sales teams, promoters, field executives, marketing teams and business operations across India.",
     engagements: ["Permanent", "Contract", "Project-based", "On-demand"],
     image: {
-      src: "/images/home/workforce-collaboration.webp",
-      alt: "Colleagues reviewing notes around a sunlit meeting table.",
+      src: "/images/home/workforce-team-1280.webp",
+      srcSet:
+        "/images/home/workforce-team-640.webp 640w, /images/home/workforce-team-1280.webp 1280w, /images/home/workforce-team-2400.webp 2400w",
+      alt: "Two colleagues reviewing a tablet together in a bright workspace.",
     },
   },
   solutions: {

@@ -52,6 +52,9 @@ This patch completes the homepage; it does not complete every Phase 1 page.
 
 ## Editing the page
 
+Part 6 replaces the original hero photo with a sharper landscape image and a
+compact laptop layout. The current asset details are in `public/images/home/CREDITS.md`.
+
 | File                                        | Purpose                                                                           |
 | ------------------------------------------- | --------------------------------------------------------------------------------- |
 | `src/app/page.tsx`                          | Homepage composition and metadata                                                 |

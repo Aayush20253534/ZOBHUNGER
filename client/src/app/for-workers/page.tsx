@@ -1,8 +1,12 @@
-import type { Metadata } from "next";
-import { PageShell } from "@/components/common/PageShell";
+import { ForWorkers } from "@/components/workers/ForWorkers";
+import { getPageMetadata } from "@/lib/page-metadata";
 
-export const metadata: Metadata = { title: "Find Work With ZOBHUNGER" };
+export const metadata = getPageMetadata(
+  "Find Work With ZOBHUNGER",
+  "Explore sales, promoter, field, marketing, telecalling, recruitment and operations roles with ZOBHUNGER.",
+  "/for-workers",
+);
 
 export default function Page() {
-  return <PageShell title="Find Work With ZOBHUNGER" />;
+  return <ForWorkers />;
 }

@@ -1,3 +1,5 @@
+@import "./forms.css";
+
 /* Part 5 pages use the shared red-and-white theme. */
 .zb-company {
   --zb-company-space: clamp(3.5rem, 7vw, 6rem);
@@ -471,70 +473,6 @@
   font-size: 0.875rem;
   text-underline-offset: 0.25rem;
 }
-.zb-form-intro {
-  display: grid;
-  gap: 0.8rem;
-  margin-bottom: 1.75rem;
-}
-.zb-form-preview-note {
-  display: grid;
-  gap: 0.65rem;
-  justify-items: start;
-  padding: 1rem;
-  background: var(--muted);
-  border: 1px solid var(--zb-border);
-  border-radius: 0.375rem;
-}
-.zb-form-preview-note .zb-chip {
-  color: var(--zb-ink);
-  background: var(--zb-surface);
-  border: 1px solid var(--zb-border);
-}
-.zb-form-preview-note p {
-  margin: 0;
-  font-size: 0.8125rem;
-  color: var(--zb-muted);
-}
-.zb-form-fieldset,
-.zb-form-group {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-.zb-form-group + .zb-form-group {
-  margin-top: 2rem;
-}
-.zb-form-group legend {
-  display: flex;
-  align-items: baseline;
-  gap: 0.65rem;
-  width: 100%;
-  margin-bottom: 1.25rem;
-  padding: 0 0 0.8rem;
-  border-bottom: 1px solid var(--zb-border);
-  font-size: 1rem;
-  font-weight: 700;
-}
-.zb-form-group legend span {
-  color: var(--zb-action);
-  font-size: 0.75rem;
-  font-variant-numeric: tabular-nums;
-}
-.zb-form-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.75rem;
-}
-.zb-company-form-page .zb-button {
-  height: auto;
-  white-space: normal;
-}
-.zb-form-result {
-  margin-bottom: 1.5rem;
-  border-radius: 0.5rem;
-}
 .zb-locations-hint {
   margin-bottom: 1rem;
 }
@@ -601,4 +539,9 @@
     grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.43fr);
     gap: 1.5rem;
   }
+}
+
+.zb-company-form-page .zb-button {
+  height: auto;
+  white-space: normal;
 }

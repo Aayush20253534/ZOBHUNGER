@@ -15,7 +15,7 @@ export function SubmissionResult({
   onClear,
 }: {
   receipt: SubmissionReceipt;
-  subject: "requirement" | "enquiry";
+  subject: "requirement" | "enquiry" | "application";
   feedbackRef: Ref<HTMLDivElement>;
   onEdit: () => void;
   onClear: () => void;
@@ -31,8 +31,13 @@ export function SubmissionResult({
         <ActionButton variant="outline" onClick={onClear}>
           Start again
         </ActionButton>
-        <ActionLink href="/solutions" variant="text">
-          Explore solutions
+        <ActionLink
+          href={subject === "application" ? "/jobs" : "/solutions"}
+          variant="text"
+        >
+          {subject === "application"
+            ? "Explore more jobs"
+            : "Explore solutions"}
         </ActionLink>
       </div>
     </div>
