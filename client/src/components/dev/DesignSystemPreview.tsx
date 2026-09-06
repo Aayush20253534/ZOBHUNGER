@@ -236,7 +236,12 @@ function EnquiryFormPreview() {
         description="Required fields are marked with an asterisk. This form checks validation and demo confirmations; it never sends or saves the information."
       />
       <div className="zb-preview-panel">
-        <form noValidate onSubmit={handleSubmit(submit)}>
+        <form
+          noValidate
+          onSubmit={(event) => {
+            void handleSubmit(submit)(event);
+          }}
+        >
           <fieldset disabled={isSubmitting} className="zb-preview-fieldset">
             <legend className="sr-only">Demo business enquiry</legend>
             <div className="zb-form-grid">

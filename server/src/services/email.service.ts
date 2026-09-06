@@ -1,4 +1,4 @@
-import Mailjet from "node-mailjet";
+import { Client } from "node-mailjet";
 import { env } from "../config/env.js";
 import { logger } from "../utils/logger.js";
 
@@ -31,7 +31,7 @@ export async function sendOperationalEmail(input: OperationalEmail) {
   }
 
   try {
-    const client = new Mailjet({
+    const client = new Client({
       apiKey: env.MAILJET_API_KEY as string,
       apiSecret: env.MAILJET_SECRET_KEY as string,
     });

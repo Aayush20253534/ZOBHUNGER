@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import {
   Building2,
   Factory,
@@ -35,6 +36,8 @@ export function IndustryIcon({
   slug: string;
   className?: string;
 }) {
-  const Icon = icons.get(slug) ?? Building2;
-  return <Icon className={className} aria-hidden="true" />;
+  return createElement(icons.get(slug) ?? Building2, {
+    className,
+    "aria-hidden": true,
+  });
 }
