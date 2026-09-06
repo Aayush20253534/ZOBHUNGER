@@ -7,49 +7,197 @@ datasource db {
   provider = "postgresql"
 }
 
-// Draft Phase 1 models. Review before running the first migration.
-model WorkforceRequirement {
-  id               String   @id @default(cuid())
-  companyName      String
-  contactPerson    String
-  businessEmail    String
-  mobileNumber     String
-  industry         String
-  serviceRequired  String
-  workforceCount   Int
-  locations        String[]
-  projectDuration  String
-  expectedStartAt  DateTime?
-  details          String
-  createdAt        DateTime @default(now())
+enum UserRole {
+  ADMIN
+  BUSINESS
+  WORKER
+}
 
+enum RequirementStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  CLOSED
+}
+
+enum JobStatus {
+  DRAFT
+  OPEN
+  CLOSED
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  REVIEWED
+  SHORTLISTED
+  REJECTED
+}
+
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  phone           String?          @unique
+  passwordHash    String
+  role            UserRole
+  isActive        Boolean          @default(true)
+  emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  businessProfile       BusinessProfile?
+  workerProfile         WorkerProfile?
+  submittedRequirements WorkforceRequirement[] @relation("RequirementSubmitter")
+  applications          JobApplication[]        @relation("WorkerApplications")
+  createdJobs           Job[]                   @relation("JobCreator")
+  auditLogs             AuditLog[]              @relation("AuditActor")
+
+  @@index([role, isActive])
   @@index([createdAt])
 }
 
-model Enquiry {
+model BusinessProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  companyName   String
+  contactPerson String
+  phone         String?
+  industry      String?
+  city          String?
+  website       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([companyName])
+  @@index([industry])
+}
+
+model WorkerProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  fullName        String
+  phone           String?
+  city            String?
+  state           String?
+  skills          String[] @default([])
+  experienceYears Int?
+  resumeUrl       String?
+  isAvailable     Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([city, isAvailable])
+}
+
+model ContactEnquiry {
   id              String   @id @default(cuid())
   name            String
   companyName     String?
   email           String
   phone           String
-  serviceRequired String
+  city            String?
+  serviceRequired String?
   message         String
   createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([createdAt])
+  @@index([email])
+}
+
+model WorkforceRequirement {
+  id                String            @id @default(cuid())
+  submittedByUserId String?
+  companyName       String
+  contactPerson     String
+  businessEmail     String
+  mobileNumber      String
+  industry          String
+  serviceRequired   String
+  workforceCount    Int
+  jobLocation       String
+  locations         String[]          @default([])
+  projectDuration   String
+  expectedStartAt   DateTime?
+  details           String
+  status            RequirementStatus @default(NEW)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  submittedBy User? @relation("RequirementSubmitter", fields: [submittedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([businessEmail])
+  @@index([submittedByUserId])
 }
 
 model Job {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  location    String
-  category    String
-  jobType     String
-  description String
-  isPublished Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String    @id @default(cuid())
+  slug           String    @unique
+  title          String
+  location       String
+  city           String
+  state          String?
+  category       String
+  engagementType String
+  description    String
+  responsibilities String[] @default([])
+  requirements     String[] @default([])
+  compensation     String?
+  status           JobStatus @default(DRAFT)
+  publishedAt      DateTime?
+  createdByUserId  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  @@index([isPublished, location, category])
+  createdBy    User?            @relation("JobCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  applications JobApplication[]
+
+  @@index([status, publishedAt])
+  @@index([city, category, engagementType])
+  @@index([createdByUserId])
+}
+
+model JobApplication {
+  id           String            @id @default(cuid())
+  jobId        String
+  workerUserId String?
+  name         String
+  email        String
+  phone        String
+  city         String?
+  resumeUrl    String?
+  message      String?
+  status       ApplicationStatus @default(SUBMITTED)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  job        Job   @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  workerUser User? @relation("WorkerApplications", fields: [workerUserId], references: [id], onDelete: SetNull)
+
+  @@unique([jobId, email])
+  @@index([jobId, status, createdAt])
+  @@index([workerUserId])
+  @@index([email])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  action      String
+  entityType  String
+  entityId    String
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  actor User? @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId, createdAt])
+  @@index([actorUserId, createdAt])
 }

@@ -5,6 +5,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().min(1).max(65_535).default(5000),
   CLIENT_ORIGIN: z.string().min(1).default("http://localhost:3000"),
+  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   API_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
   API_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(120),
 });
