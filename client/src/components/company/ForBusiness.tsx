@@ -58,11 +58,11 @@ export function ForBusiness() {
             </span>
             <div>
               <span className="zb-eyebrow">Business brief</span>
-              <h2 id="business-summary-title">Shape the requirement before the deployment.</h2>
+              <h2 id="business-summary-title">Define the brief. Deploy with clarity.</h2>
             </div>
           </div>
           <p className="zb-premium-card-copy">
-            Bring the role, geography and delivery model into one clear operating brief.
+            Set the team, coverage and engagement model before execution starts.
           </p>
           <div className="zb-premium-stat-grid">
             <article>
@@ -84,7 +84,7 @@ export function ForBusiness() {
           <div className="zb-premium-card-footer">
             <span>One brief. Multiple execution needs.</span>
             <ActionLink href="/hire-workforce" variant="text">
-              Start the brief <ArrowUpRight aria-hidden="true" className="size-4" />
+              Start brief <ArrowUpRight aria-hidden="true" className="size-4" />
             </ActionLink>
           </div>
         </aside>

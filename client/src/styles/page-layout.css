@@ -671,3 +671,63 @@
     align-items: flex-start;
   }
 }
+
+/* For Business hero: keep both columns anchored to the top and keep the brief compact. */
+@media (min-width: 960px) {
+  .zb-page-content .zb-company-hero {
+    align-items: start;
+    grid-template-columns: minmax(0, 1.42fr) minmax(22rem, 0.82fr);
+    gap: clamp(2rem, 3.5vw, 3.75rem);
+  }
+  .zb-page-content .zb-company-hero .zb-page-heading {
+    padding-top: 0.35rem;
+  }
+  .zb-page-content .zb-business-hero-card {
+    align-self: start;
+    max-width: 34rem;
+    justify-self: end;
+    padding: 1.3rem;
+  }
+  .zb-business-hero-card .zb-premium-card-header h2 {
+    font-size: clamp(1.3rem, 1.55vw, 1.55rem);
+    line-height: 1.18;
+  }
+  .zb-business-hero-card .zb-premium-card-copy {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .zb-business-hero-card .zb-premium-stat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+    margin-top: 0.9rem;
+  }
+  .zb-business-hero-card .zb-premium-stat-grid article {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.28rem;
+    padding: 0.75rem;
+  }
+  .zb-business-hero-card .zb-premium-stat-grid article > svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+  .zb-business-hero-card .zb-premium-stat-grid span {
+    font-size: 0.67rem;
+  }
+  .zb-business-hero-card .zb-premium-stat-grid strong {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+  .zb-business-hero-card .zb-premium-card-footer {
+    margin-top: 0.75rem;
+    padding-top: 0.65rem;
+    font-size: 0.74rem;
+  }
+  .zb-business-hero-card .zb-premium-card-footer .zb-action-link {
+    min-height: 2rem;
+    font-size: 0.82rem;
+  }
+}

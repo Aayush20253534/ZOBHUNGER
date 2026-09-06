@@ -6,6 +6,7 @@ import {
   Landmark,
   Monitor,
   Package,
+  MessageSquareText,
   Rocket,
   ShoppingBasket,
   ShoppingCart,
@@ -60,7 +61,9 @@ export function IndustriesPreview() {
               className="zb-card-link"
             >
               <Card className="zb-card zb-home-industry-card">
-                <Icon className="zb-card-icon" aria-hidden="true" />
+                <span className="zb-home-industry-icon" aria-hidden="true">
+                  <Icon />
+                </span>
                 <div>
                   <h3>{industry.title}</h3>
                   <p>{homeIndustryDescriptions[industry.slug]}</p>
@@ -75,6 +78,9 @@ export function IndustriesPreview() {
         })}
         <Link href="/contact" className="zb-card-link">
           <Card className="zb-card zb-home-industry-card zb-home-industry-help">
+            <span className="zb-home-industry-icon" aria-hidden="true">
+              <MessageSquareText />
+            </span>
             <div>
               <h3>Have a different requirement?</h3>
               <p>Tell us about your business.</p>

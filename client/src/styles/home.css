@@ -488,3 +488,26 @@
     padding: 1.15rem;
   }
 }
+
+/* Industry cards use real icon tiles rather than styling the SVG itself as a badge. */
+.zb-home-industry-icon {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex: 0 0 2.35rem;
+  margin-top: 0.05rem;
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 0.7rem;
+  background: var(--zb-soft);
+  color: var(--zb-action);
+}
+.zb-home-industry-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  stroke-width: 1.9;
+}
+.zb-home-industry-card:hover .zb-home-industry-icon {
+  border-color: #d21f2b47;
+  background: #fff4f4;
+}
