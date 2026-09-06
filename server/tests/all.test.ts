@@ -1,0 +1,6 @@
+import "./auth.schema.test.js";
+import "./requirements.schema.test.js";
+import "./jobs.schema.test.js";
+import "./admin-and-articles.schema.test.js";
+import "./api-response.test.js";
+import "./role.middleware.test.js";

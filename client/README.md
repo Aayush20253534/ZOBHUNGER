@@ -1,6 +1,6 @@
 # ZOBHUNGER Client
 
-Next.js frontend for the ZOBHUNGER public website.
+Next.js frontend for the ZOBHUNGER Phase 1 website.
 
 ## Local development
 
@@ -10,25 +10,53 @@ cp .env.example .env.local
 npm run dev
 ```
 
-The frontend supports two operational-data modes:
-
-- `NEXT_PUBLIC_DATA_MODE=mock` keeps jobs and forms on local preview data.
-- `NEXT_PUBLIC_DATA_MODE=api` connects jobs, contact enquiries, workforce requirements and job applications to the Express backend.
-
-For the local backend use:
+For the real backend:
 
 ```env
+NEXT_PUBLIC_DATA_MODE=api
 NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
 ```
 
-The Express server must allow the frontend origin through `CLIENT_ORIGIN` (normally `http://localhost:3000`). Requests include credentials so the same API client is ready for the secure httpOnly auth cookie introduced in backend Part 5.
+`NEXT_PUBLIC_DATA_MODE=mock` remains available for isolated frontend preview. API mode is the intended integrated Phase 1 configuration.
 
-## Phase 1 API connections
+## Backend-connected flows
 
 - Jobs list: `GET /jobs`
 - Job details: `GET /jobs/:slug`
-- Job applications: `POST /jobs/:jobId/applications` (the backend accepts a job ID or slug)
+- Job applications: `POST /jobs/:jobId/applications`
+- Blogs list: `GET /articles`
+- Blog details: `GET /articles/:slug`
 - Workforce requirements: `POST /requirements`
 - Contact enquiries: `POST /contact`
+- Login/logout/current account: `/auth/*`
+- Admin dashboard data: `/admin/*`
 
-Blog & Insights remains on reviewed sample editorial content in Phase 1 because no public article API has been introduced yet. Switching operational data to API mode therefore does not break the editorial pages or incorrectly present sample articles as backend-managed content.
+Requests include credentials so the backend's httpOnly authentication cookie works. The backend `CLIENT_ORIGIN` must allow the frontend origin.
+
+## Main Phase 1 routes
+
+```text
+/
+/solutions
+/industries
+/technology
+/for-business
+/for-workers
+/jobs
+/blogs
+/contact
+/hire-workforce
+/login
+/admin
+```
+
+Individual articles remain at `/blog/:slug`.
+
+## Quality checks
+
+```bash
+npm run lint
+npm run build
+```
+
+For the full repository verification run `npm run verify` from the repository root.
