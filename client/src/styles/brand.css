@@ -1,3 +1,5 @@
+@import "./page-intro.css";
+
 /* Shared ZOBHUNGER theme. Part 5: client-requested red and white. */
 @font-face {
   font-family: "Zobhunger Manrope";
@@ -30,6 +32,11 @@ html:root.dark {
   --zb-shadow-subtle: #2721260a;
   --zb-radius: 0.75rem;
   --zb-transition: 180ms ease;
+  --zb-header-height: clamp(4rem, 10svh, 5rem);
+  --zb-intro-title-size: clamp(2rem, 4.6vw, 3.25rem);
+  --zb-intro-space: clamp(0.75rem, 2svh, 1.125rem);
+  --zb-intro-panel-pad: clamp(1.25rem, 3vw, 1.75rem);
+  --zb-intro-row-gap: 0.75rem;
   --background: var(--zb-page);
   --foreground: var(--zb-ink);
   --card: var(--zb-surface);
@@ -78,6 +85,7 @@ html body[class] {
 body > main[class] {
   max-width: 75rem;
   padding-inline: clamp(1.25rem, 4vw, 2rem);
+  padding-top: clamp(1rem, 2.7svh, 2rem);
 }
 ::selection {
   background: var(--zb-highlight);
@@ -145,7 +153,7 @@ body > main[class] {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  min-height: 5rem;
+  min-height: var(--zb-header-height);
 }
 .zb-desktop-nav {
   display: none;
@@ -437,11 +445,11 @@ body > main[class] {
 }
 .zb-page-heading {
   max-width: 52rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: clamp(1.25rem, 3svh, 2rem);
 }
 .zb-page-heading h1 {
   margin: 0;
-  font-size: clamp(2.1rem, 4.6vw, 3.5rem);
+  font-size: var(--zb-intro-title-size);
   line-height: 1.12;
   font-weight: 750;
   letter-spacing: -0.045em;
@@ -450,16 +458,16 @@ body > main[class] {
 }
 .zb-page-description {
   max-width: 42rem;
-  margin: 1.15rem 0 0;
+  margin: var(--zb-intro-space) 0 0;
   color: var(--zb-muted);
   font-size: 1.0625rem;
-  line-height: 1.8;
+  line-height: 1.6;
 }
 .zb-page-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
 }
 .zb-section-heading {
   display: flex;
@@ -796,6 +804,16 @@ body > main[class] {
   }
   .zb-preview-search {
     grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+/* Opening sections respond to laptop height as well as width. Their natural
+   height is retained so long content and larger text can always scroll. */
+@media (min-width: 900px) {
+  html:root,
+  html:root.dark {
+    --zb-intro-title-size: clamp(2.25rem, min(4vw, 7svh), 3.25rem);
+    --zb-intro-panel-pad: clamp(1.125rem, 2.8svh, 1.625rem);
+    --zb-intro-row-gap: clamp(0.5rem, 1.5svh, 0.85rem);
   }
 }
 @media (min-width: 1100px) {
