@@ -11,6 +11,24 @@ export function getDataMode(): "mock" | "api" {
   return mode;
 }
 
+/**
+ * Phase 1 does not expose editorial APIs yet, so Blog & Insights deliberately
+ * remains on the reviewed sample-content adapter even when operational data is live.
+ */
+export function getEditorialDataMode(): "mock" {
+  return "mock";
+}
+
+const apiAdapter: SiteDataAdapter = {
+  listArticles: mockAdapter.listArticles,
+  getArticle: mockAdapter.getArticle,
+  listJobs: httpAdapter.listJobs,
+  getJob: httpAdapter.getJob,
+  submitJobApplication: httpAdapter.submitJobApplication,
+  submitRequirement: httpAdapter.submitRequirement,
+  submitEnquiry: httpAdapter.submitEnquiry,
+};
+
 export function getDataAdapter(): SiteDataAdapter {
-  return getDataMode() === "api" ? httpAdapter : mockAdapter;
+  return getDataMode() === "api" ? apiAdapter : mockAdapter;
 }

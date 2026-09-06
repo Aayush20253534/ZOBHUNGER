@@ -15,7 +15,7 @@ import {
 } from "@/lib/article-filters";
 import { getPageMetadata } from "@/lib/page-metadata";
 import { getArticles } from "@/services/articles.service";
-import { getDataMode } from "@/services/adapters";
+import { getEditorialDataMode } from "@/services/adapters";
 
 export function generateMetadata() {
   return {
@@ -24,7 +24,7 @@ export function generateMetadata() {
       "Practical guides to hiring, workforce management, sales and business execution.",
       "/blog",
     ),
-    ...(getDataMode() === "mock"
+    ...(getEditorialDataMode() === "mock"
       ? { robots: { index: false, follow: false } }
       : {}),
   };
@@ -37,7 +37,7 @@ export default async function BlogPage({
 }) {
   const filters = parseArticleFilters(await searchParams);
   const list = await getArticles(filters);
-  const isPreview = getDataMode() === "mock";
+  const isPreview = getEditorialDataMode() === "mock";
   return (
     <>
       <Breadcrumbs

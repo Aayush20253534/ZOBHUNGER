@@ -1,65 +1,140 @@
-import { apiFetch, ApiError } from "@/lib/api";
-import type { SiteDataAdapter } from "@/types/data.types";
+import {
+  apiFetch,
+  ApiError,
+  type ApiSuccessEnvelope,
+} from "@/lib/api";
+import type { SiteDataAdapter, SubmissionReceipt } from "@/types/data.types";
+import type { Job, JobList } from "@/types/job.types";
 
-/** Expected API contracts for the later backend integration. Never selected implicitly. */
-export const httpAdapter: SiteDataAdapter = {
-  listArticles(filters = {}, options) {
+type ApiJobList = Omit<JobList, "items"> & { items: ApiJob[] };
+
+interface ApiJob {
+  id: string;
+  slug: string;
+  title: string;
+  location: string;
+  city: string;
+  state?: string | null;
+  category: string;
+  engagementType: string;
+  description: string;
+  responsibilities?: string[];
+  requirements?: string[];
+  compensation?: string | null;
+  publishedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ApiSubmissionRecord {
+  id: string;
+  createdAt: string | Date;
+}
+
+function toJob(job: ApiJob): Job {
+  return {
+    id: job.id,
+    slug: job.slug,
+    title: job.title,
+    location: job.location,
+    category: job.category,
+    jobType: job.engagementType,
+    description: job.description,
+    isPublished: true,
+    createdAt: job.createdAt,
+    updatedAt: job.updatedAt,
+    responsibilities: job.responsibilities ?? [],
+    requirements: job.requirements ?? [],
+  };
+}
+
+function toReceipt(
+  response: ApiSuccessEnvelope<ApiSubmissionRecord>,
+): SubmissionReceipt {
+  return {
+    id: response.data.id,
+    createdAt:
+      typeof response.data.createdAt === "string"
+        ? response.data.createdAt
+        : response.data.createdAt.toISOString(),
+    mode: "api",
+    delivered: true,
+    message: response.message,
+  };
+}
+
+/** Real Phase 1 operational-data adapter. Editorial content stays on mock data. */
+export const httpAdapter = {
+  async listJobs(filters = {}, options) {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== "") params.set(key, String(value));
     });
-    return apiFetch(`/articles${params.size ? `?${params}` : ""}`, {
-      signal: options?.signal,
-    });
+
+    const response = await apiFetch<ApiSuccessEnvelope<ApiJobList>>(
+      `/jobs${params.size ? `?${params}` : ""}`,
+      { signal: options?.signal },
+    );
+
+    return {
+      ...response.data,
+      items: response.data.items.map(toJob),
+    };
   },
-  async getArticle(slug, options) {
-    try {
-      return await apiFetch(`/articles/${encodeURIComponent(slug)}`, {
-        signal: options?.signal,
-      });
-    } catch (error) {
-      if (error instanceof ApiError && error.status === 404) return null;
-      throw error;
-    }
-  },
-  listJobs(filters = {}, options) {
-    const params = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== "") params.set(key, String(value));
-    });
-    return apiFetch(`/jobs${params.size ? `?${params}` : ""}`, {
-      signal: options?.signal,
-    });
-  },
+
   async getJob(slug, options) {
     try {
-      return await apiFetch(`/jobs/${encodeURIComponent(slug)}`, {
-        signal: options?.signal,
-      });
+      const response = await apiFetch<ApiSuccessEnvelope<ApiJob>>(
+        `/jobs/${encodeURIComponent(slug)}`,
+        { signal: options?.signal },
+      );
+      return toJob(response.data);
     } catch (error) {
       if (error instanceof ApiError && error.status === 404) return null;
       throw error;
     }
   },
-  submitJobApplication(slug, input, options) {
-    return apiFetch(`/jobs/${encodeURIComponent(slug)}/applications`, {
-      method: "POST",
-      body: JSON.stringify(input),
-      signal: options?.signal,
-    });
+
+  async submitJobApplication(slug, input, options) {
+    const response = await apiFetch<ApiSuccessEnvelope<ApiSubmissionRecord>>(
+      `/jobs/${encodeURIComponent(slug)}/applications`,
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+        signal: options?.signal,
+      },
+    );
+    return toReceipt(response);
   },
-  submitRequirement(input, options) {
-    return apiFetch("/requirements", {
-      method: "POST",
-      body: JSON.stringify(input),
-      signal: options?.signal,
-    });
+
+  async submitRequirement(input, options) {
+    const response = await apiFetch<ApiSuccessEnvelope<ApiSubmissionRecord>>(
+      "/requirements",
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+        signal: options?.signal,
+      },
+    );
+    return toReceipt(response);
   },
-  submitEnquiry(input, options) {
-    return apiFetch("/enquiries", {
-      method: "POST",
-      body: JSON.stringify(input),
-      signal: options?.signal,
-    });
+
+  async submitEnquiry(input, options) {
+    const response = await apiFetch<ApiSuccessEnvelope<ApiSubmissionRecord>>(
+      "/contact",
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+        signal: options?.signal,
+      },
+    );
+    return toReceipt(response);
   },
-};
+} satisfies Pick<
+  SiteDataAdapter,
+  | "listJobs"
+  | "getJob"
+  | "submitJobApplication"
+  | "submitRequirement"
+  | "submitEnquiry"
+>;

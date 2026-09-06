@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ZOBHUNGER Client
 
-## Getting Started
+Next.js frontend for the ZOBHUNGER public website.
 
-First, run the development server:
+## Local development
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The frontend supports two operational-data modes:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NEXT_PUBLIC_DATA_MODE=mock` keeps jobs and forms on local preview data.
+- `NEXT_PUBLIC_DATA_MODE=api` connects jobs, contact enquiries, workforce requirements and job applications to the Express backend.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+For the local backend use:
 
-## Learn More
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
+```
 
-To learn more about Next.js, take a look at the following resources:
+The Express server must allow the frontend origin through `CLIENT_ORIGIN` (normally `http://localhost:3000`). Requests include credentials so the same API client is ready for the secure httpOnly auth cookie introduced in backend Part 5.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Phase 1 API connections
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Jobs list: `GET /jobs`
+- Job details: `GET /jobs/:slug`
+- Job applications: `POST /jobs/:jobId/applications` (the backend accepts a job ID or slug)
+- Workforce requirements: `POST /requirements`
+- Contact enquiries: `POST /contact`
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Blog & Insights remains on reviewed sample editorial content in Phase 1 because no public article API has been introduced yet. Switching operational data to API mode therefore does not break the editorial pages or incorrectly present sample articles as backend-managed content.

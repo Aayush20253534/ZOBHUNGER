@@ -6,7 +6,7 @@ import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
 import { getPageMetadata } from "@/lib/page-metadata";
 import { getArticleForPage } from "@/services/articles.service";
-import { getDataMode } from "@/services/adapters";
+import { getEditorialDataMode } from "@/services/adapters";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props) {
       article.excerpt,
       `/blog/${encodeURIComponent(article.slug)}`,
     ),
-    ...(getDataMode() === "mock" || article.isSample
+    ...(getEditorialDataMode() === "mock" || article.isSample
       ? { robots: { index: false, follow: false } }
       : {}),
   };
