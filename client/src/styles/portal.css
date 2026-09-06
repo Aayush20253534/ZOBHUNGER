@@ -117,3 +117,335 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* Live authentication and Phase 1 admin integration. */
+.zb-login-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+.zb-login-form,
+.zb-account-access-summary,
+.zb-admin-panel,
+.zb-admin-stats article,
+.zb-admin-toolbar {
+  border: 1px solid var(--zb-border);
+  border-radius: 0.85rem;
+  background: var(--zb-surface);
+  box-shadow: 0 4px 20px var(--zb-shadow-subtle);
+}
+.zb-login-form {
+  display: grid;
+  gap: 1.1rem;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border-top: 3px solid var(--zb-action);
+}
+.zb-login-form-heading {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.zb-login-form-heading h2,
+.zb-account-access-summary h2,
+.zb-admin-toolbar h1,
+.zb-admin-panel h2 {
+  margin: 0;
+  color: var(--zb-ink);
+  letter-spacing: -0.035em;
+}
+.zb-login-form-heading h2 {
+  font-size: 1.65rem;
+}
+.zb-login-form label {
+  display: grid;
+  gap: 0.5rem;
+  color: var(--zb-ink);
+  font-weight: 650;
+}
+.zb-login-form input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.55rem;
+  background: #fff;
+  color: var(--zb-ink);
+  font: inherit;
+  outline: none;
+}
+.zb-login-form input:focus {
+  border-color: var(--zb-action);
+  box-shadow: 0 0 0 3px rgba(207, 29, 43, 0.1);
+}
+.zb-login-submit,
+.zb-admin-actions button,
+.zb-admin-state button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.8rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--zb-action);
+  border-radius: 0.55rem;
+  background: var(--zb-action);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.zb-login-submit:disabled,
+.zb-admin-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+.zb-login-submit svg,
+.zb-admin-actions svg {
+  width: 1rem;
+  height: 1rem;
+}
+.zb-login-error {
+  margin: 0;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid #efb4b9;
+  border-radius: 0.5rem;
+  background: #fff1f2;
+  color: #9f1421;
+}
+.zb-login-security-note {
+  margin: 0;
+  color: var(--zb-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.zb-account-access-summary {
+  padding: clamp(1.4rem, 3vw, 2rem);
+}
+.zb-account-access-summary > h2 {
+  margin-top: 0.3rem;
+  font-size: 1.65rem;
+}
+.zb-account-type-list {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1.25rem;
+}
+.zb-account-type-list article {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 1rem 0;
+  border-top: 1px solid var(--zb-border);
+}
+.zb-account-type-list article:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.zb-account-type-list h3,
+.zb-account-type-list p {
+  margin: 0;
+}
+.zb-account-type-list h3 {
+  color: var(--zb-ink);
+  font-size: 1rem;
+}
+.zb-account-type-list p {
+  margin-top: 0.3rem;
+  color: var(--zb-muted);
+  line-height: 1.55;
+}
+.zb-admin-dashboard {
+  display: grid;
+  gap: 1.25rem;
+}
+.zb-admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem 2rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-top: 3px solid var(--zb-action);
+}
+.zb-admin-toolbar h1 {
+  margin-top: 0.25rem;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+}
+.zb-admin-toolbar p:last-child {
+  margin: 0.45rem 0 0;
+  color: var(--zb-muted);
+}
+.zb-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.zb-admin-actions button:last-child {
+  background: #fff;
+  color: var(--zb-action);
+}
+.zb-admin-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+.zb-admin-stats article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.65rem;
+  align-items: center;
+  padding: 1.05rem;
+}
+.zb-admin-stats svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--zb-action);
+  grid-row: span 2;
+}
+.zb-admin-stats span {
+  color: var(--zb-muted);
+  font-size: 0.875rem;
+}
+.zb-admin-stats strong {
+  color: var(--zb-ink);
+  font-size: 1.5rem;
+}
+.zb-admin-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+.zb-admin-panel {
+  min-width: 0;
+  overflow: hidden;
+}
+.zb-admin-panel h2 {
+  padding: 1.05rem 1.15rem;
+  border-bottom: 1px solid var(--zb-border);
+  font-size: 1.15rem;
+}
+.zb-admin-list {
+  display: grid;
+}
+.zb-admin-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.95rem 1.15rem;
+  border-top: 1px solid var(--zb-border);
+}
+.zb-admin-row:first-child {
+  border-top: 0;
+}
+.zb-admin-row > div {
+  min-width: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+.zb-admin-row strong,
+.zb-admin-row span {
+  min-width: 0;
+}
+.zb-admin-row > div > span {
+  color: var(--zb-muted);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+.zb-admin-row > .zb-chip {
+  flex-shrink: 0;
+}
+.zb-admin-empty,
+.zb-admin-state {
+  margin: 0;
+  padding: 1.2rem;
+  color: var(--zb-muted);
+}
+.zb-admin-state {
+  border: 1px solid var(--zb-border);
+  border-radius: 0.75rem;
+  background: var(--zb-surface);
+}
+@media (min-width: 900px) {
+  .zb-login-layout {
+    grid-template-columns: minmax(0, 0.9fr) minmax(24rem, 1.1fr);
+  }
+  .zb-admin-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .zb-admin-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Portal-specific desktop sizing. Public landing pages keep their larger marketing type. */
+.zb-portal-page .zb-portal-heading {
+  margin-bottom: 1.25rem;
+}
+.zb-portal-page .zb-portal-heading .zb-page-heading {
+  max-width: 50rem;
+  margin-bottom: 0;
+}
+.zb-portal-page .zb-portal-heading .zb-page-heading h1 {
+  max-width: 18ch;
+  font-size: clamp(2.25rem, 4.1vw, 3.45rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+.zb-portal-page .zb-portal-heading .zb-page-description {
+  max-width: 46rem;
+  margin-top: 0.9rem;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.zb-portal-page .zb-portal-heading .zb-eyebrow {
+  margin-bottom: 0.7rem;
+  font-size: 0.75rem;
+}
+
+.zb-admin-toolbar {
+  padding: clamp(1.05rem, 2vw, 1.4rem);
+}
+.zb-admin-toolbar h1 {
+  margin-top: 0.2rem;
+  font-size: clamp(1.65rem, 2.6vw, 2.05rem);
+  line-height: 1.15;
+}
+.zb-admin-toolbar > div:first-child > .zb-eyebrow {
+  margin-bottom: 0.55rem;
+  font-size: 0.72rem;
+}
+.zb-admin-toolbar p:last-child {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+}
+.zb-admin-actions button {
+  min-height: 2.55rem;
+  padding: 0.62rem 0.9rem;
+  font-size: 0.95rem;
+}
+.zb-admin-stats article {
+  padding: 0.9rem 1rem;
+}
+.zb-admin-stats strong {
+  font-size: 1.35rem;
+}
+.zb-admin-panel h2 {
+  padding: 0.9rem 1rem;
+  font-size: 1.05rem;
+}
+.zb-admin-row {
+  padding: 0.82rem 1rem;
+}
+
+@media (max-width: 720px) {
+  .zb-portal-page .zb-portal-heading .zb-page-heading h1 {
+    max-width: none;
+    font-size: clamp(2rem, 10vw, 2.7rem);
+  }
+  .zb-admin-toolbar {
+    align-items: flex-start;
+  }
+}

@@ -1,61 +1,34 @@
-import {
-  ArrowUpRight,
-  Building2,
-  LockKeyhole,
-  ShieldCheck,
-  UserRound,
-} from "lucide-react";
-import { ActionLink } from "@/components/common/ActionLink";
+import { Building2, ShieldCheck, UserRound } from "lucide-react";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { PageShell } from "@/components/common/PageShell";
+import { LoginForm } from "@/components/auth/LoginForm";
 import { getPageMetadata } from "@/lib/page-metadata";
 import "@/styles/portal.css";
 
 export const metadata = {
   ...getPageMetadata(
     "Portal Access",
-    "The planned entry point for ZOBHUNGER client, worker and administrator accounts.",
+    "Secure sign-in for ZOBHUNGER administrator, business and worker accounts.",
     "/login",
   ),
   robots: { index: false, follow: false },
 };
 
-const portals = [
+const accountTypes = [
   {
-    id: "client",
-    title: "Client Login",
-    audience: "For business teams",
+    title: "Business account",
     icon: Building2,
-    description:
-      "A planned workspace for requirements, candidate review and workforce updates.",
-    points: ["Requirements and hiring progress", "Deployment and reporting"],
-    href: "/hire-workforce",
-    action: "Share a requirement",
+    copy: "Authentication is active. The full business workspace remains a later-phase portal.",
   },
   {
-    id: "worker",
-    title: "Worker Login",
-    audience: "For people looking for work",
+    title: "Worker account",
     icon: UserRound,
-    description:
-      "A planned account for your profile, applications and assignment information.",
-    points: [
-      "Profile and application progress",
-      "Assignments and work updates",
-    ],
-    href: "/jobs",
-    action: "Explore job pages",
+    copy: "Authentication is active. The full worker workspace remains a later-phase portal.",
   },
   {
-    id: "admin",
-    title: "Admin Login",
-    audience: "For authorised operations teams",
+    title: "Admin account",
     icon: ShieldCheck,
-    description:
-      "Planned internal tools for managing enquiries, people and business delivery.",
-    points: ["Enquiry and candidate coordination", "Assignment management"],
-    href: "/contact",
-    action: "Contact ZOBHUNGER",
+    copy: "Authentication and the Phase 1 admin dashboard are active now.",
   },
 ] as const;
 
@@ -68,62 +41,33 @@ export default function LoginPage() {
       <div className="zb-portal-heading">
         <PageShell
           eyebrow="Portal access"
-          title="Your work. One connected place."
-          description="Dedicated spaces for businesses, workers and the team coordinating delivery. Choose an area to see what is planned."
+          title="Secure access is now connected."
+          description="Sign in with an account stored in PostgreSQL. Admin users can access the Phase 1 operations dashboard; business and worker account authentication is ready for the later workspaces."
         />
-        <p className="zb-portal-status">
-          <LockKeyhole aria-hidden="true" />
-          <span>
-            <strong>Account access is not open yet.</strong> You can explore the
-            public website without signing in.
-          </span>
-        </p>
       </div>
-      <section
-        className="zb-portal-grid"
-        aria-label="Planned portal entry points"
-      >
-        {portals.map((portal) => {
-          const Icon = portal.icon;
-          return (
-            <article className="zb-portal-card" key={portal.id}>
-              <div className="zb-portal-card-top">
-                <span className="zb-icon-tile">
-                  <Icon aria-hidden="true" />
-                </span>
-                <span className="zb-chip">Planned</span>
-              </div>
-              <p className="zb-eyebrow">{portal.audience}</p>
-              <h2>{portal.title}</h2>
-              <p>{portal.description}</p>
-              <ul>
-                {portal.points.map((point) => (
-                  <li key={point}>{point}</li>
-                ))}
-              </ul>
-              <p className="zb-portal-unavailable">
-                <LockKeyhole aria-hidden="true" />
-                Sign-in not yet available
-              </p>
-              <ActionLink href={portal.href} variant="secondary">
-                {portal.action}
-                <ArrowUpRight aria-hidden="true" className="size-4" />
-              </ActionLink>
-            </article>
-          );
-        })}
-      </section>
-      <div className="zb-portal-help">
-        <div>
-          <h2>Explore the platform direction.</h2>
-          <p>
-            See how the planned tools connect requirements, people and progress.
-          </p>
-        </div>
-        <ActionLink href="/technology" variant="text">
-          Our technology vision
-          <ArrowUpRight aria-hidden="true" className="size-4" />
-        </ActionLink>
+
+      <div className="zb-login-layout">
+        <LoginForm />
+        <aside className="zb-account-access-summary" aria-label="Account access status">
+          <p className="zb-eyebrow">Account status</p>
+          <h2>What is available now</h2>
+          <div className="zb-account-type-list">
+            {accountTypes.map((account) => {
+              const Icon = account.icon;
+              return (
+                <article key={account.title}>
+                  <span className="zb-icon-tile" aria-hidden="true">
+                    <Icon />
+                  </span>
+                  <div>
+                    <h3>{account.title}</h3>
+                    <p>{account.copy}</p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </aside>
       </div>
     </div>
   );

@@ -37,7 +37,8 @@ export default async function BlogPage({
 }) {
   const filters = parseArticleFilters(await searchParams);
   const list = await getArticles(filters);
-  const isPreview = getEditorialDataMode() === "mock";
+  const isPreview =
+    getEditorialDataMode() === "mock" || list.items.some((article) => article.isSample);
   return (
     <>
       <Breadcrumbs
@@ -56,8 +57,8 @@ export default async function BlogPage({
         >
           {isPreview && (
             <p className="zb-inline-notice">
-              Editorial samples for review. These are not approved company
-              publications.
+              Seeded editorial samples for review. They are loaded from the
+              database in API mode, but are not approved company publications.
             </p>
           )}
         </PageShell>

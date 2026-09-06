@@ -19,8 +19,8 @@ export function JobDetails({ job }: { job: Job }) {
         <div className="zb-jobs-demo-note">
           <span className="zb-chip">Demo vacancy</span>
           <p>
-            This is an illustrative role, not a live vacancy. The application
-            form is a preview.
+            This role is seeded demonstration data. Test applications submitted
+            in API mode are stored in PostgreSQL for integration testing.
           </p>
         </div>
       )}
@@ -31,7 +31,7 @@ export function JobDetails({ job }: { job: Job }) {
           description={job.description}
           actions={
             <ActionLink href="#apply">
-              {job.isDemo ? "Preview application" : "Apply for this role"}
+              {job.isDemo ? "Test application" : "Apply for this role"}
             </ActionLink>
           }
         />
@@ -80,7 +80,7 @@ export function JobDetails({ job }: { job: Job }) {
             aria-labelledby="job-application-title"
           >
             <h2 id="job-application-title">
-              {job.isDemo ? "Try the application" : "Apply for this role"}
+              {job.isDemo ? "Submit a test application" : "Apply for this role"}
             </h2>
             <p>
               Share your contact details, location and any experience you want

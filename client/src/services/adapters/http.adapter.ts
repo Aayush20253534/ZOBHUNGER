@@ -4,9 +4,11 @@ import {
   type ApiSuccessEnvelope,
 } from "@/lib/api";
 import type { SiteDataAdapter, SubmissionReceipt } from "@/types/data.types";
+import type { Article, ArticleList } from "@/types/article.types";
 import type { Job, JobList } from "@/types/job.types";
 
 type ApiJobList = Omit<JobList, "items"> & { items: ApiJob[] };
+type ApiArticleList = ArticleList;
 
 interface ApiJob {
   id: string;
@@ -21,6 +23,7 @@ interface ApiJob {
   responsibilities?: string[];
   requirements?: string[];
   compensation?: string | null;
+  isDemo?: boolean;
   publishedAt?: string | null;
   createdAt: string;
   updatedAt: string;
@@ -45,6 +48,7 @@ function toJob(job: ApiJob): Job {
     updatedAt: job.updatedAt,
     responsibilities: job.responsibilities ?? [],
     requirements: job.requirements ?? [],
+    isDemo: job.isDemo ?? false,
   };
 }
 
@@ -63,8 +67,33 @@ function toReceipt(
   };
 }
 
-/** Real Phase 1 operational-data adapter. Editorial content stays on mock data. */
+/** Real Phase 1 adapter backed by the Express/PostgreSQL API. */
 export const httpAdapter = {
+  async listArticles(filters = {}, options) {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== "") params.set(key, String(value));
+    });
+
+    const response = await apiFetch<ApiSuccessEnvelope<ApiArticleList>>(
+      `/articles${params.size ? `?${params}` : ""}`,
+      { signal: options?.signal },
+    );
+    return response.data;
+  },
+
+  async getArticle(slug, options) {
+    try {
+      const response = await apiFetch<ApiSuccessEnvelope<Article>>(
+        `/articles/${encodeURIComponent(slug)}`,
+        { signal: options?.signal },
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return null;
+      throw error;
+    }
+  },
   async listJobs(filters = {}, options) {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
@@ -132,6 +161,8 @@ export const httpAdapter = {
   },
 } satisfies Pick<
   SiteDataAdapter,
+  | "listArticles"
+  | "getArticle"
   | "listJobs"
   | "getJob"
   | "submitJobApplication"
