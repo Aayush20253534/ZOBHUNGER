@@ -834,3 +834,86 @@
     margin-top: 0.5rem;
   }
 }
+
+/* Solutions overview hero: match the compact, top-aligned treatment used by
+   the Business and Workers landing pages on desktop. */
+@media (min-width: 960px) {
+  .zb-page-content .zb-solutions-overview-hero {
+    align-items: start;
+    grid-template-columns: minmax(0, 1.34fr) minmax(24rem, 0.86fr);
+    gap: clamp(2.25rem, 3.8vw, 4rem);
+  }
+
+  .zb-page-content .zb-solutions-overview-hero .zb-page-heading {
+    padding-top: 0.35rem;
+  }
+
+  .zb-page-content .zb-solutions-overview-hero .zb-page-heading h1 {
+    font-size: clamp(3rem, 4.35vw, 3.9rem);
+  }
+
+  .zb-page-content .zb-solutions-overview-hero .zb-page-description {
+    max-width: 44rem;
+    margin-top: 1rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .zb-page-content .zb-solutions-overview-hero .zb-page-actions {
+    margin-top: 1.25rem;
+  }
+
+  .zb-page-content .zb-solutions-overview-hero .zb-intro-panel {
+    align-self: start;
+    justify-self: end;
+    width: 100%;
+    max-width: 36rem;
+    padding: 1.35rem;
+  }
+
+  .zb-solutions-overview-hero .zb-intro-panel-top {
+    gap: 0.75rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .zb-solutions-overview-hero .zb-icon-tile {
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+
+  .zb-solutions-overview-hero .zb-icon-tile svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .zb-solutions-overview-hero .zb-intro-panel h2 {
+    font-size: clamp(1.35rem, 1.75vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .zb-solutions-overview-hero .zb-intro-panel-description {
+    margin-top: 0.65rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .zb-solutions-overview-hero .zb-intro-panel dl {
+    gap: 0.55rem;
+    margin-top: 0.95rem;
+  }
+
+  .zb-solutions-overview-hero .zb-intro-panel dl > div {
+    padding: 0.68rem 0.85rem;
+  }
+
+  .zb-solutions-overview-hero .zb-intro-panel dt {
+    gap: 0.55rem;
+    font-size: 0.92rem;
+  }
+
+  .zb-solutions-overview-hero .zb-intro-panel dd {
+    margin-top: 0.18rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+}
