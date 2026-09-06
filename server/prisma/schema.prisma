@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Draft Phase 1 models. Review before running the first migration.
+model WorkforceRequirement {
+  id               String   @id @default(cuid())
+  companyName      String
+  contactPerson    String
+  businessEmail    String
+  mobileNumber     String
+  industry         String
+  serviceRequired  String
+  workforceCount   Int
+  locations        String[]
+  projectDuration  String
+  expectedStartAt  DateTime?
+  details          String
+  createdAt        DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Enquiry {
+  id              String   @id @default(cuid())
+  name            String
+  companyName     String?
+  email           String
+  phone           String
+  serviceRequired String
+  message         String
+  createdAt       DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  location    String
+  category    String
+  jobType     String
+  description String
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, location, category])
+}
