@@ -1,6 +1,21 @@
-import { Client } from "node-mailjet";
+import { createRequire } from "node:module";
 import { env } from "../config/env.js";
 import { logger } from "../utils/logger.js";
+
+const require = createRequire(import.meta.url);
+
+type MailjetClient = {
+  post(resource: string, config?: { version?: string }): {
+    request(data: unknown): Promise<unknown>;
+  };
+};
+
+type MailjetConstructor = new (options: {
+  apiKey: string;
+  apiSecret: string;
+}) => MailjetClient;
+
+const Mailjet = require("node-mailjet") as MailjetConstructor;
 
 interface OperationalEmail {
   subject: string;
@@ -31,7 +46,7 @@ export async function sendOperationalEmail(input: OperationalEmail) {
   }
 
   try {
-    const client = new Client({
+    const client = new Mailjet({
       apiKey: env.MAILJET_API_KEY as string,
       apiSecret: env.MAILJET_SECRET_KEY as string,
     });
