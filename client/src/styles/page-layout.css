@@ -984,3 +984,131 @@
     margin-top: clamp(1.75rem, 2.6vw, 2.4rem);
   }
 }
+
+/* Solution detail heroes: keep all seven service pages balanced on laptop and
+   desktop screens. The copy remains prominent, but the brief no longer grows
+   tall enough to dominate the first viewport. */
+@media (min-width: 960px) {
+  .zb-page-content .zb-solution-hero {
+    align-items: start;
+    grid-template-columns: minmax(0, 1.34fr) minmax(24rem, 0.86fr);
+    gap: clamp(2.25rem, 3.8vw, 4rem);
+    margin-top: -0.2rem;
+  }
+
+  .zb-page-content .zb-solution-hero .zb-page-heading {
+    padding-top: 0.4rem;
+  }
+
+  .zb-page-content .zb-solution-hero .zb-page-heading h1 {
+    max-width: 14ch;
+    font-size: clamp(3rem, 4.35vw, 3.9rem);
+    line-height: 1.08;
+    letter-spacing: -0.045em;
+  }
+
+  .zb-page-content .zb-solution-hero .zb-page-description {
+    max-width: 44rem;
+    margin-top: 1rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .zb-page-content .zb-solution-hero .zb-page-actions {
+    margin-top: 1.25rem;
+  }
+
+  .zb-page-content .zb-solution-hero .zb-intro-panel {
+    align-self: start;
+    justify-self: end;
+    width: 100%;
+    max-width: 34.5rem;
+    padding: 1.2rem 1.25rem;
+    transform: translateY(-0.4rem);
+  }
+
+  .zb-solution-hero .zb-intro-panel-top {
+    gap: 0.7rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .zb-solution-hero .zb-icon-tile {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .zb-solution-hero .zb-icon-tile svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .zb-solution-hero .zb-intro-panel h2 {
+    font-size: clamp(1.4rem, 1.8vw, 1.65rem);
+    line-height: 1.18;
+  }
+
+  .zb-solution-hero .zb-intro-panel-description {
+    margin-top: 0.55rem;
+    font-size: 0.94rem;
+    line-height: 1.48;
+  }
+
+  .zb-solution-hero .zb-intro-panel dl {
+    gap: 0.45rem;
+    margin-top: 0.8rem;
+  }
+
+  .zb-solution-hero .zb-intro-panel dl > div {
+    padding: 0.58rem 0.78rem;
+  }
+
+  .zb-solution-hero .zb-intro-panel dt {
+    gap: 0.55rem;
+    font-size: 0.93rem;
+    line-height: 1.35;
+  }
+
+  .zb-solution-hero .zb-intro-panel dd {
+    margin-top: 0.12rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .zb-page-content .zb-solution-hero + .zb-solution-jump-nav {
+    margin-top: 1.15rem;
+  }
+
+  .zb-page-content .zb-solutions .zb-solution-section {
+    --zb-solution-space: clamp(2.15rem, 3vw, 3rem);
+  }
+
+  .zb-page-content .zb-solution-service-card {
+    min-height: 100%;
+    padding: 1.25rem;
+  }
+
+  .zb-page-content .zb-solution-service-card h3 {
+    font-size: 1.12rem;
+    line-height: 1.4;
+  }
+
+  .zb-page-content .zb-solution-service-card p {
+    font-size: 0.98rem;
+    line-height: 1.62;
+  }
+}
+
+@media (min-width: 960px) and (max-width: 1180px) {
+  .zb-page-content .zb-solution-hero {
+    grid-template-columns: minmax(0, 1.2fr) minmax(22rem, 0.8fr);
+    gap: 2rem;
+  }
+
+  .zb-page-content .zb-solution-hero .zb-page-heading h1 {
+    font-size: clamp(2.75rem, 4.4vw, 3.45rem);
+  }
+
+  .zb-page-content .zb-solution-hero .zb-intro-panel {
+    max-width: 32rem;
+  }
+}
