@@ -22,7 +22,7 @@ export function generateMetadata() {
     ...getPageMetadata(
       "Blog & Insights",
       "Practical guides to hiring, workforce management, sales and business execution.",
-      "/blog",
+      "/blogs",
     ),
     ...(getEditorialDataMode() === "mock"
       ? { robots: { index: false, follow: false } }
@@ -98,7 +98,7 @@ export default async function BlogPage({
         id="insights-search"
         aria-label="Search and filter insights"
       >
-        <form action="/blog" method="get" className="zb-insights-search">
+        <form action="/blogs" method="get" className="zb-insights-search">
           <div className="zb-field">
             <label htmlFor="insight-query">Search insights</label>
             <Input
@@ -120,7 +120,7 @@ export default async function BlogPage({
             Search
           </ActionButton>
           {(filters.query || filters.category) && (
-            <ActionLink href="/blog" variant="text">
+            <ActionLink href="/blogs" variant="text">
               Clear filters
             </ActionLink>
           )}

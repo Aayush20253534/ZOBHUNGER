@@ -8,7 +8,7 @@ export default function NotFound() {
         eyebrow="Guide unavailable"
         title="This guide isn’t available."
         description="The link may have changed, or the guide may no longer be published."
-        actions={<ActionLink href="/blog">Explore all insights</ActionLink>}
+        actions={<ActionLink href="/blogs">Explore all insights</ActionLink>}
       />
     </div>
   );

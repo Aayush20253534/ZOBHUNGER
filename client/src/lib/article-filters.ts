@@ -28,5 +28,5 @@ export function articlesHref(filters: ArticleFilters = {}) {
   }
   if (filters.page && Number.isSafeInteger(filters.page) && filters.page > 1)
     params.set("page", String(Math.min(filters.page, 100000)));
-  return params.size ? `/blog?${params}` : "/blog";
+  return params.size ? `/blogs?${params}` : "/blogs";
 }

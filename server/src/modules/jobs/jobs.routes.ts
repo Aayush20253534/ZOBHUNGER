@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { validate } from "../../middlewares/validate.middleware.js";
+import { publicSubmissionRateLimiter } from "../../middlewares/rate-limit.middleware.js";
 import {
   createJobApplicationController,
   getJobController,
@@ -28,6 +29,7 @@ jobsRouter.get(
 
 jobsRouter.post(
   "/:jobId/applications",
+  publicSubmissionRateLimiter,
   validate({
     params: jobApplicationParamsSchema,
     body: createJobApplicationSchema,

@@ -11,6 +11,7 @@ import {
   listPublicJobs,
   submitJobApplication,
 } from "./jobs.service.js";
+import { notifyNewApplication } from "../../services/notification.service.js";
 
 export const listJobsController: RequestHandler = async (_req, res) => {
   const query = res.locals.validated.query as ListJobsQuery;
@@ -30,6 +31,7 @@ export const createJobApplicationController: RequestHandler = async (_req, res) 
   const { jobId } = res.locals.validated.params as JobApplicationParams;
   const input = res.locals.validated.body as CreateJobApplicationInput;
   const application = await submitJobApplication(jobId, input);
+  void notifyNewApplication(application, res.locals.requestId);
 
   res.status(201).json(
     apiSuccessResponse("Your application has been submitted.", application),

@@ -10,7 +10,7 @@ export const navigation: readonly NavigationItem[] = [
   { label: "Solutions", href: "/solutions", group: "solutions" },
   { label: "Industries", href: "/industries", group: "industries" },
   { label: "Technology", href: "/technology" },
-  { label: "Insights", href: "/blog" },
+  { label: "Blogs", href: "/blogs" },
   { label: "For Business", href: "/for-business" },
   { label: "For Workers", href: "/for-workers" },
   { label: "About", href: "/about" },

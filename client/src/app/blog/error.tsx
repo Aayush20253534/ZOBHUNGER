@@ -12,7 +12,7 @@ export default function ErrorPage({ reset }: { reset: () => void }) {
       </FeedbackMessage>
       <div className="zb-page-actions">
         <ActionButton onClick={reset}>Try again</ActionButton>
-        <ActionLink href="/blog" variant="secondary">
+        <ActionLink href="/blogs" variant="secondary">
           Back to insights
         </ActionLink>
       </div>

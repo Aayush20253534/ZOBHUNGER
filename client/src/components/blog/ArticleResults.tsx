@@ -39,7 +39,7 @@ export function ArticleResults({
           title="No guides match your search"
           description="Try another keyword or choose a different topic."
           action={
-            <ActionLink href="/blog" variant="secondary">
+            <ActionLink href="/blogs" variant="secondary">
               Clear filters
             </ActionLink>
           }

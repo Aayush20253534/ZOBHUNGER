@@ -2,8 +2,9 @@ import type { ErrorRequestHandler } from "express";
 import { env } from "../config/env.js";
 import { apiErrorResponse } from "../utils/api-response.js";
 import { HttpError } from "../utils/http-error.js";
+import { logger } from "../utils/logger.js";
 
-export const errorHandler: ErrorRequestHandler = (error: unknown, _req, res, next) => {
+export const errorHandler: ErrorRequestHandler = (error: unknown, req, res, next) => {
   if (res.headersSent) {
     next(error);
     return;
@@ -28,7 +29,11 @@ export const errorHandler: ErrorRequestHandler = (error: unknown, _req, res, nex
     return;
   }
 
-  console.error(error);
+  logger.error("request.failed", error, {
+    requestId: res.locals.requestId,
+    method: req.method,
+    path: req.originalUrl,
+  });
 
   res.status(500).json(
     apiErrorResponse("Internal server error", {

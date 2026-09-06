@@ -328,3 +328,44 @@
     grid-column: span 2;
   }
 }
+
+/* Compact catalogue sizing for desktop job discovery. */
+.zb-page-content .zb-jobs-heading .zb-page-heading {
+  max-width: 46rem;
+  margin-bottom: 0.8rem;
+}
+.zb-page-content .zb-jobs-heading .zb-page-heading h1 {
+  font-size: clamp(2.05rem, 3vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+.zb-page-content .zb-jobs-heading .zb-page-description {
+  max-width: 44rem;
+  margin-top: 0.8rem;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.zb-page-content .zb-job-filters {
+  padding: clamp(1rem, 2vw, 1.4rem);
+}
+.zb-page-content .zb-job-results {
+  margin-top: 1.5rem;
+}
+.zb-page-content .zb-job-results-grid .zb-card {
+  padding: 1.25rem;
+}
+.zb-page-content .zb-job-results-grid .zb-card-title {
+  font-size: clamp(1.15rem, 1.7vw, 1.4rem);
+}
+.zb-page-content .zb-job-results-grid .zb-card-copy {
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+@media (min-width: 960px) {
+  .zb-page-content .zb-jobs-heading {
+    padding-top: 0.15rem;
+  }
+  .zb-page-content .zb-jobs-heading .zb-page-heading h1 {
+    font-size: clamp(2.25rem, 2.8vw, 2.9rem);
+  }
+}

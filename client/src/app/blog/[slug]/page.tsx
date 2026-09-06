@@ -120,7 +120,7 @@ export default async function ArticlePage({ params }: Props) {
           label="Explore solutions"
         />
       </div>
-      <ActionLink href="/blog" variant="text" className="zb-back-to-insights">
+      <ActionLink href="/blogs" variant="text" className="zb-back-to-insights">
         <ArrowLeft aria-hidden="true" className="size-4" />
         Back to all insights
       </ActionLink>
