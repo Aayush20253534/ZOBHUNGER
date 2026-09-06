@@ -1,4 +1,4 @@
-import { ArrowUpRight, Layers3, MessagesSquare } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Layers3, MessagesSquare } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
@@ -32,7 +32,18 @@ export function SolutionsOverview() {
               </ActionLink>
             </>
           }
-        />
+        >
+          <div className="zb-solutions-hero-proof" aria-label="How ZOBHUNGER combines services">
+            <div>
+              <CheckCircle2 aria-hidden="true" />
+              <span><strong>One brief</strong> across roles and locations</span>
+            </div>
+            <div>
+              <CheckCircle2 aria-hidden="true" />
+              <span><strong>Flexible execution</strong> from hiring to field operations</span>
+            </div>
+          </div>
+        </PageShell>
         <IntroPanel
           id="solutions-brief-heading"
           icon={<Layers3 />}

@@ -917,3 +917,70 @@
     line-height: 1.45;
   }
 }
+
+
+/* Solutions overview final balance: use the lower-left hero space for concise
+   service proof, while keeping the right brief fully visible on laptop screens. */
+.zb-solutions-hero-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.55rem;
+  max-width: 44rem;
+  margin-top: 1.15rem;
+}
+.zb-solutions-hero-proof > div {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  color: var(--zb-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.zb-solutions-hero-proof svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  color: var(--zb-action);
+}
+.zb-solutions-hero-proof strong {
+  color: var(--zb-ink);
+  font-weight: 700;
+}
+@media (min-width: 700px) {
+  .zb-solutions-hero-proof {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 1.25rem;
+  }
+}
+@media (min-width: 960px) {
+  .zb-page-content .zb-solutions-overview-hero {
+    margin-top: -0.35rem;
+  }
+  .zb-page-content .zb-solutions-overview-hero .zb-intro-panel {
+    transform: translateY(-0.55rem);
+    max-width: 34.5rem;
+    padding: 1.15rem 1.2rem;
+  }
+  .zb-solutions-overview-hero .zb-intro-panel-top {
+    margin-bottom: 0.6rem;
+  }
+  .zb-solutions-overview-hero .zb-intro-panel-description {
+    margin-top: 0.5rem;
+    line-height: 1.42;
+  }
+  .zb-solutions-overview-hero .zb-intro-panel dl {
+    gap: 0.42rem;
+    margin-top: 0.7rem;
+  }
+  .zb-solutions-overview-hero .zb-intro-panel dl > div {
+    padding: 0.52rem 0.75rem;
+  }
+  .zb-solutions-overview-hero .zb-intro-panel dd {
+    margin-top: 0.1rem;
+    line-height: 1.35;
+  }
+  .zb-page-content .zb-solutions-overview-hero + .zb-solution-section {
+    margin-top: clamp(1.75rem, 2.6vw, 2.4rem);
+  }
+}
