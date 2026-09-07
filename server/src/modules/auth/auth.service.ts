@@ -32,8 +32,8 @@ export async function getAuthenticatedUser(id: string) {
 export async function loginPlacementCellUser(input: LoginInput) {
   const user = await findUserByEmail(input.email);
   if (!user || !(await verifyPassword(user.passwordHash, input.password))) throw new HttpError(401, "Invalid email or password", { code: "INVALID_CREDENTIALS" });
-  if (user.role !== "PLACEMENT_CELL") throw new HttpError(403, "This login is reserved for approved Placement Cell partners", { code: "PLACEMENT_CELL_LOGIN_REQUIRED" });
-  if (!user.isActive) throw new HttpError(403, "Activate your approved Placement Cell account before signing in", { code: "PLACEMENT_CELL_ACCOUNT_INACTIVE" });
+  if (user.role !== "PLACEMENT_CELL") throw new HttpError(403, "This login is reserved for approved institution partners", { code: "PLACEMENT_CELL_LOGIN_REQUIRED" });
+  if (!user.isActive) throw new HttpError(403, "Activate your approved institution partner account before signing in", { code: "PLACEMENT_CELL_ACCOUNT_INACTIVE" });
   const updated = await markLogin(user.id);
   return safeUser(updated);
 }

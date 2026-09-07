@@ -80,7 +80,7 @@ export const listPlacementCellApplicationsController: RequestHandler = async (_r
   const data = await listPlacementCellApplicationsForAdmin(
     res.locals.validated.query as ListPlacementCellApplicationsQuery,
   );
-  res.status(200).json(apiSuccessResponse("Placement Cell applications retrieved", data));
+  res.status(200).json(apiSuccessResponse("Institution partnership applications retrieved", data));
 };
 
 export const downloadPartnerResumeController: RequestHandler = async (_req, res) => {
@@ -163,7 +163,7 @@ export const updatePlacementCellApplicationStatusController: RequestHandler = as
     auditContext(req, adminId(res)),
   );
   res.status(200).json(apiSuccessResponse(
-    result.changed ? "Placement Cell application updated" : "Placement Cell application unchanged",
+    result.changed ? "Institution partnership application updated" : "Institution partnership application unchanged",
     result.entity,
   ));
 };

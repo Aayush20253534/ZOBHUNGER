@@ -2,7 +2,7 @@ import { PlacementCellPartnership } from "@/components/placement/PlacementCellPa
 import { getPageMetadata } from "@/lib/page-metadata";
 
 export const metadata = getPageMetadata(
-  "Partner With ZOBHUNGER – Placement Cell & Institution",
+  "Placement Cell & Institution Partnership",
   "Connect students with jobs, internships, freelance work, apprenticeships, training and flexible career opportunities through ZOBHUNGER.",
   "/placement-cell-partnership",
 );

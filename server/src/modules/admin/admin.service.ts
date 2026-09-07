@@ -103,16 +103,16 @@ export async function changePlacementCellApplicationStatus(
   }
 
   const result = await reviewPlacementCellApplicationWithAudit(id, status, context, provisioning);
-  if (result.kind === "not-found") throw new HttpError(404, "Placement Cell application not found", { code: "PLACEMENT_CELL_APPLICATION_NOT_FOUND" });
-  if (result.kind === "already-approved") throw new HttpError(409, "An approved Placement Cell application cannot be moved back to review", { code: "PLACEMENT_CELL_ALREADY_APPROVED" });
+  if (result.kind === "not-found") throw new HttpError(404, "Institution partnership application not found", { code: "PLACEMENT_CELL_APPLICATION_NOT_FOUND" });
+  if (result.kind === "already-approved") throw new HttpError(409, "An approved institution partnership application cannot be moved back to review", { code: "PLACEMENT_CELL_ALREADY_APPROVED" });
   if (result.kind === "email-conflict") throw new HttpError(409, "A user account already exists for this institution email", { code: "PLACEMENT_CELL_EMAIL_ALREADY_REGISTERED" });
 
   if (result.kind === "updated" && status === PlacementCellApplicationStatus.APPROVED && rawActivationToken) {
     const activationUrl = `${env.CLIENT_ORIGIN.replace(/\/$/, "")}/placement-cell-login?activation=${encodeURIComponent(rawActivationToken)}`;
     await sendOperationalEmail({
       to: result.entity.officialEmail,
-      subject: "ZOBHUNGER Placement Cell partnership approved",
-      text: `Your Placement Cell onboarding request for ${result.entity.institutionName} has been approved. Activate your approved Placement Cell account and set your password using this secure link (valid for 72 hours): ${activationUrl}`,
+      subject: "ZOBHUNGER Placement Cell & Institution Partnership approved",
+      text: `Your Placement Cell & Institution Partnership request for ${result.entity.institutionName} has been approved. Activate your approved institution partner account and set your password using this secure link (valid for 72 hours): ${activationUrl}`,
     });
   }
 

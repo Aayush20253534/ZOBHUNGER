@@ -6,11 +6,11 @@ import type { PlacementCandidateInput, PlacementCandidateQuery } from "./placeme
 
 async function placementCellIdForUser(userId: string) {
   const profile = await findPlacementCellPortalProfile(userId);
-  if (!profile || profile.status !== "APPROVED") throw new HttpError(403, "Approved Placement Cell access is required", { code: "PLACEMENT_CELL_ACCESS_REQUIRED" });
+  if (!profile || profile.status !== "APPROVED") throw new HttpError(403, "Approved institution partner access is required", { code: "PLACEMENT_CELL_ACCESS_REQUIRED" });
   return profile.id;
 }
 function candidateWriteError(error: unknown): never {
-  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") throw new HttpError(409, "A candidate with this email already exists in your Placement Cell", { code: "PLACEMENT_CANDIDATE_EXISTS" });
+  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") throw new HttpError(409, "A candidate with this email already exists in your institution records", { code: "PLACEMENT_CANDIDATE_EXISTS" });
   throw error;
 }
 export async function getPlacementCandidates(userId: string, query: PlacementCandidateQuery) {

@@ -181,7 +181,7 @@ export function AdminDashboard() {
               icon: Handshake,
             },
             {
-              label: "Placement cells",
+              label: "Institution partners",
               value: data.placementCellApplications.total,
               icon: Building2,
             },
@@ -202,7 +202,7 @@ export function AdminDashboard() {
       });
       await load();
     } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : "Unable to update the Placement Cell application.");
+      setError(caught instanceof ApiError ? caught.message : "Unable to update the institution partnership application.");
     }
   }
 
@@ -341,7 +341,7 @@ export function AdminDashboard() {
           )}
         </AdminPanel>
 
-        <AdminPanel title="Placement Cell onboarding">
+        <AdminPanel title="Placement Cell & Institution onboarding">
           {data.placementCellApplications.items.length === 0 ? (
             <EmptyRow />
           ) : (

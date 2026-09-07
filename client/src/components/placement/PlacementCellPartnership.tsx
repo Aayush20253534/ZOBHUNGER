@@ -51,19 +51,19 @@ export function PlacementCellPartnership() {
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },
-          { label: "Placement Cell Partnership" },
+          { label: "Placement Cell & Institution Partnership" },
         ]}
       />
 
       <div className="zb-placement-hero">
         <PageShell
-          eyebrow="Partner With ZOBHUNGER – Placement Cell & Institution"
+          eyebrow="Placement Cell & Institution Partnership"
           title="Empower Your Students With Career & Earning Opportunities"
-          description="ZOBHUNGER partners with Colleges, Universities, Training Institutes and Placement Cells to connect students with suitable employment, internship, apprenticeship, freelance and flexible work opportunities."
+          description="ZOBHUNGER partners with colleges, universities, training institutes and placement teams through one institutional partnership program for jobs, internships, apprenticeships, freelance work and flexible opportunities."
           actions={
             <>
               <ActionLink href="/placement-cell-partnership/apply">
-                Onboard Your Placement Cell
+                Onboard Your Institution
                 <ArrowUpRight aria-hidden="true" className="size-4" />
               </ActionLink>
               <ActionLink
@@ -80,7 +80,7 @@ export function PlacementCellPartnership() {
           <span className="zb-placement-hero-icon" aria-hidden="true">
             <GraduationCap />
           </span>
-          <span className="zb-eyebrow">Institution partnership</span>
+          <span className="zb-eyebrow">Placement Cell & Institution Partnership</span>
           <h2>Connect your campus to more ways of working.</h2>
           <p>
             Jobs, internships, freelance work, apprenticeships, training and
@@ -103,7 +103,7 @@ export function PlacementCellPartnership() {
           id="placement-process-title"
           eyebrow="How it works"
           title="A clear path from institution onboarding to opportunity matching."
-          description="The Placement Cell remains the institutional point of coordination while ZOBHUNGER provides access to relevant opportunities after approval."
+          description="The institution remains the point of coordination while ZOBHUNGER provides access to relevant opportunities after approval."
         />
         <ol className="zb-placement-steps">
           {placementSteps.map((step, index) => (
@@ -185,10 +185,10 @@ export function PlacementCellPartnership() {
 
       <section className="zb-placement-section zb-placement-portal" aria-labelledby="placement-portal-title">
         <div className="zb-placement-portal-copy">
-          <span className="zb-eyebrow">Placement Cell Portal</span>
+          <span className="zb-eyebrow">Institution Partner Portal</span>
           <h2 id="placement-portal-title">One workspace for candidates and opportunities.</h2>
           <p>
-            Once approved, authorized Placement Cell representatives receive dedicated portal access to manage candidate records and follow relevant opportunities.
+            Once approved, authorized institution representatives receive dedicated portal access to manage candidate records and follow relevant opportunities.
           </p>
           <ul className="zb-placement-feature-list">
             {portalFeatures.map((feature) => (
@@ -196,15 +196,15 @@ export function PlacementCellPartnership() {
             ))}
           </ul>
           <ActionLink href="/placement-cell-login" variant="secondary">
-            Placement Cell Login
+            Institution Partner Login
           </ActionLink>
         </div>
 
-        <div className="zb-placement-dashboard" aria-label="Placement Cell dashboard preview">
+        <div className="zb-placement-dashboard" aria-label="Institution partner dashboard preview">
           <div className="zb-placement-dashboard-topbar">
             <div>
               <span className="zb-dashboard-mark"><PanelsTopLeft aria-hidden="true" /></span>
-              <div><strong>Placement Cell Portal</strong><span>Institution workspace</span></div>
+              <div><strong>Institution Partner Portal</strong><span>Institution workspace</span></div>
             </div>
             <span className="zb-dashboard-status">Approved partner</span>
           </div>
@@ -227,7 +227,7 @@ export function PlacementCellPartnership() {
           title="Create More Opportunities for Your Students"
           description="Partner with ZOBHUNGER and help connect your students with relevant jobs, internships, apprenticeships, training, certifications and flexible earning opportunities."
           href="/placement-cell-partnership/apply"
-          label="Onboard Your Placement Cell"
+          label="Onboard Your Institution"
         />
       </div>
     </div>

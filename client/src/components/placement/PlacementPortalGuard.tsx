@@ -38,9 +38,9 @@ export function PlacementPortalGuard({ children }: { children: ReactNode }) {
       <main className="zb-placement-portal-access-page">
         <section className="zb-placement-portal-access-card" aria-live="polite">
           <span className="zb-placement-portal-access-icon"><LockKeyhole aria-hidden="true" /></span>
-          <p className="zb-eyebrow">Placement Cell Portal</p>
+          <p className="zb-eyebrow">Institution Partner Portal</p>
           <h1>Checking access</h1>
-          <p>Verifying your approved Placement Cell session.</p>
+          <p>Verifying your approved institution partner session.</p>
         </section>
       </main>
     );
@@ -71,9 +71,9 @@ export function PlacementPortalGuard({ children }: { children: ReactNode }) {
           <span className="zb-placement-portal-access-icon"><LockKeyhole aria-hidden="true" /></span>
           <p className="zb-eyebrow">Portal unavailable</p>
           <h1>Access could not be verified</h1>
-          <p>Please try signing in again before opening the Placement Cell Portal.</p>
+          <p>Please try signing in again before opening the Institution Partner Portal.</p>
           <Link className="zb-button zb-button-primary" href="/placement-cell-login">
-            Placement Cell Login
+            Institution Partner Login
           </Link>
         </section>
       </main>

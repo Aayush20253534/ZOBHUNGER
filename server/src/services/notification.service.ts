@@ -131,12 +131,12 @@ export function notifyNewPlacementCellApplication(
 ) {
   return sendOperationalEmail({
     requestId,
-    subject: `New Placement Cell onboarding: ${application.institutionName}`,
+    subject: `New institution partnership onboarding: ${application.institutionName}`,
     text: [
-      `Placement Cell application ID: ${application.id}`,
+      `Institution partnership application ID: ${application.id}`,
       `Institution: ${application.institutionName}`,
       `Institution type: ${application.institutionType}`,
-      `Placement Cell: ${application.placementCellName}`,
+      `Placement Cell / Career Services: ${application.placementCellName}`,
       `Contact: ${application.contactPersonName} (${application.designation})`,
       `Official email: ${application.officialEmail}`,
       `Phone: ${application.mobileNumber}`,
@@ -145,7 +145,7 @@ export function notifyNewPlacementCellApplication(
       `Courses / departments: ${application.coursesDepartments}`,
       `Preferred opportunities: ${application.preferredOpportunityTypes.join(", ")}`,
       "",
-      "Review and approval are required before Placement Cell portal access is provisioned.",
+      "Review and approval are required before Institution Partner Portal access is provisioned.",
     ].join("\n"),
   });
 }

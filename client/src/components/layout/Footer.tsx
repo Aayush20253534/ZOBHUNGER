@@ -26,7 +26,7 @@ const partnershipLinks = [
     label: "Placement Cell & Institution Partnership",
     href: "/placement-cell-partnership",
   },
-  { label: "Placement Cell Login", href: "/placement-cell-login" },
+  { label: "Institution Partner Login", href: "/placement-cell-login" },
 ] as const;
 
 const resourceLinks = [

@@ -1,13 +1,13 @@
 export const placementSteps = [
   {
-    title: "Register Your Placement Cell",
+    title: "Register Your Institution",
     description:
       "College, University or Institution submits its details through the onboarding process.",
   },
   {
     title: "Get Portal Login Access",
     description:
-      "After approval, the Placement Cell receives dedicated access to the ZOBHUNGER Placement Cell Portal.",
+      "After approval, the institution receives dedicated access to the ZOBHUNGER Institution Partner Portal.",
   },
   {
     title: "Upload Candidate Details",

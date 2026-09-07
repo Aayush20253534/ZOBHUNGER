@@ -5,11 +5,11 @@ import { activatePlacementCellAccount, getPlacementCellPortalProfile } from "./p
 
 export const activatePlacementCellController: RequestHandler = async (_req, res) => {
   const data = await activatePlacementCellAccount(res.locals.validated.body as ActivatePlacementCellInput);
-  res.status(200).json(apiSuccessResponse("Placement Cell account activated", data));
+  res.status(200).json(apiSuccessResponse("Institution partner account activated", data));
 };
 
 export const placementCellPortalProfileController: RequestHandler = async (_req, res) => {
   const user = res.locals.authUser as { id: string };
   const profile = await getPlacementCellPortalProfile(user.id);
-  res.status(200).json(apiSuccessResponse("Placement Cell profile retrieved", { profile }));
+  res.status(200).json(apiSuccessResponse("Institution partner profile retrieved", { profile }));
 };

@@ -14,7 +14,7 @@ import type { PlacementApplicationQuery, PlacementOpportunityApplicationInput, P
 async function approvedPlacementCellForUser(userId: string) {
   const profile = await findPlacementCellPortalProfile(userId);
   if (!profile || profile.status !== "APPROVED") {
-    throw new HttpError(403, "Approved Placement Cell access is required", { code: "PLACEMENT_CELL_ACCESS_REQUIRED" });
+    throw new HttpError(403, "Approved institution partner access is required", { code: "PLACEMENT_CELL_ACCESS_REQUIRED" });
   }
   return profile;
 }

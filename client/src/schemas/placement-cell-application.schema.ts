@@ -10,7 +10,7 @@ export const opportunityTypeValues = [
 export const placementCellApplicationSchema = z.object({
   institutionName: z.string().trim().min(2, "Enter the institution name").max(200),
   institutionType: z.enum(["college", "university", "training-institute", "other"], { required_error: "Select an institution type" }),
-  placementCellName: z.string().trim().min(2, "Enter the Placement Cell name").max(180),
+  placementCellName: z.string().trim().min(2, "Enter the Placement Cell or Career Services name").max(180),
   contactPersonName: z.string().trim().min(2, "Enter the contact person's name").max(120),
   designation: z.string().trim().min(2, "Enter the designation").max(120),
   officialEmail: z.string().trim().email("Enter a valid official email address").max(254),

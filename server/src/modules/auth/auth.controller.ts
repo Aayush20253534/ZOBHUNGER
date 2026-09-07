@@ -47,5 +47,5 @@ export const logoutController: RequestHandler = async (_req, res) => {
 export const placementCellLoginController: RequestHandler = async (_req, res) => {
   const user = await loginPlacementCellUser(res.locals.validated.body as LoginInput);
   setAuthCookie(res, user);
-  res.status(200).json(apiSuccessResponse("Placement Cell login successful", { user }));
+  res.status(200).json(apiSuccessResponse("Institution partner login successful", { user }));
 };

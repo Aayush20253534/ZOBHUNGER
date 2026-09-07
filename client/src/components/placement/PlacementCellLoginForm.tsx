@@ -21,11 +21,11 @@ export function PlacementCellLoginForm() {
     } finally { setSubmitting(false); }
   }
   return <form className="zb-login-form" onSubmit={submit}>
-    <div className="zb-login-form-heading"><span className="zb-icon-tile"><Building2 /></span><div><p className="zb-eyebrow">Approved partners only</p><h2>Placement Cell Login</h2></div></div>
+    <div className="zb-login-form-heading"><span className="zb-icon-tile"><Building2 /></span><div><p className="zb-eyebrow">Approved partners only</p><h2>Institution Partner Login</h2></div></div>
     <label><span>Official email address</span><input type="email" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} required /></label>
     <label><span>Password</span><input type="password" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} required /></label>
     {error && <p className="zb-login-error" role="alert">{error}</p>}
-    <button className="zb-login-submit" disabled={submitting}><LogIn />{submitting ? "Signing in..." : "Sign in to Placement Cell Portal"}</button>
+    <button className="zb-login-submit" disabled={submitting}><LogIn />{submitting ? "Signing in..." : "Sign in to Institution Partner Portal"}</button>
     <p className="zb-login-security-note">Access is available only after ZOBHUNGER approves the institution and the account activation is completed.</p>
   </form>;
 }

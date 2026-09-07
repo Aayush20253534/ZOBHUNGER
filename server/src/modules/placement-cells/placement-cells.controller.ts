@@ -9,7 +9,7 @@ export const createPlacementCellApplicationController: RequestHandler = async (_
   const application = await submitPlacementCellApplication(input);
   void notifyNewPlacementCellApplication({ ...application, ...input }, res.locals.requestId);
   res.status(201).json(apiSuccessResponse(
-    "Your Placement Cell onboarding request has been submitted for review.",
+    "Your Placement Cell & Institution Partnership request has been submitted for review.",
     application,
   ));
 };

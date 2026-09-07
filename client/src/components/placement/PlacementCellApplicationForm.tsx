@@ -50,11 +50,11 @@ export function PlacementCellApplicationForm() {
 
   return <form className="zb-placement-application-form" noValidate aria-busy={busy} onSubmit={handleSubmit(submit)}>
     {status.type === "error" && <FeedbackMessage tone="error" title="We couldn't submit your request">{status.message}</FeedbackMessage>}
-    <fieldset disabled={busy} className="zb-form-fieldset"><legend className="sr-only">Placement Cell onboarding form</legend>
+    <fieldset disabled={busy} className="zb-form-fieldset"><legend className="sr-only">Institution partnership onboarding form</legend>
       <fieldset className="zb-form-group"><legend><span>01</span> Institution details</legend><div className="zb-form-grid">
         <TextField label="Institution Name" required autoComplete="organization" error={errors.institutionName?.message} {...register("institutionName")} />
         <Controller name="institutionType" control={control} render={({field}) => <SelectField label="Institution Type" required name={field.name} value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} inputRef={field.ref} disabled={busy} options={[{value:"college",label:"College"},{value:"university",label:"University"},{value:"training-institute",label:"Training Institute"},{value:"other",label:"Other Institution"}]} error={errors.institutionType?.message} />} />
-        <TextField label="Placement Cell Name" required error={errors.placementCellName?.message} {...register("placementCellName")} />
+        <TextField label="Placement Cell / Career Services Name" required error={errors.placementCellName?.message} {...register("placementCellName")} />
         <TextField label="Website" type="url" placeholder="https://institution.edu" error={errors.website?.message} {...register("website")} />
         <TextField label="City" required autoComplete="address-level2" error={errors.city?.message} {...register("city")} />
         <TextField label="State" required autoComplete="address-level1" error={errors.state?.message} {...register("state")} />
@@ -71,8 +71,8 @@ export function PlacementCellApplicationForm() {
       </div><div className="zb-placement-checkbox-field"><span className="zb-placement-checkbox-label">Preferred Opportunity Types <b>*</b></span><div className="zb-placement-checkbox-grid">
         {opportunityOptions.map(([value,label]) => <label key={value}><input type="checkbox" value={value} {...register("preferredOpportunityTypes")} /><span>{label}</span></label>)}
       </div>{errors.preferredOpportunityTypes?.message && <p className="zb-field-error" role="alert">{errors.preferredOpportunityTypes.message}</p>}</div></fieldset>
-      <div className="zb-placement-form-note"><strong>Approval required.</strong><span>Submitting institution details does not create portal access. ZOBHUNGER reviews each request before approved Placement Cell credentials are provisioned.</span></div>
-      <div className="zb-form-actions"><ActionButton type="submit" disabled={busy}>{busy ? "Submitting..." : "Submit for Placement Cell Onboarding"}</ActionButton></div>
+      <div className="zb-placement-form-note"><strong>Approval required.</strong><span>Submitting institution details does not create portal access. ZOBHUNGER reviews each request before approved institution partner credentials are provisioned.</span></div>
+      <div className="zb-form-actions"><ActionButton type="submit" disabled={busy}>{busy ? "Submitting..." : "Submit Institution Partnership Request"}</ActionButton></div>
     </fieldset>
   </form>;
 }
