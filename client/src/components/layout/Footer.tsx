@@ -6,6 +6,7 @@ import { solutions } from "@/data/solutions";
 const companyLinks = [
   { label: "About", href: "/about" },
   { label: "Presence", href: "/presence" },
+  { label: "Careers", href: "/careers" },
   { label: "Brand experience", href: "/brand-experience" },
   { label: "Case studies", href: "/case-studies" },
   { label: "Contact", href: "/contact" },

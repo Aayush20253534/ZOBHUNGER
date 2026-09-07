@@ -130,26 +130,6 @@ export function About() {
             </article>
           ))}
         </div>
-        <div className="zb-compliance-proof">
-          <div>
-            <span className="zb-eyebrow">Supporting document</span>
-            <h3>Corporate Capability Statement</h3>
-            <p>
-              Review the signed corporate capability statement for company
-              credentials, operating profile and supporting information.
-            </p>
-          </div>
-          <ActionLink
-            href={capabilityStatement.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="secondary"
-          >
-            <FileText className="size-4" aria-hidden="true" />
-            {capabilityStatement.label}
-            <ArrowUpRight className="size-4" aria-hidden="true" />
-          </ActionLink>
-        </div>
       </section>
       <section
         className="zb-company-section zb-company-note"

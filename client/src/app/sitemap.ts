@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/for-workers",
     "/about",
     "/presence",
+    "/careers",
     "/blogs",
     "/brand-experience",
     "/case-studies",
