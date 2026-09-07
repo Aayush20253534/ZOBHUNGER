@@ -285,6 +285,67 @@
   gap: 1.5rem;
   align-items: start;
 }
+
+.zb-company-form-main {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.zb-company-contact-card {
+  display: grid;
+  gap: 1.1rem;
+  padding: clamp(1.25rem, 2.4vw, 1.75rem);
+  border: 1px solid var(--zb-border);
+  border-radius: var(--zb-radius);
+  background: var(--zb-surface);
+}
+
+.zb-company-contact-heading {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.zb-company-contact-heading h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.zb-business-contacts-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  margin: 0;
+}
+
+.zb-business-contacts-grid > div {
+  min-width: 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--zb-border);
+}
+
+.zb-business-contacts-grid dt {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--zb-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.zb-business-contacts-grid dd {
+  margin: 0.2rem 0 0;
+}
+
+@media (min-width: 720px) {
+  .zb-business-contacts-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr) minmax(0, 1.35fr);
+    gap: 1.25rem;
+  }
+}
+
 .zb-company-form-panel {
   min-width: 0;
   padding: clamp(1.25rem, 3vw, 2rem);
