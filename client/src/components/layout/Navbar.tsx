@@ -21,9 +21,12 @@ export function Navbar() {
       </a>
       <header className="zb-header">
         <div className="zb-container zb-header-inner">
-          <Link href="/" className="zb-wordmark" aria-label="ZOBHUNGER home">
-            ZOB<span>HUNGER</span>
-          </Link>
+          <div className="zb-header-brand">
+            <Link href="/" className="zb-wordmark" aria-label="ZOBHUNGER home">
+              ZOB<span>HUNGER</span>
+            </Link>
+            <span className="zb-header-tagline">Hire. Deploy. Deliver.</span>
+          </div>
 
           <nav className="zb-desktop-nav" aria-label="Main navigation">
             {navigation.map((item) => {
