@@ -9,6 +9,7 @@ import { login } from "@/services/auth.service";
 function destinationForRole(role: "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL") {
   if (role === "ADMIN") return "/admin";
   if (role === "BUSINESS") return "/for-business";
+  if (role === "PLACEMENT_CELL") return "/placement-portal";
   return "/for-workers";
 }
 

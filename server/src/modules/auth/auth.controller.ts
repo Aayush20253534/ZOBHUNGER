@@ -3,7 +3,7 @@ import { env } from "../../config/env.js";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import { signAccessToken } from "../../utils/jwt.js";
 import type { LoginInput, RegisterInput } from "./auth.schema.js";
-import { loginUser, registerUser } from "./auth.service.js";
+import { loginPlacementCellUser, loginUser, registerUser } from "./auth.service.js";
 
 function authCookieOptions() {
   const production = env.NODE_ENV === "production";
@@ -42,4 +42,10 @@ export const meController: RequestHandler = async (_req, res) => {
 export const logoutController: RequestHandler = async (_req, res) => {
   res.clearCookie(env.AUTH_COOKIE_NAME, authCookieOptions());
   res.status(200).json(apiSuccessResponse("Logged out", { loggedOut: true }));
+};
+
+export const placementCellLoginController: RequestHandler = async (_req, res) => {
+  const user = await loginPlacementCellUser(res.locals.validated.body as LoginInput);
+  setAuthCookie(res, user);
+  res.status(200).json(apiSuccessResponse("Placement Cell login successful", { user }));
 };

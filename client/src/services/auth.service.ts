@@ -21,3 +21,10 @@ export async function logout() {
     method: "POST",
   });
 }
+
+export async function placementCellLogin(email: string, password: string) {
+  return apiFetch<ApiSuccessEnvelope<AuthResponse>>("/auth/placement-cell-login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}

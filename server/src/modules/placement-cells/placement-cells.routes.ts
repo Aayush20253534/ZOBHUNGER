@@ -1,13 +1,14 @@
 import { Router } from "express";
-import { publicSubmissionRateLimiter } from "../../middlewares/rate-limit.middleware.js";
+import { requireAuth } from "../../middlewares/auth.middleware.js";
+import { requireRole } from "../../middlewares/role.middleware.js";
+import { publicSubmissionRateLimiter, authRateLimiter } from "../../middlewares/rate-limit.middleware.js";
 import { validate } from "../../middlewares/validate.middleware.js";
+import { activatePlacementCellController, placementCellPortalProfileController } from "./placement-cell-access.controller.js";
+import { activatePlacementCellSchema } from "./placement-cell-access.schema.js";
 import { createPlacementCellApplicationController } from "./placement-cells.controller.js";
 import { createPlacementCellApplicationSchema } from "./placement-cells.schema.js";
 
 export const placementCellsRouter = Router();
-placementCellsRouter.post(
-  "/",
-  publicSubmissionRateLimiter,
-  validate({ body: createPlacementCellApplicationSchema }),
-  createPlacementCellApplicationController,
-);
+placementCellsRouter.post("/", publicSubmissionRateLimiter, validate({ body: createPlacementCellApplicationSchema }), createPlacementCellApplicationController);
+placementCellsRouter.post("/activate", authRateLimiter, validate({ body: activatePlacementCellSchema }), activatePlacementCellController);
+placementCellsRouter.get("/portal/profile", requireAuth, requireRole("PLACEMENT_CELL"), placementCellPortalProfileController);

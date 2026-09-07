@@ -85,6 +85,9 @@ export function Footer() {
               <li>
                 <Link href="/login">Portal access</Link>
               </li>
+              <li>
+                <Link href="/placement-cell-login">Placement Cell Login</Link>
+              </li>
             </ul>
           </nav>
         </div>

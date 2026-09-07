@@ -197,7 +197,7 @@ export function PlacementCellPartnership() {
               <li key={feature}><Check aria-hidden="true" />{feature}</li>
             ))}
           </ul>
-          <ActionLink href="/login" variant="secondary">
+          <ActionLink href="/placement-cell-login" variant="secondary">
             Placement Cell Login
           </ActionLink>
         </div>
