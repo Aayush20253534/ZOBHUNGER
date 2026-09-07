@@ -810,8 +810,8 @@ body > main[class] {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .zb-footer-grid {
-    grid-template-columns: 1.35fr 1.1fr 0.9fr 0.8fr;
-    gap: 2.5rem;
+    grid-template-columns: 1.35fr 1fr 0.9fr 0.9fr 0.72fr;
+    gap: clamp(1.5rem, 2.2vw, 2.5rem);
   }
 }
 @media (min-width: 1200px) {

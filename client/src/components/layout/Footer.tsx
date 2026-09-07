@@ -63,22 +63,27 @@ export function Footer() {
                 <Link href="/become-a-partner">Become a Partner</Link>
               </li>
               <li>
-                <Link href="/technology">Our technology vision</Link>
-              </li>
-              <li>
                 <Link href="/for-workers">For workers</Link>
               </li>
               <li>
                 <Link href="/jobs">Careers & jobs</Link>
               </li>
               <li>
-                <Link href="/blog">Blog & insights</Link>
+                <Link href="/contact">Contact</Link>
+              </li>
+            </ul>
+          </nav>
+          <nav aria-label="Resources in footer">
+            <h2>Resources</h2>
+            <ul>
+              <li>
+                <Link href="/technology">Technology vision</Link>
+              </li>
+              <li>
+                <Link href="/blogs">Blog & insights</Link>
               </li>
               <li>
                 <Link href="/login">Portal access</Link>
-              </li>
-              <li>
-                <Link href="/contact">Contact</Link>
               </li>
             </ul>
           </nav>

@@ -15,7 +15,7 @@ export function About() {
   return (
     <div className="zb-company">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "About" }]} />
-      <div className="zb-company-hero">
+      <div className="zb-company-hero zb-about-hero">
         <PageShell
           eyebrow="About ZOBHUNGER"
           title="Building a smarter workforce ecosystem."
@@ -27,7 +27,7 @@ export function About() {
             </ActionLink>
           }
         />
-        <aside className="zb-company-statement" aria-label="Our approach">
+        <aside className="zb-company-statement zb-about-statement" aria-label="Our approach">
           <span className="zb-eyebrow">People and execution, connected</span>
           <p>{site.tagline}</p>
           <span>

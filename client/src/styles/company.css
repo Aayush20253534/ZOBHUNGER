@@ -427,3 +427,47 @@
   height: auto;
   white-space: normal;
 }
+/* About hero: keep the opening statement compact and balanced like the stronger business pages. */
+@media (min-width: 960px) {
+  .zb-company .zb-about-hero {
+    align-items: start;
+    grid-template-columns: minmax(0, 1.34fr) minmax(20rem, 0.76fr);
+    gap: clamp(2rem, 3.2vw, 3.4rem);
+  }
+
+  .zb-company .zb-about-hero .zb-page-heading {
+    padding-top: 0.2rem;
+  }
+
+  .zb-company .zb-about-hero .zb-page-heading h1 {
+    max-width: 15ch;
+    font-size: clamp(2.85rem, 4vw, 3.55rem);
+    line-height: 1.08;
+  }
+
+  .zb-company .zb-about-hero .zb-page-heading > p {
+    max-width: 43rem;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .zb-company .zb-about-statement {
+    width: 100%;
+    max-width: 31.5rem;
+    justify-self: end;
+    gap: 1rem;
+    padding: 1.6rem;
+  }
+
+  .zb-company .zb-about-statement > p {
+    max-width: 11ch;
+    font-size: clamp(1.85rem, 2.6vw, 2.35rem);
+    line-height: 1.16;
+  }
+
+  .zb-company .zb-about-statement > span:last-child {
+    max-width: 25rem;
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+}
