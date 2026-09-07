@@ -7,10 +7,12 @@ import {
   listEnquiriesController,
   listJobsController,
   listPartnerApplicationsController,
+  listPlacementCellApplicationsController,
   downloadPartnerResumeController,
   listRequirementsController,
   updateApplicationStatusController,
   updatePartnerApplicationStatusController,
+  updatePlacementCellApplicationStatusController,
   updateJobStatusController,
   updateRequirementStatusController,
 } from "./admin.controller.js";
@@ -19,10 +21,12 @@ import {
   listAdminJobsQuerySchema,
   listApplicationsQuerySchema,
   listPartnerApplicationsQuerySchema,
+  listPlacementCellApplicationsQuerySchema,
   listEnquiriesQuerySchema,
   listRequirementsQuerySchema,
   updateApplicationStatusSchema,
   updatePartnerApplicationStatusSchema,
+  updatePlacementCellApplicationStatusSchema,
   updateJobStatusSchema,
   updateRequirementStatusSchema,
 } from "./admin.schema.js";
@@ -62,6 +66,12 @@ adminRouter.get(
 );
 
 adminRouter.get(
+  "/placement-cell-applications",
+  validate({ query: listPlacementCellApplicationsQuerySchema }),
+  listPlacementCellApplicationsController,
+);
+
+adminRouter.get(
   "/partner-applications/:id/resume",
   validate({ params: entityIdParamsSchema }),
   downloadPartnerResumeController,
@@ -90,4 +100,10 @@ adminRouter.patch(
   "/partner-applications/:id/status",
   validate({ params: entityIdParamsSchema, body: updatePartnerApplicationStatusSchema }),
   updatePartnerApplicationStatusController,
+);
+
+adminRouter.patch(
+  "/placement-cell-applications/:id/status",
+  validate({ params: entityIdParamsSchema, body: updatePlacementCellApplicationStatusSchema }),
+  updatePlacementCellApplicationStatusController,
 );

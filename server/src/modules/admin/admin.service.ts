@@ -1,24 +1,33 @@
+import { createHash, randomBytes } from "node:crypto";
 import {
   ApplicationStatus,
   JobStatus,
   RequirementStatus,
   PartnerApplicationStatus,
+  PlacementCellApplicationStatus,
 } from "../../generated/prisma/client.js";
+import { env } from "../../config/env.js";
+import { sendOperationalEmail } from "../../services/email.service.js";
+import { hashPassword } from "../../utils/password.js";
 import { HttpError } from "../../utils/http-error.js";
 import type {
   ListAdminJobsQuery,
   ListApplicationsQuery,
   ListPartnerApplicationsQuery,
+  ListPlacementCellApplicationsQuery,
   ListEnquiriesQuery,
   ListRequirementsQuery,
   UpdateApplicationStatusInput,
   UpdatePartnerApplicationStatusInput,
+  UpdatePlacementCellApplicationStatusInput,
   UpdateJobStatusInput,
   UpdateRequirementStatusInput,
 } from "./admin.schema.js";
 import {
   findAdminApplications,
   findAdminPartnerApplications,
+  findAdminPlacementCellApplications,
+  reviewPlacementCellApplicationWithAudit,
   findPartnerResumeForAdmin,
   findAdminEnquiries,
   findAdminJobs,
@@ -68,6 +77,46 @@ export async function listApplicationsForAdmin(filters: ListApplicationsQuery) {
 export async function listPartnerApplicationsForAdmin(filters: ListPartnerApplicationsQuery) {
   const { items, total } = await findAdminPartnerApplications(filters);
   return paginated(items, total, filters.page, filters.pageSize);
+}
+
+export async function listPlacementCellApplicationsForAdmin(filters: ListPlacementCellApplicationsQuery) {
+  const { items, total } = await findAdminPlacementCellApplications(filters);
+  return paginated(items, total, filters.page, filters.pageSize);
+}
+
+export async function changePlacementCellApplicationStatus(
+  id: string,
+  input: UpdatePlacementCellApplicationStatusInput,
+  context: AdminAuditContext,
+) {
+  const status = PlacementCellApplicationStatus[input.status];
+  let rawActivationToken: string | undefined;
+  let provisioning: { passwordHash: string; activationTokenHash: string; activationExpiresAt: Date } | undefined;
+
+  if (status === PlacementCellApplicationStatus.APPROVED) {
+    rawActivationToken = randomBytes(32).toString("hex");
+    provisioning = {
+      passwordHash: await hashPassword(randomBytes(48).toString("base64url")),
+      activationTokenHash: createHash("sha256").update(rawActivationToken).digest("hex"),
+      activationExpiresAt: new Date(Date.now() + 72 * 60 * 60 * 1000),
+    };
+  }
+
+  const result = await reviewPlacementCellApplicationWithAudit(id, status, context, provisioning);
+  if (result.kind === "not-found") throw new HttpError(404, "Placement Cell application not found", { code: "PLACEMENT_CELL_APPLICATION_NOT_FOUND" });
+  if (result.kind === "already-approved") throw new HttpError(409, "An approved Placement Cell application cannot be moved back to review", { code: "PLACEMENT_CELL_ALREADY_APPROVED" });
+  if (result.kind === "email-conflict") throw new HttpError(409, "A user account already exists for this institution email", { code: "PLACEMENT_CELL_EMAIL_ALREADY_REGISTERED" });
+
+  if (result.kind === "updated" && status === PlacementCellApplicationStatus.APPROVED && rawActivationToken) {
+    const activationUrl = `${env.CLIENT_ORIGIN.replace(/\/$/, "")}/placement-cell-login?activation=${encodeURIComponent(rawActivationToken)}`;
+    await sendOperationalEmail({
+      to: result.entity.officialEmail,
+      subject: "ZOBHUNGER Placement Cell partnership approved",
+      text: `Your Placement Cell onboarding request for ${result.entity.institutionName} has been approved. Activate your approved Placement Cell account and set your password using this secure link (valid for 72 hours): ${activationUrl}`,
+    });
+  }
+
+  return { entity: result.entity, changed: result.kind === "updated" };
 }
 
 export async function getPartnerResumeForAdmin(id: string) {

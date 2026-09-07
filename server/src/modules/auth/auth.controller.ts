@@ -16,7 +16,7 @@ function authCookieOptions() {
 }
 
 function setAuthCookie(res: Response, user: { id: string; role: unknown }) {
-  const token = signAccessToken({ sub: user.id, role: user.role as "ADMIN" | "BUSINESS" | "WORKER" });
+  const token = signAccessToken({ sub: user.id, role: user.role as "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL" });
   res.cookie(env.AUTH_COOKIE_NAME, token, {
     ...authCookieOptions(),
     maxAge: env.AUTH_COOKIE_MAX_AGE_MS,

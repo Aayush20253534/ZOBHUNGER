@@ -3,7 +3,7 @@ import { env } from "../config/env.js";
 
 export interface AccessTokenPayload {
   sub: string;
-  role: "ADMIN" | "BUSINESS" | "WORKER";
+  role: "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL";
 }
 
 export function signAccessToken(payload: AccessTokenPayload): string {

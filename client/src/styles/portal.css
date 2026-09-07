@@ -449,3 +449,10 @@
     align-items: flex-start;
   }
 }
+
+/* Phase 1.5 Part 3: Placement Cell admin review actions. */
+.zb-admin-placement-row { align-items: flex-start; }
+.zb-admin-row-actions { display: flex !important; flex-wrap: wrap; gap: .45rem !important; margin-top: .45rem; }
+.zb-admin-row-actions button { min-height: 2rem; padding: .4rem .65rem; border: 1px solid var(--zb-border); border-radius: .4rem; background: var(--zb-surface); color: var(--zb-ink); font: inherit; font-size: .75rem; font-weight: 700; cursor: pointer; }
+.zb-admin-row-actions button:hover { border-color: var(--zb-action); }
+.zb-admin-row-actions .zb-admin-approve { border-color: var(--zb-action); background: var(--zb-action); color: #fff; }

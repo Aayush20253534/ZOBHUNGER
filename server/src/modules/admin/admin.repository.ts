@@ -4,12 +4,15 @@ import {
   Prisma,
   RequirementStatus,
   PartnerApplicationStatus,
+  PlacementCellApplicationStatus,
+  UserRole,
 } from "../../generated/prisma/client.js";
 import { prisma } from "../../config/db.js";
 import type {
   ListAdminJobsQuery,
   ListApplicationsQuery,
   ListPartnerApplicationsQuery,
+  ListPlacementCellApplicationsQuery,
   ListEnquiriesQuery,
   ListRequirementsQuery,
 } from "./admin.schema.js";
@@ -235,6 +238,85 @@ interface AuditContext {
   actorUserId: string;
   ipAddress?: string;
   userAgent?: string;
+}
+
+
+export async function findAdminPlacementCellApplications(filters: ListPlacementCellApplicationsQuery) {
+  const where: Prisma.PlacementCellApplicationWhereInput = {};
+  if (filters.status) where.status = PlacementCellApplicationStatus[filters.status];
+  if (filters.query) {
+    where.OR = [
+      { institutionName: { contains: filters.query, mode: "insensitive" } },
+      { placementCellName: { contains: filters.query, mode: "insensitive" } },
+      { contactPersonName: { contains: filters.query, mode: "insensitive" } },
+      { officialEmail: { contains: filters.query, mode: "insensitive" } },
+      { city: { contains: filters.query, mode: "insensitive" } },
+      { state: { contains: filters.query, mode: "insensitive" } },
+    ];
+  }
+  const page = pagination(filters.page, filters.pageSize);
+  const [items, total] = await prisma.$transaction([
+    prisma.placementCellApplication.findMany({ where, orderBy: { createdAt: "desc" }, ...page }),
+    prisma.placementCellApplication.count({ where }),
+  ]);
+  return { items, total };
+}
+
+export async function reviewPlacementCellApplicationWithAudit(
+  id: string,
+  status: PlacementCellApplicationStatus,
+  context: AuditContext,
+  provisioning?: { passwordHash: string; activationTokenHash: string; activationExpiresAt: Date },
+) {
+  return prisma.$transaction(async (tx) => {
+    const current = await tx.placementCellApplication.findUnique({ where: { id } });
+    if (!current) return { kind: "not-found" as const };
+    if (current.status === PlacementCellApplicationStatus.APPROVED && status !== PlacementCellApplicationStatus.APPROVED) {
+      return { kind: "already-approved" as const };
+    }
+    if (status === PlacementCellApplicationStatus.APPROVED) {
+      if (current.provisionedUserId) return { kind: "unchanged" as const, entity: current };
+      const existingUser = await tx.user.findUnique({ where: { email: current.officialEmail.toLowerCase() } });
+      if (existingUser) return { kind: "email-conflict" as const };
+      if (!provisioning) throw new Error("Provisioning data is required for approval");
+      const user = await tx.user.create({
+        data: {
+          email: current.officialEmail.toLowerCase(),
+          passwordHash: provisioning.passwordHash,
+          role: UserRole.PLACEMENT_CELL,
+          isActive: false,
+        },
+      });
+      const updated = await tx.placementCellApplication.update({
+        where: { id },
+        data: {
+          status,
+          reviewedByUserId: context.actorUserId,
+          reviewedAt: new Date(),
+          provisionedUserId: user.id,
+          activationTokenHash: provisioning.activationTokenHash,
+          activationExpiresAt: provisioning.activationExpiresAt,
+        },
+      });
+      await tx.auditLog.create({ data: {
+        actorUserId: context.actorUserId, action: "PLACEMENT_CELL_APPLICATION_APPROVED",
+        entityType: "PlacementCellApplication", entityId: id,
+        metadata: { from: current.status, to: status, provisionedUserId: user.id },
+        ipAddress: context.ipAddress, userAgent: context.userAgent,
+      }});
+      return { kind: "updated" as const, entity: updated };
+    }
+    if (current.status === status) return { kind: "unchanged" as const, entity: current };
+    const updated = await tx.placementCellApplication.update({
+      where: { id }, data: { status, reviewedByUserId: context.actorUserId, reviewedAt: new Date() },
+    });
+    await tx.auditLog.create({ data: {
+      actorUserId: context.actorUserId, action: "PLACEMENT_CELL_APPLICATION_STATUS_CHANGED",
+      entityType: "PlacementCellApplication", entityId: id,
+      metadata: { from: current.status, to: status }, ipAddress: context.ipAddress, userAgent: context.userAgent,
+    }});
+    return { kind: "updated" as const, entity: updated };
+  });
 }
 
 export async function updateRequirementStatusWithAudit(

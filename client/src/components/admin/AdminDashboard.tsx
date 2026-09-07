@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { useRouter } from "next/navigation";
 import {
   BriefcaseBusiness,
+  Building2,
   ClipboardList,
   Inbox,
   Handshake,
@@ -77,12 +78,28 @@ interface PartnerApplication {
   createdAt: string;
 }
 
+interface PlacementCellApplication {
+  id: string;
+  institutionName: string;
+  institutionType: string;
+  contactPersonName: string;
+  officialEmail: string;
+  city: string;
+  state: string;
+  numberOfStudents: number;
+  preferredOpportunityTypes: string[];
+  status: "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
+  provisionedUserId?: string | null;
+  createdAt: string;
+}
+
 interface DashboardData {
   enquiries: Paginated<Enquiry>;
   requirements: Paginated<Requirement>;
   jobs: Paginated<AdminJob>;
   applications: Paginated<Application>;
   partnerApplications: Paginated<PartnerApplication>;
+  placementCellApplications: Paginated<PlacementCellApplication>;
 }
 
 async function fetchPage<T>(path: string) {
@@ -110,14 +127,15 @@ export function AdminDashboard() {
       }
       setUser(current.data.user);
 
-      const [enquiries, requirements, jobs, applications, partnerApplications] = await Promise.all([
+      const [enquiries, requirements, jobs, applications, partnerApplications, placementCellApplications] = await Promise.all([
         fetchPage<Enquiry>("/admin/enquiries"),
         fetchPage<Requirement>("/admin/requirements"),
         fetchPage<AdminJob>("/admin/jobs"),
         fetchPage<Application>("/admin/applications"),
         fetchPage<PartnerApplication>("/admin/partner-applications"),
+        fetchPage<PlacementCellApplication>("/admin/placement-cell-applications"),
       ]);
-      setData({ enquiries, requirements, jobs, applications, partnerApplications });
+      setData({ enquiries, requirements, jobs, applications, partnerApplications, placementCellApplications });
     } catch (caught) {
       if (caught instanceof ApiError && (caught.status === 401 || caught.status === 403)) {
         router.replace("/login");
@@ -162,10 +180,31 @@ export function AdminDashboard() {
               value: data.partnerApplications.total,
               icon: Handshake,
             },
+            {
+              label: "Placement cells",
+              value: data.placementCellApplications.total,
+              icon: Building2,
+            },
           ]
         : [],
     [data],
   );
+
+  async function updatePlacementCellStatus(
+    id: string,
+    status: "UNDER_REVIEW" | "APPROVED" | "REJECTED",
+  ) {
+    setError(null);
+    try {
+      await apiFetch(`/admin/placement-cell-applications/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
+      await load();
+    } catch (caught) {
+      setError(caught instanceof ApiError ? caught.message : "Unable to update the Placement Cell application.");
+    }
+  }
 
   async function handleLogout() {
     try {
@@ -301,6 +340,20 @@ export function AdminDashboard() {
             ))
           )}
         </AdminPanel>
+
+        <AdminPanel title="Placement Cell onboarding">
+          {data.placementCellApplications.items.length === 0 ? (
+            <EmptyRow />
+          ) : (
+            data.placementCellApplications.items.map((item) => (
+              <PlacementCellAdminRow
+                key={item.id}
+                item={item}
+                onStatusChange={updatePlacementCellStatus}
+              />
+            ))
+          )}
+        </AdminPanel>
       </section>
     </div>
   );
@@ -323,6 +376,36 @@ function AdminRow({ title, meta, tag }: { title: string; meta: string; tag: stri
         <span>{meta}</span>
       </div>
       <span className="zb-chip">{tag}</span>
+    </div>
+  );
+}
+
+function PlacementCellAdminRow({
+  item,
+  onStatusChange,
+}: {
+  item: PlacementCellApplication;
+  onStatusChange: (id: string, status: "UNDER_REVIEW" | "APPROVED" | "REJECTED") => Promise<void>;
+}) {
+  return (
+    <div className="zb-admin-row zb-admin-placement-row">
+      <div>
+        <strong>{item.institutionName}</strong>
+        <span>{`${item.contactPersonName} · ${item.city}, ${item.state} · ${item.numberOfStudents} students`}</span>
+        <span>{item.officialEmail}</span>
+        <div className="zb-admin-row-actions">
+          {item.status === "SUBMITTED" && (
+            <button type="button" onClick={() => void onStatusChange(item.id, "UNDER_REVIEW")}>Review</button>
+          )}
+          {(item.status === "SUBMITTED" || item.status === "UNDER_REVIEW") && (
+            <>
+              <button type="button" className="zb-admin-approve" onClick={() => void onStatusChange(item.id, "APPROVED")}>Approve & provision access</button>
+              <button type="button" onClick={() => void onStatusChange(item.id, "REJECTED")}>Reject</button>
+            </>
+          )}
+        </div>
+      </div>
+      <span className="zb-chip">{item.status}</span>
     </div>
   );
 }

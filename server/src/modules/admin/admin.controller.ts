@@ -5,10 +5,12 @@ import type {
   ListAdminJobsQuery,
   ListApplicationsQuery,
   ListPartnerApplicationsQuery,
+  ListPlacementCellApplicationsQuery,
   ListEnquiriesQuery,
   ListRequirementsQuery,
   UpdateApplicationStatusInput,
   UpdatePartnerApplicationStatusInput,
+  UpdatePlacementCellApplicationStatusInput,
   UpdateJobStatusInput,
   UpdateRequirementStatusInput,
 } from "./admin.schema.js";
@@ -19,6 +21,8 @@ import {
   changeRequirementStatus,
   listApplicationsForAdmin,
   listPartnerApplicationsForAdmin,
+  listPlacementCellApplicationsForAdmin,
+  changePlacementCellApplicationStatus,
   getPartnerResumeForAdmin,
   listEnquiriesForAdmin,
   listJobsForAdmin,
@@ -70,6 +74,13 @@ export const listPartnerApplicationsController: RequestHandler = async (_req, re
     res.locals.validated.query as ListPartnerApplicationsQuery,
   );
   res.status(200).json(apiSuccessResponse("Partner applications retrieved", data));
+};
+
+export const listPlacementCellApplicationsController: RequestHandler = async (_req, res) => {
+  const data = await listPlacementCellApplicationsForAdmin(
+    res.locals.validated.query as ListPlacementCellApplicationsQuery,
+  );
+  res.status(200).json(apiSuccessResponse("Placement Cell applications retrieved", data));
 };
 
 export const downloadPartnerResumeController: RequestHandler = async (_req, res) => {
@@ -142,4 +153,17 @@ export const updatePartnerApplicationStatusController: RequestHandler = async (r
       result.entity,
     ),
   );
+};
+
+export const updatePlacementCellApplicationStatusController: RequestHandler = async (req, res) => {
+  const { id } = res.locals.validated.params as EntityIdParams;
+  const result = await changePlacementCellApplicationStatus(
+    id,
+    res.locals.validated.body as UpdatePlacementCellApplicationStatusInput,
+    auditContext(req, adminId(res)),
+  );
+  res.status(200).json(apiSuccessResponse(
+    result.changed ? "Placement Cell application updated" : "Placement Cell application unchanged",
+    result.entity,
+  ));
 };

@@ -6,7 +6,7 @@ import { LockKeyhole, LogIn } from "lucide-react";
 import { ApiError } from "@/lib/api";
 import { login } from "@/services/auth.service";
 
-function destinationForRole(role: "ADMIN" | "BUSINESS" | "WORKER") {
+function destinationForRole(role: "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL") {
   if (role === "ADMIN") return "/admin";
   if (role === "BUSINESS") return "/for-business";
   return "/for-workers";

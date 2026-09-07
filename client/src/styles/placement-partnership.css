@@ -519,6 +519,7 @@
 .zb-placement-checkbox-grid input { width: 1rem; height: 1rem; accent-color: var(--zb-action); }
 .zb-placement-form-note { display: grid; gap: .3rem; margin-top: 1.5rem; padding: 1rem 1.1rem; border-left: 3px solid var(--zb-action); background: var(--zb-soft); font-size: .85rem; }
 .zb-placement-form-note span { color: var(--zb-muted); line-height: 1.55; }
+.zb-placement-application-form .zb-form-actions { margin-top: .85rem; }
 .zb-placement-apply-aside { display: grid; gap: 1rem; padding: clamp(1.3rem,3vw,1.8rem); border: 1px solid var(--zb-soft-border); border-radius: var(--zb-radius); background: var(--zb-soft); }
 .zb-placement-apply-aside h2 { margin: 0; max-width: 14ch; font-size: clamp(1.5rem,3vw,2rem); line-height: 1.18; letter-spacing: -.035em; }
 .zb-placement-apply-aside ol { display: grid; gap: 0; margin: .35rem 0 0; padding: 0; list-style: none; }

@@ -1,4 +1,4 @@
-export type UserRole = "ADMIN" | "BUSINESS" | "WORKER";
+export type UserRole = "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL";
 
 export interface AuthUser {
   id: string;
