@@ -1,0 +1,506 @@
+.zb-presence-page {
+  --zb-presence-panel: #461820;
+  --zb-presence-soft: #fff5f6;
+}
+
+.zb-presence-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+  align-items: stretch;
+}
+
+.zb-presence-hero-copy {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.zb-presence-hero-copy > div {
+  width: 100%;
+}
+
+.zb-presence-hero .zb-page-heading {
+  margin-bottom: 0;
+}
+
+.zb-presence-network {
+  position: relative;
+  overflow: hidden;
+  min-height: 26rem;
+  padding: clamp(1.35rem, 2.5vw, 1.8rem);
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 80% 12%, #c8202f10 0 12rem, transparent 12.1rem),
+    linear-gradient(145deg, #ffffff 0%, #fffafa 58%, #fff2f3 100%);
+  box-shadow: 0 14px 34px var(--zb-shadow-subtle);
+}
+
+.zb-presence-network::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(#c8202f0d 1px, transparent 1px),
+    linear-gradient(90deg, #c8202f0d 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+}
+
+.zb-presence-network-header,
+.zb-presence-network-footer,
+.zb-presence-network-canvas {
+  position: relative;
+  z-index: 1;
+}
+
+.zb-presence-network-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.zb-presence-network-header .zb-eyebrow {
+  margin-bottom: 0.35rem;
+}
+
+.zb-presence-network-header h2 {
+  max-width: 24rem;
+  margin: 0;
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  font-weight: 760;
+}
+
+.zb-presence-network-icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 3rem;
+  border-radius: 0.8rem;
+  background: var(--zb-presence-panel);
+  color: #fff;
+}
+
+.zb-presence-network-icon svg {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.zb-presence-network-canvas {
+  position: relative;
+  min-height: 15.25rem;
+  margin-top: 1rem;
+}
+
+.zb-presence-network-line {
+  position: absolute;
+  left: 50%;
+  top: 51%;
+  z-index: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #c8202f66, #46182066);
+  transform-origin: left center;
+}
+
+.zb-presence-network-line::after {
+  content: "";
+  position: absolute;
+  right: -0.2rem;
+  top: 50%;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--zb-action);
+  transform: translateY(-50%);
+  box-shadow: 0 0 0 0.25rem #c8202f14;
+}
+
+.zb-presence-network-line--north {
+  width: 32%;
+  transform: rotate(-38deg);
+}
+
+.zb-presence-network-line--west {
+  width: 37%;
+  transform: rotate(159deg);
+}
+
+.zb-presence-network-line--east {
+  width: 34%;
+  transform: rotate(18deg);
+}
+
+.zb-presence-network-node {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.4rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.65rem;
+  background: #fff;
+  color: var(--zb-ink);
+  box-shadow: 0 8px 20px #27212612;
+  font-size: 0.78rem;
+}
+
+.zb-presence-network-node svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  color: var(--zb-action);
+}
+
+.zb-presence-network-node strong {
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.zb-presence-network-node small {
+  color: var(--zb-muted);
+  font-size: 0.66rem;
+  line-height: 1.2;
+}
+
+.zb-presence-network-node--hq {
+  left: 50%;
+  top: 51%;
+  flex-wrap: wrap;
+  width: 8.5rem;
+  justify-content: center;
+  padding: 0.8rem;
+  border-color: var(--zb-action);
+  background: var(--zb-presence-panel);
+  color: #fff;
+  transform: translate(-50%, -50%);
+}
+
+.zb-presence-network-node--hq svg,
+.zb-presence-network-node--hq small {
+  color: var(--zb-highlight);
+}
+
+.zb-presence-network-node--hq strong,
+.zb-presence-network-node--hq small {
+  width: 100%;
+  text-align: center;
+}
+
+.zb-presence-network-node--delhi {
+  right: 2%;
+  top: 8%;
+}
+
+.zb-presence-network-node--mumbai {
+  left: 0;
+  bottom: 8%;
+}
+
+.zb-presence-network-node--bihar {
+  right: 0;
+  bottom: 14%;
+}
+
+.zb-presence-network-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--zb-border);
+  color: var(--zb-muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+
+.zb-presence-network-footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.zb-presence-network-footer i {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--zb-action);
+}
+
+.zb-presence-network-footer i[data-tone="hq"] {
+  background: var(--zb-presence-panel);
+}
+
+.zb-presence-location-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.zb-presence-location-card {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  padding: clamp(1.25rem, 2.5vw, 1.6rem);
+  border: 1px solid var(--zb-border);
+  border-radius: 0.85rem;
+  background: var(--zb-surface);
+  box-shadow: 0 5px 18px var(--zb-shadow-subtle);
+}
+
+.zb-presence-location-card::after {
+  content: "";
+  position: absolute;
+  right: -2.75rem;
+  bottom: -3.4rem;
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 999px;
+  border: 1rem solid #c8202f08;
+}
+
+.zb-presence-location-card--hq {
+  border-top: 3px solid var(--zb-action);
+  background: linear-gradient(150deg, #fff 0%, #fff8f8 100%);
+}
+
+.zb-presence-location-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.zb-presence-location-card-top svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--zb-action);
+}
+
+.zb-presence-location-index {
+  color: var(--zb-action);
+  font-size: 0.7rem;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.zb-presence-location-type {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--zb-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.zb-presence-location-card h3 {
+  margin: 0;
+  font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+  font-weight: 760;
+}
+
+.zb-presence-location-card p {
+  position: relative;
+  z-index: 1;
+  max-width: 31rem;
+  margin: 0.75rem 0 0;
+  color: var(--zb-muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+
+.zb-presence-step-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.zb-presence-step {
+  min-width: 0;
+  padding: clamp(1.2rem, 2.3vw, 1.55rem);
+  border: 1px solid var(--zb-border);
+  border-radius: 0.8rem;
+  background: var(--zb-surface);
+}
+
+.zb-presence-step-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.zb-presence-step-top span {
+  color: var(--zb-action);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.zb-presence-step-top svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--zb-action);
+}
+
+.zb-presence-step h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.3;
+  font-weight: 750;
+}
+
+.zb-presence-step p {
+  margin: 0.65rem 0 0;
+  color: var(--zb-muted);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.zb-presence-route-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  overflow: hidden;
+  padding: clamp(1.5rem, 3vw, 2.4rem);
+  border-radius: 1rem;
+  background: var(--zb-presence-panel);
+  color: #fff;
+}
+
+.zb-presence-route-copy .zb-eyebrow {
+  color: var(--zb-highlight);
+}
+
+.zb-presence-route-copy h2 {
+  max-width: 34rem;
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.45rem);
+  line-height: 1.18;
+  letter-spacing: -0.04em;
+  font-weight: 760;
+}
+
+.zb-presence-route-copy p {
+  max-width: 40rem;
+  margin: 0.9rem 0 1.25rem;
+  color: var(--zb-on-panel-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.zb-presence-route-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 0.55rem;
+}
+
+.zb-presence-route-flow span {
+  display: flex;
+  align-items: center;
+  min-height: 3.2rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #ffffff2b;
+  border-radius: 0.65rem;
+  background: #ffffff0f;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 680;
+}
+
+.zb-presence-route-flow svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  justify-self: center;
+  color: var(--zb-highlight);
+  transform: rotate(90deg);
+}
+
+.zb-presence-final-cta {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+@media (min-width: 680px) {
+  .zb-presence-location-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zb-presence-step-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .zb-presence-hero {
+    grid-template-columns: minmax(0, 1.08fr) minmax(24rem, 0.92fr);
+  }
+
+  .zb-presence-route-panel {
+    grid-template-columns: minmax(0, 1.05fr) minmax(23rem, 0.95fr);
+    gap: clamp(2rem, 4vw, 4rem);
+  }
+
+  .zb-presence-route-flow {
+    width: 100%;
+    max-width: 27rem;
+    justify-self: end;
+  }
+}
+
+@media (max-width: 560px) {
+  .zb-presence-network {
+    min-height: 24rem;
+    padding: 1.15rem;
+  }
+
+  .zb-presence-network-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .zb-presence-network-icon {
+    width: 2.6rem;
+    height: 2.6rem;
+    flex-basis: 2.6rem;
+  }
+
+  .zb-presence-network-canvas {
+    min-height: 14.25rem;
+  }
+
+  .zb-presence-network-node {
+    padding: 0.45rem 0.55rem;
+    font-size: 0.7rem;
+  }
+
+  .zb-presence-network-node--hq {
+    width: 7rem;
+  }
+
+  .zb-presence-network-node--delhi {
+    right: 0;
+  }
+
+  .zb-presence-network-node--mumbai {
+    left: 0;
+  }
+
+  .zb-presence-network-node--bihar {
+    right: 0;
+  }
+}
