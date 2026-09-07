@@ -4,3 +4,4 @@ import "./jobs.schema.test.js";
 import "./admin-and-articles.schema.test.js";
 import "./api-response.test.js";
 import "./role.middleware.test.js";
+import "./partners.schema.test.js";

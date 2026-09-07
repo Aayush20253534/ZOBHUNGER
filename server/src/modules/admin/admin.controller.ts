@@ -4,17 +4,22 @@ import type {
   EntityIdParams,
   ListAdminJobsQuery,
   ListApplicationsQuery,
+  ListPartnerApplicationsQuery,
   ListEnquiriesQuery,
   ListRequirementsQuery,
   UpdateApplicationStatusInput,
+  UpdatePartnerApplicationStatusInput,
   UpdateJobStatusInput,
   UpdateRequirementStatusInput,
 } from "./admin.schema.js";
 import {
   changeApplicationStatus,
+  changePartnerApplicationStatus,
   changeJobStatus,
   changeRequirementStatus,
   listApplicationsForAdmin,
+  listPartnerApplicationsForAdmin,
+  getPartnerResumeForAdmin,
   listEnquiriesForAdmin,
   listJobsForAdmin,
   listRequirementsForAdmin,
@@ -60,6 +65,24 @@ export const listApplicationsController: RequestHandler = async (_req, res) => {
   res.status(200).json(apiSuccessResponse("Applications retrieved", data));
 };
 
+export const listPartnerApplicationsController: RequestHandler = async (_req, res) => {
+  const data = await listPartnerApplicationsForAdmin(
+    res.locals.validated.query as ListPartnerApplicationsQuery,
+  );
+  res.status(200).json(apiSuccessResponse("Partner applications retrieved", data));
+};
+
+export const downloadPartnerResumeController: RequestHandler = async (_req, res) => {
+  const { id } = res.locals.validated.params as EntityIdParams;
+  const resume = await getPartnerResumeForAdmin(id);
+  res.setHeader("Content-Type", resume.resumeMimeType);
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename*=UTF-8''${encodeURIComponent(resume.resumeFileName)}`,
+  );
+  res.status(200).send(Buffer.from(resume.resumeData));
+};
+
 export const updateRequirementStatusController: RequestHandler = async (req, res) => {
   const { id } = res.locals.validated.params as EntityIdParams;
   const result = await changeRequirementStatus(
@@ -100,6 +123,22 @@ export const updateApplicationStatusController: RequestHandler = async (req, res
   res.status(200).json(
     apiSuccessResponse(
       result.changed ? "Application status updated" : "Application status unchanged",
+      result.entity,
+    ),
+  );
+};
+
+
+export const updatePartnerApplicationStatusController: RequestHandler = async (req, res) => {
+  const { id } = res.locals.validated.params as EntityIdParams;
+  const result = await changePartnerApplicationStatus(
+    id,
+    res.locals.validated.body as UpdatePartnerApplicationStatusInput,
+    auditContext(req, adminId(res)),
+  );
+  res.status(200).json(
+    apiSuccessResponse(
+      result.changed ? "Partner application status updated" : "Partner application status unchanged",
       result.entity,
     ),
   );

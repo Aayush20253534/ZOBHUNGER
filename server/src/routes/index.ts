@@ -5,6 +5,7 @@ import { articlesRouter } from "../modules/articles/articles.routes.js";
 import { enquiriesRouter } from "../modules/enquiries/enquiries.routes.js";
 import { requirementsRouter } from "../modules/requirements/requirements.routes.js";
 import { jobsRouter } from "../modules/jobs/jobs.routes.js";
+import { partnersRouter } from "../modules/partners/partners.routes.js";
 import { healthRouter } from "./health.routes.js";
 
 export const apiRouter = Router();
@@ -16,3 +17,4 @@ apiRouter.use("/admin", adminRouter);
 apiRouter.use("/jobs", jobsRouter);
 apiRouter.use("/contact", enquiriesRouter);
 apiRouter.use("/requirements", requirementsRouter);
+apiRouter.use("/partner-applications", partnersRouter);

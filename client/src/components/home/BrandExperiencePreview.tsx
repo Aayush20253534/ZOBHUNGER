@@ -1,5 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 import { ArrowUpRight, BriefcaseBusiness } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
+import { brandLogoUrl } from "@/data/brand-logos";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import {
   brandExperienceIntro,
@@ -34,9 +36,21 @@ export function BrandExperiencePreview() {
       <div className="zb-home-brand-board" aria-label="Selected brand experience">
         <span className="zb-home-brand-board-label">Selected experience</span>
         <ul>
-          {featuredBrandExperience.map((brand) => (
-            <li key={brand}>{brand}</li>
-          ))}
+          {featuredBrandExperience.map((brand) => {
+            const logoUrl = brandLogoUrl(brand);
+            return (
+              <li key={brand}>
+                <span className="zb-home-brand-logo" aria-hidden="true">
+                  {logoUrl ? (
+                    <img src={logoUrl} alt="" loading="lazy" width="28" height="28" />
+                  ) : (
+                    <span>{brand.slice(0, 1)}</span>
+                  )}
+                </span>
+                <span>{brand}</span>
+              </li>
+            );
+          })}
         </ul>
         <p>{brandExperienceIntro.eyebrow} across project-led assignments.</p>
       </div>

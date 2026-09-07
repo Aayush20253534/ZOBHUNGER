@@ -33,6 +33,13 @@ enum ApplicationStatus {
   REJECTED
 }
 
+enum PartnerApplicationStatus {
+  SUBMITTED
+  REVIEWED
+  CONTACTED
+  CLOSED
+}
+
 model User {
   id              String           @id @default(cuid())
   email           String           @unique
@@ -186,6 +193,36 @@ model JobApplication {
   @@index([jobId, status, createdAt])
   @@index([workerUserId])
   @@index([email])
+}
+
+model PartnerApplication {
+  id                    String                   @id @default(cuid())
+  fullName              String
+  mobileNumber          String
+  email                 String
+  currentCity           String
+  currentProfession     String
+  companyName           String
+  totalExperienceYears  Int
+  specialization        String
+  industryExperience    String
+  linkedInUrl           String?
+  contributionPreference String
+  expertiseDescription  String
+  professionalNetwork   String?
+  preferredPartnershipArea String
+  resumeFileName        String?
+  resumeMimeType        String?
+  resumeData            Bytes?
+  resumeUploadToken     String?                  @unique
+  status                PartnerApplicationStatus @default(SUBMITTED)
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([currentCity])
+  @@index([specialization])
 }
 
 model Article {

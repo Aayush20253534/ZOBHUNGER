@@ -3,11 +3,13 @@ import {
   JobStatus,
   Prisma,
   RequirementStatus,
+  PartnerApplicationStatus,
 } from "../../generated/prisma/client.js";
 import { prisma } from "../../config/db.js";
 import type {
   ListAdminJobsQuery,
   ListApplicationsQuery,
+  ListPartnerApplicationsQuery,
   ListEnquiriesQuery,
   ListRequirementsQuery,
 } from "./admin.schema.js";
@@ -117,6 +119,72 @@ export async function findAdminJobs(filters: ListAdminJobsQuery) {
   ]);
 
   return { items, total };
+}
+
+
+export async function findAdminPartnerApplications(filters: ListPartnerApplicationsQuery) {
+  const where: Prisma.PartnerApplicationWhereInput = {};
+
+  if (filters.status) {
+    where.status = PartnerApplicationStatus[filters.status];
+  }
+
+  if (filters.query) {
+    where.OR = [
+      { fullName: { contains: filters.query, mode: "insensitive" } },
+      { email: { contains: filters.query, mode: "insensitive" } },
+      { mobileNumber: { contains: filters.query, mode: "insensitive" } },
+      { currentCity: { contains: filters.query, mode: "insensitive" } },
+      { currentProfession: { contains: filters.query, mode: "insensitive" } },
+      { companyName: { contains: filters.query, mode: "insensitive" } },
+      { specialization: { contains: filters.query, mode: "insensitive" } },
+    ];
+  }
+
+  const page = pagination(filters.page, filters.pageSize);
+  const [items, total] = await prisma.$transaction([
+    prisma.partnerApplication.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        fullName: true,
+        mobileNumber: true,
+        email: true,
+        currentCity: true,
+        currentProfession: true,
+        companyName: true,
+        totalExperienceYears: true,
+        specialization: true,
+        industryExperience: true,
+        linkedInUrl: true,
+        contributionPreference: true,
+        expertiseDescription: true,
+        professionalNetwork: true,
+        preferredPartnershipArea: true,
+        resumeFileName: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      ...page,
+    }),
+    prisma.partnerApplication.count({ where }),
+  ]);
+
+  return { items, total };
+}
+
+export function findPartnerResumeForAdmin(id: string) {
+  return prisma.partnerApplication.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      resumeFileName: true,
+      resumeMimeType: true,
+      resumeData: true,
+    },
+  });
 }
 
 export async function findAdminApplications(filters: ListApplicationsQuery) {
@@ -264,6 +332,48 @@ export async function updateApplicationStatusWithAudit(
         entityType: "JobApplication",
         entityId: id,
         metadata: { from: current.status, to: status, jobId: current.jobId },
+        ipAddress: context.ipAddress,
+        userAgent: context.userAgent,
+      },
+    });
+
+    return { entity: updated, changed: true };
+  });
+}
+
+
+export async function updatePartnerApplicationStatusWithAudit(
+  id: string,
+  status: PartnerApplicationStatus,
+  context: AuditContext,
+) {
+  return prisma.$transaction(async (tx) => {
+    const current = await tx.partnerApplication.findUnique({ where: { id } });
+    if (!current) return null;
+    if (current.status === status) return { entity: current, changed: false };
+
+    const updated = await tx.partnerApplication.update({
+      where: { id },
+      data: { status },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        currentCity: true,
+        specialization: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        actorUserId: context.actorUserId,
+        action: "PARTNER_APPLICATION_STATUS_CHANGED",
+        entityType: "PartnerApplication",
+        entityId: id,
+        metadata: { from: current.status, to: status },
         ipAddress: context.ipAddress,
         userAgent: context.userAgent,
       },

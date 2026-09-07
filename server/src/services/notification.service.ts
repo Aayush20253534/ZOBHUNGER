@@ -80,3 +80,41 @@ export function notifyNewApplication(
     ].join("\n"),
   });
 }
+
+
+export function notifyNewPartnerApplication(
+  application: {
+    id: string;
+    fullName: string;
+    email: string;
+    mobileNumber: string;
+    currentCity: string;
+    currentProfession: string;
+    companyName: string;
+    totalExperienceYears: number;
+    specialization: string;
+    contributionPreference: string;
+    preferredPartnershipArea: string;
+  },
+  requestId?: string,
+) {
+  return sendOperationalEmail({
+    requestId,
+    subject: `New independent business partner application: ${application.fullName}`,
+    text: [
+      `Partner application ID: ${application.id}`,
+      `Name: ${application.fullName}`,
+      `Email: ${application.email}`,
+      `Phone: ${application.mobileNumber}`,
+      `City: ${application.currentCity}`,
+      `Profession: ${application.currentProfession}`,
+      `Company / business: ${application.companyName}`,
+      `Experience: ${application.totalExperienceYears} years`,
+      `Specialization: ${application.specialization}`,
+      `Contribution: ${application.contributionPreference}`,
+      `Preferred partnership area: ${application.preferredPartnershipArea}`,
+      "",
+      "Open the admin dashboard to review the complete profile.",
+    ].join("\n"),
+  });
+}

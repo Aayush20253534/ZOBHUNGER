@@ -6,6 +6,7 @@ import {
   BriefcaseBusiness,
   ClipboardList,
   Inbox,
+  Handshake,
   LogOut,
   RefreshCw,
   UsersRound,
@@ -59,11 +60,29 @@ interface Application {
   job: { id: string; slug: string; title: string; status: string };
 }
 
+
+interface PartnerApplication {
+  id: string;
+  fullName: string;
+  email: string;
+  currentCity: string;
+  currentProfession: string;
+  companyName: string;
+  totalExperienceYears: number;
+  specialization: string;
+  contributionPreference: string;
+  preferredPartnershipArea: string;
+  resumeFileName?: string | null;
+  status: string;
+  createdAt: string;
+}
+
 interface DashboardData {
   enquiries: Paginated<Enquiry>;
   requirements: Paginated<Requirement>;
   jobs: Paginated<AdminJob>;
   applications: Paginated<Application>;
+  partnerApplications: Paginated<PartnerApplication>;
 }
 
 async function fetchPage<T>(path: string) {
@@ -91,13 +110,14 @@ export function AdminDashboard() {
       }
       setUser(current.data.user);
 
-      const [enquiries, requirements, jobs, applications] = await Promise.all([
+      const [enquiries, requirements, jobs, applications, partnerApplications] = await Promise.all([
         fetchPage<Enquiry>("/admin/enquiries"),
         fetchPage<Requirement>("/admin/requirements"),
         fetchPage<AdminJob>("/admin/jobs"),
         fetchPage<Application>("/admin/applications"),
+        fetchPage<PartnerApplication>("/admin/partner-applications"),
       ]);
-      setData({ enquiries, requirements, jobs, applications });
+      setData({ enquiries, requirements, jobs, applications, partnerApplications });
     } catch (caught) {
       if (caught instanceof ApiError && (caught.status === 401 || caught.status === 403)) {
         router.replace("/login");
@@ -136,6 +156,11 @@ export function AdminDashboard() {
               label: "Applications",
               value: data.applications.total,
               icon: UsersRound,
+            },
+            {
+              label: "Partner leads",
+              value: data.partnerApplications.total,
+              icon: Handshake,
             },
           ]
         : [],
@@ -256,6 +281,21 @@ export function AdminDashboard() {
                 key={item.id}
                 title={item.name}
                 meta={`${item.job.title} · ${item.email}`}
+                tag={item.status}
+              />
+            ))
+          )}
+        </AdminPanel>
+
+        <AdminPanel title="Independent Business Partner applications">
+          {data.partnerApplications.items.length === 0 ? (
+            <EmptyRow />
+          ) : (
+            data.partnerApplications.items.map((item) => (
+              <AdminRow
+                key={item.id}
+                title={item.fullName}
+                meta={`${item.currentProfession} · ${item.specialization} · ${item.currentCity}${item.resumeFileName ? " · Resume attached" : ""}`}
                 tag={item.status}
               />
             ))

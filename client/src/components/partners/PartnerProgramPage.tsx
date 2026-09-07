@@ -9,6 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
+import { PartnerApplicationForm } from "@/components/partners/PartnerApplicationForm";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { SectionHeading } from "@/components/common/SectionHeading";
@@ -218,17 +219,8 @@ export function PartnerProgramPage() {
             our team understand where a relevant collaboration may exist.
           </p>
         </div>
-        <div className="zb-partner-application-summary">
-          <span>Application will include</span>
-          <ul>
-            <li>Professional profile &amp; experience</li>
-            <li>Specialization &amp; industry background</li>
-            <li>Preferred contribution &amp; partnership area</li>
-            <li>Optional LinkedIn and resume/profile</li>
-          </ul>
-          <ActionLink href="/contact" variant="secondary">
-            Apply to Become a Partner
-          </ActionLink>
+        <div className="zb-partner-application-form-wrap">
+          <PartnerApplicationForm />
         </div>
       </section>
 

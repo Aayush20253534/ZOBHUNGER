@@ -684,3 +684,34 @@
     gap: clamp(2rem, 3.8vw, 3.8rem);
   }
 }
+
+/* Brand marks in the compact home experience board. */
+.zb-home-brand-board li {
+  grid-template-columns: auto minmax(0, 1fr);
+  place-items: initial;
+  align-items: center;
+  gap: 0.65rem;
+  text-align: left;
+}
+
+.zb-home-brand-logo {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid #ffffff30;
+  border-radius: 0.45rem;
+  background: #fff;
+  color: var(--zb-panel);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.zb-home-brand-logo img {
+  display: block;
+  width: 1.35rem;
+  height: 1.35rem;
+  object-fit: contain;
+}
