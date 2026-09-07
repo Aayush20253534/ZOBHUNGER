@@ -257,6 +257,8 @@ model PlacementCellApplication {
   createdAt                 DateTime                       @default(now())
   updatedAt                 DateTime                       @updatedAt
 
+  candidates                PlacementCandidate[]
+
   @@index([status, createdAt])
   @@index([officialEmail])
   @@index([city, state])
@@ -297,4 +299,31 @@ model AuditLog {
 
   @@index([entityType, entityId, createdAt])
   @@index([actorUserId, createdAt])
+}
+
+model PlacementCandidate {
+  id                         String   @id @default(cuid())
+  placementCellApplicationId String
+  fullName                   String
+  email                      String
+  mobileNumber               String
+  qualification              String
+  course                     String
+  department                 String?
+  skills                     String[] @default([])
+  interests                  String[] @default([])
+  city                       String
+  state                      String
+  availability               String
+  experience                 String?
+  preferredWorkTypes         String[] @default([])
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  placementCell PlacementCellApplication @relation(fields: [placementCellApplicationId], references: [id], onDelete: Cascade)
+
+  @@unique([placementCellApplicationId, email])
+  @@index([placementCellApplicationId, createdAt])
+  @@index([placementCellApplicationId, fullName])
+  @@index([placementCellApplicationId, city])
 }
