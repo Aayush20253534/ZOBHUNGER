@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CTASection } from "@/components/common/CTASection";
 import { AudienceSection } from "@/components/home/AudienceSection";
 import { BrandExperiencePreview } from "@/components/home/BrandExperiencePreview";
+import { ExecutionStrengthsPreview } from "@/components/home/ExecutionStrengthsPreview";
 import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { IndustriesPreview } from "@/components/home/IndustriesPreview";
@@ -35,6 +36,7 @@ export default function Page() {
       <HowItWorks />
       <IndustriesPreview />
       <BrandExperiencePreview />
+      <ExecutionStrengthsPreview />
       <AudienceSection />
       <TechnologyPreview />
       <div className="zb-home-final-cta">

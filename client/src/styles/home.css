@@ -627,3 +627,60 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* Extended Phase 1 Part 3: compact execution-strength proof on the home page. */
+.zb-home-execution-strengths {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.4rem;
+  padding: clamp(1.35rem, 3.5vw, 2.2rem);
+  border-top: 1px solid var(--zb-soft-border);
+  border-bottom: 1px solid var(--zb-soft-border);
+}
+
+.zb-home-execution-strengths-intro .zb-section-heading {
+  margin-bottom: 1rem;
+}
+
+.zb-home-execution-strengths-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zb-home-execution-strengths-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 3rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.6rem;
+  background: #fff;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.zb-home-execution-strengths-list svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  color: var(--zb-action);
+}
+
+@media (min-width: 640px) {
+  .zb-home-execution-strengths-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .zb-home-execution-strengths {
+    grid-template-columns: minmax(0, 0.9fr) minmax(30rem, 1.1fr);
+    align-items: center;
+    gap: clamp(2rem, 3.8vw, 3.8rem);
+  }
+}

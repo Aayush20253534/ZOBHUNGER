@@ -3,7 +3,9 @@ import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
+import { CoreCapabilitiesSection } from "@/components/experience/CoreCapabilitiesSection";
 import { ExperienceGroup } from "@/components/experience/ExperienceGroup";
+import { WhyBrandsSection } from "@/components/experience/WhyBrandsSection";
 import {
   brandExperienceGroups,
   brandExperienceIntro,
@@ -105,6 +107,10 @@ export function BrandExperiencePage() {
           </ActionLink>
         </div>
       </section>
+
+      <CoreCapabilitiesSection />
+
+      <WhyBrandsSection />
 
       <div className="zb-experience-section">
         <CTASection
