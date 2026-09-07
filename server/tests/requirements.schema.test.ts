@@ -34,6 +34,29 @@ test("explicit jobLocation is included in locations", () => {
   assert.deepEqual(parsed.locations, ["Gurugram", "Delhi"]);
 });
 
+
+test("blank optional start date is accepted and normalized away", () => {
+  const parsed = createRequirementSchema.parse({
+    ...validRequirement,
+    expectedStartAt: "",
+  });
+
+  assert.equal(parsed.expectedStartAt, undefined);
+});
+
+test("provided start date is coerced to a Date", () => {
+  const parsed = createRequirementSchema.parse({
+    ...validRequirement,
+    expectedStartAt: "2026-09-15",
+  });
+
+  assert.equal(parsed.expectedStartAt instanceof Date, true);
+  assert.equal(
+    parsed.expectedStartAt?.toISOString().startsWith("2026-09-15"),
+    true,
+  );
+});
+
 test("requirement schema requires at least one location", () => {
   const result = createRequirementSchema.safeParse({
     ...validRequirement,

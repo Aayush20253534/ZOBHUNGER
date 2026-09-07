@@ -14,7 +14,11 @@ export const createRequirementSchema = z
     jobLocation: locationSchema.optional(),
     locations: z.array(locationSchema).max(50).default([]),
     projectDuration: z.string().trim().min(2).max(160),
-    expectedStartAt: z.coerce.date().optional(),
+    expectedStartAt: z.preprocess(
+      (value) =>
+        typeof value === "string" && value.trim() === "" ? undefined : value,
+      z.coerce.date().optional(),
+    ),
     details: z.string().trim().min(5).max(6000),
   })
   .superRefine((value, ctx) => {

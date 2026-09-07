@@ -16,7 +16,10 @@ const envSchema = z.object({
   AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(10),
   SUBMISSION_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(3_600_000),
   SUBMISSION_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(30),
-  TRUST_PROXY: z.enum(["true", "false"]).default("false").transform((value) => value === "true"),
+  TRUST_PROXY: z
+    .enum(["true", "false"])
+    .default(process.env.NODE_ENV === "production" ? "true" : "false")
+    .transform((value) => value === "true"),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
   MAILJET_API_KEY: z.string().trim().min(1).optional(),
   MAILJET_SECRET_KEY: z.string().trim().min(1).optional(),

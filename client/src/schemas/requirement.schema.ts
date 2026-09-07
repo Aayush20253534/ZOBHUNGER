@@ -46,7 +46,8 @@ export const requirementSchema = z.object({
     .max(120),
   expectedStartAt: z
     .union([isoDateSchema, isoDateTimeSchema, z.literal("")])
-    .optional(),
+    .optional()
+    .transform((value) => value || undefined),
   details: z
     .string()
     .trim()
