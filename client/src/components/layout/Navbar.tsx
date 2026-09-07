@@ -147,6 +147,9 @@ function NavigationShell({ pathname }: { pathname: string }) {
                 </Link>
               ),
             )}
+            <ActionLink href="/become-a-partner" variant="secondary" className="zb-partner-nav-cta">
+              Partner With Us
+            </ActionLink>
             <ActionLink href={site.primaryAction.href}>
               {site.primaryAction.label}
             </ActionLink>

@@ -836,3 +836,18 @@ body > main[class] {
     transition: none;
   }
 }
+
+/* Keep the two business CTAs usable without letting the desktop navigation
+   become a single unbroken railway timetable. */
+@media (min-width: 1200px) {
+  .zb-desktop-nav .zb-partner-nav-cta {
+    min-height: 2.75rem;
+    padding-inline: 0.8rem;
+    font-size: 0.8125rem;
+  }
+  .zb-desktop-nav > .zb-action-link:last-child {
+    min-height: 2.75rem;
+    padding-inline: 0.9rem;
+    font-size: 0.8125rem;
+  }
+}

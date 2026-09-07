@@ -106,6 +106,22 @@ export function About() {
       </section>
       <section
         className="zb-company-section zb-company-note"
+        aria-labelledby="about-partner-title"
+      >
+        <div>
+          <h2 id="about-partner-title">Bring your expertise into the network.</h2>
+          <p>
+            Experienced professionals, consultants and business specialists can
+            explore flexible project-led collaboration through our Independent
+            Business Partner Program.
+          </p>
+        </div>
+        <ActionLink href="/become-a-partner" variant="secondary">
+          Become a Partner
+        </ActionLink>
+      </section>
+      <section
+        className="zb-company-section zb-company-note"
         aria-labelledby="about-technology-title"
       >
         <div>

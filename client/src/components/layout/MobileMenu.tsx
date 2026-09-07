@@ -117,6 +117,13 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
               Portal access
             </ActionLink>
             <ActionLink
+              href="/become-a-partner"
+              variant="secondary"
+              onClick={() => setOpen(false)}
+            >
+              Become a Partner
+            </ActionLink>
+            <ActionLink
               href={site.primaryAction.href}
               onClick={() => setOpen(false)}
             >

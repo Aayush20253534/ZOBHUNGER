@@ -60,6 +60,9 @@ export function Footer() {
                 <Link href="/case-studies">Case studies</Link>
               </li>
               <li>
+                <Link href="/become-a-partner">Become a Partner</Link>
+              </li>
+              <li>
                 <Link href="/technology">Our technology vision</Link>
               </li>
               <li>
