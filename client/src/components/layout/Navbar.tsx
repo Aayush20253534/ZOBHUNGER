@@ -159,6 +159,7 @@ function NavigationShell({ pathname }: { pathname: string }) {
                   isCurrentPath(pathname, "/placement-cell-partnership") ||
                   isCurrentPath(pathname, "/placement-cell-login")
                 }
+                aria-haspopup="menu"
                 aria-expanded={openMenu === "partners"}
                 aria-controls="zb-navigation-partners"
                 onClick={() =>
@@ -171,6 +172,7 @@ function NavigationShell({ pathname }: { pathname: string }) {
               <div
                 id="zb-navigation-partners"
                 className="zb-partner-nav-panel"
+                role="menu"
                 hidden={openMenu !== "partners"}
               >
                 <div className="zb-partner-nav-heading">
@@ -180,7 +182,12 @@ function NavigationShell({ pathname }: { pathname: string }) {
                 <ul>
                   {partnerNavigation.map((link) => (
                     <li key={link.href}>
-                      <Link href={link.href} onClick={() => setOpenMenu(null)}>
+                      <Link
+                        href={link.href}
+                        role="menuitem"
+                        data-active={isCurrentPath(pathname, link.href)}
+                        onClick={() => setOpenMenu(null)}
+                      >
                         <strong>{link.label}</strong>
                         <small>{link.description}</small>
                       </Link>
@@ -189,6 +196,8 @@ function NavigationShell({ pathname }: { pathname: string }) {
                 </ul>
                 <Link
                   className="zb-partner-login-link"
+                  role="menuitem"
+                  data-active={isCurrentPath(pathname, "/placement-cell-login")}
                   href="/placement-cell-login"
                   onClick={() => setOpenMenu(null)}
                 >

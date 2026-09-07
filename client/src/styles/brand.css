@@ -921,7 +921,8 @@ body > main[class] {
 }
 
 .zb-partner-nav-panel li > a:hover,
-.zb-partner-nav-panel li > a:focus-visible {
+.zb-partner-nav-panel li > a:focus-visible,
+.zb-partner-nav-panel li > a[data-active="true"] {
   background: var(--muted);
 }
 

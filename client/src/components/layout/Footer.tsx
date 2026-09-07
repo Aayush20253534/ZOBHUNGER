@@ -45,6 +45,9 @@ export function Footer() {
               <li>
                 <Link href="/contact">Talk to our team</Link>
               </li>
+              <li>
+                <Link href="/placement-cell-partnership">Placement Cell Partnership</Link>
+              </li>
             </ul>
           </nav>
           <nav aria-label="Company links in footer">
