@@ -125,26 +125,6 @@ body > main[class] {
   border-radius: 0.25rem;
 }
 
-.zb-navbar-brand {
-  display: inline-flex;
-  align-items: center;
-  flex: 0 0 auto;
-  text-decoration: none;
-}
-.zb-navbar-logo {
-  display: block;
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  object-position: center;
-}
-@media (max-width: 640px) {
-  .zb-navbar-logo {
-    width: 42px;
-    height: 42px;
-  }
-}
-
 .zb-wordmark {
   display: inline-flex;
   align-items: center;
@@ -171,13 +151,18 @@ body > main[class] {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1.25rem;
   min-height: var(--zb-header-height);
 }
 .zb-desktop-nav {
   display: none;
   align-items: center;
-  gap: clamp(0.6rem, 1.2vw, 1.1rem);
+  justify-content: center;
+  gap: clamp(1rem, 1.55vw, 1.65rem);
+}
+.zb-header-primary-action {
+  display: none;
+  flex: 0 0 auto;
 }
 .zb-nav-link {
   display: inline-flex;
@@ -836,8 +821,20 @@ body > main[class] {
   }
 }
 @media (min-width: 1200px) {
+  .zb-header-inner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: clamp(2rem, 3vw, 3.5rem);
+  }
   .zb-desktop-nav {
     display: flex;
+    justify-self: center;
+  }
+  .zb-header-primary-action {
+    display: inline-flex;
+    min-height: 2.75rem;
+    padding-inline: 1.1rem;
+    font-size: 0.875rem;
   }
   .zb-mobile-trigger {
     display: none;
@@ -855,14 +852,5 @@ body > main[class] {
   .zb-action-link,
   .zb-button {
     transition: none;
-  }
-}
-
-/* The simplified primary navigation leaves one clear business CTA in the header. */
-@media (min-width: 1200px) {
-  .zb-desktop-nav > .zb-action-link:last-child {
-    min-height: 2.75rem;
-    padding-inline: 1rem;
-    font-size: 0.875rem;
   }
 }

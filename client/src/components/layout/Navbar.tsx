@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ActionLink } from "@/components/common/ActionLink";
@@ -22,16 +21,8 @@ export function Navbar() {
       </a>
       <header className="zb-header">
         <div className="zb-container zb-header-inner">
-          <Link href="/" className="zb-navbar-brand" aria-label="ZOBHUNGER home">
-            <Image
-              className="zb-navbar-logo"
-              src="/Logo/Logo.png"
-              alt="ZOBHUNGER"
-              width={96}
-              height={96}
-              priority
-              sizes="(max-width: 640px) 42px, 48px"
-            />
+          <Link href="/" className="zb-wordmark" aria-label="ZOBHUNGER home">
+            ZOB<span>HUNGER</span>
           </Link>
 
           <nav className="zb-desktop-nav" aria-label="Main navigation">
@@ -48,10 +39,14 @@ export function Navbar() {
                 </Link>
               );
             })}
-            <ActionLink href={site.primaryAction.href}>
-              {site.primaryAction.label}
-            </ActionLink>
           </nav>
+
+          <ActionLink
+            href={site.primaryAction.href}
+            className="zb-header-primary-action"
+          >
+            {site.primaryAction.label}
+          </ActionLink>
 
           <MobileMenu pathname={pathname} />
         </div>
