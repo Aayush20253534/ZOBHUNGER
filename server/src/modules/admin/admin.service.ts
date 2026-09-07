@@ -82,7 +82,13 @@ export async function getPartnerResumeForAdmin(id: string) {
       code: "PARTNER_RESUME_NOT_FOUND",
     });
   }
-  return result;
+
+  return {
+    id: result.id,
+    resumeFileName: result.resumeFileName,
+    resumeMimeType: result.resumeMimeType,
+    resumeData: result.resumeData,
+  };
 }
 
 export async function changeRequirementStatus(

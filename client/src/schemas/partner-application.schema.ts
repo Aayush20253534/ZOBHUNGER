@@ -3,8 +3,8 @@ import { z } from "zod";
 const optionalUrl = z
   .string()
   .trim()
-  .refine((value) => !value || /^https?:\/\//i.test(value), "Enter a valid URL")
-  .max(1000);
+  .max(1000)
+  .refine((value) => !value || /^https?:\/\//i.test(value), "Enter a valid URL");
 
 export const partnerApplicationSchema = z.object({
   fullName: z.string().trim().min(2, "Enter your full name").max(120),

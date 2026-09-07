@@ -32,7 +32,7 @@ export function savePartnerResume(
     data: {
       resumeFileName: file.fileName,
       resumeMimeType: file.mimeType,
-      resumeData: file.data,
+      resumeData: new Uint8Array(file.data),
       resumeUploadToken: null,
     },
     select: { id: true, resumeFileName: true },
