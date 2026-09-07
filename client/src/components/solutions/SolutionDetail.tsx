@@ -1,24 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowUpRight,
-  CalendarClock,
-  Check,
-  Flag,
-  Headset,
-  Megaphone,
-  Store,
-  TrendingUp,
-  UsersRound,
-} from "lucide-react";
+import { ArrowUpRight, Check } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
-import { IntroPanel } from "@/components/common/IntroPanel";
 import { ProcessFlow } from "@/components/common/ProcessFlow";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { SolutionCard } from "@/components/solutions/SolutionCard";
+import { SolutionExecutionVisual } from "@/components/solutions/SolutionExecutionVisual";
 import { Card } from "@/components/ui/card";
 import { industries } from "@/data/industries";
 import { solutionDetails } from "@/data/solution-details";
@@ -26,21 +16,10 @@ import { solutions } from "@/data/solutions";
 import type { SolutionDetailContent } from "@/types/solution-detail.types";
 import "@/styles/solutions.css";
 
-const icons = {
-  "workforce-solutions": UsersRound,
-  "sales-force": TrendingUp,
-  "promoter-solutions": Megaphone,
-  "retail-execution": Store,
-  "brand-activation": Flag,
-  "business-operations": Headset,
-  "gig-workforce": CalendarClock,
-};
-
 export function SolutionDetail({ slug }: { slug: string }) {
   const solution = solutions.find((item) => item.slug === slug);
   if (!solution) notFound();
   const detail: SolutionDetailContent = solutionDetails[solution.slug];
-  const Icon = icons[solution.slug];
   // Part 5's requirement form can consume this existing catalogue slug.
   const requirementHref = `/hire-workforce?service=${encodeURIComponent(solution.slug)}`;
   const relevantIndustries = industries.filter((industry) =>
@@ -55,7 +34,7 @@ export function SolutionDetail({ slug }: { slug: string }) {
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },
-          { label: "Solutions", href: "/solutions" },
+          { label: "Our Services", href: "/solutions" },
           { label: solution.label },
         ]}
       />
@@ -73,12 +52,11 @@ export function SolutionDetail({ slug }: { slug: string }) {
             </>
           }
         />
-        <IntroPanel
-          id="solution-brief-heading"
-          icon={<Icon />}
-          title="Built for your requirement"
-          description={detail.bestFor}
-          items={detail.facts}
+        <SolutionExecutionVisual
+          slug={solution.slug}
+          label={solution.label}
+          facts={detail.facts}
+          bestFor={detail.bestFor}
         />
       </div>
       <nav
@@ -87,7 +65,7 @@ export function SolutionDetail({ slug }: { slug: string }) {
       >
         <a href="#solution-services">Services</a>
         <a href={`#${detail.focus.id}`}>{detail.focus.label}</a>
-        <a href="#solution-process">Delivery process</a>
+        <a href="#solution-process">Execution flow</a>
         <a href="#solution-industries">Industries</a>
       </nav>
       <section
@@ -102,9 +80,15 @@ export function SolutionDetail({ slug }: { slug: string }) {
           description={detail.servicesDescription}
         />
         <ul className="zb-solution-service-grid" role="list">
-          {detail.services.map((service) => (
+          {detail.services.map((service, index) => (
             <li key={service.title}>
               <Card className="zb-card zb-solution-service-card">
+                <div className="zb-solution-service-card-top">
+                  <span aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <small>Service activity</small>
+                </div>
                 <h3>{service.title}</h3>
                 <p>{service.description}</p>
               </Card>

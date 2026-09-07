@@ -11,7 +11,9 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { solutionVisuals } from "@/data/solution-visuals";
 import type { SolutionSummary } from "@/types/catalog.types";
+import type { SolutionSlug } from "@/types/solution-detail.types";
 
 const icons = {
   "workforce-solutions": UsersRound,
@@ -24,7 +26,9 @@ const icons = {
 };
 
 export function SolutionCard({ solution }: { solution: SolutionSummary }) {
-  const Icon = icons[solution.slug as keyof typeof icons] ?? UsersRound;
+  const slug = solution.slug as SolutionSlug;
+  const Icon = icons[slug] ?? UsersRound;
+  const visual = solutionVisuals[slug];
   return (
     <Link
       href={`/${solution.slug}`}
@@ -40,6 +44,14 @@ export function SolutionCard({ solution }: { solution: SolutionSummary }) {
         </div>
         <h3 className="zb-card-title">{solution.title}</h3>
         <p className="zb-card-copy">{solution.description}</p>
+        <div className="zb-solution-card-flow" aria-hidden="true">
+          {visual.stages.slice(0, 3).map((stage, index) => (
+            <span key={stage}>
+              <small>{String(index + 1).padStart(2, "0")}</small>
+              {stage}
+            </span>
+          ))}
+        </div>
         <div className="zb-card-meta">
           {solution.services.map((service) => (
             <span className="zb-chip" key={service}>
@@ -48,7 +60,7 @@ export function SolutionCard({ solution }: { solution: SolutionSummary }) {
           ))}
         </div>
         <span className="zb-card-cta">
-          Explore solution{" "}
+          View execution model{" "}
           <ArrowUpRight className="size-4" aria-hidden="true" />
         </span>
       </Card>

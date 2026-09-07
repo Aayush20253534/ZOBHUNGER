@@ -1,4 +1,13 @@
-import { ArrowUpRight, CheckCircle2, Layers3, MessagesSquare } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BriefcaseBusiness,
+  CheckCircle2,
+  Layers3,
+  MapPinned,
+  MessagesSquare,
+  Workflow,
+} from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
@@ -9,6 +18,33 @@ import { SolutionCard } from "@/components/solutions/SolutionCard";
 import { Card } from "@/components/ui/card";
 import { solutions } from "@/data/solutions";
 import "@/styles/solutions.css";
+
+const executionLanes = [
+  {
+    icon: BriefcaseBusiness,
+    label: "Build the team",
+    description:
+      "Recruitment, staffing and flexible workforce for defined roles and timelines.",
+    services: ["Workforce", "Gig Workforce"],
+    flow: ["Brief", "Match", "Deploy"],
+  },
+  {
+    icon: MapPinned,
+    label: "Execute in market",
+    description:
+      "Customer-facing and retail activity across territories, outlets, events and campaigns.",
+    services: ["Sales Force", "Promoters", "Retail", "Activation"],
+    flow: ["Plan", "Activate", "Report"],
+  },
+  {
+    icon: Workflow,
+    label: "Support operations",
+    description:
+      "Coordinated capacity for outreach, customer support, data and back-office workflows.",
+    services: ["Business Operations"],
+    flow: ["Scope", "Onboard", "Coordinate"],
+  },
+] as const;
 
 export function SolutionsOverview() {
   return (
@@ -66,6 +102,52 @@ export function SolutionsOverview() {
         />
       </div>
       <section
+        className="zb-solution-section zb-solution-execution-map"
+        aria-labelledby="solution-execution-map-heading"
+      >
+        <SectionHeading
+          id="solution-execution-map-heading"
+          eyebrow="From brief to execution"
+          title="See how the work moves before you choose a service."
+          description="ZOBHUNGER services are organised around three practical outcomes: building teams, executing in market and supporting ongoing business operations."
+        />
+        <div className="zb-solution-execution-lanes">
+          {executionLanes.map((lane) => {
+            const LaneIcon = lane.icon;
+            return (
+              <article key={lane.label} className="zb-solution-execution-lane">
+                <div className="zb-solution-execution-lane-heading">
+                  <span aria-hidden="true">
+                    <LaneIcon />
+                  </span>
+                  <div>
+                    <small>Execution lane</small>
+                    <h3>{lane.label}</h3>
+                  </div>
+                </div>
+                <p>{lane.description}</p>
+                <div
+                  className="zb-solution-execution-lane-flow"
+                  aria-hidden="true"
+                >
+                  {lane.flow.map((step, index) => (
+                    <span key={step}>
+                      {step}
+                      {index < lane.flow.length - 1 && <ArrowRight />}
+                    </span>
+                  ))}
+                </div>
+                <div className="zb-solution-execution-lane-services">
+                  {lane.services.map((service) => (
+                    <span key={service}>{service}</span>
+                  ))}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+      <section
         id="solution-catalogue"
         className="zb-solution-section"
         aria-labelledby="solution-catalogue-heading"
@@ -73,7 +155,7 @@ export function SolutionsOverview() {
         <SectionHeading
           id="solution-catalogue-heading"
           eyebrow="The service catalogue"
-          title="Seven services. Built to work together."
+          title="Seven services. One connected execution system."
           description="Explore each service for the roles, execution support and engagement options it covers."
         />
         <div className="zb-solutions-catalog">
