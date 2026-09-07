@@ -5,11 +5,13 @@ import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
 import { CoreCapabilitiesSection } from "@/components/experience/CoreCapabilitiesSection";
 import { ExperienceGroup } from "@/components/experience/ExperienceGroup";
+import { ExperienceProjectCard } from "@/components/experience/ExperienceProjectCard";
 import { WhyBrandsSection } from "@/components/experience/WhyBrandsSection";
 import {
   brandExperienceGroups,
   brandExperienceIntro,
 } from "@/data/brand-experience";
+import { caseStudies } from "@/data/case-studies";
 import "@/styles/experience.css";
 
 const experiencePillars = [
@@ -62,6 +64,14 @@ export function BrandExperiencePage() {
             audits, sampling, seller onboarding, training and consumer
             engagement across multiple sectors.
           </p>
+          <div className="zb-experience-hero-flow" aria-label="Typical execution pattern">
+            {["Brief", "Mobilise", "Execute", "Report"].map((step, index) => (
+              <div key={step}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{step}</strong>
+              </div>
+            ))}
+          </div>
         </aside>
       </section>
 
@@ -93,8 +103,8 @@ export function BrandExperiencePage() {
           </p>
         </div>
         <div className="zb-experience-groups">
-          {brandExperienceGroups.map((group) => (
-            <ExperienceGroup key={group.id} group={group} />
+          {brandExperienceGroups.map((group, index) => (
+            <ExperienceGroup key={group.id} group={group} index={index} />
           ))}
         </div>
         <p className="zb-experience-note">
@@ -105,6 +115,24 @@ export function BrandExperiencePage() {
           <ActionLink href="/case-studies" variant="secondary">
             Explore case studies <ArrowRight className="size-4" aria-hidden="true" />
           </ActionLink>
+        </div>
+      </section>
+
+      <section className="zb-experience-section" aria-labelledby="experience-project-stories">
+        <div className="zb-experience-section-heading">
+          <div>
+            <span className="zb-eyebrow">Project proof</span>
+            <h2 id="experience-project-stories">See how the work was structured.</h2>
+          </div>
+          <p>
+            Selected approved project stories connect the brand name to the actual
+            objective, field execution and outcome rather than leaving proof as a logo wall.
+          </p>
+        </div>
+        <div className="zb-experience-project-grid">
+          {caseStudies.map((study) => (
+            <ExperienceProjectCard key={study.slug} study={study} />
+          ))}
         </div>
       </section>
 

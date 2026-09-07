@@ -1,4 +1,4 @@
-import { ArrowRight, BriefcaseBusiness, Layers3 } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, Layers3, Route } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
@@ -26,6 +26,24 @@ export function CaseStudiesPage() {
         </aside>
       </section>
 
+      <section className="zb-case-proof-rail" aria-label="Case study framework">
+        <div className="zb-case-proof-intro">
+          <Route aria-hidden="true" />
+          <div>
+            <span className="zb-eyebrow">How to read the proof</span>
+            <strong>Every project story follows the work from brief to outcome.</strong>
+          </div>
+        </div>
+        <ol>
+          {["Objective", "Field plan", "Execution", "Outcome"].map((item, index) => (
+            <li key={item}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <strong>{item}</strong>
+            </li>
+          ))}
+        </ol>
+      </section>
+
       <section id="case-study-projects" className="zb-case-section" aria-labelledby="case-projects-title">
         <div className="zb-case-section-heading">
           <div><span className="zb-eyebrow">Selected projects</span><h2 id="case-projects-title">Experience by department.</h2></div>
@@ -37,7 +55,13 @@ export function CaseStudiesPage() {
             <section key={department} className="zb-case-department" aria-labelledby={`department-${studies[0].slug}`}>
               <div className="zb-case-department-heading">
                 <BriefcaseBusiness aria-hidden="true" />
-                <div><span>Department</span><h2 id={`department-${studies[0].slug}`}>{department}</h2></div>
+                <div className="zb-case-department-copy">
+                  <div className="zb-case-department-meta">
+                    <span>Department</span>
+                    <span>{studies.length} {studies.length === 1 ? "project" : "projects"}</span>
+                  </div>
+                  <h2 id={`department-${studies[0].slug}`}>{department}</h2>
+                </div>
               </div>
               <div className="zb-case-grid">
                 {studies.map((study, index) => <CaseStudyCard key={study.slug} study={study} index={index} />)}
