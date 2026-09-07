@@ -179,9 +179,11 @@ model Job {
 }
 
 model JobApplication {
-  id           String            @id @default(cuid())
-  jobId        String
-  workerUserId String?
+  id                         String            @id @default(cuid())
+  jobId                      String
+  workerUserId               String?
+  placementCandidateId       String?
+  placementCellApplicationId String?
   name         String
   email        String
   phone        String
@@ -194,12 +196,16 @@ model JobApplication {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
-  job        Job   @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  workerUser User? @relation("WorkerApplications", fields: [workerUserId], references: [id], onDelete: SetNull)
+  job                       Job                       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  workerUser                User?                     @relation("WorkerApplications", fields: [workerUserId], references: [id], onDelete: SetNull)
+  placementCandidate        PlacementCandidate?       @relation(fields: [placementCandidateId], references: [id], onDelete: SetNull)
+  placementCellApplication  PlacementCellApplication? @relation("PlacementCellApplications", fields: [placementCellApplicationId], references: [id], onDelete: SetNull)
 
   @@unique([jobId, email])
   @@index([jobId, status, createdAt])
   @@index([workerUserId])
+  @@index([placementCandidateId])
+  @@index([placementCellApplicationId, status, createdAt])
   @@index([email])
 }
 
@@ -258,6 +264,7 @@ model PlacementCellApplication {
   updatedAt                 DateTime                       @updatedAt
 
   candidates                PlacementCandidate[]
+  candidateApplications     JobApplication[]             @relation("PlacementCellApplications")
 
   @@index([status, createdAt])
   @@index([officialEmail])
@@ -321,6 +328,7 @@ model PlacementCandidate {
   updatedAt                  DateTime @updatedAt
 
   placementCell PlacementCellApplication @relation(fields: [placementCellApplicationId], references: [id], onDelete: Cascade)
+  applications  JobApplication[]
 
   @@unique([placementCellApplicationId, email])
   @@index([placementCellApplicationId, createdAt])

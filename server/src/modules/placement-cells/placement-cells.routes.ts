@@ -9,6 +9,8 @@ import { createPlacementCellApplicationController } from "./placement-cells.cont
 import { createPlacementCellApplicationSchema } from "./placement-cells.schema.js";
 import { createPlacementCandidateController, deletePlacementCandidateController, listPlacementCandidatesController, updatePlacementCandidateController } from "./placement-candidates.controller.js";
 import { placementCandidateBodySchema, placementCandidateParamsSchema, placementCandidateQuerySchema } from "./placement-candidates.schema.js";
+import { listPlacementOpportunitiesController, listPlacementOpportunityApplicationsController, submitPlacementOpportunityApplicationController } from "./placement-opportunities.controller.js";
+import { placementApplicationQuerySchema, placementOpportunityApplicationSchema, placementOpportunityParamsSchema, placementOpportunityQuerySchema } from "./placement-opportunities.schema.js";
 
 export const placementCellsRouter = Router();
 placementCellsRouter.post("/", publicSubmissionRateLimiter, validate({ body: createPlacementCellApplicationSchema }), createPlacementCellApplicationController);
@@ -19,3 +21,7 @@ placementCellsRouter.get("/portal/candidates", requireAuth, requireRole("PLACEME
 placementCellsRouter.post("/portal/candidates", requireAuth, requireRole("PLACEMENT_CELL"), validate({ body: placementCandidateBodySchema }), createPlacementCandidateController);
 placementCellsRouter.put("/portal/candidates/:id", requireAuth, requireRole("PLACEMENT_CELL"), validate({ params: placementCandidateParamsSchema, body: placementCandidateBodySchema }), updatePlacementCandidateController);
 placementCellsRouter.delete("/portal/candidates/:id", requireAuth, requireRole("PLACEMENT_CELL"), validate({ params: placementCandidateParamsSchema }), deletePlacementCandidateController);
+
+placementCellsRouter.get("/portal/opportunities", requireAuth, requireRole("PLACEMENT_CELL"), validate({ query: placementOpportunityQuerySchema }), listPlacementOpportunitiesController);
+placementCellsRouter.post("/portal/opportunities/:jobId/applications", requireAuth, requireRole("PLACEMENT_CELL"), validate({ params: placementOpportunityParamsSchema, body: placementOpportunityApplicationSchema }), submitPlacementOpportunityApplicationController);
+placementCellsRouter.get("/portal/applications", requireAuth, requireRole("PLACEMENT_CELL"), validate({ query: placementApplicationQuerySchema }), listPlacementOpportunityApplicationsController);
