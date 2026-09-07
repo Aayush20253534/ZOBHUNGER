@@ -552,11 +552,21 @@
   text-underline-offset: .22rem;
 }
 
-/* Restricted Placement Cell portal state. Center the illustration in the
-   visible area below the sticky navbar. The footer starts after this viewport. */
-body > main[class]:has(.zb-placement-portal-restricted-page) {
+/* Restricted Placement Cell portal state. The root layout normally constrains
+   page content to max-w-6xl with generous padding. For this state we deliberately
+   release that constraint so the illustration is centered against the full
+   viewport, not the inner content column. The footer begins after this area. */
+body:has(.zb-placement-portal-restricted-page) > main {
+  width: 100%;
+  max-width: none;
   min-height: calc(100svh - var(--zb-header-height));
-  padding-block: 1.25rem;
+  margin: 0;
+  padding: 0;
+}
+
+body:has(.zb-placement-portal-restricted-page) .zb-page-content {
+  width: 100%;
+  min-height: calc(100svh - var(--zb-header-height));
 }
 
 body:has(.zb-placement-portal-restricted-page) .zb-footer {
@@ -566,11 +576,11 @@ body:has(.zb-placement-portal-restricted-page) .zb-footer {
 .zb-placement-portal-restricted-page {
   display: flex;
   width: 100%;
-  min-height: calc(100svh - var(--zb-header-height) - 2.5rem);
+  min-height: calc(100svh - var(--zb-header-height));
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  margin-inline: auto;
+  padding: 1.5rem;
+  margin: 0;
   background: var(--zb-background, #fff);
 }
 
@@ -579,7 +589,7 @@ body:has(.zb-placement-portal-restricted-page) .zb-footer {
   width: 100%;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .zb-placement-portal-restricted-image {
@@ -592,13 +602,8 @@ body:has(.zb-placement-portal-restricted-page) .zb-footer {
 }
 
 @media (max-width: 640px) {
-  body > main[class]:has(.zb-placement-portal-restricted-page) {
-    padding-block: 1rem;
-  }
-
   .zb-placement-portal-restricted-page {
-    min-height: calc(100svh - var(--zb-header-height) - 2rem);
-    padding: .75rem;
+    padding: 1rem;
   }
 
   .zb-placement-portal-restricted-image {
