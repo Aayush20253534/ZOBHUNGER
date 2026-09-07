@@ -73,7 +73,7 @@ function NavigationShell({ pathname }: { pathname: string }) {
               width={520}
               height={180}
               priority
-              sizes="(max-width: 640px) 132px, 156px"
+              sizes="(max-width: 640px) 150px, 240px"
             />
           </Link>
           <nav className="zb-desktop-nav" aria-label="Main navigation">

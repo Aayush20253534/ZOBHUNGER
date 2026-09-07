@@ -133,15 +133,15 @@ body > main[class] {
 }
 .zb-navbar-logo {
   display: block;
-  width: 200px;
-  height: 2.35rem;
-  object-fit: contain;
-  object-position: left center;
+  width: 240px;
+  height: 42px;
+  object-fit: cover;
+  object-position: center;
 }
 @media (max-width: 640px) {
   .zb-navbar-logo {
-    width: 8.25rem;
-    height: 2rem;
+    width: 150px;
+    height: 32px;
   }
 }
 

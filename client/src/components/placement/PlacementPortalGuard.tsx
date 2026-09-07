@@ -54,10 +54,10 @@ export function PlacementPortalGuard({ children }: { children: ReactNode }) {
             className="zb-placement-portal-restricted-image"
             src="/Restricted_Caricature/Caricature.png"
             alt="Restricted area illustration"
-            width={1536}
-            height={1024}
+            width={220}
+            height={147}
             priority
-            sizes="(max-width: 640px) 82vw, 352px"
+            sizes="(max-width: 640px) 180px, 220px"
           />
         </section>
       </main>

@@ -552,38 +552,39 @@
   text-underline-offset: .22rem;
 }
 
-/* Restricted Placement Cell portal state. Keep it compact like the public business pages. */
+/* Restricted Placement Cell portal state. Fit the complete state below the navbar without scrolling. */
 .zb-placement-portal-restricted-page {
   display: grid;
-  min-height: clamp(16rem, 38vh, 22rem);
+  min-height: min(23rem, calc(100svh - var(--zb-header-height) - 1rem));
   place-items: center;
-  padding: clamp(.75rem, 1.5vw, 1.15rem) 1rem clamp(1rem, 2vw, 1.5rem);
+  padding: 1rem;
   background: var(--zb-background, #fff);
 }
 
 .zb-placement-portal-restricted-card {
   display: grid;
-  width: auto;
-  max-width: 100%;
+  width: 100%;
+  max-width: 24rem;
   place-items: center;
   margin: 0 auto;
 }
 
 .zb-placement-portal-restricted-image {
   display: block;
-  width: clamp(13.5rem, 18vw, 17.5rem);
-  max-width: 100%;
+  width: min(42vw, 220px);
+  max-width: 220px;
   height: auto;
   object-fit: contain;
 }
 
 @media (max-width: 640px) {
   .zb-placement-portal-restricted-page {
-    min-height: 15rem;
-    padding-block: .75rem 1rem;
+    min-height: min(19rem, calc(100svh - var(--zb-header-height) - .5rem));
+    padding: .75rem;
   }
 
   .zb-placement-portal-restricted-image {
-    width: min(68vw, 14rem);
+    width: min(52vw, 180px);
+    max-width: 180px;
   }
 }
