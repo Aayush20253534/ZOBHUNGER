@@ -14,12 +14,12 @@ export function SolutionsOverview() {
   return (
     <div className="zb-solutions">
       <Breadcrumbs
-        items={[{ label: "Home", href: "/" }, { label: "Solutions" }]}
+        items={[{ label: "Home", href: "/" }, { label: "Our Services" }]}
       />
       <div className="zb-solution-hero zb-solutions-overview-hero">
         <PageShell
           eyebrow="Hire. Deploy. Manage. Execute. Scale."
-          title="Our solutions"
+          title="Our services"
           description="Everything your business needs to hire, deploy and manage teams. Find recruitment, sales, campaign and operations support in one connected service catalogue."
           actions={
             <>
@@ -28,7 +28,7 @@ export function SolutionsOverview() {
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </ActionLink>
               <ActionLink href="#solution-catalogue" variant="secondary">
-                Explore the solutions
+                Explore the services
               </ActionLink>
             </>
           }
@@ -73,8 +73,8 @@ export function SolutionsOverview() {
         <SectionHeading
           id="solution-catalogue-heading"
           eyebrow="The service catalogue"
-          title="Seven solutions. Built to work together."
-          description="Explore each solution for the roles, services and engagement options it covers."
+          title="Seven services. Built to work together."
+          description="Explore each service for the roles, execution support and engagement options it covers."
         />
         <div className="zb-solutions-catalog">
           {solutions.map((solution) => (
