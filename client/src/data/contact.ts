@@ -5,6 +5,7 @@ export interface ContactDetails {
   socialLinks?: readonly { label: string; href: string }[];
 }
 
-// Add only client-approved business contacts. The WhatsApp sender's private
-// number is not a verified public business number. Empty fields stay hidden.
+// Add only client-approved business contacts and certified office details.
+// Empty fields stay hidden, so office information can be added once the
+// certification details supplied by the client are available in source form.
 export const contactDetails: ContactDetails = {};

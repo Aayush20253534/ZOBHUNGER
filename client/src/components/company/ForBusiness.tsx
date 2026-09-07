@@ -162,6 +162,20 @@ export function ForBusiness() {
         </dl>
       </section>
 
+      <section className="zb-company-section zb-company-note" aria-labelledby="business-partner-title">
+        <div>
+          <h2 id="business-partner-title">Have industry expertise or business opportunities to bring?</h2>
+          <p>
+            Experienced professionals, consultants and business specialists can
+            explore project-led collaboration through the Independent Business
+            Partner Program.
+          </p>
+        </div>
+        <ActionLink href="/become-a-partner" variant="secondary">
+          Partner With Us
+        </ActionLink>
+      </section>
+
       <section
         className="zb-company-section zb-company-faq"
         aria-labelledby="business-questions-title"

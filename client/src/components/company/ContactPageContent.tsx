@@ -57,6 +57,17 @@ export function ContactPageContent({
             </ActionLink>
           </section>
           <section className="zb-company-aside-card">
+            <span className="zb-eyebrow">Independent business partners</span>
+            <h2>Want to collaborate through your expertise or network?</h2>
+            <p>
+              Explore the Independent Business Partner Program for flexible,
+              contribution-led project opportunities.
+            </p>
+            <ActionLink href="/become-a-partner" variant="secondary">
+              Partner With Us
+            </ActionLink>
+          </section>
+          <section className="zb-company-aside-card">
             <span className="zb-eyebrow">For workers</span>
             <h2>Looking for your next role?</h2>
             <p>
