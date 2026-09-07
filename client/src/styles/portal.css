@@ -552,39 +552,44 @@
   text-underline-offset: .22rem;
 }
 
-/* Restricted Placement Cell portal state. Fit the complete state below the navbar without scrolling. */
+/* Restricted Placement Cell portal state. Keep the full illustration visible in the first viewport. */
 .zb-placement-portal-restricted-page {
-  display: grid;
-  min-height: min(23rem, calc(100svh - var(--zb-header-height) - 1rem));
-  place-items: center;
+  display: flex;
+  width: 100%;
+  min-height: clamp(20rem, 52vh, 27rem);
+  align-items: center;
+  justify-content: center;
   padding: 1rem;
+  margin-inline: auto;
   background: var(--zb-background, #fff);
 }
 
 .zb-placement-portal-restricted-card {
-  display: grid;
+  display: flex;
   width: 100%;
-  max-width: 24rem;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   margin: 0 auto;
 }
 
 .zb-placement-portal-restricted-image {
   display: block;
-  width: min(42vw, 220px);
-  max-width: 220px;
+  width: min(34vw, 360px);
+  max-width: 360px;
   height: auto;
+  max-height: min(42vh, 280px);
   object-fit: contain;
 }
 
 @media (max-width: 640px) {
   .zb-placement-portal-restricted-page {
-    min-height: min(19rem, calc(100svh - var(--zb-header-height) - .5rem));
+    min-height: clamp(17rem, 46vh, 22rem);
     padding: .75rem;
   }
 
   .zb-placement-portal-restricted-image {
-    width: min(52vw, 180px);
-    max-width: 180px;
+    width: min(72vw, 260px);
+    max-width: 260px;
+    max-height: 220px;
   }
 }
