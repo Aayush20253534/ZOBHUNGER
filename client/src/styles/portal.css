@@ -552,11 +552,21 @@
   text-underline-offset: .22rem;
 }
 
-/* Restricted Placement Cell portal state. Keep the full illustration visible in the first viewport. */
+/* Restricted Placement Cell portal state. Center the illustration in the
+   visible area below the sticky navbar. The footer starts after this viewport. */
+body > main[class]:has(.zb-placement-portal-restricted-page) {
+  min-height: calc(100svh - var(--zb-header-height));
+  padding-block: 1.25rem;
+}
+
+body:has(.zb-placement-portal-restricted-page) .zb-footer {
+  margin-top: 0;
+}
+
 .zb-placement-portal-restricted-page {
   display: flex;
   width: 100%;
-  min-height: clamp(20rem, 52vh, 27rem);
+  min-height: calc(100svh - var(--zb-header-height) - 2.5rem);
   align-items: center;
   justify-content: center;
   padding: 1rem;
@@ -582,8 +592,12 @@
 }
 
 @media (max-width: 640px) {
+  body > main[class]:has(.zb-placement-portal-restricted-page) {
+    padding-block: 1rem;
+  }
+
   .zb-placement-portal-restricted-page {
-    min-height: clamp(17rem, 46vh, 22rem);
+    min-height: calc(100svh - var(--zb-header-height) - 2rem);
     padding: .75rem;
   }
 
