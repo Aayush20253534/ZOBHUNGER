@@ -684,3 +684,75 @@
 .zb-partner-form .zb-form-actions {
   margin-top: 0.875rem;
 }
+
+/* Compact the desktop partner hero so the first viewport matches other portal entry pages. */
+@media (min-width: 960px) {
+  .zb-page-content .zb-partner-hero {
+    grid-template-columns: minmax(0, 1.36fr) minmax(21rem, 0.78fr);
+    gap: clamp(1.75rem, 3vw, 3rem);
+  }
+
+  .zb-page-content .zb-partner-hero .zb-page-heading {
+    padding-top: 0.15rem;
+  }
+
+  .zb-page-content .zb-partner-hero .zb-page-heading h1 {
+    max-width: 13.5ch;
+    font-size: clamp(2.7rem, 3.85vw, 3.55rem);
+    line-height: 1.02;
+  }
+
+  .zb-page-content .zb-partner-hero-subtitle {
+    max-width: 35rem;
+    margin-top: 0.75rem;
+    font-size: 1.05rem;
+  }
+
+  .zb-page-content .zb-partner-hero .zb-page-description {
+    max-width: 39rem;
+    margin-top: 0.7rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .zb-page-content .zb-partner-hero .zb-button-row {
+    margin-top: 1rem;
+  }
+
+  .zb-page-content .zb-partner-hero-card {
+    max-width: 31.5rem;
+    padding: 1.1rem 1.15rem;
+  }
+
+  .zb-partner-hero-card .zb-partner-hero-icon {
+    width: 2.55rem;
+    height: 2.55rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .zb-partner-hero-card .zb-partner-hero-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .zb-partner-hero-card h2 {
+    margin-top: 0.45rem;
+    font-size: clamp(1.2rem, 1.4vw, 1.4rem);
+  }
+
+  .zb-partner-hero-card > p {
+    margin-top: 0.55rem;
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+
+  .zb-partner-hero-facts {
+    gap: 0.45rem;
+    margin-top: 0.7rem;
+  }
+
+  .zb-partner-hero-facts > div {
+    padding: 0.58rem 0.65rem;
+    font-size: 0.78rem;
+  }
+}
