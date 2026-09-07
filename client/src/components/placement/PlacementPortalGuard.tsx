@@ -57,7 +57,7 @@ export function PlacementPortalGuard({ children }: { children: ReactNode }) {
             width={1536}
             height={1024}
             priority
-            sizes="(max-width: 640px) 84vw, 460px"
+            sizes="(max-width: 640px) 82vw, 352px"
           />
         </section>
       </main>

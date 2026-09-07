@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
@@ -64,8 +65,16 @@ function NavigationShell({ pathname }: { pathname: string }) {
         }}
       >
         <div className="zb-container zb-header-inner">
-          <Link href="/" className="zb-wordmark" aria-label="Zobhunger home">
-            ZOB<span>HUNGER</span>
+          <Link href="/" className="zb-navbar-brand" aria-label="Zobhunger home">
+            <Image
+              className="zb-navbar-logo"
+              src="/Logo/Logo.png"
+              alt="ZOBHUNGER"
+              width={520}
+              height={180}
+              priority
+              sizes="(max-width: 640px) 132px, 156px"
+            />
           </Link>
           <nav className="zb-desktop-nav" aria-label="Main navigation">
             {navigation.map((item) =>

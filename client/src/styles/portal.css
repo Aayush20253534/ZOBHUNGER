@@ -555,37 +555,35 @@
 /* Restricted Placement Cell portal state. Keep it compact like the public business pages. */
 .zb-placement-portal-restricted-page {
   display: grid;
-  min-height: clamp(28rem, 62vh, 38rem);
+  min-height: clamp(22rem, 48vh, 29rem);
   place-items: center;
-  padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1rem, 3vw, 2rem) clamp(2rem, 4vw, 3rem);
+  padding: clamp(1.25rem, 2.5vw, 2rem) 1rem clamp(1.75rem, 3vw, 2.5rem);
   background: var(--zb-background, #fff);
 }
 
 .zb-placement-portal-restricted-card {
   display: grid;
-  width: min(100%, 31rem);
+  width: auto;
+  max-width: 100%;
   place-items: center;
   margin: 0 auto;
 }
 
 .zb-placement-portal-restricted-image {
   display: block;
-  width: min(100%, 29rem);
+  width: clamp(18rem, 26vw, 22rem);
+  max-width: 100%;
   height: auto;
   object-fit: contain;
 }
 
 @media (max-width: 640px) {
   .zb-placement-portal-restricted-page {
-    min-height: clamp(24rem, 56vh, 32rem);
-    padding-top: 1.25rem;
-  }
-
-  .zb-placement-portal-restricted-card {
-    width: min(100%, 24rem);
+    min-height: 21rem;
+    padding-block: 1.25rem 1.75rem;
   }
 
   .zb-placement-portal-restricted-image {
-    width: min(100%, 22rem);
+    width: min(82vw, 18.5rem);
   }
 }

@@ -124,6 +124,27 @@ body > main[class] {
   outline-offset: 5px;
   border-radius: 0.25rem;
 }
+
+.zb-navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  text-decoration: none;
+}
+.zb-navbar-logo {
+  display: block;
+  width: clamp(8.25rem, 11vw, 9.75rem);
+  height: 2.35rem;
+  object-fit: contain;
+  object-position: left center;
+}
+@media (max-width: 640px) {
+  .zb-navbar-logo {
+    width: 8.25rem;
+    height: 2rem;
+  }
+}
+
 .zb-wordmark {
   display: inline-flex;
   align-items: center;
