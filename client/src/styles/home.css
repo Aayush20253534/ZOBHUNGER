@@ -715,3 +715,8 @@
   height: 1.35rem;
   object-fit: contain;
 }
+
+/* Phase 1.5: give the homepage hero a little breathing room below the navigation. */
+.zb-page-content .zb-home {
+  padding-top: clamp(0.5rem, 1vw, 0.875rem);
+}

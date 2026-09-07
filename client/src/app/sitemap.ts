@@ -15,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/brand-experience",
     "/case-studies",
     "/become-a-partner",
+    "/placement-cell-partnership",
     "/contact",
     "/hire-workforce",
     "/how-it-works",
