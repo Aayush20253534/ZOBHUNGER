@@ -200,19 +200,40 @@
   border: 1px solid var(--zb-border);
   border-radius: 0.5rem;
   background: #fff;
+  gap: 0.65rem;
   font-size: 0.86rem;
   font-weight: 650;
   line-height: 1.3;
 }
 
-.zb-experience-brand-list li::before {
-  content: "";
-  flex: 0 0 auto;
-  width: 0.35rem;
-  height: 0.35rem;
-  margin-right: 0.55rem;
-  border-radius: 50%;
-  background: var(--zb-action);
+.zb-experience-brand-logo {
+  display: grid;
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--zb-border) 82%, transparent);
+  border-radius: 0.48rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+}
+
+.zb-experience-brand-logo img {
+  display: block;
+  width: 1.45rem;
+  height: 1.45rem;
+  object-fit: contain;
+}
+
+.zb-experience-brand-logo > span {
+  color: var(--zb-action);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.zb-experience-brand-name {
+  min-width: 0;
 }
 
 .zb-experience-note {
