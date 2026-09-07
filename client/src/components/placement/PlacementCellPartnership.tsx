@@ -10,14 +10,12 @@ import {
   GraduationCap,
   Handshake,
   Laptop,
-  MapPin,
   Network,
   PanelsTopLeft,
   Route,
   Sparkles,
   Target,
   Users,
-  WalletCards,
 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";

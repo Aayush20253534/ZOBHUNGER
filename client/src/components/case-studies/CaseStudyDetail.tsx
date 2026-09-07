@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Check, Target } from "lucide-react";
+import { ArrowLeft, Check, Target } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";

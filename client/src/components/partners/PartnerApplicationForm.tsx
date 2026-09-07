@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, FileText, Upload } from "lucide-react";
@@ -39,7 +39,6 @@ export function PartnerApplicationForm() {
     | { type: "success"; id: string; warning?: string }
     | { type: "error"; message: string }
   >({ type: "idle" });
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     register,
     handleSubmit,
@@ -86,7 +85,6 @@ export function PartnerApplicationForm() {
       setStatus({ type: "success", id: receipt.id, warning: receipt.warning });
       reset(emptyValues);
       setResume(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       setStatus({
         type: "error",
@@ -163,7 +161,6 @@ export function PartnerApplicationForm() {
                 <p>PDF, DOC or DOCX. Maximum 2 MB.</p>
               </div>
               <input
-                ref={fileInputRef}
                 id="partner-resume"
                 type="file"
                 accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
