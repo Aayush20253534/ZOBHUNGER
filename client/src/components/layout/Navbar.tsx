@@ -10,6 +10,7 @@ import { industries } from "@/data/industries";
 import {
   isCurrentPath,
   navigation,
+  partnerNavigation,
   type NavigationGroup,
 } from "@/data/navigation";
 import { site } from "@/data/site";
@@ -147,9 +148,54 @@ function NavigationShell({ pathname }: { pathname: string }) {
                 </Link>
               ),
             )}
-            <ActionLink href="/become-a-partner" variant="secondary" className="zb-partner-nav-cta">
-              Partner With Us
-            </ActionLink>
+            <div className="zb-partner-menu">
+              <button
+                type="button"
+                className="zb-action-link zb-partner-nav-cta"
+                data-variant="secondary"
+                data-menu="partners"
+                data-active={
+                  isCurrentPath(pathname, "/become-a-partner") ||
+                  isCurrentPath(pathname, "/placement-cell-partnership") ||
+                  isCurrentPath(pathname, "/placement-cell-login")
+                }
+                aria-expanded={openMenu === "partners"}
+                aria-controls="zb-navigation-partners"
+                onClick={() =>
+                  setOpenMenu(openMenu === "partners" ? null : "partners")
+                }
+              >
+                Partner With Us
+                <ChevronDown className="zb-nav-chevron" aria-hidden="true" />
+              </button>
+              <div
+                id="zb-navigation-partners"
+                className="zb-partner-nav-panel"
+                hidden={openMenu !== "partners"}
+              >
+                <div className="zb-partner-nav-heading">
+                  <span>Partnerships</span>
+                  <p>Choose the partnership route that fits your role.</p>
+                </div>
+                <ul>
+                  {partnerNavigation.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} onClick={() => setOpenMenu(null)}>
+                        <strong>{link.label}</strong>
+                        <small>{link.description}</small>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  className="zb-partner-login-link"
+                  href="/placement-cell-login"
+                  onClick={() => setOpenMenu(null)}
+                >
+                  Placement Cell Login
+                </Link>
+              </div>
+            </div>
             <ActionLink href={site.primaryAction.href}>
               {site.primaryAction.label}
             </ActionLink>

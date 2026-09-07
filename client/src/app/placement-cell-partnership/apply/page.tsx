@@ -3,11 +3,14 @@ import { PlacementCellApplicationForm } from "@/components/placement/PlacementCe
 import { getPageMetadata } from "@/lib/page-metadata";
 import "@/styles/placement-partnership.css";
 
-export const metadata = getPageMetadata(
-  "Placement Cell & Institution Onboarding",
-  "Submit your College, University, Training Institute or Placement Cell details for ZOBHUNGER partnership review.",
-  "/placement-cell-partnership/apply",
-);
+export const metadata = {
+  ...getPageMetadata(
+    "Placement Cell & Institution Onboarding",
+    "Submit your College, University, Training Institute or Placement Cell details for ZOBHUNGER partnership review.",
+    "/placement-cell-partnership/apply",
+  ),
+  robots: { index: false, follow: true },
+};
 
 export default function Page() {
   return <div className="zb-placement-apply-page">

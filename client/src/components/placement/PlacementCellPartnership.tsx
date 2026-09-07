@@ -78,7 +78,7 @@ export function PlacementCellPartnership() {
           }
         />
 
-        <aside className="zb-placement-hero-card" aria-label="Institution partnership summary">
+        <aside id="institution-partners" className="zb-placement-hero-card" aria-label="Institution partnership summary">
           <span className="zb-placement-hero-icon" aria-hidden="true">
             <GraduationCap />
           </span>

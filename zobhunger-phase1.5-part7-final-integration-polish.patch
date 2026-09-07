@@ -1,0 +1,382 @@
+diff --git a/client/src/app/placement-cell-partnership/apply/page.tsx b/client/src/app/placement-cell-partnership/apply/page.tsx
+index 6c8780f..6f1ff6e 100644
+--- a/client/src/app/placement-cell-partnership/apply/page.tsx
++++ b/client/src/app/placement-cell-partnership/apply/page.tsx
+@@ -3,11 +3,14 @@ import { PlacementCellApplicationForm } from "@/components/placement/PlacementCe
+ import { getPageMetadata } from "@/lib/page-metadata";
+ import "@/styles/placement-partnership.css";
+ 
+-export const metadata = getPageMetadata(
+-  "Placement Cell & Institution Onboarding",
+-  "Submit your College, University, Training Institute or Placement Cell details for ZOBHUNGER partnership review.",
+-  "/placement-cell-partnership/apply",
+-);
++export const metadata = {
++  ...getPageMetadata(
++    "Placement Cell & Institution Onboarding",
++    "Submit your College, University, Training Institute or Placement Cell details for ZOBHUNGER partnership review.",
++    "/placement-cell-partnership/apply",
++  ),
++  robots: { index: false, follow: true },
++};
+ 
+ export default function Page() {
+   return <div className="zb-placement-apply-page">
+diff --git a/client/src/app/placement-portal/layout.tsx b/client/src/app/placement-portal/layout.tsx
+index 8d668de..b6a7e88 100644
+--- a/client/src/app/placement-portal/layout.tsx
++++ b/client/src/app/placement-portal/layout.tsx
+@@ -1,6 +1,11 @@
++import type { Metadata } from "next";
+ import type { ReactNode } from "react";
+ import { PlacementPortalGuard } from "@/components/placement/PlacementPortalGuard";
+ 
++export const metadata: Metadata = {
++  robots: { index: false, follow: false },
++};
++
+ export default function PlacementPortalLayout({ children }: { children: ReactNode }) {
+   return <PlacementPortalGuard>{children}</PlacementPortalGuard>;
+ }
+diff --git a/client/src/app/robots.ts b/client/src/app/robots.ts
+index a11aca3..06c1ae5 100644
+--- a/client/src/app/robots.ts
++++ b/client/src/app/robots.ts
+@@ -2,9 +2,13 @@ import type { MetadataRoute } from "next";
+ import { site } from "@/data/site";
+ 
+ export default function robots(): MetadataRoute.Robots {
+-  // Sample pages carry noindex metadata. Allow crawlers to read that metadata.
++  // Keep public marketing pages discoverable while excluding private workspaces.
+   return {
+-    rules: { userAgent: "*", allow: "/", disallow: "/design-system" },
++    rules: {
++      userAgent: "*",
++      allow: "/",
++      disallow: ["/design-system", "/admin", "/placement-portal"],
++    },
+     sitemap: `${site.url}/sitemap.xml`,
+   };
+ }
+diff --git a/client/src/app/sitemap.ts b/client/src/app/sitemap.ts
+index ea7dafb..e39406e 100644
+--- a/client/src/app/sitemap.ts
++++ b/client/src/app/sitemap.ts
+@@ -16,7 +16,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
+     "/case-studies",
+     "/become-a-partner",
+     "/placement-cell-partnership",
+-    "/placement-cell-partnership/apply",
+     "/contact",
+     "/hire-workforce",
+     "/how-it-works",
+diff --git a/client/src/components/layout/Footer.tsx b/client/src/components/layout/Footer.tsx
+index 22746f6..0ee8e83 100644
+--- a/client/src/components/layout/Footer.tsx
++++ b/client/src/components/layout/Footer.tsx
+@@ -62,6 +62,9 @@ export function Footer() {
+               <li>
+                 <Link href="/become-a-partner">Become a Partner</Link>
+               </li>
++              <li>
++                <Link href="/placement-cell-partnership">Placement Cell & Institution Partnership</Link>
++              </li>
+               <li>
+                 <Link href="/for-workers">For workers</Link>
+               </li>
+diff --git a/client/src/components/layout/MobileMenu.tsx b/client/src/components/layout/MobileMenu.tsx
+index 6db6fd2..c5a1a9b 100644
+--- a/client/src/components/layout/MobileMenu.tsx
++++ b/client/src/components/layout/MobileMenu.tsx
+@@ -13,7 +13,11 @@ import {
+   SheetTrigger,
+ } from "@/components/ui/sheet";
+ import { industries } from "@/data/industries";
+-import { isCurrentPath, navigation } from "@/data/navigation";
++import {
++  isCurrentPath,
++  navigation,
++  partnerNavigation,
++} from "@/data/navigation";
+ import { site } from "@/data/site";
+ import { solutions } from "@/data/solutions";
+ 
+@@ -108,6 +112,26 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
+               </Link>
+             ),
+           )}
++          <details className="zb-mobile-partner-menu">
++            <summary>Partner With Us</summary>
++            <ul>
++              {partnerNavigation.map((link) => (
++                <li key={link.href}>
++                  <Link href={link.href} onClick={() => setOpen(false)}>
++                    {link.label}
++                  </Link>
++                </li>
++              ))}
++              <li>
++                <Link
++                  href="/placement-cell-login"
++                  onClick={() => setOpen(false)}
++                >
++                  Placement Cell Login
++                </Link>
++              </li>
++            </ul>
++          </details>
+           <div className="zb-mobile-actions">
+             <ActionLink
+               href="/login"
+@@ -116,13 +140,6 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
+             >
+               Portal access
+             </ActionLink>
+-            <ActionLink
+-              href="/become-a-partner"
+-              variant="secondary"
+-              onClick={() => setOpen(false)}
+-            >
+-              Become a Partner
+-            </ActionLink>
+             <ActionLink
+               href={site.primaryAction.href}
+               onClick={() => setOpen(false)}
+diff --git a/client/src/components/layout/Navbar.tsx b/client/src/components/layout/Navbar.tsx
+index 4fcd6b0..2a2f06b 100644
+--- a/client/src/components/layout/Navbar.tsx
++++ b/client/src/components/layout/Navbar.tsx
+@@ -10,6 +10,7 @@ import { industries } from "@/data/industries";
+ import {
+   isCurrentPath,
+   navigation,
++  partnerNavigation,
+   type NavigationGroup,
+ } from "@/data/navigation";
+ import { site } from "@/data/site";
+@@ -147,9 +148,54 @@ function NavigationShell({ pathname }: { pathname: string }) {
+                 </Link>
+               ),
+             )}
+-            <ActionLink href="/become-a-partner" variant="secondary" className="zb-partner-nav-cta">
+-              Partner With Us
+-            </ActionLink>
++            <div className="zb-partner-menu">
++              <button
++                type="button"
++                className="zb-action-link zb-partner-nav-cta"
++                data-variant="secondary"
++                data-menu="partners"
++                data-active={
++                  isCurrentPath(pathname, "/become-a-partner") ||
++                  isCurrentPath(pathname, "/placement-cell-partnership") ||
++                  isCurrentPath(pathname, "/placement-cell-login")
++                }
++                aria-expanded={openMenu === "partners"}
++                aria-controls="zb-navigation-partners"
++                onClick={() =>
++                  setOpenMenu(openMenu === "partners" ? null : "partners")
++                }
++              >
++                Partner With Us
++                <ChevronDown className="zb-nav-chevron" aria-hidden="true" />
++              </button>
++              <div
++                id="zb-navigation-partners"
++                className="zb-partner-nav-panel"
++                hidden={openMenu !== "partners"}
++              >
++                <div className="zb-partner-nav-heading">
++                  <span>Partnerships</span>
++                  <p>Choose the partnership route that fits your role.</p>
++                </div>
++                <ul>
++                  {partnerNavigation.map((link) => (
++                    <li key={link.href}>
++                      <Link href={link.href} onClick={() => setOpenMenu(null)}>
++                        <strong>{link.label}</strong>
++                        <small>{link.description}</small>
++                      </Link>
++                    </li>
++                  ))}
++                </ul>
++                <Link
++                  className="zb-partner-login-link"
++                  href="/placement-cell-login"
++                  onClick={() => setOpenMenu(null)}
++                >
++                  Placement Cell Login
++                </Link>
++              </div>
++            </div>
+             <ActionLink href={site.primaryAction.href}>
+               {site.primaryAction.label}
+             </ActionLink>
+diff --git a/client/src/components/placement/PlacementCellPartnership.tsx b/client/src/components/placement/PlacementCellPartnership.tsx
+index 373ee40..b09f4da 100644
+--- a/client/src/components/placement/PlacementCellPartnership.tsx
++++ b/client/src/components/placement/PlacementCellPartnership.tsx
+@@ -78,7 +78,7 @@ export function PlacementCellPartnership() {
+           }
+         />
+ 
+-        <aside className="zb-placement-hero-card" aria-label="Institution partnership summary">
++        <aside id="institution-partners" className="zb-placement-hero-card" aria-label="Institution partnership summary">
+           <span className="zb-placement-hero-icon" aria-hidden="true">
+             <GraduationCap />
+           </span>
+diff --git a/client/src/data/navigation.ts b/client/src/data/navigation.ts
+index 9ff558d..a6fa40b 100644
+--- a/client/src/data/navigation.ts
++++ b/client/src/data/navigation.ts
+@@ -1,4 +1,4 @@
+-export type NavigationGroup = "solutions" | "industries";
++export type NavigationGroup = "solutions" | "industries" | "partners";
+ 
+ export interface NavigationItem {
+   label: string;
+@@ -6,6 +6,25 @@ export interface NavigationItem {
+   group?: NavigationGroup;
+ }
+ 
++
++export const partnerNavigation = [
++  {
++    label: "Independent Business Partner",
++    href: "/become-a-partner",
++    description: "Collaborate with ZOBHUNGER as an independent business partner.",
++  },
++  {
++    label: "Placement Cell Partnership",
++    href: "/placement-cell-partnership",
++    description: "Onboard your Placement Cell and connect students with opportunities.",
++  },
++  {
++    label: "College & Institution Partnership",
++    href: "/placement-cell-partnership#institution-partners",
++    description: "Partnership access for colleges, universities and training institutes.",
++  },
++] as const;
++
+ export const navigation: readonly NavigationItem[] = [
+   { label: "Solutions", href: "/solutions", group: "solutions" },
+   { label: "Industries", href: "/industries", group: "industries" },
+diff --git a/client/src/styles/brand.css b/client/src/styles/brand.css
+index 0261be3..ecb4c99 100644
+--- a/client/src/styles/brand.css
++++ b/client/src/styles/brand.css
+@@ -851,3 +851,114 @@ body > main[class] {
+     font-size: 0.8125rem;
+   }
+ }
++
++/* Phase 1.5: compact partnership navigation keeps institutional access visible
++   without turning the primary header into a row of oversized CTAs. */
++.zb-partner-menu {
++  position: relative;
++}
++
++.zb-partner-menu > button {
++  font-family: inherit;
++  cursor: pointer;
++}
++
++.zb-partner-menu > button[data-active="true"] {
++  border-color: var(--zb-action);
++  color: var(--zb-action);
++}
++
++.zb-partner-nav-panel {
++  position: absolute;
++  top: calc(100% + 0.45rem);
++  right: 0;
++  z-index: 5;
++  width: min(28rem, calc(100vw - 3rem));
++  padding: 0.8rem;
++  border: 1px solid var(--zb-border);
++  border-radius: 0.75rem;
++  background: var(--zb-surface);
++  box-shadow: 0 14px 32px var(--zb-shadow);
++}
++
++.zb-partner-nav-panel[hidden] {
++  display: none;
++}
++
++.zb-partner-nav-heading {
++  padding: 0.45rem 0.55rem 0.75rem;
++  border-bottom: 1px solid var(--zb-border);
++}
++
++.zb-partner-nav-heading span {
++  color: var(--zb-action);
++  font-size: 0.75rem;
++  font-weight: 800;
++  letter-spacing: 0.08em;
++  text-transform: uppercase;
++}
++
++.zb-partner-nav-heading p {
++  margin: 0.3rem 0 0;
++  color: var(--zb-muted);
++  font-size: 0.8125rem;
++  line-height: 1.5;
++}
++
++.zb-partner-nav-panel ul {
++  display: grid;
++  gap: 0.2rem;
++  margin: 0.5rem 0;
++  padding: 0;
++  list-style: none;
++}
++
++.zb-partner-nav-panel li > a {
++  display: block;
++  padding: 0.7rem 0.65rem;
++  border-radius: 0.5rem;
++  text-decoration: none;
++}
++
++.zb-partner-nav-panel li > a:hover,
++.zb-partner-nav-panel li > a:focus-visible {
++  background: var(--muted);
++}
++
++.zb-partner-nav-panel strong,
++.zb-partner-nav-panel small {
++  display: block;
++}
++
++.zb-partner-nav-panel strong {
++  color: var(--zb-ink);
++  font-size: 0.875rem;
++}
++
++.zb-partner-nav-panel small {
++  margin-top: 0.2rem;
++  color: var(--zb-muted);
++  font-size: 0.75rem;
++  line-height: 1.45;
++}
++
++.zb-partner-login-link {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  min-height: 2.75rem;
++  padding: 0.65rem;
++  border-top: 1px solid var(--zb-border);
++  color: var(--zb-action);
++  font-size: 0.8125rem;
++  font-weight: 750;
++  text-decoration: none;
++}
++
++.zb-partner-login-link::after {
++  content: "→";
++}
++
++.zb-mobile-partner-menu summary {
++  color: var(--zb-ink);
++}

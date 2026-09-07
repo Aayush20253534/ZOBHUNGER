@@ -13,7 +13,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { industries } from "@/data/industries";
-import { isCurrentPath, navigation } from "@/data/navigation";
+import {
+  isCurrentPath,
+  navigation,
+  partnerNavigation,
+} from "@/data/navigation";
 import { site } from "@/data/site";
 import { solutions } from "@/data/solutions";
 
@@ -108,6 +112,26 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
               </Link>
             ),
           )}
+          <details className="zb-mobile-partner-menu">
+            <summary>Partner With Us</summary>
+            <ul>
+              {partnerNavigation.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} onClick={() => setOpen(false)}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link
+                  href="/placement-cell-login"
+                  onClick={() => setOpen(false)}
+                >
+                  Placement Cell Login
+                </Link>
+              </li>
+            </ul>
+          </details>
           <div className="zb-mobile-actions">
             <ActionLink
               href="/login"
@@ -115,13 +139,6 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
               onClick={() => setOpen(false)}
             >
               Portal access
-            </ActionLink>
-            <ActionLink
-              href="/become-a-partner"
-              variant="secondary"
-              onClick={() => setOpen(false)}
-            >
-              Become a Partner
             </ActionLink>
             <ActionLink
               href={site.primaryAction.href}

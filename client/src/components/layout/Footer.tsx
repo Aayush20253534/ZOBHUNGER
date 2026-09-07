@@ -63,6 +63,9 @@ export function Footer() {
                 <Link href="/become-a-partner">Become a Partner</Link>
               </li>
               <li>
+                <Link href="/placement-cell-partnership">Placement Cell & Institution Partnership</Link>
+              </li>
+              <li>
                 <Link href="/for-workers">For workers</Link>
               </li>
               <li>

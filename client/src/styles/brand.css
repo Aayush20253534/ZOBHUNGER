@@ -851,3 +851,114 @@ body > main[class] {
     font-size: 0.8125rem;
   }
 }
+
+/* Phase 1.5: compact partnership navigation keeps institutional access visible
+   without turning the primary header into a row of oversized CTAs. */
+.zb-partner-menu {
+  position: relative;
+}
+
+.zb-partner-menu > button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.zb-partner-menu > button[data-active="true"] {
+  border-color: var(--zb-action);
+  color: var(--zb-action);
+}
+
+.zb-partner-nav-panel {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  z-index: 5;
+  width: min(28rem, calc(100vw - 3rem));
+  padding: 0.8rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.75rem;
+  background: var(--zb-surface);
+  box-shadow: 0 14px 32px var(--zb-shadow);
+}
+
+.zb-partner-nav-panel[hidden] {
+  display: none;
+}
+
+.zb-partner-nav-heading {
+  padding: 0.45rem 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--zb-border);
+}
+
+.zb-partner-nav-heading span {
+  color: var(--zb-action);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.zb-partner-nav-heading p {
+  margin: 0.3rem 0 0;
+  color: var(--zb-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.zb-partner-nav-panel ul {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zb-partner-nav-panel li > a {
+  display: block;
+  padding: 0.7rem 0.65rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+}
+
+.zb-partner-nav-panel li > a:hover,
+.zb-partner-nav-panel li > a:focus-visible {
+  background: var(--muted);
+}
+
+.zb-partner-nav-panel strong,
+.zb-partner-nav-panel small {
+  display: block;
+}
+
+.zb-partner-nav-panel strong {
+  color: var(--zb-ink);
+  font-size: 0.875rem;
+}
+
+.zb-partner-nav-panel small {
+  margin-top: 0.2rem;
+  color: var(--zb-muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.zb-partner-login-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 2.75rem;
+  padding: 0.65rem;
+  border-top: 1px solid var(--zb-border);
+  color: var(--zb-action);
+  font-size: 0.8125rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.zb-partner-login-link::after {
+  content: "→";
+}
+
+.zb-mobile-partner-menu summary {
+  color: var(--zb-ink);
+}
