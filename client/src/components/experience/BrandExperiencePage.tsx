@@ -99,6 +99,11 @@ export function BrandExperiencePage() {
           Brand names are presented as project or execution experience and do
           not imply an exclusive or ongoing partnership.
         </p>
+        <div className="zb-experience-case-link">
+          <ActionLink href="/case-studies" variant="secondary">
+            Explore case studies <ArrowRight className="size-4" aria-hidden="true" />
+          </ActionLink>
+        </div>
       </section>
 
       <div className="zb-experience-section">

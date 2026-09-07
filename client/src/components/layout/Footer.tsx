@@ -57,6 +57,9 @@ export function Footer() {
                 <Link href="/brand-experience">Brand experience</Link>
               </li>
               <li>
+                <Link href="/case-studies">Case studies</Link>
+              </li>
+              <li>
                 <Link href="/technology">Our technology vision</Link>
               </li>
               <li>

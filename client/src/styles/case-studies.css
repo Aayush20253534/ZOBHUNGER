@@ -1,0 +1,51 @@
+.zb-case-page { --zb-case-space: clamp(2.6rem, 4.5vw, 4.25rem); min-width: 0; }
+.zb-case-page .zb-breadcrumbs { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem .55rem; list-style:none; margin:0 0 1.75rem; padding:0; color:var(--zb-muted); font-size:.8125rem; }
+.zb-case-page .zb-breadcrumbs li { display:inline-flex; align-items:center; gap:.55rem; }
+.zb-case-page .zb-breadcrumbs a { display:inline-flex; align-items:center; min-height:2.75rem; color:var(--zb-muted); text-decoration:none; }
+.zb-case-hero { display:grid; grid-template-columns:1fr; gap:1.5rem; }
+.zb-case-hero .zb-page-heading h1 { max-width:12ch; }
+.zb-case-hero-panel { min-height:19rem; display:flex; flex-direction:column; justify-content:flex-end; padding:clamp(1.5rem,4vw,2.35rem); border-radius:var(--zb-radius); background:linear-gradient(150deg,#40151d 0%,#741f2c 58%,#c8202f 135%); color:#fff; }
+.zb-case-hero-panel > svg { width:2rem; height:2rem; margin-bottom:1.2rem; }
+.zb-case-hero-panel .zb-eyebrow { color:var(--zb-highlight); }
+.zb-case-hero-panel h2 { max-width:15ch; margin:.65rem 0 0; font-size:clamp(1.75rem,3vw,2.45rem); line-height:1.15; letter-spacing:-.04em; }
+.zb-case-hero-panel p { max-width:36rem; margin:1rem 0 0; color:var(--zb-on-panel-muted); line-height:1.7; }
+.zb-case-section { margin-top:var(--zb-case-space); }
+.zb-case-section-heading { display:grid; grid-template-columns:1fr; gap:.8rem 2rem; align-items:end; margin-bottom:1.5rem; }
+.zb-case-section-heading h2 { margin:.35rem 0 0; font-size:clamp(1.85rem,3vw,2.5rem); letter-spacing:-.04em; }
+.zb-case-section-heading > p { max-width:34rem; margin:0; color:var(--zb-muted); line-height:1.65; }
+.zb-case-department { padding:clamp(1.2rem,2.5vw,1.6rem) 0; border-top:1px solid var(--zb-border); }
+.zb-case-department + .zb-case-department { margin-top:1rem; }
+.zb-case-department-heading { display:flex; gap:.9rem; align-items:center; margin-bottom:1.1rem; }
+.zb-case-department-heading > svg { width:2.4rem; height:2.4rem; padding:.62rem; border-radius:.65rem; background:var(--zb-soft); color:var(--zb-action); }
+.zb-case-department-heading span { color:var(--zb-action); font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+.zb-case-department-heading h2 { margin:.15rem 0 0; font-size:1.25rem; }
+.zb-case-grid { display:grid; grid-template-columns:1fr; gap:1rem; }
+.zb-case-card { display:flex; flex-direction:column; min-height:23rem; padding:clamp(1.35rem,3vw,1.75rem); border:1px solid var(--zb-border); border-radius:var(--zb-radius); background:#fff; box-shadow:0 10px 30px rgb(15 23 42 / 4%); }
+.zb-case-card-topline { display:flex; justify-content:space-between; gap:1rem; color:var(--zb-muted); font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+.zb-case-card-topline span:first-child { color:var(--zb-action); }
+.zb-case-brand { margin-top:2.2rem; color:var(--zb-action); font-size:.92rem; font-weight:800; letter-spacing:.02em; }
+.zb-case-card h3 { max-width:19ch; margin:.45rem 0 0; font-size:clamp(1.55rem,2.5vw,2rem); line-height:1.16; letter-spacing:-.035em; }
+.zb-case-card > p { margin:.85rem 0 0; color:var(--zb-muted); line-height:1.65; }
+.zb-case-card > ul { display:flex; flex-wrap:wrap; gap:.45rem; margin:1.15rem 0 1.5rem; padding:0; list-style:none; }
+.zb-case-card > ul li { padding:.38rem .58rem; border-radius:999px; background:var(--zb-soft); color:var(--zb-ink); font-size:.75rem; font-weight:650; }
+.zb-case-card-link { display:inline-flex; align-items:center; gap:.45rem; margin-top:auto; color:var(--zb-action); font-weight:750; text-decoration:none; }
+.zb-case-card-link svg { width:1rem; height:1rem; }
+.zb-case-detail-hero { display:grid; grid-template-columns:1fr; gap:1.5rem; padding:clamp(1.5rem,4vw,3rem) 0; }
+.zb-case-detail-brand { margin-top:1.4rem; color:var(--zb-action); font-size:1rem; font-weight:800; }
+.zb-case-detail-hero h1 { max-width:13ch; margin:.45rem 0 0; font-size:clamp(2.5rem,5vw,4.7rem); line-height:1.02; letter-spacing:-.055em; }
+.zb-case-detail-hero > div > p { max-width:45rem; margin:1.2rem 0 1.5rem; color:var(--zb-muted); font-size:1.05rem; line-height:1.75; }
+.zb-case-detail-hero aside { align-self:start; padding:1.5rem; border-top:3px solid var(--zb-action); border-radius:0 0 var(--zb-radius) var(--zb-radius); background:var(--zb-soft); }
+.zb-case-detail-hero aside > span { color:var(--zb-action); font-size:.75rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+.zb-case-detail-hero aside strong { display:block; margin:.5rem 0 1rem; font-size:1.25rem; }
+.zb-case-detail-hero aside ul { margin:0; padding-left:1.15rem; color:var(--zb-muted); line-height:1.8; }
+.zb-case-story-grid { display:grid; grid-template-columns:1fr; gap:1rem; margin-top:1rem; }
+.zb-case-story-block { padding:clamp(1.4rem,3vw,2rem); border:1px solid var(--zb-border); border-radius:var(--zb-radius); background:#fff; }
+.zb-case-story-block > svg { width:1.5rem; color:var(--zb-action); margin-bottom:1rem; }
+.zb-case-story-block h2 { max-width:18ch; margin:.45rem 0 0; font-size:clamp(1.4rem,2.4vw,1.85rem); letter-spacing:-.03em; }
+.zb-case-story-block > p { margin:1rem 0 0; color:var(--zb-muted); line-height:1.75; }
+.zb-case-execution-list { display:grid; grid-template-columns:1fr; gap:.65rem; margin:1.2rem 0 0; padding:0; list-style:none; }
+.zb-case-execution-list li { display:flex; align-items:flex-start; gap:.65rem; padding:.7rem 0; border-top:1px solid var(--zb-border); }
+.zb-case-execution-list svg { flex:0 0 1rem; width:1rem; margin-top:.15rem; color:var(--zb-action); }
+.zb-case-impact { background:var(--zb-soft); }
+@media (min-width:760px) { .zb-case-section-heading { grid-template-columns:1fr minmax(20rem,.75fr); } .zb-case-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .zb-case-execution-list { grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:1.5rem; } }
+@media (min-width:960px) { .zb-case-hero { grid-template-columns:minmax(0,1.18fr) minmax(24rem,.82fr); gap:clamp(2rem,3.5vw,3.5rem); align-items:start; } .zb-case-hero .zb-page-heading { padding-top:.4rem; } .zb-case-hero .zb-page-heading h1 { font-size:clamp(3rem,4.4vw,3.9rem); } .zb-case-hero-panel { transform:translateY(-.3rem); } .zb-case-detail-hero { grid-template-columns:minmax(0,1.35fr) minmax(19rem,.65fr); gap:clamp(3rem,6vw,6rem); align-items:center; } .zb-case-story-grid { grid-template-columns:.8fr 1.2fr; } .zb-case-impact { grid-column:1 / -1; } }
