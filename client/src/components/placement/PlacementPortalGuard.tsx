@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { LockKeyhole } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
-import { ApiError } from "@/lib/api-client";
-import { getPlacementCellProfile } from "@/services/placement-cell.service";
+import { ApiError } from "@/lib/api";
+import { getPlacementCellProfile } from "@/services/placement-cell-access.service";
 
 type GuardState = "checking" | "allowed" | "denied" | "error";
 
