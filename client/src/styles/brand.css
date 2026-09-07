@@ -133,7 +133,7 @@ body > main[class] {
 }
 .zb-navbar-logo {
   display: block;
-  width: clamp(8.25rem, 11vw, 9.75rem);
+  width: 200px;
   height: 2.35rem;
   object-fit: contain;
   object-position: left center;
