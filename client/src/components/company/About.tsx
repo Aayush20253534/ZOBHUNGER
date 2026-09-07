@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Compass, Target } from "lucide-react";
+import { ArrowUpRight, Compass, FileText, ShieldCheck, Target } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
@@ -7,6 +7,7 @@ import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Card } from "@/components/ui/card";
 import { company } from "@/data/company";
+import { capabilityStatement, complianceCredentials } from "@/data/compliance";
 import { site } from "@/data/site";
 import { solutions } from "@/data/solutions";
 import "@/styles/company.css";
@@ -103,6 +104,52 @@ export function About() {
         <ActionLink href="/brand-experience" variant="secondary">
           Explore brand experience
         </ActionLink>
+      </section>
+      <section
+        className="zb-company-section"
+        id="certifications"
+        aria-labelledby="about-certifications-title"
+      >
+        <SectionHeading
+          id="about-certifications-title"
+          eyebrow="Certifications & corporate credentials"
+          title="Built on recognised standards and registered credentials."
+          description="A concise view of the certifications and statutory credentials reflected in ZOBHUNGER's corporate capability statement."
+        />
+        <div className="zb-compliance-grid">
+          {complianceCredentials.map((credential) => (
+            <article className="zb-compliance-card" key={credential.title}>
+              <span className="zb-compliance-icon" aria-hidden="true">
+                <ShieldCheck />
+              </span>
+              <div>
+                <span className="zb-compliance-label">{credential.label}</span>
+                <h3>{credential.title}</h3>
+                <p>{credential.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="zb-compliance-proof">
+          <div>
+            <span className="zb-eyebrow">Supporting document</span>
+            <h3>Corporate Capability Statement</h3>
+            <p>
+              Review the signed corporate capability statement for company
+              credentials, operating profile and supporting information.
+            </p>
+          </div>
+          <ActionLink
+            href={capabilityStatement.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="secondary"
+          >
+            <FileText className="size-4" aria-hidden="true" />
+            {capabilityStatement.label}
+            <ArrowUpRight className="size-4" aria-hidden="true" />
+          </ActionLink>
+        </div>
       </section>
       <section
         className="zb-company-section zb-company-note"
