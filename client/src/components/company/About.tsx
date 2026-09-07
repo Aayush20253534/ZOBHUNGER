@@ -92,6 +92,18 @@ export function About() {
           ))}
         </div>
       </section>
+      <section className="zb-company-section zb-company-note" aria-labelledby="about-experience-title">
+        <div>
+          <h2 id="about-experience-title">Experience shaped by work in the field.</h2>
+          <p>
+            Explore selected brand experience across e-commerce, logistics,
+            fintech, banking, retail, activation and digital services.
+          </p>
+        </div>
+        <ActionLink href="/brand-experience" variant="secondary">
+          Explore brand experience
+        </ActionLink>
+      </section>
       <section
         className="zb-company-section zb-company-note"
         aria-labelledby="about-technology-title"
