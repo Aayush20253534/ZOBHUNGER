@@ -679,3 +679,8 @@
     font-size: 0.82rem;
   }
 }
+
+/* Keep the partner submit action visually separated from the upload control. */
+.zb-partner-form .zb-form-actions {
+  margin-top: 0.875rem;
+}
