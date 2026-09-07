@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { LockKeyhole } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
@@ -47,20 +48,35 @@ export function PlacementPortalGuard({ children }: { children: ReactNode }) {
 
   if (state === "denied") {
     return (
-      <main className="zb-placement-portal-access-page">
-        <section className="zb-placement-portal-access-card">
-          <span className="zb-placement-portal-access-icon"><LockKeyhole aria-hidden="true" /></span>
-          <p className="zb-eyebrow">Restricted area</p>
-          <h1>This page isn&apos;t accessible</h1>
-          <p>
-            Placement Cell Portal pages are available only to approved institutional partners who are signed in.
-          </p>
-          <Link className="zb-button zb-button-primary" href="/placement-cell-login">
-            Placement Cell Login
-          </Link>
-          <Link className="zb-placement-portal-access-secondary" href="/placement-cell-partnership">
-            View partnership information
-          </Link>
+      <main className="zb-placement-portal-access-page zb-placement-portal-restricted-page">
+        <section className="zb-placement-portal-access-card zb-placement-portal-restricted-card">
+          <div className="zb-placement-portal-restricted-art" aria-hidden="true">
+            <Image
+              src="/Restricted_Caricature/Caricature.png"
+              alt=""
+              width={1536}
+              height={1024}
+              priority
+              sizes="(max-width: 640px) 92vw, 560px"
+            />
+          </div>
+
+          <div className="zb-placement-portal-restricted-copy">
+            <p className="zb-eyebrow">Restricted Area</p>
+            <h1>This page isn&apos;t accessible</h1>
+            <p>
+              Placement Cell Portal pages are available only to approved institutional partners who are signed in.
+            </p>
+
+            <div className="zb-placement-portal-access-actions">
+              <Link className="zb-button zb-button-primary" href="/placement-cell-login">
+                Placement Cell Login
+              </Link>
+              <Link className="zb-placement-portal-access-secondary" href="/placement-cell-partnership">
+                View partnership information
+              </Link>
+            </div>
+          </div>
         </section>
       </main>
     );

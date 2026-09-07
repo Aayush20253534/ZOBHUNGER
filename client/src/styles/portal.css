@@ -551,3 +551,94 @@
   font-weight: 700;
   text-underline-offset: .22rem;
 }
+
+/* Restricted Placement Cell portal state. */
+.zb-placement-portal-restricted-page {
+  min-height: clamp(34rem, 72vh, 48rem);
+  padding-top: clamp(1.75rem, 4vw, 3.25rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.zb-placement-portal-restricted-card {
+  width: min(100%, 56rem);
+  padding: clamp(1.25rem, 3vw, 2rem) clamp(1.25rem, 4vw, 2.75rem) clamp(1.75rem, 4vw, 2.5rem);
+  border-top: 0;
+  overflow: hidden;
+}
+
+.zb-placement-portal-restricted-art {
+  width: min(100%, 36rem);
+  margin-inline: auto;
+}
+
+.zb-placement-portal-restricted-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.zb-placement-portal-restricted-copy {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  margin-top: clamp(.45rem, 1.5vw, .9rem);
+  text-align: center;
+}
+
+.zb-placement-portal-restricted-copy .zb-eyebrow {
+  margin: 0 0 .45rem;
+  color: var(--zb-action);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.zb-placement-portal-restricted-copy h1 {
+  margin: 0 0 .7rem;
+  font-size: clamp(1.8rem, 4vw, 2.45rem);
+  line-height: 1.12;
+  letter-spacing: -.04em;
+}
+
+.zb-placement-portal-restricted-copy > p:not(.zb-eyebrow) {
+  max-width: 38rem;
+  margin: 0;
+  color: var(--zb-muted);
+  line-height: 1.65;
+}
+
+.zb-placement-portal-access-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .85rem 1.15rem;
+  margin-top: 1.4rem;
+}
+
+.zb-placement-portal-access-actions .zb-placement-portal-access-secondary {
+  margin-top: 0;
+}
+
+@media (max-width: 640px) {
+  .zb-placement-portal-restricted-card {
+    padding-inline: 1rem;
+  }
+
+  .zb-placement-portal-restricted-art {
+    width: min(100%, 30rem);
+  }
+
+  .zb-placement-portal-access-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .zb-placement-portal-access-actions .zb-button,
+  .zb-placement-portal-access-actions .zb-placement-portal-access-secondary {
+    width: min(100%, 18rem);
+    text-align: center;
+  }
+}
