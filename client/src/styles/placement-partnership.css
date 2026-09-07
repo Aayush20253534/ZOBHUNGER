@@ -500,3 +500,37 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+
+/* Phase 1.5 Part 2: dedicated institution onboarding. */
+.zb-placement-apply-page { min-width: 0; }
+.zb-placement-apply-header { max-width: 49rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.zb-placement-apply-header h1 { margin: .55rem 0 .8rem; max-width: 16ch; font-size: clamp(2.35rem, 5vw, 4rem); line-height: 1.05; letter-spacing: -.05em; }
+.zb-placement-apply-header p { margin: 0; max-width: 44rem; color: var(--zb-muted); font-size: 1rem; line-height: 1.65; }
+.zb-placement-apply-layout { display: grid; grid-template-columns: minmax(0,1fr); gap: 1.5rem; align-items: start; }
+.zb-placement-form-panel { min-width: 0; padding: clamp(1.25rem,3vw,2rem); border: 1px solid var(--zb-border); border-radius: var(--zb-radius); background: var(--zb-surface); }
+.zb-placement-application-form .zb-form-group + .zb-form-group { margin-top: 2.25rem; }
+.zb-placement-checkbox-field { margin-top: 1.4rem; }
+.zb-placement-checkbox-label { display: block; margin-bottom: .75rem; font-size: .875rem; font-weight: 650; }
+.zb-placement-checkbox-label b { color: var(--zb-action); }
+.zb-placement-checkbox-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: .55rem; }
+.zb-placement-checkbox-grid label { display: flex; align-items: center; gap: .65rem; min-height: 2.75rem; padding: .7rem .8rem; border: 1px solid var(--zb-border); border-radius: .45rem; cursor: pointer; font-size: .875rem; }
+.zb-placement-checkbox-grid label:has(input:checked) { border-color: color-mix(in srgb, var(--zb-action) 45%, var(--zb-border)); background: var(--zb-soft); }
+.zb-placement-checkbox-grid input { width: 1rem; height: 1rem; accent-color: var(--zb-action); }
+.zb-placement-form-note { display: grid; gap: .3rem; margin-top: 1.5rem; padding: 1rem 1.1rem; border-left: 3px solid var(--zb-action); background: var(--zb-soft); font-size: .85rem; }
+.zb-placement-form-note span { color: var(--zb-muted); line-height: 1.55; }
+.zb-placement-apply-aside { display: grid; gap: 1rem; padding: clamp(1.3rem,3vw,1.8rem); border: 1px solid var(--zb-soft-border); border-radius: var(--zb-radius); background: var(--zb-soft); }
+.zb-placement-apply-aside h2 { margin: 0; max-width: 14ch; font-size: clamp(1.5rem,3vw,2rem); line-height: 1.18; letter-spacing: -.035em; }
+.zb-placement-apply-aside ol { display: grid; gap: 0; margin: .35rem 0 0; padding: 0; list-style: none; }
+.zb-placement-apply-aside li { display: grid; grid-template-columns: 2rem minmax(0,1fr); gap: .7rem; padding: 1rem 0; border-top: 1px solid var(--zb-soft-border); }
+.zb-placement-apply-aside li b { color: var(--zb-action); font-size: .75rem; }
+.zb-placement-apply-aside li span { display: grid; gap: .2rem; color: var(--zb-muted); font-size: .84rem; line-height: 1.5; }
+.zb-placement-apply-aside li strong { color: var(--zb-ink); font-size: .9rem; }
+.zb-placement-apply-aside > p { margin: 0; color: var(--zb-muted); font-size: .8rem; line-height: 1.55; }
+.zb-placement-form-success { display: flex; gap: 1rem; align-items: flex-start; padding: clamp(1.5rem,3vw,2rem); border: 1px solid var(--zb-soft-border); border-radius: var(--zb-radius); background: var(--zb-soft); }
+.zb-placement-form-success > svg { width: 1.8rem; height: 1.8rem; flex: 0 0 auto; color: var(--zb-action); }
+.zb-placement-form-success h2 { margin: .4rem 0 .65rem; font-size: 1.5rem; }
+.zb-placement-form-success p { margin: 0 0 .8rem; color: var(--zb-muted); }
+.zb-placement-form-success small { color: var(--zb-muted); }
+@media (min-width:640px) { .zb-placement-checkbox-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (min-width:940px) { .zb-placement-apply-layout { grid-template-columns: minmax(0,1fr) minmax(18rem,.38fr); gap: 2rem; } .zb-placement-apply-aside { position: sticky; top: 6.5rem; } }

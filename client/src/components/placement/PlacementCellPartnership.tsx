@@ -64,12 +64,12 @@ export function PlacementCellPartnership() {
           description="ZOBHUNGER partners with Colleges, Universities, Training Institutes and Placement Cells to connect students with suitable employment, internship, apprenticeship, freelance and flexible work opportunities."
           actions={
             <>
-              <ActionLink href="/contact?subject=placement-cell-partnership">
+              <ActionLink href="/placement-cell-partnership/apply">
                 Onboard Your Placement Cell
                 <ArrowUpRight aria-hidden="true" className="size-4" />
               </ActionLink>
               <ActionLink
-                href="/contact?subject=institution-onboarding"
+                href="/placement-cell-partnership/apply"
                 variant="secondary"
               >
                 Submit Institution Details
@@ -228,7 +228,7 @@ export function PlacementCellPartnership() {
         <CTASection
           title="Create More Opportunities for Your Students"
           description="Partner with ZOBHUNGER and help connect your students with relevant jobs, internships, apprenticeships, training, certifications and flexible earning opportunities."
-          href="/contact?subject=placement-cell-partnership"
+          href="/placement-cell-partnership/apply"
           label="Onboard Your Placement Cell"
         />
       </div>

@@ -40,6 +40,13 @@ enum PartnerApplicationStatus {
   CLOSED
 }
 
+enum PlacementCellApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
 model User {
   id              String           @id @default(cuid())
   email           String           @unique
@@ -223,6 +230,33 @@ model PartnerApplication {
   @@index([email])
   @@index([currentCity])
   @@index([specialization])
+}
+
+model PlacementCellApplication {
+  id                        String                         @id @default(cuid())
+  institutionName           String
+  institutionType           String
+  placementCellName         String
+  contactPersonName         String
+  designation               String
+  officialEmail             String
+  mobileNumber              String
+  city                      String
+  state                     String
+  website                   String?
+  numberOfStudents          Int
+  coursesDepartments        String
+  preferredOpportunityTypes String[]                       @default([])
+  status                    PlacementCellApplicationStatus @default(SUBMITTED)
+  reviewedByUserId          String?
+  reviewedAt                DateTime?
+  createdAt                 DateTime                       @default(now())
+  updatedAt                 DateTime                       @updatedAt
+
+  @@index([status, createdAt])
+  @@index([officialEmail])
+  @@index([city, state])
+  @@index([institutionType])
 }
 
 model Article {
