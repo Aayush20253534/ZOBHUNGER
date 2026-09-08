@@ -1,5 +1,6 @@
 import { ArrowDown, ArrowUpRight, ClipboardList } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
+import { ExecutionImage } from "@/components/common/ExecutionImage";
 import { home } from "@/data/home";
 import { site } from "@/data/site";
 import "@/styles/home-hero-motion.css";
@@ -30,18 +31,10 @@ export function Hero() {
       </div>
       <figure className="zb-home-hero-figure">
         <div className="zb-home-hero-image">
-          {/* Pre-sized local variants avoid a second lossy image conversion. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={home.hero.image.src}
-            srcSet={home.hero.image.srcSet}
-            alt={home.hero.image.alt}
-            width={2400}
-            height={1600}
+          <ExecutionImage
+            visual={home.hero.image}
             sizes="(min-width: 1200px) 420px, (min-width: 900px) 35vw, (min-width: 640px) 560px, calc(100vw - 40px)"
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
+            priority
           />
         </div>
         <figcaption>

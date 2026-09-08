@@ -1,3 +1,5 @@
+import { executionVisuals } from "@/data/execution-visuals";
+
 /** Homepage copy adapted from the client's Phase 1 brief. No invented performance figures. */
 export const home = {
   hero: {
@@ -11,12 +13,7 @@ export const home = {
       { title: "Project-based", description: "Deliver a specific brief" },
       { title: "On-demand", description: "Plan for changing needs" },
     ],
-    image: {
-      src: "/images/home/workforce-team-1280.webp",
-      srcSet:
-        "/images/home/workforce-team-640.webp 640w, /images/home/workforce-team-1280.webp 1280w, /images/home/workforce-team-2400.webp 2400w",
-      alt: "Two colleagues reviewing a tablet together in a bright workspace.",
-    },
+    image: executionVisuals["field-executives"],
   },
   solutions: {
     eyebrow: "Our services",

@@ -1,0 +1,32 @@
+.zb-execution-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--zb-soft);
+}
+
+.zb-execution-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.zb-execution-image-source {
+  position: absolute;
+  bottom: 0.65rem;
+  left: 0.65rem;
+  max-width: calc(100% - 1.3rem);
+  padding: 0.3rem 0.55rem;
+  border: 1px solid #ffffff40;
+  border-radius: 999px;
+  background: #24181ddd;
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 600;
+  line-height: 1.4;
+  pointer-events: none;
+}
