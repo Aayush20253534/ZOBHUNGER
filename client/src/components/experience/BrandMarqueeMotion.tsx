@@ -11,7 +11,7 @@ export function BrandMarqueeMotion({ children }: { children: ReactNode }) {
     <div className="zb-brand-marquee-motion" data-paused={paused}>
       <div className="zb-brand-marquee-rows">{children}</div>
       <div className="zb-brand-marquee-controls">
-        <button
+        {/* <button
           type="button"
           className="zb-brand-marquee-toggle"
           onClick={() => setPaused((current) => !current)}
@@ -19,7 +19,7 @@ export function BrandMarqueeMotion({ children }: { children: ReactNode }) {
         >
           <Icon aria-hidden="true" />
           {paused ? "Resume logos" : "Pause logos"}
-        </button>
+        </button> */}
       </div>
     </div>
   );
