@@ -1,9 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { SectionHeading } from "@/components/common/SectionHeading";
-import { brandLogoUrl } from "@/data/brand-logos";
 import { caseStudies } from "@/data/case-studies";
 
 export function HomeCaseStudyProof() {
@@ -16,7 +14,7 @@ export function HomeCaseStudyProof() {
         id="home-project-proof-title"
         eyebrow="Project proof"
         title="See how execution takes shape in the field."
-        description="Selected project stories show the objective, operating flow and on-ground work behind the engagement."
+        description="Representative sector stories show the challenge, execution model and outcome behind each engagement type."
         action={
           <ActionLink href="/case-studies" variant="text">
             Explore case studies
@@ -26,7 +24,7 @@ export function HomeCaseStudyProof() {
 
       <div className="zb-home-project-grid">
         {caseStudies.slice(0, 2).map((study) => {
-          const logo = brandLogoUrl(study.brand);
+          const flow = study.solution.slice(0, 4);
           return (
             <Link
               href={`/case-studies/${study.slug}`}
@@ -34,27 +32,21 @@ export function HomeCaseStudyProof() {
               key={study.slug}
             >
               <div className="zb-home-project-brand">
-                <span aria-hidden="true">
-                  {logo ? (
-                    <img src={logo} alt="" width="34" height="34" loading="lazy" />
-                  ) : (
-                    study.brand.slice(0, 1)
-                  )}
-                </span>
+                <span aria-hidden="true">{study.industry.slice(0, 1)}</span>
                 <div>
-                  <small>{study.department}</small>
-                  <strong>{study.brand}</strong>
+                  <small>{study.category}</small>
+                  <strong>{study.industry}</strong>
                 </div>
               </div>
 
               <div className="zb-home-project-copy">
-                <span className="zb-eyebrow">{study.category}</span>
+                <span className="zb-eyebrow">{study.clientType}</span>
                 <h3>{study.title}</h3>
-                <p>{study.summary}</p>
+                <p>{study.about}</p>
               </div>
 
-              <ol className="zb-home-project-flow" aria-label={`${study.brand} execution preview`}>
-                {study.execution.slice(0, 4).map((step, index) => (
+              <ol className="zb-home-project-flow" aria-label={`${study.title} solution preview`}>
+                {flow.map((step: string, index: number) => (
                   <li key={step}>
                     <span>{String(index + 1).padStart(2, "0")}</span>
                     <CheckCircle2 aria-hidden="true" />
