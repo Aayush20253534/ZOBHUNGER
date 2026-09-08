@@ -31,7 +31,6 @@ export function ExecutionImage({
         fetchPriority={priority ? "high" : undefined}
         decoding="async"
       />
-      <span className="zb-execution-image-source">{visual.sourceLabel}</span>
     </div>
   );
 }
