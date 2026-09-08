@@ -813,3 +813,154 @@
   width: auto;
   text-align: left;
 }
+/* =========================================================
+   EXECUTION NETWORK STATUS CARD - FINAL FIX
+   ========================================================= */
+
+.zb-presence-network-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.zb-presence-network-heading {
+  min-width: 0;
+}
+
+.zb-presence-network-status {
+  display: grid;
+  grid-template-columns: 2.8rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+
+  width: 14.75rem;
+  min-width: 14.75rem;
+
+  padding: 0.68rem 0.78rem;
+
+  border: 1px solid rgba(70, 24, 32, 0.12);
+  border-radius: 1rem;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  box-shadow:
+    0 0.8rem 1.8rem rgba(38, 22, 27, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  overflow: visible;
+}
+
+.zb-presence-network-status .zb-presence-network-icon {
+  display: grid;
+  place-items: center;
+
+  width: 2.8rem;
+  height: 2.8rem;
+  min-width: 2.8rem;
+
+  border-radius: 0.82rem;
+
+  background: linear-gradient(
+    145deg,
+    #561b25,
+    var(--zb-presence-panel)
+  );
+
+  color: #fff;
+
+  box-shadow: 0 0.45rem 1rem rgba(70, 24, 32, 0.16);
+}
+
+.zb-presence-network-status .zb-presence-network-icon svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.zb-presence-network-status-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+}
+
+.zb-presence-network-status-copy > small {
+  margin: 0;
+
+  color: var(--zb-muted);
+
+  font-size: 0.57rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0.075em;
+
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.zb-presence-network-status-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+
+  min-width: 0;
+
+  line-height: 1;
+}
+
+.zb-presence-network-status-value > strong {
+  flex: 0 0 auto;
+
+  color: var(--zb-presence-panel);
+
+  font-size: 1.15rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.zb-presence-network-status-value > span {
+  color: var(--zb-ink);
+
+  font-size: 0.68rem;
+  font-weight: 720;
+  line-height: 1.15;
+
+  white-space: nowrap;
+}
+
+
+/* Tablet */
+
+@media (max-width: 1100px) {
+  .zb-presence-network-status {
+    width: 13.75rem;
+    min-width: 13.75rem;
+  }
+
+  .zb-presence-network-status-value > span {
+    font-size: 0.64rem;
+  }
+}
+
+
+/* Mobile */
+
+@media (max-width: 560px) {
+  .zb-presence-network-header {
+    grid-template-columns: 1fr;
+  }
+
+  .zb-presence-network-status {
+    width: fit-content;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .zb-presence-network-status-value > span {
+    white-space: normal;
+  }
+}

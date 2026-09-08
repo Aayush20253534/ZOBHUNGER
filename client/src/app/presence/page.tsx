@@ -82,7 +82,9 @@ const executionSteps = [
 export default function PresencePage() {
   return (
     <div className="zb-presence-page">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Presence" }]} />
+      <Breadcrumbs
+        items={[{ label: "Home", href: "/" }, { label: "Presence" }]}
+      />
 
       <section className="zb-presence-hero">
         <div className="zb-presence-hero-copy">
@@ -101,7 +103,10 @@ export default function PresencePage() {
           />
         </div>
 
-        <aside className="zb-presence-network" aria-label="ZOBHUNGER operating footprint">
+        <aside
+          className="zb-presence-network"
+          aria-label="ZOBHUNGER operating footprint"
+        >
           <div className="zb-presence-network-header">
             <div>
               <span className="zb-eyebrow">Operating footprint</span>
@@ -111,9 +116,14 @@ export default function PresencePage() {
               <span className="zb-presence-network-icon" aria-hidden="true">
                 <Navigation />
               </span>
-              <div>
+
+              <div className="zb-presence-network-status-copy">
                 <small>Execution network</small>
-                <strong>4 coordination points</strong>
+
+                <span className="zb-presence-network-status-value">
+                  <strong>4</strong>
+                  <span>coordination points</span>
+                </span>
               </div>
             </div>
           </div>
@@ -126,7 +136,9 @@ export default function PresencePage() {
             <span className="zb-presence-network-line zb-presence-network-line--east" />
 
             <span className="zb-presence-network-node zb-presence-network-node--hq">
-              <span className="zb-presence-network-node-icon"><Building2 /></span>
+              <span className="zb-presence-network-node-icon">
+                <Building2 />
+              </span>
               <span className="zb-presence-network-node-copy">
                 <small>Coordination hub</small>
                 <strong>Ghazipur</strong>
@@ -135,7 +147,9 @@ export default function PresencePage() {
               <b>HQ</b>
             </span>
             <span className="zb-presence-network-node zb-presence-network-node--delhi">
-              <span className="zb-presence-network-node-icon"><MapPin /></span>
+              <span className="zb-presence-network-node-icon">
+                <MapPin />
+              </span>
               <span className="zb-presence-network-node-copy">
                 <small>North market</small>
                 <strong>Delhi</strong>
@@ -143,7 +157,9 @@ export default function PresencePage() {
               <b>DEL</b>
             </span>
             <span className="zb-presence-network-node zb-presence-network-node--mumbai">
-              <span className="zb-presence-network-node-icon"><MapPin /></span>
+              <span className="zb-presence-network-node-icon">
+                <MapPin />
+              </span>
               <span className="zb-presence-network-node-copy">
                 <small>West market</small>
                 <strong>Mumbai</strong>
@@ -151,7 +167,9 @@ export default function PresencePage() {
               <b>MUM</b>
             </span>
             <span className="zb-presence-network-node zb-presence-network-node--bihar">
-              <span className="zb-presence-network-node-icon"><MapPin /></span>
+              <span className="zb-presence-network-node-icon">
+                <MapPin />
+              </span>
               <span className="zb-presence-network-node-copy">
                 <small>East market</small>
                 <strong>Bihar</strong>
@@ -172,14 +190,19 @@ export default function PresencePage() {
         </aside>
       </section>
 
-      <section className="zb-section zb-presence-locations" aria-labelledby="presence-locations-title">
+      <section
+        className="zb-section zb-presence-locations"
+        aria-labelledby="presence-locations-title"
+      >
         <div className="zb-section-heading">
           <div>
             <span className="zb-eyebrow">Where we operate</span>
-            <h2 id="presence-locations-title">A growing footprint across priority markets.</h2>
+            <h2 id="presence-locations-title">
+              A growing footprint across priority markets.
+            </h2>
             <p>
-              Our location structure is designed to keep coordination close to the businesses,
-              workers and field activities we support.
+              Our location structure is designed to keep coordination close to
+              the businesses, workers and field activities we support.
             </p>
           </div>
         </div>
@@ -191,10 +214,14 @@ export default function PresencePage() {
               key={location.title}
             >
               <div className="zb-presence-location-card-top">
-                <span className="zb-presence-location-index">{location.shortLabel}</span>
+                <span className="zb-presence-location-index">
+                  {location.shortLabel}
+                </span>
                 <MapPin aria-hidden="true" />
               </div>
-              <span className="zb-presence-location-type">{location.label}</span>
+              <span className="zb-presence-location-type">
+                {location.label}
+              </span>
               <h3>{location.title}</h3>
               <p>{location.description}</p>
             </article>
@@ -202,14 +229,20 @@ export default function PresencePage() {
         </div>
       </section>
 
-      <section className="zb-section zb-presence-execution" aria-labelledby="presence-execution-title">
+      <section
+        className="zb-section zb-presence-execution"
+        aria-labelledby="presence-execution-title"
+      >
         <div className="zb-section-heading">
           <div>
             <span className="zb-eyebrow">From presence to execution</span>
-            <h2 id="presence-execution-title">A location matters only when it helps work move faster.</h2>
+            <h2 id="presence-execution-title">
+              A location matters only when it helps work move faster.
+            </h2>
             <p>
-              ZOBHUNGER connects business requirements with regional coordination and practical
-              on-ground execution, rather than treating presence as a list of addresses.
+              ZOBHUNGER connects business requirements with regional
+              coordination and practical on-ground execution, rather than
+              treating presence as a list of addresses.
             </p>
           </div>
         </div>
@@ -231,20 +264,29 @@ export default function PresencePage() {
         </div>
       </section>
 
-      <section className="zb-section zb-presence-route-panel" aria-labelledby="presence-route-title">
+      <section
+        className="zb-section zb-presence-route-panel"
+        aria-labelledby="presence-route-title"
+      >
         <div className="zb-presence-route-copy">
           <span className="zb-eyebrow">Built around your requirement</span>
-          <h2 id="presence-route-title">Execution should follow the work, not office boundaries.</h2>
+          <h2 id="presence-route-title">
+            Execution should follow the work, not office boundaries.
+          </h2>
           <p>
-            Share the market, workforce requirement and objective. Our team can map the appropriate
-            coordination path and help structure the execution plan.
+            Share the market, workforce requirement and objective. Our team can
+            map the appropriate coordination path and help structure the
+            execution plan.
           </p>
           <ActionLink href="/contact" variant="light">
             Discuss your market requirement <ArrowRight aria-hidden="true" />
           </ActionLink>
         </div>
 
-        <div className="zb-presence-route-flow" aria-label="ZOBHUNGER execution flow">
+        <div
+          className="zb-presence-route-flow"
+          aria-label="ZOBHUNGER execution flow"
+        >
           <span>Business requirement</span>
           <ArrowRight aria-hidden="true" />
           <span>Regional coordination</span>
