@@ -580,7 +580,7 @@
   text-transform: uppercase;
 }
 
-.zb-home-brand-board ul {
+.zb-home-brand-board > ul {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.55rem;
@@ -589,7 +589,7 @@
   list-style: none;
 }
 
-.zb-home-brand-board li {
+.zb-home-brand-board > ul > li {
   display: grid;
   place-items: center;
   min-height: 3rem;
@@ -611,7 +611,7 @@
 }
 
 @media (min-width: 760px) {
-  .zb-home-brand-board ul {
+  .zb-home-brand-board > ul {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -623,7 +623,7 @@
     align-items: stretch;
   }
 
-  .zb-home-brand-board ul {
+  .zb-home-brand-board > ul {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -686,7 +686,7 @@
 }
 
 /* Brand marks in the compact home experience board. */
-.zb-home-brand-board li {
+.zb-home-brand-board > ul > li {
   grid-template-columns: auto minmax(0, 1fr);
   place-items: initial;
   align-items: center;
@@ -1585,10 +1585,6 @@
   width: 100%;
   min-height: 0;
   padding: clamp(1.15rem, 2.4vw, 1.6rem);
-}
-
-.zb-home-brand-board .zb-brand-marquee-window {
-  mask-image: linear-gradient(90deg, transparent, #000 2.5%, #000 97.5%, transparent);
 }
 
 /* Replace the old connector diagram with a cleaner India footprint visual. */

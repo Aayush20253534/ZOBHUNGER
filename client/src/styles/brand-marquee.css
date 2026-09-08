@@ -1,8 +1,15 @@
 .zb-brand-marquee {
   --zb-marquee-gap: 0.75rem;
+  --zb-marquee-card-width: 12.5rem;
   position: relative;
   min-width: 0;
   padding: clamp(1rem, 2vw, 1.35rem) 0 0;
+}
+
+.zb-brand-marquee-rows {
+  display: grid;
+  gap: var(--zb-marquee-gap);
+  min-width: 0;
 }
 
 .zb-brand-marquee-window {
@@ -16,12 +23,21 @@
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: zb-brand-marquee-scroll 52s linear infinite;
+  animation-name: var(--zb-marquee-animation);
+  animation-duration: var(--zb-marquee-duration);
+  animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+  animation-iteration-count: infinite;
 }
 
-.zb-brand-marquee-window:hover .zb-brand-marquee-moving-row,
-.zb-brand-marquee-window:focus-within .zb-brand-marquee-moving-row {
+.zb-brand-marquee-motion[data-paused="true"] .zb-brand-marquee-moving-row {
   animation-play-state: paused;
+}
+
+/* Pause the entire sequence together, keeping all three rows in sync. */
+@media (hover: hover) and (pointer: fine) {
+  .zb-brand-marquee-rows:hover .zb-brand-marquee-moving-row {
+    animation-play-state: paused;
+  }
 }
 
 .zb-brand-marquee-track {
@@ -36,9 +52,12 @@
 .zb-brand-marquee-track li {
   display: flex;
   align-items: center;
+  flex: 0 0 var(--zb-marquee-card-width);
+  box-sizing: border-box;
+  width: var(--zb-marquee-card-width);
+  min-width: 0;
   gap: 0.65rem;
-  min-width: 9.8rem;
-  min-height: 4.25rem;
+  min-height: 4.5rem;
   padding: 0.7rem 0.9rem;
   border: 1px solid var(--zb-border);
   border-radius: 0.75rem;
@@ -47,8 +66,12 @@
   box-shadow: 0 0.4rem 1rem rgb(38 22 27 / 4%);
   font-size: 0.8rem;
   font-weight: 750;
-  line-height: 1.2;
-  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.zb-brand-marquee-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .zb-brand-marquee-logo {
@@ -76,6 +99,45 @@
   font-weight: 850;
 }
 
+.zb-brand-marquee-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.zb-brand-marquee-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 8rem;
+  min-height: 2.75rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--zb-ink);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.zb-brand-marquee-toggle:hover {
+  border-color: var(--zb-action);
+  color: var(--zb-action);
+}
+
+.zb-brand-marquee-toggle:focus-visible {
+  outline: 2px solid var(--zb-action);
+  outline-offset: 3px;
+}
+
+.zb-brand-marquee-toggle svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
 .zb-brand-marquee-note {
   margin: 0.8rem 0 0;
   color: var(--zb-muted);
@@ -84,13 +146,13 @@
 }
 
 .zb-brand-marquee--compact {
-  padding-top: 0.75rem;
+  --zb-marquee-card-width: 12rem;
+  padding-top: 0.9rem;
 }
 
 .zb-brand-marquee--compact .zb-brand-marquee-track li {
-  min-width: 8.8rem;
-  min-height: 3.75rem;
-  padding: 0.55rem 0.7rem;
+  min-height: 4rem;
+  padding: 0.6rem 0.75rem;
 }
 
 .zb-brand-marquee--compact .zb-brand-marquee-logo {
@@ -108,65 +170,38 @@
   display: none;
 }
 
-
-/* Homepage brand experience: show every company once in a static grid. */
-.zb-brand-marquee--static .zb-brand-marquee-window {
-  overflow: visible;
-  mask-image: none;
-}
-
-.zb-brand-marquee--static .zb-brand-marquee-static-grid {
-  width: 100%;
-}
-
-.zb-brand-marquee--static .zb-brand-marquee-track {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0;
-}
-
-.zb-brand-marquee--static .zb-brand-marquee-track li {
-  min-width: 0;
-  width: 100%;
-  min-height: 3.8rem;
-}
-
-@media (max-width: 1120px) {
-  .zb-brand-marquee--static .zb-brand-marquee-track {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+@media (max-width: 600px) {
+  .zb-brand-marquee {
+    --zb-marquee-gap: 0.6rem;
+    --zb-marquee-card-width: 10.75rem;
   }
-}
-
-@media (max-width: 760px) {
-  .zb-brand-marquee--static .zb-brand-marquee-track {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 480px) {
-  .zb-brand-marquee--static .zb-brand-marquee-track {
-    grid-template-columns: 1fr;
-  }
-}
-
-@keyframes zb-brand-marquee-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .zb-brand-marquee-window {
-    overflow-x: auto;
+  .zb-brand-marquee .zb-brand-marquee-window {
+    overflow: visible;
     mask-image: none;
   }
 
   .zb-brand-marquee-moving-row {
+    width: 100%;
     animation: none;
+    will-change: auto;
   }
 
-  .zb-brand-marquee-track[aria-hidden="true"] {
+  .zb-brand-marquee-track {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    width: 100%;
+    padding: 0;
+  }
+
+  .zb-brand-marquee-track li {
+    width: auto;
+  }
+
+  .zb-brand-marquee-track[aria-hidden="true"],
+  .zb-brand-marquee-controls {
     display: none;
   }
 }
