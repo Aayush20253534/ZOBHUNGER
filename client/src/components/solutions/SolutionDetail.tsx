@@ -4,6 +4,7 @@ import { ArrowUpRight, Check } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
+import { BriefCaseStudy } from "@/components/case-studies/BriefCaseStudy";
 import { ProcessFlow } from "@/components/common/ProcessFlow";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
@@ -13,6 +14,7 @@ import { Card } from "@/components/ui/card";
 import { industries } from "@/data/industries";
 import { solutionDetails } from "@/data/solution-details";
 import { solutions } from "@/data/solutions";
+import { getSolutionCaseStudy } from "@/data/service-industry-case-studies";
 import type { SolutionDetailContent } from "@/types/solution-detail.types";
 import "@/styles/solutions.css";
 
@@ -28,6 +30,7 @@ export function SolutionDetail({ slug }: { slug: string }) {
   const relatedSolutions = solutions.filter((item) =>
     detail.relatedSlugs.includes(item.slug),
   );
+  const caseStudy = getSolutionCaseStudy(solution.slug);
 
   return (
     <div className="zb-solutions" data-solution={solution.slug}>
@@ -66,6 +69,7 @@ export function SolutionDetail({ slug }: { slug: string }) {
         <a href="#solution-services">Services</a>
         <a href={`#${detail.focus.id}`}>{detail.focus.label}</a>
         <a href="#solution-process">Execution flow</a>
+        <a href="#solution-case-study">Case study</a>
         <a href="#solution-industries">Industries</a>
       </nav>
       <section
@@ -140,6 +144,9 @@ export function SolutionDetail({ slug }: { slug: string }) {
           action={{ href: requirementHref, label: detail.cta.label }}
         />
       </section>
+      <div className="zb-solution-section">
+        <BriefCaseStudy study={caseStudy} id="solution-case-study" />
+      </div>
       <section
         id="solution-industries"
         className="zb-solution-section zb-solution-industries"

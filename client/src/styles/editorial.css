@@ -831,3 +831,81 @@
     transition: none;
   }
 }
+
+/* Client revision: keep the Blog hero as compact and balanced as the other
+   primary landing pages. Topic filtering stays in the dedicated library below. */
+.zb-editorial-hero--premium .zb-page-heading h1 {
+  max-width: 13ch;
+}
+
+.zb-editorial-hero--premium .zb-page-description {
+  max-width: 44rem;
+}
+
+.zb-insights-editorial-map .zb-insights-lane-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.zb-insights-editorial-map .zb-insights-lane-grid article {
+  padding: 0.72rem 0.8rem;
+}
+
+.zb-insights-editorial-map .zb-insights-feature-strip {
+  margin-top: 0.8rem;
+  padding: 0.7rem 0.8rem;
+}
+
+.zb-insights-editorial-map > .zb-action-link[data-variant="text"] {
+  margin-top: 0.35rem;
+}
+
+@media (min-width: 960px) {
+  .zb-page-content .zb-editorial-hero {
+    grid-template-columns: minmax(0, 1.18fr) minmax(24rem, 0.82fr);
+    gap: clamp(1.75rem, 3vw, 3rem);
+    align-items: center;
+  }
+
+  .zb-page-content .zb-editorial-hero .zb-page-heading h1 {
+    max-width: 12.5ch;
+    font-size: clamp(2.85rem, 4vw, 3.55rem);
+    line-height: 1.04;
+  }
+
+  .zb-page-content .zb-editorial-hero .zb-page-description {
+    margin-top: 1rem;
+    font-size: 1.02rem;
+    line-height: 1.6;
+  }
+
+  .zb-page-content .zb-editorial-hero .zb-page-actions {
+    margin-top: 1.15rem;
+  }
+
+  .zb-page-content .zb-insights-hero-card {
+    align-self: center;
+    max-width: 34rem;
+    padding: 1.25rem;
+  }
+
+  .zb-insights-hero-card .zb-premium-card-header h2 {
+    font-size: clamp(1.25rem, 1.5vw, 1.5rem);
+    line-height: 1.15;
+  }
+
+  .zb-insights-editorial-map .zb-insights-lane-grid article {
+    grid-template-columns: 2.15rem minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .zb-insights-editorial-map .zb-insights-lane-icon {
+    width: 2.15rem;
+    height: 2.15rem;
+  }
+
+  .zb-insights-editorial-map .zb-insights-lane-grid p {
+    font-size: 0.72rem;
+  }
+}

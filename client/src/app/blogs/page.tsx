@@ -123,17 +123,6 @@ export default async function BlogPage({
             })}
           </div>
 
-          <div className="zb-insights-topic-cloud" aria-label="Featured insight topics">
-            {articleCategories.map((category) => (
-              <Link
-                key={category}
-                href={articlesHref({ category }) + "#insights-search"}
-              >
-                {category}
-              </Link>
-            ))}
-          </div>
-
           <div className="zb-insights-feature-strip">
             <Sparkles aria-hidden="true" />
             <p>

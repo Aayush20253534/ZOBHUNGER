@@ -4,13 +4,10 @@ import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
 import { CoreCapabilitiesSection } from "@/components/experience/CoreCapabilitiesSection";
-import { ExperienceGroup } from "@/components/experience/ExperienceGroup";
+import { BrandLogoMarquee } from "@/components/experience/BrandLogoMarquee";
 import { ExperienceProjectCard } from "@/components/experience/ExperienceProjectCard";
 import { WhyBrandsSection } from "@/components/experience/WhyBrandsSection";
-import {
-  brandExperienceGroups,
-  brandExperienceIntro,
-} from "@/data/brand-experience";
+import { brandExperienceIntro } from "@/data/brand-experience";
 import { caseStudies } from "@/data/case-studies";
 import "@/styles/experience.css";
 
@@ -95,22 +92,14 @@ export function BrandExperiencePage() {
         <div className="zb-experience-section-heading">
           <div>
             <span className="zb-eyebrow">Across sectors</span>
-            <h2 id="experience-groups-title">Selected brand experience.</h2>
+            <h2 id="experience-groups-title">Execution experience across families & markets.</h2>
           </div>
           <p>
-            Organised by the kind of market and execution environment in which
-            the work was delivered.
+            All approved brand marks are presented together in one moving experience wall,
+            with detailed project stories separated below.
           </p>
         </div>
-        <div className="zb-experience-groups">
-          {brandExperienceGroups.map((group, index) => (
-            <ExperienceGroup key={group.id} group={group} index={index} />
-          ))}
-        </div>
-        <p className="zb-experience-note">
-          Brand names are presented as project or execution experience and do
-          not imply an exclusive or ongoing partnership.
-        </p>
+        <BrandLogoMarquee />
         <div className="zb-experience-case-link">
           <ActionLink href="/case-studies" variant="secondary">
             Explore case studies <ArrowRight className="size-4" aria-hidden="true" />

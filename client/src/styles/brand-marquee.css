@@ -1,0 +1,129 @@
+.zb-brand-marquee {
+  --zb-marquee-gap: 0.75rem;
+  position: relative;
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.35rem) 0 0;
+}
+
+.zb-brand-marquee-window {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+
+.zb-brand-marquee-moving-row {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: zb-brand-marquee-scroll 52s linear infinite;
+}
+
+.zb-brand-marquee-window:hover .zb-brand-marquee-moving-row,
+.zb-brand-marquee-window:focus-within .zb-brand-marquee-moving-row {
+  animation-play-state: paused;
+}
+
+.zb-brand-marquee-track {
+  display: flex;
+  flex: none;
+  gap: var(--zb-marquee-gap);
+  margin: 0;
+  padding: 0 var(--zb-marquee-gap) 0 0;
+  list-style: none;
+}
+
+.zb-brand-marquee-track li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 9.8rem;
+  min-height: 4.25rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.75rem;
+  background: #fff;
+  color: var(--zb-ink);
+  box-shadow: 0 0.4rem 1rem rgb(38 22 27 / 4%);
+  font-size: 0.8rem;
+  font-weight: 750;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.zb-brand-marquee-logo {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2.4rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  overflow: hidden;
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 0.55rem;
+  background: #fff;
+}
+
+.zb-brand-marquee-logo img {
+  display: block;
+  width: 1.85rem;
+  height: 1.85rem;
+  object-fit: contain;
+}
+
+.zb-brand-marquee-logo > span {
+  color: var(--zb-action);
+  font-size: 0.9rem;
+  font-weight: 850;
+}
+
+.zb-brand-marquee-note {
+  margin: 0.8rem 0 0;
+  color: var(--zb-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.zb-brand-marquee--compact {
+  padding-top: 0.75rem;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-track li {
+  min-width: 8.8rem;
+  min-height: 3.75rem;
+  padding: 0.55rem 0.7rem;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-logo {
+  flex-basis: 2rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-logo img {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-note {
+  display: none;
+}
+
+@keyframes zb-brand-marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zb-brand-marquee-window {
+    overflow-x: auto;
+    mask-image: none;
+  }
+
+  .zb-brand-marquee-moving-row {
+    animation: none;
+  }
+
+  .zb-brand-marquee-track[aria-hidden="true"] {
+    display: none;
+  }
+}

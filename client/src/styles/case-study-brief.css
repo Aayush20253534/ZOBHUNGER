@@ -1,0 +1,167 @@
+.zb-brief-case-study {
+  scroll-margin-top: 6rem;
+  overflow: hidden;
+  border: 1px solid var(--zb-soft-border);
+  border-radius: var(--zb-radius);
+  background: linear-gradient(145deg, #fff 0%, #fffafb 100%);
+  box-shadow: 0 0.75rem 2rem rgb(38 22 27 / 5%);
+}
+
+.zb-brief-case-study-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.15rem 2rem;
+  padding: clamp(1.35rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--zb-border);
+}
+
+.zb-brief-case-study-head h2 {
+  max-width: 24ch;
+  margin: 0.4rem 0 0;
+  font-size: clamp(1.6rem, 2.8vw, 2.25rem);
+  line-height: 1.18;
+  letter-spacing: -0.035em;
+}
+
+.zb-brief-case-study-head > div > p {
+  max-width: 50rem;
+  margin: 0.75rem 0 0;
+  color: var(--zb-muted);
+  line-height: 1.65;
+}
+
+.zb-brief-case-study-head dl {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.zb-brief-case-study-head dl > div {
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.7rem;
+  background: #fff;
+}
+
+.zb-brief-case-study-head dt {
+  color: var(--zb-action);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.zb-brief-case-study-head dd {
+  margin: 0.22rem 0 0;
+  color: var(--zb-ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.zb-brief-case-study-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.zb-brief-case-study-flow article {
+  min-width: 0;
+  padding: clamp(1.15rem, 2.3vw, 1.55rem);
+}
+
+.zb-brief-case-study-flow article + article {
+  border-top: 1px solid var(--zb-border);
+}
+
+.zb-brief-case-study-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.zb-brief-case-study-label > span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  border-radius: 0.55rem;
+  background: var(--zb-soft);
+  color: var(--zb-action);
+  font-size: 0.65rem;
+  font-weight: 850;
+}
+
+.zb-brief-case-study-label h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.zb-brief-case-study-flow ul {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zb-brief-case-study-flow li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.5rem;
+  color: var(--zb-muted);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.zb-brief-case-study-flow li svg {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.18rem;
+  color: var(--zb-action);
+}
+
+.zb-brief-case-study-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem 1.25rem;
+  padding: 0.85rem clamp(1.15rem, 2.3vw, 1.55rem);
+  border-top: 1px solid var(--zb-border);
+  background: var(--zb-soft);
+}
+
+.zb-brief-case-study-footer p {
+  flex: 1 1 32rem;
+  margin: 0;
+  color: var(--zb-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 760px) {
+  .zb-brief-case-study-head {
+    grid-template-columns: minmax(0, 1.45fr) minmax(17rem, 0.55fr);
+    align-items: end;
+  }
+
+  .zb-brief-case-study-flow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .zb-brief-case-study-flow article + article {
+    border-top: 0;
+    border-left: 1px solid var(--zb-border);
+  }
+}
+
+.zb-brief-case-study-about-label {
+  display: block;
+  margin-top: 0.8rem;
+  color: var(--zb-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}

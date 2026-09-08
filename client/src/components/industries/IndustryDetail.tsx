@@ -4,12 +4,14 @@ import { ArrowUpRight, Check, ClipboardList } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
+import { BriefCaseStudy } from "@/components/case-studies/BriefCaseStudy";
 import { IntroPanel } from "@/components/common/IntroPanel";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { IndustryIcon } from "@/components/industries/IndustryIcon";
 import { Card } from "@/components/ui/card";
 import { getIndustryContent } from "@/lib/industry-content";
+import { getIndustryCaseStudy } from "@/data/service-industry-case-studies";
 import "@/styles/industries.css";
 
 export function IndustryDetail({ slug }: { slug: string }) {
@@ -18,6 +20,7 @@ export function IndustryDetail({ slug }: { slug: string }) {
   const { industry, detail } = content;
   // The later requirement form can use this validated catalogue slug as its initial industry.
   const requirementHref = `/hire-workforce?industry=${encodeURIComponent(industry.slug)}`;
+  const caseStudy = getIndustryCaseStudy(industry.slug);
 
   return (
     <div className="zb-industries" data-industry={industry.slug}>
@@ -55,6 +58,7 @@ export function IndustryDetail({ slug }: { slug: string }) {
       >
         <a href="#industry-services">Services</a>
         <a href="#industry-scenarios">Example requirements</a>
+        <a href="#industry-case-study">Case study</a>
         <a href="#industry-brief">Your requirement brief</a>
       </nav>
       <section
@@ -115,6 +119,9 @@ export function IndustryDetail({ slug }: { slug: string }) {
           ))}
         </div>
       </section>
+      <div className="zb-industry-section">
+        <BriefCaseStudy study={caseStudy} id="industry-case-study" />
+      </div>
       <section
         id="industry-brief"
         className="zb-industry-section zb-industry-brief"

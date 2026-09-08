@@ -1,12 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 import { ArrowUpRight, BriefcaseBusiness } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
-import { brandLogoUrl } from "@/data/brand-logos";
+import { BrandLogoMarquee } from "@/components/experience/BrandLogoMarquee";
 import { SectionHeading } from "@/components/common/SectionHeading";
-import {
-  brandExperienceIntro,
-  featuredBrandExperience,
-} from "@/data/brand-experience";
+import { brandExperienceIntro } from "@/data/brand-experience";
 
 export function BrandExperiencePreview() {
   return (
@@ -18,7 +14,7 @@ export function BrandExperiencePreview() {
         <SectionHeading
           id="home-experience-heading"
           eyebrow="Brand experience"
-          title="Execution experience across familiar markets."
+          title="Execution experience across families & markets."
           description="From manpower deployment and seller onboarding to audits, sampling, lead generation and consumer engagement, our work has supported assignments across multiple sectors."
         />
         <div className="zb-home-experience-proof">
@@ -33,25 +29,9 @@ export function BrandExperiencePreview() {
           <ArrowUpRight className="size-4" aria-hidden="true" />
         </ActionLink>
       </div>
-      <div className="zb-home-brand-board" aria-label="Selected brand experience">
-        <span className="zb-home-brand-board-label">Selected experience</span>
-        <ul>
-          {featuredBrandExperience.map((brand) => {
-            const logoUrl = brandLogoUrl(brand);
-            return (
-              <li key={brand}>
-                <span className="zb-home-brand-logo" aria-hidden="true">
-                  {logoUrl ? (
-                    <img src={logoUrl} alt="" loading="lazy" width="28" height="28" />
-                  ) : (
-                    <span>{brand.slice(0, 1)}</span>
-                  )}
-                </span>
-                <span>{brand}</span>
-              </li>
-            );
-          })}
-        </ul>
+      <div className="zb-home-brand-board" aria-label="Execution experience across families and markets">
+        <span className="zb-home-brand-board-label">Execution experience across families & markets</span>
+        <BrandLogoMarquee compact />
         <p>{brandExperienceIntro.eyebrow} across project-led assignments.</p>
       </div>
     </section>
