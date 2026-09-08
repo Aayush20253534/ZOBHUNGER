@@ -65,7 +65,7 @@ export default async function BlogPage({
     <>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Blog" }]} />
 
-      <div className="zb-editorial-hero zb-editorial-hero--premium">
+      <div className="zb-editorial-hero zb-editorial-hero--premium zb-blog-landing-hero">
         <PageShell
           eyebrow="Blog"
           title="Ideas for building teams and executing better in the real world."

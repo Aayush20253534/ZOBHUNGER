@@ -10,3 +10,37 @@
 .zb-solution-showcase-card .zb-solution-card-cover img {
   object-fit: cover;
 }
+
+/* Respond to the actual card width, including related-service grids. */
+.zb-solution-card-link .zb-solution-showcase-card {
+  container: zb-service-card / inline-size;
+}
+.zb-solution-showcase-card .zb-solution-card-heading-row { flex-wrap: wrap; }
+.zb-solution-showcase-card .zb-solution-card-heading-row .zb-chip { max-width: 100%; white-space: normal; }
+.zb-solution-showcase-card .zb-solution-card-tags .zb-chip { max-width: 100%; white-space: normal; line-height: 1.4; }
+
+@container zb-service-card (max-width: 420px) {
+  .zb-solution-showcase-card .zb-solution-card-flow-step {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .35rem;
+    padding: .55rem .35rem;
+  }
+  .zb-solution-showcase-card .zb-solution-card-flow-step strong {
+    font-size: .8125rem;
+    line-height: 1.35;
+    white-space: normal;
+  }
+  .zb-solution-showcase-card .zb-solution-card-step-number { font-size: .6875rem; }
+}
+
+@container zb-service-card (max-width: 280px) {
+  .zb-solution-showcase-card .zb-solution-card-flow { grid-template-columns: minmax(0, 1fr); }
+  .zb-solution-showcase-card .zb-solution-card-flow-step { flex-direction: row; align-items: center; gap: .65rem; }
+  .zb-solution-showcase-card .zb-solution-card-flow-step + .zb-solution-card-flow-step { border-top: 1px solid var(--zb-soft-border); border-left: 0; }
+  .zb-solution-showcase-card .zb-solution-card-flow-arrow { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zb-solution-card-link:hover .zb-card.zb-solution-showcase-card { transform: none; }
+}

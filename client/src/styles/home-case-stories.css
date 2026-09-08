@@ -14,3 +14,8 @@
 @media (max-width: 380px) {
   .zb-home-case-stages { grid-template-columns: minmax(0, 1fr); }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .zb-home .zb-home-case-story,
+  .zb-home .zb-home-case-story:hover { transform: none; transition: none; }
+}

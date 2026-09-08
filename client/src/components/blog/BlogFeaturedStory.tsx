@@ -21,7 +21,7 @@ export function BlogFeaturedStory({
       <Link href={`/blog/${encodeURIComponent(article.slug)}`} aria-label={`Read ${article.title}`}>
         <ExecutionImage
           visual={executionVisuals[story.cover]}
-          sizes="(min-width: 1280px) 470px, (min-width: 960px) 38vw, (min-width: 600px) 520px, calc(100vw - 40px)"
+          sizes="(min-width: 1100px) 416px, (min-width: 960px) 36vw, (min-width: 480px) 416px, calc(100vw - 40px)"
           priority
         />
         <div className="zb-blog-feature-copy">
@@ -31,7 +31,7 @@ export function BlogFeaturedStory({
           </div>
           <h2 id="blog-feature-title">{article.title}</h2>
           <span className="zb-blog-feature-read" aria-hidden="true">
-            Read the illustrated guide <ArrowUpRight />
+            Read the guide <ArrowUpRight />
           </span>
         </div>
       </Link>

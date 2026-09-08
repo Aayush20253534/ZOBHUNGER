@@ -12,7 +12,7 @@ function createVisual(id: string, scene: ExecutionScene) {
     ...scene,
     id,
     src: `${base}-1200.webp`,
-    srcSet: `${base}-600.webp 600w, ${base}-1200.webp 1200w, ${base}-1536.webp 1536w`,
+    srcSet: `${base}-600.webp 600w, ${base}-960.webp 960w, ${base}-1200.webp 1200w, ${base}-1536.webp 1536w`,
     width: 1200,
     height: 800,
     sourceLabel: "AI-generated scene",

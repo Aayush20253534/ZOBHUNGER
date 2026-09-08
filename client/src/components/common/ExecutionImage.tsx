@@ -19,14 +19,16 @@ export function ExecutionImage({
   return (
     <div className={cn("zb-execution-image", className)}>
       {/* Local WebP variants keep image selection in the browser and avoid
-          another compression pass or an image service on the request path. */}
+          another compression pass or an image service on the request path.
+          Lazy images use their rendered width with supplied sizes as fallback;
+          priority images need an explicit size before layout. */}
       <img
         src={visual.src}
         srcSet={visual.srcSet}
         alt={visual.alt}
         width={visual.width}
         height={visual.height}
-        sizes={sizes}
+        sizes={priority ? sizes : `auto, ${sizes}`}
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : undefined}
         decoding="async"

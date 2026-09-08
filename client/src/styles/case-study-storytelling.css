@@ -119,3 +119,20 @@
   .zb-case-workflow-steps > li, .zb-case-handover-sheet { break-inside: avoid; }
   .zb-case-step-arrow { display: none; }
 }
+
+.zb-case-card.zb-case-card-visual .zb-case-card-link { min-height: 2.75rem; }
+.zb-case-related-reading > a { min-width: 0; overflow-wrap: break-word; }
+
+@media (max-width: 479px) {
+  .zb-case-detail-visual .zb-case-story-actions { gap: .5rem; }
+  .zb-case-story-cover figcaption { padding: .75rem; }
+  .zb-case-client-view { padding: 1rem; }
+  .zb-case-handover-sheet { padding: 1rem; }
+  .zb-case-workflow-steps > li { padding: 1rem; }
+  .zb-case-card.zb-case-card-visual .zb-case-card-services { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zb-case-page .zb-case-card-visual,
+  .zb-case-page .zb-case-card-visual:hover { transform: none; transition: none; }
+}

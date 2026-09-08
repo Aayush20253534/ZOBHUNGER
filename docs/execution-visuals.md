@@ -5,6 +5,14 @@ The images were created with the built-in image-generation tool, using fictional
 people and illustrative market situations. They are not photographs or evidence
 of a completed client engagement.
 
+Part 8 adds a 960px variant for every scene, encoded from the original generated
+PNG at the same WebP quality. These files are 24–26% smaller than their 1200px
+counterparts. The browser can select them for medium-sized and higher-density
+card layouts; this is a file-size comparison, not a measured page-speed score.
+Lazy images also use `sizes="auto, …"` with the existing responsive size as a
+fallback, while priority images keep explicit sizes. This follows the
+[HTML image sizing rules](https://html.spec.whatwg.org/multipage/images.html#sizes-attributes).
+
 ## Included scenes
 
 | Catalog key | What the scene shows | Suggested placement |
@@ -19,8 +27,8 @@ of a completed client engagement.
 ## Files and image sizes
 
 - Assets: `client/public/images/execution/`.
-- Each scene has `-600.webp`, `-1200.webp`, and `-1536.webp` variants.
-- Dimensions are 600 × 400, 1200 × 800, and 1536 × 1024. All keep the original 3:2 composition.
+- Each scene has `-600.webp`, `-960.webp`, `-1200.webp`, and `-1536.webp` variants.
+- Dimensions are 600 × 400, 960 × 640, 1200 × 800, and 1536 × 1024. All keep the original 3:2 composition.
 - Images are encoded as WebP at quality 82, with no additional creative retouching.
 - Asset catalog: `client/src/data/execution-visuals.ts`.
 - Shared component: `client/src/components/common/ExecutionImage.tsx`.
@@ -50,7 +58,7 @@ const visual = executionVisuals.sampling;
 ```
 
 Use a `sizes` value that matches the actual layout. The browser selects one
-image from `srcSet`; it does not need to download all three variants. By default
+image from `srcSet`; it does not need to download all four variants. By default
 the component lazy-loads. Set `priority` only for an image above the fold, as the
 homepage does. Intrinsic dimensions and a fixed aspect ratio reserve its space.
 The component is server-rendered and needs no image API, client-side gallery
