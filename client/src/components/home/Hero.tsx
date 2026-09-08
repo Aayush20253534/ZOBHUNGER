@@ -2,6 +2,7 @@ import { ArrowDown, ArrowUpRight, ClipboardList } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { home } from "@/data/home";
 import { site } from "@/data/site";
+import "@/styles/home-hero-motion.css";
 
 export function Hero() {
   return (

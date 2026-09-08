@@ -1,0 +1,83 @@
+/* Run once on a fresh render, including refresh, without waiting for JavaScript.
+   Static content is the default for reduced motion, printing and older browsers. */
+@media screen and (prefers-reduced-motion: no-preference) {
+  .zb-home-hero-copy > :is(
+    .zb-eyebrow,
+    h1,
+    .zb-home-hero-description,
+    .zb-home-hero-actions,
+    .zb-home-worker-link
+  ),
+  .zb-home-hero > :is(.zb-home-hero-figure, .zb-home-hero-footer) {
+    animation: zb-home-hero-enter 600ms cubic-bezier(0.22, 1, 0.36, 1)
+      var(--zb-hero-enter-delay, 0ms) 1 backwards;
+  }
+
+  .zb-home-hero-copy > .zb-eyebrow {
+    --zb-hero-enter-y: -10px;
+  }
+
+  .zb-home-hero-copy > h1 {
+    --zb-hero-enter-y: -18px;
+    --zb-hero-enter-delay: 60ms;
+    /* Keep the main heading readable from the first paint. */
+    --zb-hero-enter-opacity: 0.6;
+  }
+
+  .zb-home-hero-description {
+    --zb-hero-enter-delay: 120ms;
+  }
+
+  .zb-home-hero-actions {
+    --zb-hero-enter-delay: 180ms;
+  }
+
+  .zb-home-worker-link {
+    --zb-hero-enter-delay: 230ms;
+  }
+
+  .zb-home-hero-figure {
+    --zb-hero-enter-x: 18px;
+    --zb-hero-enter-y: 0px;
+    --zb-hero-enter-delay: 90ms;
+    /* The priority image stays visible while it settles into position. */
+    --zb-hero-enter-opacity: 1;
+  }
+
+  .zb-home-hero-footer {
+    --zb-hero-enter-y: 10px;
+    --zb-hero-enter-delay: 260ms;
+  }
+
+  /* Reveal focused links without restarting the animation when focus leaves. */
+  .zb-home-hero .zb-home-hero-actions:focus-within,
+  .zb-home-hero .zb-home-worker-link:focus-within,
+  .zb-home-hero .zb-home-hero-footer:focus-within {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Follow the stacked hero layout without extending the mobile page sideways. */
+@media (max-width: 899px) {
+  .zb-home-hero-figure {
+    --zb-hero-enter-x: 0px;
+    --zb-hero-enter-y: 12px;
+  }
+}
+
+@keyframes zb-home-hero-enter {
+  from {
+    opacity: var(--zb-hero-enter-opacity, 0);
+    transform: translate3d(
+      var(--zb-hero-enter-x, 0px),
+      var(--zb-hero-enter-y, 12px),
+      0
+    );
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
