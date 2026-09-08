@@ -4,6 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { site } from "@/data/site";
 import "./globals.css";
+import "@/styles/mobile.css";
 
 export const viewport: Viewport = {
   themeColor: "#ffffff",
@@ -82,7 +83,7 @@ const organizationSchema = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-background text-foreground antialiased">
+      <body className="zb-site min-h-screen bg-background text-foreground antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

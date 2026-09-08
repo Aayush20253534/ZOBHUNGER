@@ -1,0 +1,238 @@
+/* Shared phone refinements. The root class keeps these rules stronger than
+   route styles regardless of the order Next loads their CSS during navigation. */
+.zb-presence-mobile-key { display: none; }
+
+/* The sheet is also used on tablets and short landscape screens. */
+.zb-site .zb-mobile-drawer {
+  height: 100dvh;
+  max-height: 100dvh;
+  width: min(100%, 26rem);
+  gap: 0;
+}
+.zb-site .zb-mobile-brand-header {
+  flex-shrink: 0;
+  padding: max(1.25rem, env(safe-area-inset-top)) 3.75rem 1rem 1.25rem;
+}
+.zb-site .zb-mobile-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0.5rem 1.25rem max(1.5rem, env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+.zb-site .zb-mobile-drawer [data-slot="sheet-close"] {
+  width: 2.75rem;
+  height: 2.75rem;
+  top: max(0.65rem, env(safe-area-inset-top));
+  right: 0.65rem;
+}
+.zb-site .zb-mobile-services summary {
+  justify-content: space-between;
+  gap: 1rem;
+  list-style: none;
+  cursor: pointer;
+}
+.zb-site .zb-mobile-services summary::-webkit-details-marker { display: none; }
+.zb-site .zb-mobile-services summary svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+.zb-site .zb-mobile-services[open] summary svg { transform: rotate(180deg); }
+.zb-site .zb-mobile-service-links {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.4rem;
+  margin-bottom: 0.75rem;
+  border-radius: 0.85rem;
+  background: #fff3f5;
+}
+.zb-site .zb-mobile-service-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.55rem;
+  color: var(--zb-ink);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-decoration: none;
+}
+.zb-site .zb-mobile-service-links a:is(:hover, [aria-current="page"]) { background: #fff; color: #b81931; }
+.zb-site .zb-mobile-service-links svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+.zb-site .zb-mobile-actions { display: grid; gap: 0.75rem; }
+
+@media (max-width: 767px) {
+  body.zb-site { --zb-header-height: 4.5rem; }
+  body.zb-site > main[class] {
+    padding: 1rem 1rem 3rem;
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  .zb-site .zb-container {
+    padding-inline: 1rem;
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  .zb-site .zb-header-inner { gap: 0.75rem; min-height: 4.5rem; }
+  .zb-site .zb-header-brand { min-width: 0; }
+  .zb-site .zb-header .zb-mobile-trigger { min-height: 2.75rem; padding: 0.6rem 0.8rem; gap: 0.4rem; font-size: 0.85rem; }
+
+  .zb-site .zb-page-content :is(.zb-page-heading, .zb-section-heading) { min-width: 0; }
+  body.zb-site .zb-page-content h1,
+  .zb-site .zb-page-content .zb-page-heading h1,
+  .zb-site .zb-page-content .zb-home-hero-copy h1 {
+    font-size: clamp(2rem, 7.7vw, 2.85rem);
+    line-height: 1.12;
+    letter-spacing: -0.04em;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+  }
+  .zb-site .zb-page-content .zb-section-heading h2 { font-size: clamp(1.5rem, 6vw, 2rem); line-height: 1.2; }
+  .zb-site .zb-page-content :is(.zb-page-description, .zb-home-hero-description, .zb-section-heading p) {
+    font-size: 1rem;
+    line-height: 1.65;
+    max-width: 100%;
+  }
+  .zb-site .zb-page-content .zb-page-description { margin-top: 1rem; }
+  .zb-site .zb-page-content .zb-eyebrow { font-size: 0.7rem; letter-spacing: 0.085em; }
+  .zb-site .zb-page-content .zb-breadcrumbs { flex-wrap: wrap; gap: 0.25rem 0.5rem; margin-bottom: 1.25rem; font-size: 0.8rem; }
+  .zb-site .zb-page-content .zb-breadcrumbs li { min-width: 0; max-width: 100%; }
+  .zb-site .zb-page-content .zb-breadcrumbs a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  .zb-site .zb-page-content :is(.zb-page-actions, .zb-home-hero-actions, .zb-about-hero-actions, .zb-form-actions, .zb-work-actions) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1.25rem;
+  }
+  .zb-site :is(.zb-action-link, .zb-button),
+  .zb-site .zb-page-content :is(.zb-action-link, .zb-button) {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 2.75rem;
+    height: auto;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-align: center;
+  }
+  .zb-site :is(.zb-action-link, .zb-button) > svg { flex-shrink: 0; }
+  .zb-site .zb-page-content .zb-action-link[data-variant="text"] { padding-inline: 0; text-align: start; }
+  .zb-site .zb-page-content :is(.zb-solution-hero, .zb-company-hero, .zb-industry-hero, .zb-workers-hero, .zb-editorial-hero) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+  .zb-site .zb-page-content :is(.zb-solution-section, .zb-company-section, .zb-industry-section, .zb-editorial-section, .zb-work-section) { margin-top: 2.5rem; }
+  .zb-site .zb-page-content .zb-section-heading { gap: 0.9rem; margin-bottom: 1.25rem; }
+  .zb-site .zb-page-content :is(.zb-solution-jump-nav, .zb-industry-jump-nav) { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .zb-site .zb-page-content :is(.zb-solution-jump-nav, .zb-industry-jump-nav) a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    max-width: 100%;
+    padding: 0.55rem 0.8rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    white-space: normal;
+  }
+  .zb-site .zb-page-content :is(.zb-solutions-catalog, .zb-solution-service-grid, .zb-solution-related, .zb-article-grid, .zb-case-grid, .zb-job-results-grid) { grid-template-columns: minmax(0, 1fr); }
+  .zb-site .zb-page-content :is(.zb-solution-service-card, .zb-company-brief, .zb-company-aside-card, .zb-industry-brief, .zb-worker-browse-card) { padding: 1.1rem; border-radius: 1rem; }
+  .zb-site .zb-page-content .zb-solution-service-card h3 { font-size: 1.15rem; line-height: 1.35; }
+  .zb-site .zb-page-content .zb-solution-service-card p { font-size: 0.95rem; line-height: 1.65; }
+  .zb-site .zb-page-content .zb-solution-showcase-card { padding: 1.1rem; }
+  .zb-site .zb-page-content .zb-solution-showcase-card .zb-card-title { font-size: 1.2rem; }
+  .zb-site .zb-page-content :is(.zb-process-flow, .zb-process-detail) { padding: 1rem; }
+  .zb-site .zb-page-content .zb-process-track button { padding: 0.8rem; gap: 0.65rem; }
+  .zb-site .zb-page-content .zb-process-step-title { min-width: 0; font-size: 0.9rem; }
+  .zb-site .zb-page-content .zb-process-detail-copy h3 { font-size: 1.4rem; }
+  .zb-site .zb-page-content .zb-process-detail-copy > p { font-size: 1rem; }
+  .zb-site .zb-page-content .zb-process-outcome { padding: 0.85rem; }
+  .zb-site .zb-page-content .zb-process-outcome > p { font-size: 1rem; }
+  .zb-site .zb-page-content .zb-company-tags { flex-wrap: wrap; }
+  .zb-site .zb-page-content :is(.zb-article-card-top, .zb-article-card-footer) { flex-wrap: wrap; gap: 0.65rem; }
+  .zb-site .zb-page-content .zb-article-body section :is(p, li) { font-size: 1rem; line-height: 1.8; }
+  .zb-site .zb-page-content .zb-article-body section h2 { font-size: 1.45rem; line-height: 1.35; }
+  .zb-site .zb-page-content .zb-article-sidebar { position: static; }
+  .zb-site .zb-page-content .zb-cta { padding: 1.5rem 1.1rem; gap: 1.25rem; border-radius: 1.1rem; }
+  .zb-site .zb-page-content .zb-cta h2 { font-size: clamp(1.5rem, 6vw, 2rem); line-height: 1.2; }
+  .zb-site .zb-page-content .zb-cta p { font-size: 0.95rem; }
+
+  /* Keep the home visuals and marquee behaviour; give their copy room. */
+  .zb-site .zb-page-content .zb-home-hero { gap: 1.5rem; padding-top: 0.5rem; }
+  .zb-site .zb-page-content .zb-home-engagements { gap: 0.65rem; }
+  .zb-site .zb-page-content .zb-home-engagements li { min-width: 0; padding: 0.9rem; }
+  .zb-site .zb-page-content .zb-home-engagements strong { font-size: 0.9rem; }
+  .zb-site .zb-page-content .zb-home-experience-title,
+  .zb-site .zb-page-content .zb-experience-partners > h2 { font-size: clamp(1.2rem, 5.2vw, 1.8rem); }
+
+  /* SVG place labels become tiny when scaled: repeat them as readable text. */
+  .zb-site .zb-page-content .zb-presence-network { min-width: 0; padding: 1rem; }
+  .zb-site .zb-page-content .zb-presence-network-header { grid-template-columns: minmax(0, 1fr); gap: 0.9rem; }
+  .zb-site .zb-page-content .zb-presence-network-header h2 { font-size: 1.3rem; line-height: 1.25; }
+  .zb-site .zb-page-content .zb-presence-network-status { min-width: 0; width: fit-content; max-width: 100%; padding: 0.6rem 0.75rem; }
+  .zb-site .zb-page-content .zb-presence-network-status-value { flex-wrap: wrap; }
+  .zb-site .zb-page-content .zb-presence-network-status-value strong { font-size: 1.25rem; }
+  .zb-site .zb-page-content .zb-presence-network-status-value > span { font-size: 0.75rem; white-space: normal; }
+  .zb-site .zb-page-content .zb-presence-mobile-key {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
+  }
+  .zb-site .zb-presence-mobile-key li { display: flex; gap: 0.4rem; align-items: baseline; padding: 0.35rem 0.6rem; border: 1px solid #f0cbd3; border-radius: 0.5rem; background: #fff; font-size: 0.75rem; }
+  .zb-site .zb-presence-mobile-key span { color: #855361; font-size: 0.65rem; }
+  .zb-site .zb-page-content .zb-presence-network-footer { flex-wrap: wrap; gap: 0.5rem 0.75rem; font-size: 0.75rem; }
+  .zb-site .zb-page-content .zb-presence-network-footer small { font-size: 0.7rem; }
+
+  /* Public forms and portal forms share usable touch controls and long labels. */
+  .zb-site .zb-page-content :is(.zb-form-grid, .zb-candidate-form, .zb-job-filter-row, .zb-job-search-row) { grid-template-columns: minmax(0, 1fr); }
+  .zb-site .zb-page-content :is(.zb-company-form-panel, .zb-placement-form-panel, .zb-partner-application-form-wrap, .zb-login-form, .zb-candidate-panel, .zb-admin-panel) { min-width: 0; padding: 1.1rem; }
+  .zb-site .zb-page-content :is(.zb-field, .zb-form-group, .zb-form-fieldset) { min-width: 0; }
+  .zb-site .zb-page-content .zb-form-group legend { flex-wrap: wrap; gap: 0.3rem 0.6rem; line-height: 1.5; }
+  .zb-site .zb-page-content .zb-field :is(label, .zb-field-note, .zb-field-error) { overflow-wrap: anywhere; }
+  .zb-site .zb-page-content :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), textarea, select, .zb-input),
+  .zb-site [data-slot="select-trigger"] {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 2.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .zb-site [data-slot="select-trigger"] { width: 100%; height: auto; padding-block: 0.65rem; white-space: normal; }
+  .zb-site [data-slot="select-value"] { min-width: 0; white-space: normal; overflow: visible; -webkit-line-clamp: unset; }
+  .zb-site [data-slot="select-content"] { max-width: calc(100vw - 2rem); }
+  .zb-site [data-slot="select-item"] { min-height: 2.75rem; padding-block: 0.65rem; overflow-wrap: anywhere; }
+  .zb-site .zb-page-content :is(.zb-placement-checkbox-grid, .zb-partner-file-control) { grid-template-columns: minmax(0, 1fr); }
+  .zb-site .zb-page-content .zb-placement-checkbox-grid label { min-height: 2.75rem; }
+  .zb-site .zb-page-content .zb-partner-file-selected { min-width: 0; overflow-wrap: anywhere; }
+  .zb-site .zb-page-content :is(.zb-candidate-row-actions, .zb-admin-row-actions, .zb-admin-actions, .zb-opportunity-filterbar) { flex-wrap: wrap; gap: 0.5rem; }
+  .zb-site .zb-page-content :is(.zb-candidate-row-actions, .zb-admin-row-actions) button { min-width: 2.75rem; min-height: 2.75rem; }
+  .zb-site .zb-page-content .zb-candidate-row-actions button { width: 2.75rem; }
+  .zb-site .zb-page-content :is(.zb-admin-stats, .zb-placement-portal-stats) > :is(div, article) { min-width: 0; }
+  .zb-site .zb-page-content .zb-admin-stats article { grid-template-columns: auto minmax(0, 1fr); padding: 0.85rem; }
+  .zb-site .zb-page-content :is(.zb-placement-portal-header, .zb-candidate-panel-title) { flex-wrap: wrap; gap: 0.75rem; }
+  .zb-site .zb-page-content :is(.zb-field, .zb-contact-office-detail, .zb-admin-row, .zb-placement-portal-grid) :is(a, dd, p) { overflow-wrap: anywhere; }
+
+  .zb-site .zb-footer { padding-block: 2.5rem 1.25rem; }
+  .zb-site .zb-footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 1rem; }
+  .zb-site .zb-footer-intro { grid-column: 1 / -1; }
+  .zb-site .zb-footer-grid > nav { min-width: 0; }
+  .zb-site .zb-footer h2 { font-size: 0.9rem; }
+  .zb-site .zb-footer li a { min-height: 2.75rem; padding-block: 0.5rem; font-size: 0.8rem; line-height: 1.5; overflow-wrap: break-word; }
+  .zb-site .zb-footer-bottom { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
+
+@media (max-width: 479px) {
+  .zb-site .zb-page-content :is(.zb-page-actions, .zb-home-hero-actions, .zb-about-hero-actions, .zb-form-actions, .zb-work-actions) { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .zb-site .zb-page-content :is(.zb-page-actions, .zb-home-hero-actions, .zb-about-hero-actions, .zb-form-actions, .zb-work-actions) > :is(a, button) { width: 100%; }
+  .zb-site .zb-page-content .zb-cta > .zb-action-link { width: 100%; }
+}
+
+@media (max-width: 359px) {
+  .zb-site .zb-footer-grid { grid-template-columns: minmax(0, 1fr); }
+  .zb-site .zb-page-content .zb-admin-stats { grid-template-columns: minmax(0, 1fr); }
+}

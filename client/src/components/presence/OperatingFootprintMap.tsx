@@ -126,6 +126,9 @@ const markers = [
   },
 ] as const;
 
+// Reuse the same labels in the readable phone key below the SVG.
+export const footprintLocations = markers.map(({ name, detail }) => ({ name, detail }));
+
 const headquarters = markers.find((marker) => marker.tone === "hq")!;
 
 export function OperatingFootprintMap({

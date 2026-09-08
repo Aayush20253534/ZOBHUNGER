@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { ArrowUpRight, ChevronDown, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ActionLink } from "@/components/common/ActionLink";
 import {
@@ -17,6 +17,7 @@ import {
   navigation,
 } from "@/data/navigation";
 import { site } from "@/data/site";
+import { solutions } from "@/data/solutions";
 
 export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
   const [open, setOpen] = useState(false);
@@ -57,7 +58,36 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
           className="zb-mobile-nav"
           aria-label="Mobile navigation"
         >
-          {navigation.map((item) => (
+          {navigation.map((item) => item.href === "/solutions" ? (
+            <details
+              key={item.href}
+              className="zb-mobile-services"
+              open={isNavigationItemActive(pathname, item)}
+            >
+              <summary>
+                {item.label}<ChevronDown aria-hidden="true" />
+              </summary>
+              <div className="zb-mobile-service-links">
+                <Link
+                  href="/solutions"
+                  aria-current={pathname === "/solutions" ? "page" : undefined}
+                  onClick={() => setOpen(false)}
+                >
+                  Explore all services<ArrowUpRight aria-hidden="true" />
+                </Link>
+                {solutions.map((solution) => (
+                  <Link
+                    key={solution.slug}
+                    href={`/${solution.slug}`}
+                    aria-current={pathname === `/${solution.slug}` ? "page" : undefined}
+                    onClick={() => setOpen(false)}
+                  >
+                    {solution.label}
+                  </Link>
+                ))}
+              </div>
+            </details>
+          ) : (
             <Link
               key={item.href}
               href={item.href}
@@ -75,6 +105,13 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
               onClick={() => setOpen(false)}
             >
               {site.primaryAction.label}
+            </ActionLink>
+            <ActionLink
+              href={site.workerAction.href}
+              variant="secondary"
+              onClick={() => setOpen(false)}
+            >
+              {site.workerAction.label}
             </ActionLink>
           </div>
         </nav>

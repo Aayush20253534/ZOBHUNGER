@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowUpRight, Check } from "lucide-react";
+import { ArrowUpRight, BriefcaseBusiness, Check, ListChecks, Target, UsersRound } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
@@ -11,13 +11,18 @@ import { SectionHeading } from "@/components/common/SectionHeading";
 import { SolutionCard } from "@/components/solutions/SolutionCard";
 import { SolutionExecutionVisual } from "@/components/solutions/SolutionExecutionVisual";
 import { SolutionFieldStories } from "@/components/solutions/SolutionFieldStories";
+import { getActivityIcon } from "@/components/solutions/solution-icons";
 import { Card } from "@/components/ui/card";
 import { industries } from "@/data/industries";
 import { solutionDetails } from "@/data/solution-details";
 import { solutions } from "@/data/solutions";
+import { solutionVisuals } from "@/data/solution-visuals";
 import { getSolutionCaseStudy } from "@/data/service-industry-case-studies";
 import type { SolutionDetailContent } from "@/types/solution-detail.types";
 import "@/styles/solutions.css";
+import "@/styles/service-hero.css";
+
+const factIcons = [BriefcaseBusiness, UsersRound, ListChecks];
 
 export function SolutionDetail({ slug }: { slug: string }) {
   const solution = solutions.find((item) => item.slug === slug);
@@ -59,14 +64,13 @@ export function SolutionDetail({ slug }: { slug: string }) {
         <SolutionExecutionVisual
           slug={solution.slug}
           label={solution.label}
-          facts={detail.facts}
-          bestFor={detail.bestFor}
         />
       </div>
       <nav
         className="zb-solution-jump-nav"
         aria-label={`${solution.label} page sections`}
       >
+        <a href="#solution-at-a-glance">At a glance</a>
         <a href="#solution-in-action">See the work</a>
         <a href="#solution-services">Services</a>
         <a href={`#${detail.focus.id}`}>{detail.focus.label}</a>
@@ -74,6 +78,35 @@ export function SolutionDetail({ slug }: { slug: string }) {
         <a href="#solution-case-study">Case study</a>
         <a href="#solution-industries">Industries</a>
       </nav>
+      <section
+        id="solution-at-a-glance"
+        className="zb-service-overview"
+        aria-labelledby="solution-overview-heading"
+      >
+        <div className="zb-service-overview-intro">
+          <span className="zb-eyebrow">Service overview</span>
+          <h2 id="solution-overview-heading">{solution.label} at a glance.</h2>
+          <p>{solutionVisuals[solution.slug].description}</p>
+        </div>
+        <div className="zb-service-suitability">
+          <Target aria-hidden="true" />
+          <div>
+            <h3>Best for</h3>
+            <p>{detail.bestFor}</p>
+          </div>
+        </div>
+        <dl className="zb-service-facts">
+          {detail.facts.map((fact, index) => {
+            const FactIcon = factIcons[index % factIcons.length];
+            return (
+              <div key={fact.label}>
+                <dt><FactIcon aria-hidden="true" />{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            );
+          })}
+        </dl>
+      </section>
       <SolutionFieldStories slug={solution.slug} />
       <section
         id="solution-services"
@@ -87,20 +120,23 @@ export function SolutionDetail({ slug }: { slug: string }) {
           description={detail.servicesDescription}
         />
         <ul className="zb-solution-service-grid" role="list">
-          {detail.services.map((service, index) => (
-            <li key={service.title}>
-              <Card className="zb-card zb-solution-service-card">
-                <div className="zb-solution-service-card-top">
-                  <span aria-hidden="true">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <small>Service activity</small>
-                </div>
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-              </Card>
-            </li>
-          ))}
+          {detail.services.map((service, index) => {
+            const ActivityIcon = getActivityIcon(service.title);
+            return (
+              <li key={service.title}>
+                <Card className="zb-card zb-solution-service-card">
+                  <div className="zb-solution-service-card-top">
+                    <span className="zb-service-activity-icon" aria-hidden="true">
+                      <ActivityIcon />
+                    </span>
+                    <small>Activity {String(index + 1).padStart(2, "0")}</small>
+                  </div>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                </Card>
+              </li>
+            );
+          })}
         </ul>
       </section>
       <section

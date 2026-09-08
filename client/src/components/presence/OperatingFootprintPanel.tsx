@@ -1,5 +1,5 @@
 import { Navigation } from "lucide-react";
-import { OperatingFootprintMap } from "@/components/presence/OperatingFootprintMap";
+import { footprintLocations, OperatingFootprintMap } from "@/components/presence/OperatingFootprintMap";
 import "@/styles/presence.css";
 import "@/styles/presence-map.css";
 
@@ -37,6 +37,14 @@ export function OperatingFootprintPanel({
       <div className="zb-presence-map-wrap">
         <OperatingFootprintMap showLegend={false} />
       </div>
+
+      <ul className="zb-presence-mobile-key" aria-label="Coordination locations">
+        {footprintLocations.map((location) => (
+          <li key={location.name}>
+            <strong>{location.name}</strong><span>{location.detail}</span>
+          </li>
+        ))}
+      </ul>
 
       <div className="zb-presence-network-footer">
         <span>

@@ -51,7 +51,7 @@ export function Navbar() {
             {site.primaryAction.label}
           </ActionLink>
 
-          <MobileMenu pathname={pathname} />
+          <MobileMenu key={pathname} pathname={pathname} />
         </div>
       </header>
     </>

@@ -1,0 +1,187 @@
+/* Compact service previews; supporting detail stays in the overview below.
+   Text remains in normal flow at every zoom level, without an inner scrollbar. */
+.zb-page-content .zb-solutions[data-solution] .zb-solution-hero {
+  align-items: start;
+}
+
+.zb-service-hero-card {
+  width: 100%;
+  max-width: 30rem;
+  min-width: 0;
+  justify-self: center;
+  border: 1px solid #edc7ce;
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 12px 32px #43131d0a;
+}
+
+.zb-service-hero-scene {
+  position: relative;
+  overflow: hidden;
+  border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px) 0 0;
+}
+.zb-service-hero-scene .zb-execution-image {
+  height: clamp(9rem, 24vw, 12rem);
+  aspect-ratio: auto;
+}
+.zb-service-hero-scene img { object-position: center 35%; }
+.zb-service-hero-scene::after {
+  content: "";
+  position: absolute;
+  inset: 35% 0 0;
+  background: linear-gradient(transparent, #23151dcc);
+  pointer-events: none;
+}
+.zb-service-hero-scene-label {
+  position: absolute;
+  z-index: 1;
+  inset-inline: 1rem;
+  bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.zb-service-hero-scene-label svg { width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+.zb-service-hero-body { display: grid; gap: 1rem; padding: 1.1rem; }
+.zb-service-hero-body h2 {
+  margin: 0;
+  color: var(--zb-ink);
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  text-wrap: pretty;
+}
+.zb-service-hero-flow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zb-service-hero-flow li {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+.zb-service-hero-flow li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 1.05rem;
+  left: calc(50% + 1.3rem);
+  width: calc(100% - 2.2rem);
+  border-top: 1px dashed #dfa4ae;
+}
+.zb-service-stage-icon {
+  position: relative;
+  display: grid;
+  width: 2.2rem;
+  height: 2.2rem;
+  place-items: center;
+  border: 1px solid #f3cbd2;
+  border-radius: 0.7rem;
+  background: #fff3f5;
+  color: #bd1730;
+}
+.zb-service-stage-icon svg { width: 1.1rem; height: 1.1rem; }
+.zb-service-stage-icon small {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.3rem;
+  display: grid;
+  width: 0.95rem;
+  height: 0.95rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #4a1924;
+  color: #fff;
+  font-size: 0.55rem;
+  line-height: 1;
+}
+.zb-service-hero-flow strong { font-size: 0.75rem; font-weight: 700; line-height: 1.4; }
+.zb-service-hero-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.8rem 0 0;
+  border-top: 1px solid #f0e4e7;
+  list-style: none;
+}
+.zb-service-hero-modes li {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: #fff1f3;
+  color: #681d2b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.zb-service-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  margin-block: 1.5rem 3rem;
+  padding: clamp(1.1rem, 3vw, 2rem);
+  border: 1px solid #edc7ce;
+  border-radius: 1.25rem;
+  background: linear-gradient(125deg, #fff, #fff6f8);
+}
+.zb-service-overview-intro h2 {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+}
+.zb-service-overview p { margin: 0.65rem 0 0; color: var(--zb-muted); font-size: 0.95rem; line-height: 1.65; }
+.zb-service-suitability { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.75rem; align-items: start; }
+.zb-service-suitability > svg { margin-top: 0.15rem; width: 1.35rem; height: 1.35rem; color: #c61a34; }
+.zb-service-suitability h3 { margin: 0; font-size: 0.8rem; font-weight: 800; color: #a9142b; }
+.zb-service-suitability p { margin-top: 0.25rem; color: var(--zb-ink); }
+.zb-service-facts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; margin: 0; padding-top: 1.25rem; border-top: 1px solid #efdce1; }
+.zb-service-facts > div { min-width: 0; }
+.zb-service-facts dt { display: flex; gap: 0.5rem; align-items: center; color: #a9142b; font-size: 0.78rem; font-weight: 700; }
+.zb-service-facts dt svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+.zb-service-facts dd { margin: 0.45rem 0 0; font-size: 0.9rem; line-height: 1.6; }
+.zb-solution-service-card-top .zb-service-activity-icon { display: grid; width: 2.6rem; height: 2.6rem; place-items: center; border: 1px solid #f4cbd3; border-radius: 0.85rem; background: #fff1f3; color: #c51b34; }
+.zb-service-activity-icon svg { width: 1.3rem; height: 1.3rem; }
+
+@media (min-width: 640px) {
+  .zb-service-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 2rem; }
+  .zb-service-facts { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 960px) {
+  .zb-page-content .zb-solutions[data-solution] .zb-solution-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+    gap: clamp(1.5rem, 3vw, 3rem);
+    margin-top: 1.5rem;
+  }
+  .zb-page-content .zb-solutions[data-solution] .zb-solution-hero .zb-page-heading h1 {
+    font-size: clamp(2.35rem, 4vw, 3.75rem);
+    line-height: 1.08;
+  }
+  .zb-page-content .zb-solutions[data-solution] .zb-solution-hero .zb-page-description { font-size: 1.05rem; margin-top: 1.15rem; }
+  .zb-service-hero-card { max-width: 26rem; justify-self: end; }
+  .zb-service-hero-scene .zb-execution-image { height: clamp(8rem, 21svh, 10rem); }
+}
+@media (min-width: 960px) and (max-height: 720px) {
+  .zb-page-content .zb-solutions[data-solution] .zb-solution-hero { margin-top: 1rem; }
+  .zb-service-hero-scene .zb-execution-image { height: 7.5rem; }
+  .zb-service-hero-body { gap: 0.8rem; padding: 1rem; }
+}
+@media (max-width: 379px) {
+  .zb-service-hero-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem 0.5rem; }
+  .zb-service-hero-flow li:nth-child(2)::after { display: none; }
+  .zb-service-hero-flow strong { font-size: 0.8rem; }
+}
