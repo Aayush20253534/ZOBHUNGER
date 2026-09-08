@@ -24,15 +24,6 @@ export function HeroVisualMotion({ children }: { children: ReactNode }) {
       data-motion-ready={ready}
       data-motion-paused={paused}
     >
-      <button
-        type="button"
-        className="zb-hero-motion-toggle"
-        onClick={() => setPaused((value) => !value)}
-        aria-controls="home-hero-visual"
-      >
-        {paused ? <Play aria-hidden="true" /> : <Pause aria-hidden="true" />}
-        {paused ? "Resume motion" : "Pause motion"}
-      </button>
       {children}
     </figure>
   );
