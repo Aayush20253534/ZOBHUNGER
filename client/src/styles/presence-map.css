@@ -1,29 +1,216 @@
 .zb-footprint-map {
+  --zb-map-fill-start: #fff4f5;
+  --zb-map-fill-end: #f2c7cc;
+  --zb-map-outline: #7c2935;
+  --zb-map-grid-color: rgba(124, 41, 53, 0.09);
+  --zb-map-route: rgba(124, 41, 53, 0.35);
+  --zb-map-label-bg: rgba(63, 20, 27, 0.94);
+  --zb-map-label-border: rgba(255, 255, 255, 0.18);
+  --zb-map-label-text: #ffffff;
+  --zb-map-label-muted: rgba(255, 255, 255, 0.62);
+
   position: relative;
-  min-width: 0;
   width: 100%;
-  max-width: 34rem;
+  max-width: 31rem;
+  min-width: 0;
   margin-inline: auto;
-  color: #ffd5da;
 }
-.zb-footprint-map svg { display: block; width: 100%; height: auto; max-height: 27rem; overflow: visible; }
-.zb-footprint-map-shape { fill: url(#zb-india-fill); stroke: rgba(255,213,218,.62); stroke-width: 2; stroke-linejoin: round; }
-.zb-footprint-map-coast,.zb-footprint-map-island { fill:none; stroke:rgba(255,213,218,.38); stroke-width:2; stroke-linecap:round; }
-.zb-footprint-marker-pulse { fill:rgba(210,31,43,.12); stroke:rgba(210,31,43,.14); transform-origin:center; animation:zb-footprint-pulse 2.8s ease-out infinite; }
-.zb-footprint-marker--hq .zb-footprint-marker-pulse { fill:rgba(255,213,218,.14); stroke:rgba(255,213,218,.2); }
-.zb-footprint-marker-ring { fill:rgba(58,17,24,.95); stroke:rgba(255,255,255,.6); stroke-width:1.4; }
-.zb-footprint-marker-dot { fill:#d21f2b; }
-.zb-footprint-marker--hq .zb-footprint-marker-dot { fill:#ffd5da; }
-.zb-footprint-marker-label rect { fill:rgba(54,17,23,.92); stroke:rgba(255,255,255,.14); stroke-width:1; }
-.zb-footprint-marker-name,.zb-footprint-marker-detail { fill:#fff; font-family:inherit; font-weight:750; }
-.zb-footprint-marker-name { font-size:9px; }
-.zb-footprint-marker-detail { fill:rgba(255,255,255,.56); font-size:7px; font-weight:650; letter-spacing:.04em; text-transform:uppercase; }
-.zb-footprint-map-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem 1rem; margin-top:-.25rem; color:rgba(255,255,255,.68); font-size:.7rem; font-weight:650; }
-.zb-footprint-map-legend span { display:inline-flex; align-items:center; gap:.38rem; }
-.zb-footprint-map-legend i { width:.5rem; height:.5rem; border-radius:999px; background:#d21f2b; }
-.zb-footprint-map-legend i[data-tone="hq"] { background:#ffd5da; }
-.zb-footprint-map--compact { max-width:28rem; }
-.zb-footprint-map--compact svg { max-height:20rem; }
-@keyframes zb-footprint-pulse { 0% { transform:scale(.7); opacity:.9; } 70%,100% { transform:scale(1.35); opacity:0; } }
-@media (prefers-reduced-motion:reduce) { .zb-footprint-marker-pulse { animation:none; opacity:.35; } }
-@media (max-width:560px) { .zb-footprint-marker-label { display:none; } .zb-footprint-map svg,.zb-footprint-map--compact svg { max-height:19rem; } }
+
+.zb-footprint-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 24rem;
+  overflow: visible;
+}
+
+.zb-footprint-map-shape {
+  fill: url(#zb-india-fill);
+  stroke: var(--zb-map-outline);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.zb-footprint-map-grid {
+  fill: url(#zb-map-grid);
+  stroke: none;
+  opacity: 0.72;
+}
+
+.zb-footprint-map-grid-line {
+  fill: none;
+  stroke: var(--zb-map-grid-color);
+  stroke-width: 1;
+}
+
+.zb-footprint-islands {
+  fill: var(--zb-map-fill-end);
+  stroke: var(--zb-map-outline);
+  stroke-width: 1.15;
+}
+
+.zb-footprint-routes path {
+  fill: none;
+  stroke: var(--zb-map-route);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-dasharray: 4 5;
+}
+
+.zb-footprint-marker-pulse {
+  fill: rgba(210, 31, 43, 0.11);
+  stroke: rgba(210, 31, 43, 0.18);
+  transform-origin: center;
+  animation: zb-footprint-pulse 2.8s ease-out infinite;
+}
+
+.zb-footprint-marker--hq .zb-footprint-marker-pulse {
+  fill: rgba(70, 24, 32, 0.15);
+  stroke: rgba(70, 24, 32, 0.24);
+}
+
+.zb-footprint-marker-ring {
+  fill: #ffffff;
+  stroke: #792631;
+  stroke-width: 1.5;
+}
+
+.zb-footprint-marker-dot {
+  fill: #d21f2b;
+}
+
+.zb-footprint-marker--hq .zb-footprint-marker-ring {
+  fill: #461820;
+  stroke: #ffffff;
+}
+
+.zb-footprint-marker--hq .zb-footprint-marker-dot {
+  fill: #ffd5da;
+}
+
+.zb-footprint-marker-leader {
+  stroke: rgba(70, 24, 32, 0.48);
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
+.zb-footprint-marker-label rect {
+  fill: var(--zb-map-label-bg);
+  stroke: var(--zb-map-label-border);
+  stroke-width: 1;
+}
+
+.zb-footprint-marker-name,
+.zb-footprint-marker-detail {
+  fill: var(--zb-map-label-text);
+  font-family: inherit;
+  font-weight: 760;
+}
+
+.zb-footprint-marker-name {
+  font-size: 8.5px;
+}
+
+.zb-footprint-marker-detail {
+  fill: var(--zb-map-label-muted);
+  font-size: 6.6px;
+  font-weight: 680;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.zb-footprint-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem 1rem;
+  margin-top: -0.15rem;
+  color: var(--zb-muted);
+  font-size: 0.7rem;
+  font-weight: 680;
+}
+
+.zb-footprint-map-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.zb-footprint-map-legend i {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #d21f2b;
+}
+
+.zb-footprint-map-legend i[data-tone="hq"] {
+  background: #461820;
+}
+
+.zb-footprint-map--compact {
+  max-width: 26rem;
+}
+
+.zb-footprint-map--compact svg {
+  max-height: 18.75rem;
+}
+
+/* The same map also appears on the dark homepage presence card. */
+.zb-home-presence-board .zb-footprint-map {
+  --zb-map-fill-start: rgba(255, 244, 245, 0.95);
+  --zb-map-fill-end: rgba(238, 161, 171, 0.62);
+  --zb-map-outline: rgba(255, 213, 218, 0.82);
+  --zb-map-grid-color: rgba(255, 255, 255, 0.08);
+  --zb-map-route: rgba(255, 213, 218, 0.42);
+  --zb-map-label-bg: rgba(255, 255, 255, 0.1);
+  --zb-map-label-border: rgba(255, 255, 255, 0.17);
+}
+
+.zb-home-presence-board .zb-footprint-marker-leader {
+  stroke: rgba(255, 213, 218, 0.48);
+}
+
+.zb-home-presence-board .zb-footprint-marker-ring {
+  fill: #461820;
+  stroke: rgba(255, 255, 255, 0.76);
+}
+
+.zb-home-presence-board .zb-footprint-marker-dot {
+  fill: #ffd5da;
+}
+
+.zb-home-presence-board .zb-footprint-map-legend {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+@keyframes zb-footprint-pulse {
+  0% {
+    transform: scale(0.72);
+    opacity: 0.8;
+  }
+  70%,
+  100% {
+    transform: scale(1.38);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zb-footprint-marker-pulse {
+    animation: none;
+    opacity: 0.35;
+  }
+}
+
+@media (max-width: 560px) {
+  .zb-footprint-marker-label,
+  .zb-footprint-marker-leader {
+    display: none;
+  }
+
+  .zb-footprint-map svg,
+  .zb-footprint-map--compact svg {
+    max-height: 18rem;
+  }
+}
