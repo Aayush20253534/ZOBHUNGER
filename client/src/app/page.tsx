@@ -3,10 +3,8 @@ import { BrandExperiencePreview } from "@/components/home/BrandExperiencePreview
 import { Hero } from "@/components/home/Hero";
 import { HomeCaseStudyProof } from "@/components/home/HomeCaseStudyProof";
 import { HomeExecutionModel } from "@/components/home/HomeExecutionModel";
+import { HomeBusinessOverview } from "@/components/home/HomeBusinessOverview";
 import { HomePresencePreview } from "@/components/home/HomePresencePreview";
-import { IndustriesPreview } from "@/components/home/IndustriesPreview";
-import { ServicesOverview } from "@/components/home/ServicesOverview";
-import { WhyZobhunger } from "@/components/home/WhyZobhunger";
 import { home } from "@/data/home";
 import { getPageMetadata } from "@/lib/page-metadata";
 import "@/styles/solutions.css";
@@ -23,12 +21,10 @@ export default function Page() {
     <div className="zb-home">
       <Hero />
       <BrandExperiencePreview />
-      <ServicesOverview />
+      <HomeBusinessOverview />
       <HomeExecutionModel />
-      <IndustriesPreview />
       <HomeCaseStudyProof />
       <HomePresencePreview />
-      <WhyZobhunger />
       <div className="zb-home-final-cta">
         <CTASection
           title="Need a workforce that can execute?"

@@ -1,0 +1,29 @@
+.zb-footprint-map {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  max-width: 34rem;
+  margin-inline: auto;
+  color: #ffd5da;
+}
+.zb-footprint-map svg { display: block; width: 100%; height: auto; max-height: 27rem; overflow: visible; }
+.zb-footprint-map-shape { fill: url(#zb-india-fill); stroke: rgba(255,213,218,.62); stroke-width: 2; stroke-linejoin: round; }
+.zb-footprint-map-coast,.zb-footprint-map-island { fill:none; stroke:rgba(255,213,218,.38); stroke-width:2; stroke-linecap:round; }
+.zb-footprint-marker-pulse { fill:rgba(210,31,43,.12); stroke:rgba(210,31,43,.14); transform-origin:center; animation:zb-footprint-pulse 2.8s ease-out infinite; }
+.zb-footprint-marker--hq .zb-footprint-marker-pulse { fill:rgba(255,213,218,.14); stroke:rgba(255,213,218,.2); }
+.zb-footprint-marker-ring { fill:rgba(58,17,24,.95); stroke:rgba(255,255,255,.6); stroke-width:1.4; }
+.zb-footprint-marker-dot { fill:#d21f2b; }
+.zb-footprint-marker--hq .zb-footprint-marker-dot { fill:#ffd5da; }
+.zb-footprint-marker-label rect { fill:rgba(54,17,23,.92); stroke:rgba(255,255,255,.14); stroke-width:1; }
+.zb-footprint-marker-name,.zb-footprint-marker-detail { fill:#fff; font-family:inherit; font-weight:750; }
+.zb-footprint-marker-name { font-size:9px; }
+.zb-footprint-marker-detail { fill:rgba(255,255,255,.56); font-size:7px; font-weight:650; letter-spacing:.04em; text-transform:uppercase; }
+.zb-footprint-map-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem 1rem; margin-top:-.25rem; color:rgba(255,255,255,.68); font-size:.7rem; font-weight:650; }
+.zb-footprint-map-legend span { display:inline-flex; align-items:center; gap:.38rem; }
+.zb-footprint-map-legend i { width:.5rem; height:.5rem; border-radius:999px; background:#d21f2b; }
+.zb-footprint-map-legend i[data-tone="hq"] { background:#ffd5da; }
+.zb-footprint-map--compact { max-width:28rem; }
+.zb-footprint-map--compact svg { max-height:20rem; }
+@keyframes zb-footprint-pulse { 0% { transform:scale(.7); opacity:.9; } 70%,100% { transform:scale(1.35); opacity:0; } }
+@media (prefers-reduced-motion:reduce) { .zb-footprint-marker-pulse { animation:none; opacity:.35; } }
+@media (max-width:560px) { .zb-footprint-marker-label { display:none; } .zb-footprint-map svg,.zb-footprint-map--compact svg { max-height:19rem; } }
