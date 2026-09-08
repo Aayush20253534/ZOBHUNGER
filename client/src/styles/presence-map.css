@@ -1,242 +1,216 @@
-/* Container & Base Layout */
-.zb-card-container {
-  position: relative;
-  width: 100%;
-  max-width: 42rem;
-  margin-inline: auto;
-  background-color: #fcf4f5;
-  border-radius: 20px;
-  padding: 2.25rem 2.5rem 1.75rem 2.5rem;
-  border: 1px solid #f3dada;
-  overflow: hidden;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
-}
-
-.zb-bg-circle {
-  position: absolute;
-  top: -80px;
-  right: -80px;
-  width: 360px;
-  height: 360px;
-  background-color: rgba(238, 77, 85, 0.08);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-/* Card Header */
-.zb-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.5rem;
-  position: relative;
-  z-index: 2;
-}
-
-.zb-card-eyebrow {
-  color: #d12232;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 0.4rem;
-}
-
-.zb-card-heading {
-  font-size: 1.65rem;
-  line-height: 1.15;
-  font-weight: 800;
-  color: #1a1112;
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-/* Top Right Badge */
-.zb-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: #ffffff;
-  padding: 0.6rem 1rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
-}
-
-.zb-badge-icon {
-  width: 36px;
-  height: 36px;
-  background-color: #3d141a;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-}
-
-.zb-badge-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.zb-badge-label {
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: #8c7f82;
-  letter-spacing: 0.05em;
-}
-
-.zb-badge-value {
-  font-size: 0.85rem;
-  color: #1a1112;
-}
-
-.zb-badge-value strong {
-  font-weight: 800;
-}
-
-/* Map SVG Area */
 .zb-footprint-map {
+  --zb-map-fill-start: #fff4f5;
+  --zb-map-fill-end: #f2c7cc;
+  --zb-map-outline: #7c2935;
+  --zb-map-grid-color: rgba(124, 41, 53, 0.09);
+  --zb-map-route: rgba(124, 41, 53, 0.35);
+  --zb-map-label-bg: rgba(63, 20, 27, 0.94);
+  --zb-map-label-border: rgba(255, 255, 255, 0.18);
+  --zb-map-label-text: #ffffff;
+  --zb-map-label-muted: rgba(255, 255, 255, 0.62);
+
   position: relative;
   width: 100%;
-  margin-top: -1rem;
+  max-width: 29rem;
+  min-width: 0;
+  margin-inline: auto;
 }
 
 .zb-footprint-map svg {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  max-height: 22rem;
   overflow: visible;
 }
 
-.zb-footprint-map-grid-line {
-  fill: none;
-  stroke: rgba(209, 34, 50, 0.07);
-  stroke-width: 1;
-}
-
 .zb-footprint-map-shape {
-  fill: #fcf4f5;
-  stroke: #72232d;
-  stroke-width: 1.4;
+  fill: url(#zb-india-fill);
+  stroke: var(--zb-map-outline);
+  stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.zb-footprint-islands {
-  fill: none;
-  stroke: #72232d;
-  stroke-width: 1.2;
+.zb-footprint-map-grid {
+  fill: url(#zb-map-grid);
+  stroke: none;
+  opacity: 0.72;
 }
 
-/* Routes */
+.zb-footprint-map-grid-line {
+  fill: none;
+  stroke: var(--zb-map-grid-color);
+  stroke-width: 1;
+}
+
+.zb-footprint-islands {
+  fill: var(--zb-map-fill-end);
+  stroke: var(--zb-map-outline);
+  stroke-width: 1.15;
+}
+
 .zb-footprint-routes path {
   fill: none;
-  stroke: rgba(114, 35, 45, 0.28);
-  stroke-width: 1.2;
-  stroke-dasharray: 3 3;
+  stroke: var(--zb-map-route);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-dasharray: 4 5;
 }
 
-/* Markers */
+.zb-footprint-marker-pulse {
+  fill: rgba(210, 31, 43, 0.11);
+  stroke: rgba(210, 31, 43, 0.18);
+  transform-origin: center;
+  animation: zb-footprint-pulse 2.8s ease-out infinite;
+}
+
+.zb-footprint-marker--hq .zb-footprint-marker-pulse {
+  fill: rgba(70, 24, 32, 0.15);
+  stroke: rgba(70, 24, 32, 0.24);
+}
+
 .zb-footprint-marker-ring {
   fill: #ffffff;
-  stroke: #d12232;
-  stroke-width: 2.2;
+  stroke: #792631;
+  stroke-width: 1.5;
 }
 
 .zb-footprint-marker-dot {
-  fill: #d12232;
+  fill: #d21f2b;
 }
 
 .zb-footprint-marker--hq .zb-footprint-marker-ring {
-  fill: #ffffff;
-  stroke: #3d141a;
-  stroke-width: 2.2;
+  fill: #461820;
+  stroke: #ffffff;
 }
 
 .zb-footprint-marker--hq .zb-footprint-marker-dot {
-  fill: #3d141a;
+  fill: #ffd5da;
 }
 
-/* Labels / Tooltips */
+.zb-footprint-marker-leader {
+  stroke: rgba(70, 24, 32, 0.48);
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
 .zb-footprint-marker-label rect {
-  fill: #3d141a;
-  rx: 6px;
+  fill: var(--zb-map-label-bg);
+  stroke: var(--zb-map-label-border);
+  stroke-width: 1;
+}
+
+.zb-footprint-marker-name,
+.zb-footprint-marker-detail {
+  fill: var(--zb-map-label-text);
+  font-family: inherit;
+  font-weight: 760;
 }
 
 .zb-footprint-marker-name {
-  fill: #ffffff;
-  font-size: 9.5px;
-  font-weight: 700;
+  font-size: 8.5px;
 }
 
 .zb-footprint-marker-detail {
-  fill: rgba(255, 255, 255, 0.6);
-  font-size: 7px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  fill: var(--zb-map-label-muted);
+  font-size: 6.6px;
+  font-weight: 680;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
 }
 
-/* Footer / Legend */
 .zb-footprint-map-legend {
-  margin-top: 0.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(114, 35, 45, 0.08);
-  text-align: center;
-}
-
-.zb-legend-items {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #574649;
+  gap: 0.7rem 1rem;
+  margin-top: -0.15rem;
+  color: var(--zb-muted);
+  font-size: 0.7rem;
+  font-weight: 680;
 }
 
-.zb-legend-items span {
+.zb-footprint-map-legend span {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.38rem;
 }
 
-.zb-legend-items i {
-  width: 0.65rem;
-  height: 0.65rem;
-  border-radius: 50%;
-  display: inline-block;
+.zb-footprint-map-legend i {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #d21f2b;
 }
 
-.zb-legend-items i[data-tone="hq"] {
-  background-color: #3d141a;
+.zb-footprint-map-legend i[data-tone="hq"] {
+  background: #461820;
 }
 
-.zb-legend-items i[data-tone="market"] {
-  background-color: #d12232;
+.zb-footprint-map--compact {
+  max-width: 25rem;
 }
 
-.zb-legend-subtext {
-  margin-top: 0.4rem;
-  margin-bottom: 0;
-  font-size: 0.8rem;
-  color: #7a6a6d;
-  font-weight: 500;
+.zb-footprint-map--compact svg {
+  max-height: 17.5rem;
 }
 
-/* Mobile Adjustments */
+/* The same map also appears on the dark homepage presence card. */
+.zb-home-presence-board .zb-footprint-map {
+  --zb-map-fill-start: rgba(255, 244, 245, 0.95);
+  --zb-map-fill-end: rgba(238, 161, 171, 0.62);
+  --zb-map-outline: rgba(255, 213, 218, 0.82);
+  --zb-map-grid-color: rgba(255, 255, 255, 0.08);
+  --zb-map-route: rgba(255, 213, 218, 0.42);
+  --zb-map-label-bg: rgba(255, 255, 255, 0.1);
+  --zb-map-label-border: rgba(255, 255, 255, 0.17);
+}
+
+.zb-home-presence-board .zb-footprint-marker-leader {
+  stroke: rgba(255, 213, 218, 0.48);
+}
+
+.zb-home-presence-board .zb-footprint-marker-ring {
+  fill: #461820;
+  stroke: rgba(255, 255, 255, 0.76);
+}
+
+.zb-home-presence-board .zb-footprint-marker-dot {
+  fill: #ffd5da;
+}
+
+.zb-home-presence-board .zb-footprint-map-legend {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+@keyframes zb-footprint-pulse {
+  0% {
+    transform: scale(0.72);
+    opacity: 0.8;
+  }
+  70%,
+  100% {
+    transform: scale(1.38);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zb-footprint-marker-pulse {
+    animation: none;
+    opacity: 0.35;
+  }
+}
+
 @media (max-width: 560px) {
-  .zb-card-container {
-    padding: 1.5rem;
+  .zb-footprint-marker-label,
+  .zb-footprint-marker-leader {
+    display: none;
   }
 
-  .zb-card-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .zb-card-heading {
-    font-size: 1.35rem;
+  .zb-footprint-map svg,
+  .zb-footprint-map--compact svg {
+    max-height: 18rem;
   }
 }
