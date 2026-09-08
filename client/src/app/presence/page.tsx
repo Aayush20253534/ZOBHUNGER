@@ -107,32 +107,56 @@ export default function PresencePage() {
               <span className="zb-eyebrow">Operating footprint</span>
               <h2>One coordinated network, built around execution.</h2>
             </div>
-            <span className="zb-presence-network-icon" aria-hidden="true">
-              <Navigation />
-            </span>
+            <div className="zb-presence-network-status">
+              <span className="zb-presence-network-icon" aria-hidden="true">
+                <Navigation />
+              </span>
+              <div>
+                <small>Execution network</small>
+                <strong>4 coordination points</strong>
+              </div>
+            </div>
           </div>
 
           <div className="zb-presence-network-canvas" aria-hidden="true">
+            <span className="zb-presence-network-halo zb-presence-network-halo--outer" />
+            <span className="zb-presence-network-halo zb-presence-network-halo--inner" />
             <span className="zb-presence-network-line zb-presence-network-line--north" />
             <span className="zb-presence-network-line zb-presence-network-line--west" />
             <span className="zb-presence-network-line zb-presence-network-line--east" />
 
             <span className="zb-presence-network-node zb-presence-network-node--hq">
-              <Building2 />
-              <strong>Ghazipur</strong>
-              <small>Headquarters</small>
+              <span className="zb-presence-network-node-icon"><Building2 /></span>
+              <span className="zb-presence-network-node-copy">
+                <small>Coordination hub</small>
+                <strong>Ghazipur</strong>
+                <em>Headquarters</em>
+              </span>
+              <b>HQ</b>
             </span>
             <span className="zb-presence-network-node zb-presence-network-node--delhi">
-              <MapPin />
-              <strong>Delhi</strong>
+              <span className="zb-presence-network-node-icon"><MapPin /></span>
+              <span className="zb-presence-network-node-copy">
+                <small>North market</small>
+                <strong>Delhi</strong>
+              </span>
+              <b>DEL</b>
             </span>
             <span className="zb-presence-network-node zb-presence-network-node--mumbai">
-              <MapPin />
-              <strong>Mumbai</strong>
+              <span className="zb-presence-network-node-icon"><MapPin /></span>
+              <span className="zb-presence-network-node-copy">
+                <small>West market</small>
+                <strong>Mumbai</strong>
+              </span>
+              <b>MUM</b>
             </span>
             <span className="zb-presence-network-node zb-presence-network-node--bihar">
-              <MapPin />
-              <strong>Bihar</strong>
+              <span className="zb-presence-network-node-icon"><MapPin /></span>
+              <span className="zb-presence-network-node-copy">
+                <small>East market</small>
+                <strong>Bihar</strong>
+              </span>
+              <b>BIH</b>
             </span>
           </div>
 
@@ -143,6 +167,7 @@ export default function PresencePage() {
             <span>
               <i data-tone="market" /> Branch / market presence
             </span>
+            <small>Workforce + field execution coordination</small>
           </div>
         </aside>
       </section>

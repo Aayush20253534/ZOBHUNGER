@@ -1167,3 +1167,286 @@
     grid-column: auto;
   }
 }
+
+/* Visual polish pass: turn the home presence summary into a compact network graphic. */
+.zb-home-presence-board {
+  position: relative;
+  overflow: hidden;
+  gap: 1rem;
+  min-height: 27rem;
+  padding: clamp(1.2rem, 2.6vw, 1.65rem);
+  background:
+    radial-gradient(circle at 88% 5%, rgba(255, 213, 218, 0.12), transparent 31%),
+    linear-gradient(145deg, #461820, #351117 72%);
+  box-shadow: 0 1.1rem 2.6rem rgba(70, 24, 32, 0.14);
+}
+
+.zb-home-presence-board::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.32;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 85%, transparent);
+}
+
+.zb-home-presence-board-head,
+.zb-home-presence-network,
+.zb-home-presence-board-foot {
+  position: relative;
+  z-index: 1;
+}
+
+.zb-home-presence-board-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.zb-home-presence-board-head .zb-eyebrow {
+  color: var(--zb-highlight);
+  font-size: 0.66rem;
+}
+
+.zb-home-presence-board-head strong {
+  display: block;
+  max-width: 20rem;
+  margin-top: 0.35rem;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.zb-home-presence-route-icon {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--zb-highlight);
+}
+
+.zb-home-presence-route-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.zb-home-presence-network {
+  position: relative;
+  min-height: 16.25rem;
+  margin-top: 0.2rem;
+}
+
+.zb-home-presence-connector {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 213, 218, 0.68), rgba(255, 255, 255, 0.12));
+  transform-origin: left center;
+}
+
+.zb-home-presence-connector::after {
+  content: "";
+  position: absolute;
+  right: -0.25rem;
+  top: 50%;
+  width: 0.46rem;
+  height: 0.46rem;
+  border: 2px solid #461820;
+  border-radius: 999px;
+  background: var(--zb-highlight);
+  transform: translateY(-50%);
+  box-shadow: 0 0 0 0.2rem rgba(255, 213, 218, 0.13);
+}
+
+.zb-home-presence-connector--one {
+  width: 37%;
+  transform: rotate(-39deg);
+}
+
+.zb-home-presence-connector--two {
+  width: 39%;
+  transform: rotate(160deg);
+}
+
+.zb-home-presence-connector--three {
+  width: 37%;
+  transform: rotate(22deg);
+}
+
+.zb-home-presence-hq,
+.zb-home-presence-market {
+  position: absolute;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 0.8rem 1.8rem rgba(12, 4, 6, 0.17);
+}
+
+.zb-home-presence-hq {
+  left: 50%;
+  top: 50%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.12rem 0.65rem;
+  min-width: 9.5rem;
+  padding: 0.85rem;
+  border-color: rgba(255, 213, 218, 0.35);
+  border-radius: 0.85rem;
+  background: linear-gradient(145deg, #5a1d27, #461820);
+  transform: translate(-50%, -50%);
+}
+
+.zb-home-presence-hq .zb-home-presence-node-icon {
+  grid-row: 1 / 4;
+}
+
+.zb-home-presence-hq small,
+.zb-home-presence-market small {
+  color: var(--zb-highlight);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.zb-home-presence-hq strong {
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.zb-home-presence-hq em {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.64rem;
+  font-style: normal;
+}
+
+.zb-home-presence-node-icon {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.65rem;
+  background: var(--zb-highlight);
+  color: var(--zb-panel);
+}
+
+.zb-home-presence-node-icon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.zb-home-presence-market {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 8rem;
+  padding: 0.7rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.075);
+  backdrop-filter: blur(8px);
+}
+
+.zb-home-presence-market .zb-home-presence-node-icon {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(255, 213, 218, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--zb-highlight);
+}
+
+.zb-home-presence-market div {
+  min-width: 0;
+}
+
+.zb-home-presence-market strong {
+  display: block;
+  margin-top: 0.08rem;
+  font-size: 0.78rem;
+}
+
+.zb-home-presence-market b {
+  padding: 0.22rem 0.34rem;
+  border-radius: 0.35rem;
+  background: rgba(255, 213, 218, 0.12);
+  color: var(--zb-highlight);
+  font-size: 0.54rem;
+  line-height: 1;
+  letter-spacing: 0.06em;
+}
+
+.zb-home-presence-market--1 { right: 0; top: 6%; }
+.zb-home-presence-market--2 { left: 0; bottom: 7%; }
+.zb-home-presence-market--3 { right: 0; bottom: 12%; }
+
+.zb-home-presence-board-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.64rem;
+  font-weight: 650;
+}
+
+.zb-home-presence-board-foot span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.zb-home-presence-board-foot i {
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 999px;
+  background: var(--zb-highlight);
+}
+
+.zb-home-presence-board-foot i[data-tone="market"] {
+  background: var(--zb-action);
+}
+
+.zb-home-presence-board-foot small {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: inherit;
+}
+
+@media (max-width: 520px) {
+  .zb-home-presence-board {
+    min-height: auto;
+  }
+
+  .zb-home-presence-network {
+    display: grid;
+    gap: 0.6rem;
+    min-height: 0;
+  }
+
+  .zb-home-presence-connector {
+    display: none;
+  }
+
+  .zb-home-presence-hq,
+  .zb-home-presence-market {
+    position: static;
+    width: 100%;
+    transform: none;
+  }
+
+  .zb-home-presence-board-foot small {
+    width: 100%;
+    margin-left: 0;
+  }
+}

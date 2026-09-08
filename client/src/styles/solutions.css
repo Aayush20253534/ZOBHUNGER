@@ -677,3 +677,280 @@
   font-weight: 650;
   line-height: 1.45;
 }
+
+/* Visual polish pass: richer service cards without external artwork. */
+.zb-solution-card-link {
+  display: block;
+  height: 100%;
+}
+
+.zb-solution-showcase-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  gap: 1rem;
+  border-color: color-mix(in srgb, var(--zb-border) 82%, var(--zb-action) 18%);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 1)),
+    var(--zb-surface);
+  box-shadow: 0 0.7rem 2rem rgba(35, 24, 29, 0.055);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.zb-solution-showcase-card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: -5.5rem;
+  top: -5rem;
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 32, 47, 0.09), rgba(200, 32, 47, 0));
+}
+
+.zb-solution-card-link:hover .zb-solution-showcase-card {
+  transform: translateY(-4px);
+  border-color: rgba(200, 32, 47, 0.42);
+  box-shadow: 0 1.15rem 2.8rem rgba(35, 24, 29, 0.1);
+}
+
+.zb-solution-card-graphic {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 6rem;
+  overflow: hidden;
+  padding: 1rem;
+  border: 1px solid rgba(200, 32, 47, 0.12);
+  border-radius: 0.9rem;
+  background:
+    linear-gradient(rgba(200, 32, 47, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 32, 47, 0.055) 1px, transparent 1px),
+    linear-gradient(135deg, #fff8f8, #fff 70%);
+  background-size: 1.3rem 1.3rem, 1.3rem 1.3rem, auto;
+}
+
+.zb-solution-card-graphic > strong {
+  position: absolute;
+  right: 0.95rem;
+  top: 0.8rem;
+  color: rgba(70, 24, 32, 0.16);
+  font-size: 2.6rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.08em;
+}
+
+.zb-solution-card-icon-wrap {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 3.75rem;
+  height: 3.75rem;
+  border: 1px solid rgba(200, 32, 47, 0.18);
+  border-radius: 1rem;
+  background: linear-gradient(145deg, #fff, #ffecef);
+  color: var(--zb-action);
+  box-shadow: 0 0.7rem 1.6rem rgba(200, 32, 47, 0.12);
+}
+
+.zb-solution-card-icon-wrap svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  stroke-width: 1.9;
+}
+
+.zb-solution-card-graphic-line {
+  position: absolute;
+  left: 4.55rem;
+  right: 1.25rem;
+  top: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(200, 32, 47, 0.42), rgba(200, 32, 47, 0.08));
+}
+
+.zb-solution-card-dot {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  width: 0.66rem;
+  height: 0.66rem;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  background: var(--zb-action);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 0.22rem rgba(200, 32, 47, 0.1);
+}
+
+.zb-solution-card-dot--one { left: 48%; }
+.zb-solution-card-dot--two { left: 66%; }
+.zb-solution-card-dot--three { left: 83%; }
+
+.zb-solution-card-heading-row {
+  gap: 0.75rem;
+}
+
+.zb-solution-card-kicker {
+  color: var(--zb-muted);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.zb-solution-card-copy-block {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.zb-solution-showcase-card .zb-card-title {
+  font-size: clamp(1.35rem, 1.9vw, 1.65rem);
+  line-height: 1.22;
+}
+
+.zb-solution-showcase-card .zb-card-copy {
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+
+.zb-solution-card-flow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 0.15rem;
+  padding: 0;
+  border: 1px solid rgba(200, 32, 47, 0.13);
+  border-radius: 0.82rem;
+  background: linear-gradient(135deg, #fff4f5, #fff9f9);
+  overflow: hidden;
+}
+
+.zb-solution-card-flow-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+  min-width: 0;
+  padding: 0.75rem 0.68rem;
+}
+
+.zb-solution-card-flow-step + .zb-solution-card-flow-step {
+  border-left: 1px solid rgba(200, 32, 47, 0.11);
+}
+
+.zb-solution-card-flow-icon {
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--zb-action);
+  box-shadow: 0 0 0 1px rgba(200, 32, 47, 0.12);
+}
+
+.zb-solution-card-flow-icon svg {
+  width: 0.88rem;
+  height: 0.88rem;
+}
+
+.zb-solution-card-flow-step small {
+  display: block;
+  margin: 0 0 0.12rem;
+  color: var(--zb-action);
+  font-size: 0.56rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+}
+
+.zb-solution-card-flow-step strong {
+  display: block;
+  overflow: hidden;
+  color: var(--zb-ink);
+  font-size: 0.72rem;
+  font-weight: 760;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+}
+
+.zb-solution-card-flow-arrow {
+  position: absolute;
+  z-index: 2;
+  right: -0.48rem;
+  top: 50%;
+  width: 0.9rem;
+  height: 0.9rem;
+  padding: 0.1rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--zb-action);
+  transform: translateY(-50%);
+  box-shadow: 0 0 0 1px rgba(200, 32, 47, 0.12);
+}
+
+.zb-solution-card-tags {
+  gap: 0.42rem;
+}
+
+.zb-solution-card-tags .zb-chip {
+  border: 1px solid var(--zb-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--zb-muted);
+  font-size: 0.7rem;
+}
+
+.zb-solution-card-cta {
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--zb-border);
+}
+
+.zb-solution-card-cta-icon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: var(--zb-action);
+  color: #fff;
+  transition: transform 180ms ease;
+}
+
+.zb-solution-card-cta-icon svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.zb-solution-card-link:hover .zb-solution-card-cta-icon {
+  transform: translate(2px, -2px);
+}
+
+@media (max-width: 420px) {
+  .zb-solution-card-flow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .zb-solution-card-flow-step + .zb-solution-card-flow-step {
+    border-top: 1px solid rgba(200, 32, 47, 0.11);
+    border-left: 0;
+  }
+
+  .zb-solution-card-flow-arrow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zb-solution-showcase-card,
+  .zb-solution-card-cta-icon {
+    transition: none;
+  }
+}
