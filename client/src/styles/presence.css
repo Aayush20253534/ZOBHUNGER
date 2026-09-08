@@ -1161,13 +1161,13 @@
 
   .zb-presence-map-wrap {
     min-height: 0;
-    height: clamp(16.5rem, 34vh, 18.75rem);
+    height: clamp(17rem, 35vh, 19.25rem);
     padding: 0;
   }
 
   .zb-presence-map-wrap .zb-footprint-map {
-    width: min(100%, 25.5rem);
-    max-width: 25.5rem;
+    width: min(100%, 26.5rem);
+    max-width: 26.5rem;
   }
 
   .zb-presence-network-footer {
@@ -1193,7 +1193,7 @@
   }
 
   .zb-presence-map-wrap {
-    height: 16.25rem;
+    height: 16.75rem;
   }
 
   .zb-presence-network-status {
