@@ -30,8 +30,12 @@ export function ArticleResults({
       </div>
       {list.items.length ? (
         <div className="zb-article-grid">
-          {list.items.map((article) => (
-            <ArticleCard key={article.slug} article={article} />
+          {list.items.map((article, index) => (
+            <ArticleCard
+              key={article.slug}
+              article={article}
+              index={first + index}
+            />
           ))}
         </div>
       ) : (

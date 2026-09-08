@@ -1,5 +1,10 @@
 import { notFound } from "next/navigation";
-import { ArrowLeft, BookOpen, Clock3 } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  Clock3,
+  Layers3,
+} from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
@@ -32,32 +37,43 @@ export async function generateMetadata({ params }: Props) {
 export default async function ArticlePage({ params }: Props) {
   const article = await getArticleForPage((await params).slug);
   if (!article?.isPublished) notFound();
+
   return (
     <>
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },
-          { label: "Insights", href: "/blog" },
+          { label: "Blog", href: "/blogs" },
           { label: article.category },
         ]}
       />
+
       <article>
-        <div className="zb-article-heading">
+        <div className="zb-article-heading zb-article-heading--premium">
           <PageShell
             eyebrow={article.category}
             title={article.title}
             description={article.excerpt}
           />
-          <div className="zb-article-meta">
-            <span>
-              <BookOpen aria-hidden="true" />
-              {article.isSample ? "Sample guide" : "Practical guide"}
-            </span>
-            <span>
-              <Clock3 aria-hidden="true" />
-              {article.readingMinutes} min read
-            </span>
+
+          <div className="zb-article-summary-strip" aria-label="Guide summary">
+            <div>
+              <span aria-hidden="true"><BookOpen /></span>
+              <small>Format</small>
+              <strong>{article.isSample ? "Sample guide" : "Practical insight"}</strong>
+            </div>
+            <div>
+              <span aria-hidden="true"><Clock3 /></span>
+              <small>Reading time</small>
+              <strong>{article.readingMinutes} min read</strong>
+            </div>
+            <div>
+              <span aria-hidden="true"><Layers3 /></span>
+              <small>Sections</small>
+              <strong>{article.sections.length} practical steps</strong>
+            </div>
           </div>
+
           {article.isSample && (
             <p className="zb-inline-notice">
               Editorial sample for review; not an approved ZOBHUNGER
@@ -65,22 +81,29 @@ export default async function ArticlePage({ params }: Props) {
             </p>
           )}
         </div>
+
         <div className="zb-article-layout">
           <div className="zb-article-body">
             <aside className="zb-article-takeaway" aria-label="Key idea">
               <span className="zb-eyebrow">The key idea</span>
               <p>{article.takeaway}</p>
             </aside>
-            {article.sections.map((section) => (
+
+            {article.sections.map((section, sectionIndex) => (
               <section
                 key={section.id}
                 id={section.id}
                 aria-labelledby={`${section.id}-title`}
               >
-                <h2 id={`${section.id}-title`}>{section.heading}</h2>
+                <div className="zb-article-section-heading">
+                  <span>{String(sectionIndex + 1).padStart(2, "0")}</span>
+                  <h2 id={`${section.id}-title`}>{section.heading}</h2>
+                </div>
+
                 {section.paragraphs.map((paragraph, index) => (
                   <p key={index}>{paragraph}</p>
                 ))}
+
                 {section.points?.length ? (
                   <ul>
                     {section.points.map((point) => (
@@ -91,8 +114,10 @@ export default async function ArticlePage({ params }: Props) {
               </section>
             ))}
           </div>
+
           <aside className="zb-article-sidebar">
             <nav aria-label="In this guide">
+              <span className="zb-eyebrow">Reading path</span>
               <h2>In this guide</h2>
               <ol>
                 {article.sections.map((section) => (
@@ -102,24 +127,30 @@ export default async function ArticlePage({ params }: Props) {
                 ))}
               </ol>
             </nav>
-            <div>
+
+            <div className="zb-article-sidebar-cta">
+              <span className="zb-eyebrow">Move from insight to action</span>
               <h2>Have a requirement in mind?</h2>
               <p>
                 Bring the roles, locations and timeline into one conversation.
               </p>
-              <ActionLink href="/hire-workforce">Share your brief</ActionLink>
+              <ActionLink href="/hire-workforce" variant="light">
+                Share your brief
+              </ActionLink>
             </div>
           </aside>
         </div>
       </article>
+
       <div className="zb-editorial-section">
         <CTASection
           title="What does the next assignment need?"
           description="Explore the services that can support your team and your business."
           href="/solutions"
-          label="Explore solutions"
+          label="Explore our services"
         />
       </div>
+
       <ActionLink href="/blogs" variant="text" className="zb-back-to-insights">
         <ArrowLeft aria-hidden="true" className="size-4" />
         Back to all insights

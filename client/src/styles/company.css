@@ -1017,3 +1017,169 @@
     grid-column: 1 / -1;
   }
 }
+
+/* =========================================================
+   PART 9 — CONTACT OFFICE CARD
+   ========================================================= */
+
+.zb-contact-office-card {
+  position: relative;
+  overflow: hidden;
+  margin-top: 1rem;
+  padding: clamp(1.25rem, 2.8vw, 1.8rem);
+  border: 1px solid var(--zb-panel);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 92% 8%, rgb(200 32 47 / 20%) 0 9rem, transparent 9.1rem),
+    linear-gradient(145deg, #511a23 0%, var(--zb-panel) 58%, #351116 100%);
+  color: #fff;
+  box-shadow: 0 1.2rem 2.8rem rgb(38 22 27 / 14%);
+}
+
+.zb-contact-office-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 4%) 1px, transparent 1px);
+  background-size: 2.1rem 2.1rem;
+  mask-image: linear-gradient(to bottom, transparent, #000 20%, #000 85%, transparent);
+}
+
+.zb-contact-office-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.zb-contact-office-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.9rem;
+}
+
+.zb-contact-office-mark {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 0.9rem;
+  background: rgb(255 255 255 / 9%);
+  color: var(--zb-highlight);
+}
+
+.zb-contact-office-mark svg {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.zb-contact-office-heading .zb-eyebrow {
+  color: var(--zb-highlight);
+}
+
+.zb-contact-office-heading h2 {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.35rem, 2.3vw, 1.8rem);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+
+.zb-contact-office-heading p {
+  max-width: 40rem;
+  margin: 0.55rem 0 0;
+  color: var(--zb-on-panel-muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.zb-contact-office-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}
+
+.zb-contact-office-detail {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid rgb(255 255 255 / 13%);
+  border-radius: 0.8rem;
+  background: rgb(255 255 255 / 7%);
+  backdrop-filter: blur(8px);
+}
+
+.zb-contact-office-detail-icon {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.65rem;
+  background: rgb(255 255 255 / 9%);
+  color: var(--zb-highlight);
+}
+
+.zb-contact-office-detail-icon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.zb-contact-office-detail > div {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+}
+
+.zb-contact-office-detail small {
+  color: var(--zb-highlight);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.zb-contact-office-detail strong,
+.zb-contact-office-detail a {
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 720;
+  line-height: 1.45;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.zb-contact-office-detail a:hover {
+  color: var(--zb-highlight);
+}
+
+.zb-contact-office-detail--address a {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+  color: var(--zb-highlight);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.zb-contact-office-detail--address a svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+@media (min-width: 700px) {
+  .zb-contact-office-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zb-contact-office-detail--address {
+    grid-column: 1 / -1;
+  }
+}

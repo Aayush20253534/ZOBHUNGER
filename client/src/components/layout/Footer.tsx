@@ -30,7 +30,7 @@ const partnershipLinks = [
 ] as const;
 
 const resourceLinks = [
-  { label: "Blog & insights", href: "/blogs" },
+  { label: "Blog", href: "/blogs" },
   { label: "Industries we serve", href: "/industries" },
   { label: "Technology vision", href: "/technology" },
 ] as const;

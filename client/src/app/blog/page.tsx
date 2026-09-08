@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { ArrowUpRight, BookOpen, Search, Sparkles } from "lucide-react";
+import {
+  ArrowUpRight,
+  BookOpen,
+  BriefcaseBusiness,
+  Route,
+  Search,
+  Sparkles,
+  UsersRound,
+} from "lucide-react";
 import { ActionButton } from "@/components/common/ActionButton";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
@@ -17,10 +25,28 @@ import { getPageMetadata } from "@/lib/page-metadata";
 import { getArticles } from "@/services/articles.service";
 import { getEditorialDataMode } from "@/services/adapters";
 
+const editorialLanes = [
+  {
+    icon: UsersRound,
+    title: "People & hiring",
+    description: "Clearer briefs, workforce planning and team decisions.",
+  },
+  {
+    icon: Route,
+    title: "Field execution",
+    description: "Practical thinking for retail, gig and on-ground work.",
+  },
+  {
+    icon: BriefcaseBusiness,
+    title: "Business operations",
+    description: "Ideas that connect people, process and delivery.",
+  },
+] as const;
+
 export function generateMetadata() {
   return {
     ...getPageMetadata(
-      "Blog & Insights",
+      "Blog",
       "Practical guides to hiring, workforce management, sales and business execution.",
       "/blogs",
     ),
@@ -39,19 +65,19 @@ export default async function BlogPage({
   const list = await getArticles(filters);
   const isPreview =
     getEditorialDataMode() === "mock" || list.items.some((article) => article.isSample);
+
   return (
     <>
-      <Breadcrumbs
-        items={[{ label: "Home", href: "/" }, { label: "Blog & Insights" }]}
-      />
-      <div className="zb-editorial-hero">
+      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Blog" }]} />
+
+      <div className="zb-editorial-hero zb-editorial-hero--premium">
         <PageShell
-          eyebrow="Blog & insights"
-          title="Ideas for the work ahead."
-          description="Practical perspectives on building teams, planning assignments and connecting people with execution."
+          eyebrow="Blog"
+          title="Useful thinking for people, markets and execution."
+          description="Practical perspectives on hiring, workforce coordination, field execution and the operating decisions behind better delivery."
           actions={
             <ActionLink href="#insights-search" variant="secondary">
-              Explore the guides
+              Explore insights
             </ActionLink>
           }
         >
@@ -62,16 +88,41 @@ export default async function BlogPage({
             </p>
           )}
         </PageShell>
-        <aside className="zb-premium-hero-card zb-insights-hero-card" aria-labelledby="insights-intro-title">
+
+        <aside
+          className="zb-premium-hero-card zb-insights-hero-card zb-insights-editorial-map"
+          aria-labelledby="insights-intro-title"
+        >
           <div className="zb-premium-card-header">
             <span className="zb-premium-card-icon" aria-hidden="true">
               <BookOpen />
             </span>
             <div>
-              <span className="zb-eyebrow">Explore the thinking</span>
-              <h2 id="insights-intro-title">Ideas organised around the work you actually do.</h2>
+              <span className="zb-eyebrow">Editorial desk</span>
+              <h2 id="insights-intro-title">
+                Practical ideas organised around the work businesses actually do.
+              </h2>
             </div>
           </div>
+
+          <div className="zb-insights-lane-grid">
+            {editorialLanes.map((lane, index) => {
+              const Icon = lane.icon;
+              return (
+                <article key={lane.title}>
+                  <span className="zb-insights-lane-icon" aria-hidden="true">
+                    <Icon />
+                  </span>
+                  <div>
+                    <small>{String(index + 1).padStart(2, "0")}</small>
+                    <strong>{lane.title}</strong>
+                    <p>{lane.description}</p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
           <div className="zb-insights-topic-cloud" aria-label="Featured insight topics">
             {articleCategories.map((category) => (
               <Link
@@ -82,22 +133,37 @@ export default async function BlogPage({
               </Link>
             ))}
           </div>
+
           <div className="zb-insights-feature-strip">
             <Sparkles aria-hidden="true" />
             <p>
-              <strong>Practical, not theoretical.</strong> Hiring, workforce and execution guidance for real operating decisions.
+              <strong>Useful over ornamental.</strong> Clear guidance for real
+              operating choices, without consulting-deck fog.
             </p>
           </div>
+
           <ActionLink href="#insights-search" variant="text">
-            Search all insights <ArrowUpRight aria-hidden="true" className="size-4" />
+            Search all insights
+            <ArrowUpRight aria-hidden="true" className="size-4" />
           </ActionLink>
         </aside>
       </div>
+
       <section
         className="zb-insights-controls"
         id="insights-search"
         aria-label="Search and filter insights"
       >
+        <div className="zb-insights-controls-heading">
+          <div>
+            <span className="zb-eyebrow">Insight library</span>
+            <h2>Find the topic that matches the work ahead.</h2>
+          </div>
+          <span className="zb-insights-guide-count">
+            {list.total} {list.total === 1 ? "guide" : "guides"}
+          </span>
+        </div>
+
         <form action="/blogs" method="get" className="zb-insights-search">
           <div className="zb-field">
             <label htmlFor="insight-query">Search insights</label>
@@ -125,6 +191,7 @@ export default async function BlogPage({
             </ActionLink>
           )}
         </form>
+
         <nav className="zb-topic-filters" aria-label="Insight topics">
           <Link
             href={articlesHref({ query: filters.query }) + "#insights-search"}
@@ -146,11 +213,13 @@ export default async function BlogPage({
           ))}
         </nav>
       </section>
+
       <ArticleResults list={list} filters={filters} />
+
       <div className="zb-editorial-section">
         <CTASection
-          title="Turn the reading into a requirement."
-          description="Bring your roles, locations and the work you want to get done into one brief."
+          title="Turn the reading into an execution brief."
+          description="Bring your roles, locations and the work you want to get done into one conversation."
         />
       </div>
     </>

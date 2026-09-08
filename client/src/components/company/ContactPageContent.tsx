@@ -1,8 +1,25 @@
+import {
+  ArrowUpRight,
+  Building2,
+  Mail,
+  MapPin,
+  Phone,
+} from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { PageShell } from "@/components/common/PageShell";
 import { ContactForm } from "@/components/forms/ContactForm";
 import "@/styles/company.css";
+
+const publicContact = {
+  email: "help@zobhungr.com",
+  phoneLabel: "+91-548-4051917",
+  phoneHref: "tel:+915484051917",
+  address:
+    "Vijay Villa, 258, Nawapura, CISF Colony, Opium Factory Road, Ghazipur, Uttar Pradesh 233001",
+  mapsHref:
+    "https://www.google.com/maps/search/?api=1&query=Vijay+Villa+258+Nawapura+CISF+Colony+Opium+Factory+Road+Ghazipur+Uttar+Pradesh+233001",
+} as const;
 
 export function ContactPageContent({
   serviceRequired,
@@ -14,11 +31,13 @@ export function ContactPageContent({
       <Breadcrumbs
         items={[{ label: "Home", href: "/" }, { label: "Contact" }]}
       />
+
       <PageShell
         eyebrow="Contact ZOBHUNGER"
         title="Let's talk about the work ahead."
         description="Have a question about staffing, sales teams or business execution? Tell us the service you are exploring and what you want to discuss."
       />
+
       <div className="zb-company-form-layout">
         <div className="zb-company-form-main">
           <section
@@ -28,7 +47,69 @@ export function ContactPageContent({
             <h2 id="contact-form-title">Make an enquiry</h2>
             <ContactForm key={serviceRequired} initialService={serviceRequired} />
           </section>
+
+          <section
+            className="zb-contact-office-card"
+            aria-labelledby="contact-office-title"
+          >
+            <div className="zb-contact-office-heading">
+              <span className="zb-contact-office-mark" aria-hidden="true">
+                <Building2 />
+              </span>
+              <div>
+                <span className="zb-eyebrow">Business contact</span>
+                <h2 id="contact-office-title">Reach ZOBHUNGER directly.</h2>
+                <p>
+                  For formal correspondence, business enquiries or an office
+                  reference, use the details below.
+                </p>
+              </div>
+            </div>
+
+            <div className="zb-contact-office-details">
+              <article className="zb-contact-office-detail zb-contact-office-detail--address">
+                <span className="zb-contact-office-detail-icon" aria-hidden="true">
+                  <MapPin />
+                </span>
+                <div>
+                  <small>Head office</small>
+                  <strong>{publicContact.address}</strong>
+                  <a
+                    href={publicContact.mapsHref}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open in Maps
+                    <ArrowUpRight aria-hidden="true" />
+                  </a>
+                </div>
+              </article>
+
+              <article className="zb-contact-office-detail">
+                <span className="zb-contact-office-detail-icon" aria-hidden="true">
+                  <Mail />
+                </span>
+                <div>
+                  <small>Email</small>
+                  <a href={`mailto:${publicContact.email}`}>
+                    {publicContact.email}
+                  </a>
+                </div>
+              </article>
+
+              <article className="zb-contact-office-detail">
+                <span className="zb-contact-office-detail-icon" aria-hidden="true">
+                  <Phone />
+                </span>
+                <div>
+                  <small>Phone</small>
+                  <a href={publicContact.phoneHref}>{publicContact.phoneLabel}</a>
+                </div>
+              </article>
+            </div>
+          </section>
         </div>
+
         <aside
           className="zb-company-form-aside"
           aria-label="Other ways to get started"
@@ -51,6 +132,7 @@ export function ContactPageContent({
               Hire workforce
             </ActionLink>
           </section>
+
           <section className="zb-company-aside-card">
             <span className="zb-eyebrow">Independent business partners</span>
             <h2>Want to collaborate through your expertise or network?</h2>
@@ -62,6 +144,7 @@ export function ContactPageContent({
               Partner With Us
             </ActionLink>
           </section>
+
           <section className="zb-company-aside-card">
             <span className="zb-eyebrow">For workers</span>
             <h2>Looking for your next role?</h2>
