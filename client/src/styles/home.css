@@ -516,9 +516,9 @@
 .zb-home-experience {
   display: flex;
   flex-direction: column;
-  gap: clamp(1.75rem, 4vw, 3rem);
+  gap: clamp(1.25rem, 2.5vw, 1.75rem);
   min-width: 0;
-  padding: clamp(2rem, 4vw, 3.5rem) clamp(0.75rem, 2vw, 1.5rem);
+  padding: clamp(1.75rem, 3vw, 2.5rem) clamp(0.75rem, 2vw, 1.5rem);
   overflow: hidden;
   border: 0;
   border-radius: 0;
@@ -529,10 +529,11 @@
 .zb-home-experience-title {
   margin: 0;
   color: #111;
-  font-size: clamp(1.25rem, 5.8vw, 3rem);
+  font-size: clamp(1.25rem, 4.6vw, 2.5rem);
   font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.045em;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  word-spacing: 0.06em;
   text-align: center;
   white-space: nowrap;
 }

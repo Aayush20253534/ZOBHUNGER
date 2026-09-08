@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import type { CSSProperties } from "react";
 import { BrandMarqueeMotion } from "@/components/experience/BrandMarqueeMotion";
+import { TrustedPartnerMarquee } from "@/components/experience/TrustedPartnerMarquee";
 import { brandLogoUrl } from "@/data/brand-logos";
 import { brandExperienceGroups } from "@/data/brand-experience";
 import "@/styles/brand-marquee.css";
@@ -67,21 +68,7 @@ function LogoTrack({
 
 export function BrandLogoMarquee({ compact = false }: { compact?: boolean }) {
   if (compact) {
-    return (
-      <div
-        className="zb-brand-marquee zb-brand-marquee--compact"
-        aria-label="Trusted partner brands"
-      >
-        <BrandMarqueeMotion>
-          <div className="zb-brand-marquee-window">
-            <div className="zb-brand-marquee-moving-row zb-brand-marquee-moving-row--compact">
-              <LogoTrack brands={allBrands} />
-              <LogoTrack brands={allBrands} hidden />
-            </div>
-          </div>
-        </BrandMarqueeMotion>
-      </div>
-    );
+    return <TrustedPartnerMarquee />;
   }
 
   return (
