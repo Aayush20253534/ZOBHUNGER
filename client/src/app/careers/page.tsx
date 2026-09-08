@@ -1,20 +1,26 @@
 import {
-  ArrowRight,
+  ArrowDownRight,
+  ArrowUpRight,
   BadgeCheck,
   BriefcaseBusiness,
   Building2,
   ChartNoAxesCombined,
+  ChevronRight,
+  ClipboardCheck,
   Code2,
   GraduationCap,
   Handshake,
   Headset,
   MapPinned,
   Megaphone,
-  Sparkles,
+  MessagesSquare,
+  Route,
+  Search,
   UsersRound,
 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
+import { CareerImage } from "@/components/careers/CareerImage";
 import { PageShell } from "@/components/common/PageShell";
 import { getPageMetadata } from "@/lib/page-metadata";
 import "@/styles/careers.css";
@@ -29,36 +35,42 @@ const careerAreas = [
   {
     icon: Building2,
     title: "Operations",
+    focus: ["Plan", "Coordinate", "Deliver"],
     description:
       "Coordinate workforce delivery, field execution and day-to-day business operations across active requirements.",
   },
   {
     icon: ChartNoAxesCombined,
     title: "Sales & business development",
+    focus: ["Connect", "Understand", "Grow"],
     description:
       "Build client relationships, understand business requirements and help turn opportunities into executable programs.",
   },
   {
     icon: UsersRound,
     title: "Recruitment & people operations",
+    focus: ["Source", "Screen", "Onboard"],
     description:
       "Support sourcing, onboarding, coordination and workforce readiness across different roles and markets.",
   },
   {
     icon: Megaphone,
     title: "Marketing & brand growth",
+    focus: ["Create", "Communicate", "Reach"],
     description:
       "Shape campaigns, communication and market-facing initiatives that strengthen how ZOBHUNGER reaches businesses and workers.",
   },
   {
     icon: Code2,
     title: "Technology & product",
+    focus: ["Design", "Build", "Improve"],
     description:
       "Build and improve the digital systems that support workforce, operations, reporting and platform experiences.",
   },
   {
     icon: Headset,
     title: "Client & execution support",
+    focus: ["Listen", "Resolve", "Follow up"],
     description:
       "Keep communication, coordination and delivery moving between businesses, teams and on-ground execution.",
   },
@@ -67,51 +79,55 @@ const careerAreas = [
 const principles = [
   {
     icon: BadgeCheck,
-    title: "Ownership over hand-offs",
+    title: "Take ownership",
     description:
-      "Work is structured around taking responsibility for outcomes, not simply passing tasks between teams.",
+      "Take responsibility for the work, follow it through and keep the outcome in view.",
   },
   {
     icon: GraduationCap,
     title: "Learn through execution",
     description:
-      "Real business requirements create room to build practical judgement, operating discipline and market understanding.",
+      "Build practical judgement through real briefs, team feedback and everyday problem solving.",
   },
   {
     icon: Handshake,
-    title: "Cross-functional exposure",
+    title: "Work across teams",
     description:
-      "Projects can connect recruitment, field operations, sales, technology and client coordination in the same execution cycle.",
+      "Connect with people across recruitment, sales, operations, technology and client coordination.",
   },
   {
     icon: MapPinned,
     title: "Closer to the market",
     description:
-      "The work stays connected to the people, locations and business conditions where execution actually happens.",
+      "Understand the people, places and business conditions behind every assignment.",
   },
 ] as const;
 
 const hiringSteps = [
   {
     number: "01",
+    icon: Search,
     title: "Role fit",
     description:
       "We look at the role, experience, strengths and the kind of work you want to take ownership of.",
   },
   {
     number: "02",
+    icon: MessagesSquare,
     title: "Conversation",
     description:
       "Shortlisted candidates move into a focused discussion around expectations, responsibilities and working style.",
   },
   {
     number: "03",
+    icon: ClipboardCheck,
     title: "Capability review",
     description:
       "Depending on the role, the process may include a practical discussion, work sample or role-relevant assessment.",
   },
   {
     number: "04",
+    icon: BadgeCheck,
     title: "Joining & onboarding",
     description:
       "Selected candidates move into the role with clarity on responsibilities, reporting and the work ahead.",
@@ -123,82 +139,87 @@ export default function CareersPage() {
     <div className="zb-careers-page">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Careers" }]} />
 
-      <section className="zb-careers-hero">
+      <section className="zb-careers-hero" aria-label="Careers at ZOBHUNGER">
         <div className="zb-careers-hero-copy">
           <PageShell
             eyebrow="Careers at ZOBHUNGER"
             title="Build your career where execution happens."
-            description="Work across workforce, sales, operations, recruitment, technology and business execution while helping turn real requirements into measurable delivery."
+            description="Bring your skills to the people, teams and markets behind everyday business. Find your path across operations, sales, recruitment and technology."
             actions={
               <>
-                <ActionLink href="#career-areas">Explore career areas</ActionLink>
+                <ActionLink href="#career-areas">
+                  Explore career areas <ArrowDownRight aria-hidden="true" />
+                </ActionLink>
                 <ActionLink href="/jobs" variant="secondary">
-                  Explore work opportunities
+                  View work opportunities
                 </ActionLink>
               </>
             }
           />
         </div>
 
-        <aside className="zb-careers-path-panel" aria-label="Career pathways">
-          <div className="zb-careers-path-panel-top">
-            <span className="zb-careers-path-icon" aria-hidden="true">
-              <BriefcaseBusiness />
-            </span>
+        <figure className="zb-careers-hero-visual">
+          <CareerImage
+            scene="team-collaboration"
+            sizes="(min-width: 960px) 432px, (min-width: 520px) 480px, calc(100vw - 40px)"
+            priority
+          />
+          <figcaption>
+            <span className="zb-careers-caption-icon" aria-hidden="true"><UsersRound /></span>
             <div>
-              <span className="zb-eyebrow">Career pathways</span>
-              <h2>Different functions. One execution mindset.</h2>
+              <span className="zb-eyebrow">People behind the execution</span>
+              <strong>Different roles. Shared purpose.</strong>
             </div>
-          </div>
-
-          <div className="zb-careers-path-list">
-            {[
-              ["01", "Operations & delivery"],
-              ["02", "Sales & growth"],
-              ["03", "Recruitment & people"],
-              ["04", "Technology & product"],
-            ].map(([number, label]) => (
-              <div key={number} className="zb-careers-path-row">
-                <span>{number}</span>
-                <strong>{label}</strong>
-                <ArrowRight aria-hidden="true" />
-              </div>
-            ))}
-          </div>
-
-          <p className="zb-careers-path-note">
-            Roles may differ, but the work stays connected to business outcomes,
-            coordination and delivery.
-          </p>
-        </aside>
+          </figcaption>
+        </figure>
       </section>
 
-      <section className="zb-section zb-careers-principles" aria-labelledby="careers-principles-title">
+      <nav className="zb-careers-explore" aria-label="Explore careers">
+        {[
+          { href: "#career-areas", icon: BriefcaseBusiness, title: "Find your function", detail: "Explore career areas" },
+          { href: "#life-at-zobhunger", icon: GraduationCap, title: "See how we work", detail: "People, learning & growth" },
+          { href: "#hiring-journey", icon: Route, title: "Your hiring journey", detail: "From role fit to onboarding" },
+        ].map(({ href, icon: Icon, title, detail }) => (
+          <a href={href} key={href}>
+            <span className="zb-careers-explore-icon" aria-hidden="true"><Icon /></span>
+            <span><strong>{title}</strong><small>{detail}</small></span>
+            <ArrowDownRight aria-hidden="true" />
+          </a>
+        ))}
+      </nav>
+
+      <section className="zb-section zb-careers-principles" id="life-at-zobhunger" aria-labelledby="careers-principles-title">
         <div className="zb-section-heading">
           <div>
             <span className="zb-eyebrow">How we work</span>
-            <h2 id="careers-principles-title">A practical environment built around responsibility and growth.</h2>
+            <h2 id="careers-principles-title">Learn. Contribute. Grow.</h2>
           </div>
           <p>
-            ZOBHUNGER operates across people, markets and execution. That means
-            the work rewards clarity, ownership, collaboration and a willingness
-            to keep learning from real operating situations.
+            From the first brief to the next responsibility, build your
+            experience through the work and the people around you.
           </p>
         </div>
 
-        <div className="zb-careers-principle-grid">
-          {principles.map(({ icon: Icon, title, description }, index) => (
-            <article className="zb-careers-principle-card" key={title}>
-              <div className="zb-careers-card-top">
-                <span className="zb-careers-card-icon" aria-hidden="true">
-                  <Icon />
-                </span>
-                <span className="zb-careers-card-index">0{index + 1}</span>
-              </div>
-              <h3>{title}</h3>
-              <p>{description}</p>
-            </article>
-          ))}
+        <div className="zb-careers-life-grid">
+          <figure className="zb-careers-story-visual">
+            <CareerImage
+              scene="learning-together"
+              sizes="(min-width: 1100px) 460px, (min-width: 900px) 42vw, (min-width: 680px) 600px, calc(100vw - 40px)"
+            />
+            <figcaption>
+              <GraduationCap aria-hidden="true" />
+              <span>Learning happens alongside the work.</span>
+            </figcaption>
+          </figure>
+          <div className="zb-careers-principle-grid">
+            {principles.map(({ icon: Icon, title, description }) => (
+              <article className="zb-careers-principle-card" key={title}>
+                <span className="zb-careers-card-icon" aria-hidden="true"><Icon /></span>
+                <h3>{title}</h3>
+                <p>{description}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -215,85 +236,110 @@ export default function CareersPage() {
         </div>
 
         <div className="zb-careers-area-grid">
-          {careerAreas.map(({ icon: Icon, title, description }) => (
+          {careerAreas.map(({ icon: Icon, title, description, focus }, index) => (
             <article className="zb-careers-area-card" key={title}>
-              <span className="zb-careers-area-icon" aria-hidden="true">
-                <Icon />
-              </span>
-              <h3>{title}</h3>
-              <p>{description}</p>
+              <div className="zb-careers-area-art" aria-hidden="true">
+                <span className="zb-careers-area-icon"><Icon /></span>
+                <span className="zb-careers-area-index">0{index + 1}</span>
+                <Icon className="zb-careers-area-illustration" strokeWidth={1} />
+              </div>
+              <div className="zb-careers-area-copy">
+                <h3>{title}</h3>
+                <p>{description}</p>
+                <ul className="zb-careers-area-focus" aria-label={`${title} focus`}>
+                  {focus.map((item, itemIndex) => (
+                    <li key={item}>
+                      {itemIndex > 0 && <ChevronRight aria-hidden="true" />}
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </article>
           ))}
         </div>
       </section>
 
       <section className="zb-section zb-careers-work-options" aria-labelledby="work-options-title">
-        <div className="zb-careers-work-options-intro">
-          <span className="zb-eyebrow">Ways to work with us</span>
-          <h2 id="work-options-title">Choose the opportunity path that fits you.</h2>
+        <div className="zb-section-heading">
+          <div>
+            <span className="zb-eyebrow">Ways to work with us</span>
+            <h2 id="work-options-title">Find your route into the work.</h2>
+          </div>
           <p>
-            We keep the two paths clear so you can reach the right opportunity
-            without wandering through unrelated listings.
+            Explore a role within ZOBHUNGER or find field, gig and client-linked
+            opportunities through the platform.
           </p>
         </div>
 
-        <div className="zb-careers-work-option-grid">
-          <article className="zb-careers-work-option-card zb-careers-work-option-card--primary">
-            <span className="zb-careers-option-label">ZOBHUNGER team</span>
-            <h3>Corporate & operating roles</h3>
-            <p>
-              Roles within ZOBHUNGER can include operations, recruitment, sales,
-              business development, marketing, support and technology functions.
-            </p>
-            <div className="zb-careers-option-status">
-              <Sparkles aria-hidden="true" />
-              <span>Open roles are shared as positions become available.</span>
-            </div>
-            <ActionLink href="/contact" variant="light">
-              Contact ZOBHUNGER
-            </ActionLink>
-          </article>
+        <div className="zb-careers-opportunity-layout">
+          <figure className="zb-careers-story-visual zb-careers-field-visual">
+            <CareerImage
+              scene="field-opportunities"
+              sizes="(min-width: 1100px) 520px, (min-width: 900px) 44vw, (min-width: 680px) 600px, calc(100vw - 40px)"
+            />
+            <figcaption>
+              <MapPinned aria-hidden="true" />
+              <span>Work that takes you into the market.</span>
+            </figcaption>
+          </figure>
+          <div className="zb-careers-work-option-grid">
+            <article className="zb-careers-work-option-card zb-careers-work-option-card--primary">
+              <BriefcaseBusiness className="zb-careers-option-icon" aria-hidden="true" />
+              <span className="zb-careers-option-label">ZOBHUNGER team</span>
+              <h3>Corporate & operating roles</h3>
+              <p>
+                Build your path in operations, recruitment, sales, marketing,
+                support or technology.
+              </p>
+              <div className="zb-careers-option-status">
+                <span>Open roles are shared as positions become available.</span>
+              </div>
+              <ActionLink href="/contact" variant="light">
+                Contact ZOBHUNGER <ArrowUpRight aria-hidden="true" />
+              </ActionLink>
+            </article>
 
-          <article className="zb-careers-work-option-card">
-            <span className="zb-careers-option-label">Work opportunities</span>
-            <h3>Field, gig & client-linked opportunities</h3>
-            <p>
-              Looking for jobs, assignments, flexible work or workforce
-              opportunities available through the platform? Use the dedicated
-              jobs experience instead.
-            </p>
-            <ActionLink href="/jobs" variant="secondary">
-              Explore jobs & opportunities
-            </ActionLink>
-          </article>
+            <article className="zb-careers-work-option-card">
+              <MapPinned className="zb-careers-option-icon" aria-hidden="true" />
+              <span className="zb-careers-option-label">Work opportunities</span>
+              <h3>Field, gig & client-linked opportunities</h3>
+              <p>
+                Browse jobs, assignments and workforce opportunities available
+                through our dedicated jobs experience.
+              </p>
+              <ActionLink href="/jobs" variant="secondary">
+                Explore jobs & opportunities <ArrowUpRight aria-hidden="true" />
+              </ActionLink>
+            </article>
+          </div>
         </div>
       </section>
 
-      <section className="zb-section zb-careers-hiring" aria-labelledby="careers-hiring-title">
-        <div className="zb-careers-hiring-copy">
-          <span className="zb-eyebrow">Hiring journey</span>
-          <h2 id="careers-hiring-title">A clear process from interest to onboarding.</h2>
+      <section className="zb-section zb-careers-hiring" id="hiring-journey" aria-labelledby="careers-hiring-title">
+        <div className="zb-section-heading">
+          <div>
+            <span className="zb-eyebrow">Hiring journey</span>
+            <h2 id="careers-hiring-title">Your next chapter, step by step.</h2>
+          </div>
           <p>
-            The exact process can vary by role, but the objective stays simple:
-            understand fit, evaluate capability and set expectations before the
-            work begins.
+            The process can vary by role. Each step helps both sides understand
+            fit, capability and expectations before the work begins.
           </p>
-          <ActionLink href="/about" variant="secondary">
-            Learn about ZOBHUNGER
-          </ActionLink>
         </div>
 
-        <div className="zb-careers-hiring-steps">
-          {hiringSteps.map((step) => (
-            <article key={step.number} className="zb-careers-hiring-step">
-              <span>{step.number}</span>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.description}</p>
+        <ol className="zb-careers-hiring-steps" role="list">
+          {hiringSteps.map(({ number, icon: Icon, title, description }) => (
+            <li key={number} className="zb-careers-hiring-step">
+              <span className="zb-careers-step-icon" aria-hidden="true"><Icon /></span>
+              <div className="zb-careers-step-copy">
+                <span className="zb-careers-step-number">Step {number}</span>
+                <h3>{title}</h3>
+                <p>{description}</p>
               </div>
-            </article>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
       <section className="zb-careers-final-cta" aria-labelledby="careers-final-title">
