@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
 import type { ZodType } from "zod";
 import { HttpError } from "../utils/http-error.js";
+import { logger } from "../utils/logger.js";
 
 export interface RequestValidationSchemas {
   body?: ZodType;
@@ -24,6 +25,9 @@ export function validate(schemas: RequestValidationSchemas): RequestHandler {
 
       const result = schema.safeParse(req[source]);
       if (!result.success) {
+        // Log field names only; submitted values may contain personal data or passwords.
+        logger.info("request.validation_failed", { requestId: res.locals.requestId, method: req.method,
+          source, fields: [...new Set(result.error.issues.map(issue => String(issue.path[0] ?? source)))].slice(0, 50) });
         next(
           new HttpError(400, "Request validation failed", {
             code: "VALIDATION_ERROR",

@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { apiFieldErrors } from "@/lib/api";
 import type { DataRequestOptions, SubmissionReceipt } from "@/types/data.types";
 
 type SubmissionState =
   | { status: "idle" }
   | { status: "pending" }
-  | { status: "error"; message: string }
+  | { status: "error"; message: string; fieldErrors: Record<string, string[]> }
   | { status: "complete"; receipt: SubmissionReceipt };
 
 export function useFormSubmission<T>(
@@ -36,6 +37,7 @@ export function useFormSubmission<T>(
       if (!controller.signal.aborted && request.current === controller) {
         setState({
           status: "error",
+          fieldErrors: apiFieldErrors(error),
           message:
             error instanceof Error
               ? error.message

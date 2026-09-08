@@ -16,7 +16,8 @@ const recoveryLimiter = rateLimit({ windowMs: 15 * 60_000, limit: 5, standardHea
 passwordRecoveryRouter.post("/forgot-password", recoveryLimiter, validate({ body: requestRecoverySchema }), (_req, res) => {
   if (!recoveryEmailConfigured()) throw new HttpError(503, "Account recovery is temporarily unavailable. Please contact ZOBHUNGER support.", { code: "RECOVERY_UNAVAILABLE" });
   // The response does not reveal account existence or wait on recipient-specific delivery.
-  void requestBusinessRecovery(res.locals.validated.body.email).catch(() => logger.warn("business.recovery_failed"));
+  const requestId = res.locals.requestId;
+  void requestBusinessRecovery(res.locals.validated.body.email, requestId).catch(() => logger.warn("business.recovery_failed", { requestId }));
   res.status(202).json(apiSuccessResponse("If an active business account uses this email, a recovery link will be sent. Check your inbox and spam folder.", { accepted: true }));
 });
 passwordRecoveryRouter.post("/reset-password", authRateLimiter, validate({ body: resetPasswordSchema }), async (_req, res) => {

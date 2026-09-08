@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
@@ -36,6 +37,14 @@ const emptyValues = {
   details: "",
 };
 
+const fieldLabels = {
+  companyName: "Company name", contactPerson: "Contact person", businessEmail: "Business email",
+  mobileNumber: "Mobile number", industry: "Industry", serviceRequired: "Service required",
+  workforceCount: "Number of people", locations: "Job locations", projectDuration: "Project duration",
+  expectedStartAt: "Expected start date", details: "Requirement details",
+} as const;
+type RequirementField = keyof typeof fieldLabels;
+
 export function RequirementForm({
   initialIndustry = "",
   initialService = "",
@@ -49,6 +58,7 @@ export function RequirementForm({
     handleSubmit,
     reset,
     setFocus,
+    setError,
     formState: { errors },
   } = useForm<RequirementFormValues, unknown, RequirementInput>({
     resolver: zodResolver(requirementFormSchema),
@@ -65,6 +75,16 @@ export function RequirementForm({
   });
   const submission = useFormSubmission(submitRequirement);
   const { state, busy, feedbackRef } = submission;
+  useEffect(() => {
+    if (state.status !== "error") return;
+    for (const field of Object.keys(fieldLabels) as RequirementField[]) {
+      const message = state.fieldErrors[field]?.[0];
+      if (message) setError(field, { type: "server", message });
+    }
+  }, [state, setError]);
+  const rejectedFields = state.status === "error"
+    ? (Object.keys(fieldLabels) as RequirementField[]).filter(field => state.fieldErrors[field]?.length)
+    : [];
 
   function edit() {
     submission.clear();
@@ -101,8 +121,13 @@ export function RequirementForm({
             tone="error"
             title="We couldn't complete your requirement"
           >
-            {state.message} Your entries are still available. Please try again.
+            {rejectedFields.length ? "Please correct the fields below. Your entries are still available." : `${state.message.replace(/[.!?]$/, "")}. Your entries are still available. Please try again.`}
           </FeedbackMessage>
+          {state.status === "error" && rejectedFields.length > 0 && <ul className="mt-3 grid gap-1 text-sm" aria-label="Fields to correct">
+            {rejectedFields.map(field => <li key={field}><button type="button" className="min-h-11 w-full rounded px-2 py-2 text-left text-red-700 underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2" onClick={() => setFocus(field === "locations" ? "locations.0.name" : field)}>
+              {fieldLabels[field]}: {state.fieldErrors[field][0]}
+            </button></li>)}
+          </ul>}
         </div>
       )}
       <fieldset disabled={busy} className="zb-form-fieldset">
@@ -213,6 +238,7 @@ export function RequirementForm({
               required
               maxLength={120}
               placeholder="For example, 3 months or ongoing"
+              hint="Include a unit, for example 1 day or 3 months."
               error={errors.projectDuration?.message}
               {...register("projectDuration")}
             />
@@ -255,9 +281,9 @@ export function RequirementForm({
               </div>
             ))}
           </div>
-          {errors.locations?.root?.message && (
+          {(errors.locations?.root?.message || errors.locations?.message) && (
             <p className="zb-field-error" role="alert">
-              {errors.locations.root.message}
+              {errors.locations?.root?.message || errors.locations?.message}
             </p>
           )}
           <div className="zb-location-actions">

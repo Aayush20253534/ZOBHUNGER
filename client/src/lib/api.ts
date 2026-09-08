@@ -12,10 +12,25 @@ export class ApiError extends Error {
     message: string,
     public readonly status: number,
     public readonly code?: string,
+    public readonly details?: unknown,
   ) {
     super(message);
     this.name = "ApiError";
   }
+}
+
+export function apiFieldErrors(error: unknown): Record<string, string[]> {
+  if (!(error instanceof ApiError) || error.code !== "VALIDATION_ERROR") return {};
+  const details = error.details;
+  if (!details || typeof details !== "object" || !("fieldErrors" in details)) return {};
+  const fields = details.fieldErrors;
+  if (!fields || typeof fields !== "object" || Array.isArray(fields)) return {};
+  return Object.fromEntries(Object.entries(fields).slice(0, 50).flatMap(([field, messages]) => {
+    if (!/^[a-zA-Z][a-zA-Z0-9_.]{0,99}$/.test(field) || !Array.isArray(messages)) return [];
+    const safeMessages = messages.filter((message): message is string => typeof message === "string" && Boolean(message.trim()))
+      .slice(0, 3).map(message => message.slice(0, 240));
+    return safeMessages.length ? [[field, safeMessages]] : [];
+  }));
 }
 
 export async function apiFetch<T>(
@@ -40,6 +55,7 @@ export async function apiFetch<T>(
   if (!response.ok) {
     let message = `Request failed (${response.status}). Please try again.`;
     let code: string | undefined;
+    let details: unknown;
     try {
       const body: unknown = await response.json();
       if (body && typeof body === "object") {
@@ -54,12 +70,13 @@ export async function apiFetch<T>(
           typeof body.error.code === "string"
         ) {
           code = body.error.code;
+          if ("details" in body.error) details = body.error.details;
         }
       }
     } catch {
       /* A proxy or server can return a non-JSON error response. */
     }
-    throw new ApiError(message, response.status, code);
+    throw new ApiError(message, response.status, code, details);
   }
 
   if (response.status === 204) {

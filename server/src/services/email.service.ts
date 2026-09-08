@@ -1,106 +1,55 @@
-import { createRequire } from "node:module";
 import { env } from "../config/env.js";
 import { logger } from "../utils/logger.js";
-
-const require = createRequire(import.meta.url);
-
-type MailjetClient = {
-  post(resource: string, config?: { version?: string }): {
-    request(data: unknown): Promise<unknown>;
-  };
-};
-
-type MailjetConstructor = new (options: {
-  apiKey: string;
-  apiSecret: string;
-}) => MailjetClient;
-
-const Mailjet = require("node-mailjet") as MailjetConstructor;
+import { missingMailjetSettings, postMailjetMessage } from "./mailjet.client.js";
+import { mailjetDiagnostic } from "./mailjet-errors.js";
 
 export function recoveryEmailConfigured() {
-  return Boolean(env.MAILJET_API_KEY && env.MAILJET_SECRET_KEY && env.MAIL_FROM_EMAIL);
+  return missingMailjetSettings().length === 0;
 }
 
-export async function sendBusinessRecoveryEmail(email: string, link: string): Promise<boolean> {
-  if (!recoveryEmailConfigured()) return false;
-  try {
-    const client = new Mailjet({ apiKey: env.MAILJET_API_KEY!, apiSecret: env.MAILJET_SECRET_KEY! });
-    await client.post("send", { version: "v3.1" }).request({
-      Messages: [{
-        From: { Email: env.MAIL_FROM_EMAIL, Name: env.MAIL_FROM_NAME },
-        To: [{ Email: email }],
-        Subject: "Reset your ZOBHUNGER business password",
-        TextPart: `Use this link to choose a new password for your business account:\n\n${link}\n\nThe link expires in 30 minutes and can be used once. If you did not request this, you can ignore this email. Your password has not changed.`,
-      }],
-    });
-    return true;
-  } catch {
-    // Provider errors can contain the message body. Never log a recovery link or token.
-    logger.warn("business.recovery_delivery_failed");
+const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+})[character]!);
+
+export async function sendBusinessRecoveryEmail(email: string, link: string, requestId?: string): Promise<boolean> {
+  if (!recoveryEmailConfigured()) {
+    logger.warn("business.recovery_delivery_failed", { requestId, reason: "configuration", missing: missingMailjetSettings() });
     return false;
   }
-}
-
-interface OperationalEmail {
-  subject: string;
-  text: string;
-  to?: string;
-  requestId?: string;
-}
-
-function configured() {
-  return Boolean(
-    env.MAILJET_API_KEY &&
-      env.MAILJET_SECRET_KEY &&
-      env.MAIL_FROM_EMAIL &&
-      env.SALES_TEAM_EMAIL,
-  );
-}
-
-export async function sendOperationalEmail(input: OperationalEmail) {
-  const recipient = input.to ?? env.SALES_TEAM_EMAIL;
-
-  if (!configured() || !recipient) {
-    logger.warn("email.skipped", {
-      requestId: input.requestId,
-      subject: input.subject,
-      reason: "Mailjet configuration is incomplete",
-    });
-    return false;
-  }
-
   try {
-    const client = new Mailjet({
-      apiKey: env.MAILJET_API_KEY as string,
-      apiSecret: env.MAILJET_SECRET_KEY as string,
+    await postMailjetMessage({
+      From: { Email: env.MAIL_FROM_EMAIL!, Name: env.MAIL_FROM_NAME }, To: [{ Email: email }],
+      Subject: "Reset your ZOBHUNGER business password",
+      TextPart: `Use this link to choose a new password for your business account:\n\n${link}\n\nThe link expires in 30 minutes and can be used once. If you did not request this, you can ignore this email. Your password has not changed.`,
+      HTMLPart: `<div style="font-family:Arial,sans-serif;color:#242126;max-width:560px;margin:auto;padding:24px"><h2 style="color:#ca1731">ZOBHUNGER</h2><h1 style="font-size:24px">Reset your business password</h1><p>Choose a new password for your business workspace.</p><p style="margin:28px 0"><a href="${escapeHtml(link)}" style="background:#ca1731;color:#fff;text-decoration:none;padding:14px 20px;border-radius:8px;display:inline-block">Reset password</a></p><p>This link expires in 30 minutes and can be used once.</p><p>If you did not request this, you can ignore this email. Your password has not changed.</p></div>`,
+      // Preserve the fragment-based reset link and keep tokens out of click analytics.
+      TrackClicks: "disabled", TrackOpens: "disabled",
     });
-
-    await client.post("send", { version: "v3.1" }).request({
-      Messages: [
-        {
-          From: {
-            Email: env.MAIL_FROM_EMAIL as string,
-            Name: env.MAIL_FROM_NAME,
-          },
-          To: [{ Email: recipient }],
-          Subject: input.subject,
-          TextPart: input.text,
-        },
-      ],
-    });
-
-    logger.info("email.sent", {
-      requestId: input.requestId,
-      subject: input.subject,
-      recipient,
-    });
+    logger.info("business.recovery_email_accepted", { requestId, provider: "mailjet" });
     return true;
   } catch (error) {
-    logger.error("email.failed", error, {
-      requestId: input.requestId,
-      subject: input.subject,
-      recipient,
-    });
+    logger.warn("business.recovery_delivery_failed", { requestId, ...mailjetDiagnostic(error) });
+    return false;
+  }
+}
+
+interface OperationalEmail { subject: string; text: string; to?: string; requestId?: string }
+
+export async function sendOperationalEmail(input: OperationalEmail): Promise<boolean> {
+  const recipient = input.to ?? env.SALES_TEAM_EMAIL;
+  const missing = missingMailjetSettings();
+  if (!recipient) missing.push("SALES_TEAM_EMAIL");
+  if (missing.length) {
+    logger.warn("email.skipped", { requestId: input.requestId, reason: "configuration", missing });
+    return false;
+  }
+  try {
+    await postMailjetMessage({ From: { Email: env.MAIL_FROM_EMAIL!, Name: env.MAIL_FROM_NAME },
+      To: [{ Email: recipient! }], Subject: input.subject, TextPart: input.text });
+    logger.info("email.accepted", { requestId: input.requestId, provider: "mailjet" });
+    return true;
+  } catch (error) {
+    logger.warn("email.failed", { requestId: input.requestId, ...mailjetDiagnostic(error) });
     return false;
   }
 }

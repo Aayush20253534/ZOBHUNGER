@@ -42,7 +42,7 @@ export const requirementSchema = z.object({
   projectDuration: z
     .string()
     .trim()
-    .min(1, "Specify the project duration.")
+    .min(2, "Include the duration and unit, for example 1 day or 3 months.")
     .max(120),
   expectedStartAt: z
     .union([isoDateSchema, isoDateTimeSchema, z.literal("")])

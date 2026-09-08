@@ -17,7 +17,7 @@ export function recoveryLink(token: string) {
   return url.toString();
 }
 
-export async function requestBusinessRecovery(email: string) {
+export async function requestBusinessRecovery(email: string, requestId?: string) {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !user.isActive || user.role !== "BUSINESS") return;
   const token = randomBytes(32).toString("hex");
@@ -37,7 +37,7 @@ export async function requestBusinessRecovery(email: string) {
     return true;
   });
   if (!issued) return;
-  if (!(await sendBusinessRecoveryEmail(user.email, recoveryLink(token)))) {
+  if (!(await sendBusinessRecoveryEmail(user.email, recoveryLink(token), requestId))) {
     await prisma.passwordResetToken.deleteMany({ where: { userId: user.id, tokenHash } });
   }
 }

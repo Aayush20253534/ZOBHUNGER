@@ -1,6 +1,11 @@
 import { z } from "zod";
 
 const locationSchema = z.string().trim().min(2).max(180);
+const optionalDateSchema = z.preprocess(
+  value => value === null || (typeof value === "string" && !value.trim()) ? undefined : value,
+  z.union([z.date(), z.iso.date().transform(value => new Date(`${value}T00:00:00.000Z`)),
+    z.iso.datetime().transform(value => new Date(value))]).optional(),
+);
 
 export const createRequirementSchema = z
   .object({
@@ -11,14 +16,10 @@ export const createRequirementSchema = z
     industry: z.string().trim().min(2).max(120),
     serviceRequired: z.string().trim().min(2).max(160),
     workforceCount: z.coerce.number().int().positive().max(1_000_000),
-    jobLocation: locationSchema.optional(),
+    jobLocation: z.preprocess(value => value === "" ? undefined : value, locationSchema.optional()),
     locations: z.array(locationSchema).max(50).default([]),
-    projectDuration: z.string().trim().min(2).max(160),
-    expectedStartAt: z.preprocess(
-      (value) =>
-        typeof value === "string" && value.trim() === "" ? undefined : value,
-      z.coerce.date().optional(),
-    ),
+    projectDuration: z.string().trim().min(2, "Include the duration and unit, for example 1 day or 3 months.").max(160),
+    expectedStartAt: optionalDateSchema,
     details: z.string().trim().min(5).max(6000),
   })
   .superRefine((value, ctx) => {

@@ -65,3 +65,24 @@ test("requirement schema requires at least one location", () => {
 
   assert.equal(result.success, false);
 });
+
+test("absent start dates stay absent and invalid dates cannot become 1970 or roll into another month", () => {
+  for (const expectedStartAt of [undefined, null, "", "   "]) {
+    assert.equal(createRequirementSchema.parse({ ...validRequirement, expectedStartAt }).expectedStartAt, undefined);
+  }
+  for (const expectedStartAt of [0, true, "2026-02-30", "2026-02-30T12:00:00Z", "not-a-date"]) {
+    assert.equal(createRequirementSchema.safeParse({ ...validRequirement, expectedStartAt }).success, false);
+  }
+  assert.equal(createRequirementSchema.parse({ ...validRequirement, expectedStartAt: "2028-02-29" }).expectedStartAt?.toISOString(), "2028-02-29T00:00:00.000Z");
+});
+
+test("blank legacy primary location uses the submitted location array", () => {
+  assert.equal(createRequirementSchema.parse({ ...validRequirement, jobLocation: "" }).jobLocation, "Noida");
+});
+
+test("duration validation identifies the field and explains what to enter", () => {
+  const parsed = createRequirementSchema.safeParse({ ...validRequirement, projectDuration: "1" });
+  assert.equal(parsed.success, false);
+  assert.match(parsed.error.flatten().fieldErrors.projectDuration[0], /1 day/);
+  assert.equal(createRequirementSchema.safeParse({ ...validRequirement, projectDuration: "1 day" }).success, true);
+});

@@ -47,12 +47,20 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
   MAILJET_API_KEY: optionalSetting(z.string().trim().min(1)),
   MAILJET_SECRET_KEY: optionalSetting(z.string().trim().min(1)),
+  MAILJET_API_HOST: z.enum(["api.mailjet.com", "api.us.mailjet.com"]).default("api.mailjet.com"),
+  MAILJET_TIMEOUT_MS: z.coerce.number().int().min(1000).max(30000).default(15000),
   MAIL_FROM_EMAIL: optionalSetting(z.string().trim().email()),
   MAIL_FROM_NAME: z.string().trim().min(1).max(120).default("ZOBHUNGER"),
   SALES_TEAM_EMAIL: optionalSetting(z.string().trim().email()),
 });
 
-const parsedEnv = envSchema.safeParse(process.env);
+const firstSetting = (...names: string[]) => names.map(name => process.env[name]?.trim()).find(Boolean);
+const parsedEnv = envSchema.safeParse({ ...process.env,
+  MAILJET_API_KEY: firstSetting("MAILJET_API_KEY", "MJ_APIKEY_PUBLIC"),
+  MAILJET_SECRET_KEY: firstSetting("MAILJET_SECRET_KEY", "MAILJET_API_SECRET", "MJ_APIKEY_PRIVATE"),
+  MAILJET_API_HOST: firstSetting("MAILJET_API_HOST"),
+  MAILJET_TIMEOUT_MS: firstSetting("MAILJET_TIMEOUT_MS"),
+});
 
 if (!parsedEnv.success) {
   const errors = parsedEnv.error.issues
