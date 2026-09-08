@@ -516,22 +516,25 @@
 .zb-home-experience {
   display: flex;
   flex-direction: column;
-  gap: clamp(1.6rem, 3vw, 2.4rem);
-  padding: clamp(2rem, 5vw, 4.5rem) clamp(1rem, 3vw, 2rem);
+  gap: clamp(1.75rem, 4vw, 3rem);
+  min-width: 0;
+  padding: clamp(2rem, 4vw, 3.5rem) clamp(0.75rem, 2vw, 1.5rem);
   overflow: hidden;
   border: 0;
   border-radius: 0;
   background: #fff;
+  box-shadow: none;
 }
 
 .zb-home-experience-title {
   margin: 0;
-  color: var(--zb-ink);
-  font-size: clamp(2rem, 4vw, 3.35rem);
-  font-weight: 850;
-  line-height: 1.05;
+  color: #111;
+  font-size: clamp(1.25rem, 5.8vw, 3rem);
+  font-weight: 800;
+  line-height: 1.15;
   letter-spacing: -0.045em;
   text-align: center;
+  white-space: nowrap;
 }
 
 .zb-home-experience-action {
@@ -652,18 +655,6 @@
 
 .zb-home-hero-description {
   max-width: 42rem;
-}
-
-.zb-home-experience {
-  position: relative;
-  padding: clamp(1.35rem, 3vw, 2rem);
-  border: 1px solid var(--zb-soft-border);
-  border-radius: var(--zb-radius);
-  background: linear-gradient(135deg, var(--zb-soft), #fff 68%);
-}
-
-.zb-home-experience .zb-section-heading {
-  margin-bottom: 1rem;
 }
 
 .zb-home-solutions-grid > .zb-card-link .zb-card {
@@ -1469,11 +1460,6 @@
     width: 100%;
     transform: none;
   }
-}
-
-/* Client revision: brand proof reads first, then the logo wall gets the full width. */
-.zb-home-experience {
-  grid-template-columns: minmax(0, 1fr) !important;
 }
 
 .zb-home-experience-intro .zb-section-heading,
