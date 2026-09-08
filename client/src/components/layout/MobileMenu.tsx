@@ -41,10 +41,15 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
         <span>Menu</span>
       </SheetTrigger>
       <SheetContent side="right" className="zb-mobile-drawer">
-        <SheetHeader className="border-b px-6 py-6">
-          <SheetTitle>ZOBHUNGER</SheetTitle>
+        <SheetHeader className="zb-mobile-brand-header border-b px-6 py-6">
+          <SheetTitle className="zb-mobile-brand-title">
+            <span className="zb-wordmark" aria-label="ZOBHUNGER">
+              ZOB<span>HUNGER</span>
+            </span>
+            <span className="zb-mobile-brand-tagline">{site.tagline}</span>
+          </SheetTitle>
           <SheetDescription>
-            Workforce, sales and business execution.
+            Workforce and field execution for growing businesses.
           </SheetDescription>
         </SheetHeader>
         <nav

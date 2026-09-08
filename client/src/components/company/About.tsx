@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Compass,
   MapPin,
-  ShieldCheck,
   Target,
 } from "lucide-react";
 
@@ -19,7 +18,6 @@ import {
   brandStrengths,
   coreCapabilities,
 } from "@/data/core-capabilities";
-import { complianceCredentials } from "@/data/compliance";
 import { site } from "@/data/site";
 
 import "@/styles/company.css";
@@ -369,46 +367,6 @@ export function About() {
             </li>
           ))}
         </ul>
-      </section>
-
-      {/* CORPORATE CREDENTIALS */}
-      <section
-        className="zb-company-section"
-        id="certifications"
-        aria-labelledby="about-certifications-title"
-      >
-        <SectionHeading
-          id="about-certifications-title"
-          eyebrow="Certifications & corporate credentials"
-          title="Registered credentials and supporting standards."
-          description="A concise view of the certifications and statutory credentials reflected in ZOBHUNGER's corporate records."
-        />
-
-        <div className="zb-compliance-grid">
-          {complianceCredentials.map((credential) => (
-            <article
-              className="zb-compliance-card"
-              key={credential.title}
-            >
-              <span
-                className="zb-compliance-icon"
-                aria-hidden="true"
-              >
-                <ShieldCheck />
-              </span>
-
-              <div>
-                <span className="zb-compliance-label">
-                  {credential.label}
-                </span>
-
-                <h3>{credential.title}</h3>
-
-                <p>{credential.description}</p>
-              </div>
-            </article>
-          ))}
-        </div>
       </section>
 
       {/* FINAL CTA */}

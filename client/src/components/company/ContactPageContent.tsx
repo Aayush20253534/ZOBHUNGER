@@ -2,7 +2,6 @@ import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { PageShell } from "@/components/common/PageShell";
 import { ContactForm } from "@/components/forms/ContactForm";
-import { contactDetails } from "@/data/contact";
 import "@/styles/company.css";
 
 export function ContactPageContent({
@@ -10,12 +9,6 @@ export function ContactPageContent({
 }: {
   serviceRequired: string;
 }) {
-  const hasBusinessContacts = Boolean(
-    contactDetails.businessEmail ||
-      contactDetails.phone ||
-      contactDetails.officeAddress ||
-      contactDetails.socialLinks?.length,
-  );
   return (
     <div className="zb-company zb-company-form-page">
       <Breadcrumbs
@@ -35,56 +28,6 @@ export function ContactPageContent({
             <h2 id="contact-form-title">Make an enquiry</h2>
             <ContactForm key={serviceRequired} initialService={serviceRequired} />
           </section>
-          {hasBusinessContacts && (
-            <section
-              className="zb-company-contact-card"
-              aria-labelledby="business-contact-title"
-            >
-              <div className="zb-company-contact-heading">
-                <span className="zb-eyebrow">Direct contact</span>
-                <h2 id="business-contact-title">Business contact details</h2>
-              </div>
-              <dl className="zb-business-contacts zb-business-contacts-grid">
-                {contactDetails.businessEmail && (
-                  <div>
-                    <dt>Email</dt>
-                    <dd>
-                      <a href={"mailto:" + contactDetails.businessEmail}>
-                        {contactDetails.businessEmail}
-                      </a>
-                    </dd>
-                  </div>
-                )}
-                {contactDetails.phone && (
-                  <div>
-                    <dt>Phone</dt>
-                    <dd>
-                      <a href={contactDetails.phone.href}>
-                        {contactDetails.phone.label}
-                      </a>
-                    </dd>
-                  </div>
-                )}
-                {contactDetails.officeAddress && (
-                  <div>
-                    <dt>Office</dt>
-                    <dd>
-                      <address>{contactDetails.officeAddress}</address>
-                    </dd>
-                  </div>
-                )}
-              </dl>
-              {Boolean(contactDetails.socialLinks?.length) && (
-                <ul className="zb-contact-socials">
-                  {contactDetails.socialLinks?.map((link) => (
-                    <li key={link.href}>
-                      <a href={link.href}>{link.label}</a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          )}
         </div>
         <aside
           className="zb-company-form-aside"

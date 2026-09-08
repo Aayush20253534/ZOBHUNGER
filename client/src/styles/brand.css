@@ -144,29 +144,32 @@ body > main[class] {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 0.2rem;
+  gap: 0.16rem;
   flex: 0 0 auto;
+  min-width: 9.5rem;
   line-height: 1;
 }
 .zb-header .zb-wordmark {
-  font-size: 1.35rem;
-  font-weight: 800;
-  letter-spacing: -0.035em;
+  font-size: 1.48rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
 }
 .zb-header-tagline {
-  color: #51494f;
-  font-size: 0.62rem;
+  color: #4b4248;
+  font-size: 0.6rem;
   line-height: 1.15;
-  font-weight: 700;
-  letter-spacing: 0.045em;
+  font-weight: 750;
+  letter-spacing: 0.055em;
   white-space: nowrap;
 }
 .zb-header {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: var(--zb-surface);
-  border-bottom: 1px solid var(--zb-border);
+  background: rgba(255, 255, 255, 0.97);
+  border-bottom: 1px solid rgba(62, 28, 46, 0.1);
+  box-shadow: 0 0.35rem 1.25rem rgba(62, 28, 46, 0.055);
+  backdrop-filter: blur(14px);
 }
 .zb-header-inner {
   position: relative;
@@ -180,7 +183,7 @@ body > main[class] {
   display: none;
   align-items: center;
   justify-content: center;
-  gap: clamp(1rem, 1.55vw, 1.65rem);
+  gap: clamp(1.15rem, 1.7vw, 1.9rem);
 }
 .zb-header-primary-action {
   display: none;
@@ -194,7 +197,7 @@ body > main[class] {
   padding: 0.25rem 0.1rem;
   color: var(--zb-muted);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 650;
   white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
@@ -290,6 +293,27 @@ body > main[class] {
   max-width: none;
   gap: 0;
   background: var(--zb-surface);
+}
+.zb-mobile-brand-header {
+  gap: 0.45rem;
+}
+.zb-mobile-brand-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.22rem;
+}
+.zb-mobile-brand-title .zb-wordmark {
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+.zb-mobile-brand-tagline {
+  color: #5b5057;
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.055em;
+  line-height: 1.2;
 }
 .zb-mobile-nav {
   padding: 1rem 1.5rem 2rem;
@@ -844,11 +868,14 @@ body > main[class] {
 }
 @media (max-width: 520px) {
   .zb-header .zb-wordmark {
-    font-size: 1.2rem;
+    font-size: 1.28rem;
+  }
+  .zb-header-brand {
+    min-width: 0;
   }
   .zb-header-tagline {
     font-size: 0.54rem;
-    letter-spacing: 0.035em;
+    letter-spacing: 0.04em;
   }
 }
 @media (min-width: 1200px) {

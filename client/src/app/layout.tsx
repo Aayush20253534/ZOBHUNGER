@@ -6,7 +6,6 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { site } from "@/data/site";
-import { contactDetails } from "@/data/contact";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -33,18 +32,6 @@ const organizationSchema = {
   url: site.url,
   description: site.description,
   slogan: site.tagline,
-  email: contactDetails.businessEmail,
-  telephone: contactDetails.phone?.label,
-  address: contactDetails.officeAddress
-    ? {
-        "@type": "PostalAddress",
-        streetAddress: "Vijay Villa, 258, Nawapura, CISF Colony, Opium Factory Road",
-        addressLocality: "Ghazipur",
-        addressRegion: "Uttar Pradesh",
-        postalCode: "233001",
-        addressCountry: "IN",
-      }
-    : undefined,
   knowsAbout: [
     "Workforce solutions",
     "Recruitment",
