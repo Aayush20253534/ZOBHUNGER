@@ -1,8 +1,14 @@
-# P2.5 — Attendance management
+# P2.6 — Attendance management (historical P2.5 filename)
+
+Numbering correction: this document and its original patch were labelled P2.5
+incorrectly. In the agreed plan, P2.5 is Deployment and team roster; attendance is
+P2.6. Keep the earlier patch applied. The dedicated roster follow-up is documented
+in `P2_5_DEPLOYMENT_TEAM_ROSTER.md`. Business attendance approvals and their approval
+history remain a pending P2.6 addition; correction review is not timesheet approval.
 
 This patch is based directly on `09.zip` (archive commit
 `699222948bdc0a0335823f5696c3e5fa15be346e`), which includes P2.4 candidate tracking.
-P2.5 adds the assignment foundation and attendance workflow for the business portal.
+That patch adds the assignment foundation and attendance workflow for the business portal.
 
 ## What clients and operations can do
 
@@ -42,7 +48,7 @@ Append these paths to the deployed frontend domain.
 | `/admin/attendance/assignments/<assignmentId>?date=YYYY-MM-DD` | Admin | Calendar, daily entry, correction review and assignment settings |
 
 Use the new Attendance link in the business sidebar, the attendance link on a
-requirement brief, or Assignments & attendance on the operations dashboard.
+requirement brief, or Attendance & corrections on the operations dashboard.
 Selected candidate profiles also link to the assignment workflow. IDs come from
 these screens; `<assignmentId>` and `<requirementId>` are placeholders.
 

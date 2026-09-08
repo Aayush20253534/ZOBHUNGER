@@ -1,5 +1,6 @@
 import { adminCandidatesRouter } from "../candidates/candidates.routes.js";
 import { adminAttendanceRouter } from "../attendance/attendance.routes.js";
+import { adminDeploymentsRouter } from "../deployments/deployments.routes.js";
 import { Router } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
@@ -37,6 +38,7 @@ export const adminRouter = Router();
 
 adminRouter.use(requireAuth, requireRole("ADMIN"));
 adminRouter.use("/attendance", adminAttendanceRouter);
+adminRouter.use("/deployments", adminDeploymentsRouter);
 adminRouter.use("/candidate-management", adminCandidatesRouter);
 
 adminRouter.get(

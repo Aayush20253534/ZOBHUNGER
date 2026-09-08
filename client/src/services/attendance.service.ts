@@ -2,6 +2,9 @@ import { apiFetch, type ApiSuccessEnvelope } from "@/lib/api";
 import type { Assignment, AssignmentCalendar, AssignmentInput, AttendanceDay, AttendanceInput, Correction, DailyAttendance, DailyQuery, Paged, SelectedCandidate } from "@/types/attendance.types";
 
 const base = (admin: boolean) => admin ? "/admin/attendance" : "/business/attendance";
+export type AssignmentModule = "attendance" | "deployments";
+const assignmentBase = (module: AssignmentModule) => `/admin/${module}`;
+const adminAssignmentPath = (module: AssignmentModule, id: string) => `${assignmentBase(module)}/assignments/${encodeURIComponent(id)}`;
 const write = (body: unknown, method = "POST") => ({ method, headers: { "X-Requested-With": "XMLHttpRequest" }, body: JSON.stringify(body) });
 const idPath = (admin: boolean, id: string) => `${base(admin)}/assignments/${encodeURIComponent(id)}`;
 export function getAttendance(admin: boolean, query: DailyQuery, signal?: AbortSignal) {
@@ -18,20 +21,20 @@ export function getAttendanceDay(admin: boolean, id: string, date: string, histo
 export function getAssignments(query: string, page: number, signal?: AbortSignal) {
   return apiFetch<ApiSuccessEnvelope<Paged<Assignment> & { today: string }>>(`${base(true)}/assignments?${new URLSearchParams({ query, page: String(page) })}`, { signal });
 }
-export function getSelectedCandidates(query: string, page: number, signal?: AbortSignal) {
-  return apiFetch<ApiSuccessEnvelope<Paged<SelectedCandidate>>>(`${base(true)}/selected-candidates?${new URLSearchParams({ query, page: String(page) })}`, { signal });
+export function getSelectedCandidates(query: string, page: number, signal?: AbortSignal, module: AssignmentModule = "attendance") {
+  return apiFetch<ApiSuccessEnvelope<Paged<SelectedCandidate>>>(`${assignmentBase(module)}/selected-candidates?${new URLSearchParams({ query, page: String(page) })}`, { signal });
 }
-export function createAssignment(input: AssignmentInput & { candidateId: string }) {
-  return apiFetch<ApiSuccessEnvelope<{ id: string; created: boolean }>>(`${base(true)}/assignments`, write(input));
+export function createAssignment(input: AssignmentInput & { candidateId: string }, module: AssignmentModule = "attendance") {
+  return apiFetch<ApiSuccessEnvelope<{ id: string; created: boolean }>>(`${assignmentBase(module)}/assignments`, write(input));
 }
-export function updateAssignment(id: string, input: AssignmentInput & { revision: number; note: string }) {
-  return apiFetch<ApiSuccessEnvelope<{ id: string }>>(idPath(true, id), write(input, "PUT"));
+export function updateAssignment(id: string, input: AssignmentInput & { revision: number; note: string }, module: AssignmentModule = "attendance") {
+  return apiFetch<ApiSuccessEnvelope<{ id: string }>>(adminAssignmentPath(module, id), write(input, "PUT"));
 }
-export function endAssignment(id: string, revision: number, endDate: string, note: string) {
-  return apiFetch<ApiSuccessEnvelope<{ id: string }>>(`${idPath(true, id)}/end`, write({ revision, endDate, note }));
+export function endAssignment(id: string, revision: number, endDate: string, note: string, module: AssignmentModule = "attendance") {
+  return apiFetch<ApiSuccessEnvelope<{ id: string }>>(`${adminAssignmentPath(module, id)}/end`, write({ revision, endDate, note }));
 }
-export function cancelAssignment(id: string, revision: number, note: string) {
-  return apiFetch<ApiSuccessEnvelope<{ id: string }>>(`${idPath(true, id)}/cancel`, write({ revision, note }));
+export function cancelAssignment(id: string, revision: number, note: string, module: AssignmentModule = "attendance") {
+  return apiFetch<ApiSuccessEnvelope<{ id: string }>>(`${adminAssignmentPath(module, id)}/cancel`, write({ revision, note }));
 }
 export function saveAttendance(id: string, date: string, input: AttendanceInput) {
   return apiFetch<ApiSuccessEnvelope<{ id: string }>>(`${idPath(true, id)}/records`, write({ ...input, date }, "PUT"));

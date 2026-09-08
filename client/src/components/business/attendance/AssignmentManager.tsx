@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useState, type FormEvent } from "react";
 import { ArrowUpRight, CheckCheck, MapPin, Plus, Search, UsersRound, X } from "lucide-react";
-import { cancelAssignment, createAssignment, endAssignment, getAssignments, getSelectedCandidates, updateAssignment } from "@/services/attendance.service";
+import { cancelAssignment, createAssignment, endAssignment, getAssignments, getSelectedCandidates, updateAssignment, type AssignmentModule } from "@/services/attendance.service";
 import type { Assignment, AssignmentInput, SelectedCandidate } from "@/types/attendance.types";
 import { businessDate, useBusinessResource } from "../BusinessDashboardUI";
 import { attendanceError, AttendanceError, attendanceHref, AttendanceLoading, AttendancePages, clock, todayIST } from "./AttendanceUI";
@@ -22,15 +22,15 @@ export function AssignmentManager({ accountId }: { accountId: string }) {
   </section>;
 }
 
-function NewAssignment({ accountId, onSaved }: { accountId: string; onSaved: (value: { id: string; created: boolean }) => void }) {
+export function NewAssignment({ accountId, onSaved, module = "attendance" }: { accountId: string; onSaved: (value: { id: string; created: boolean }) => void; module?: AssignmentModule }) {
   const [candidate, setCandidate] = useState<SelectedCandidate | null>(null);
-  return <div className="zb-att-setup"><h3><span>01</span> Choose a selected candidate</h3>{candidate ? <div className="zb-att-context"><UsersRound aria-hidden="true" /><span><strong>{candidate.name}</strong>{candidate.jobTitle} · {candidate.requirement.companyName}</span><button type="button" onClick={() => setCandidate(null)}>Change</button></div> : <SelectedCandidatePicker accountId={accountId} onSelect={setCandidate} />}
-    {candidate && <><h3><span>02</span> Confirm the assignment</h3><AssignmentForm key={candidate.id} defaultLocation={candidate.requirement.jobLocation} onSave={async values => { const result = await createAssignment({ ...values, candidateId: candidate.id }); onSaved(result.data); }} /></>}
+  return <div className="zb-att-setup"><h3><span>01</span> Choose a selected candidate</h3>{candidate ? <div className="zb-att-context"><UsersRound aria-hidden="true" /><span><strong>{candidate.name}</strong>{candidate.jobTitle} · {candidate.requirement.companyName}</span><button type="button" onClick={() => setCandidate(null)}>Change</button></div> : <SelectedCandidatePicker accountId={accountId} onSelect={setCandidate} module={module} />}
+    {candidate && <><h3><span>02</span> Confirm the assignment</h3><AssignmentForm key={candidate.id} defaultLocation={candidate.requirement.jobLocation} onSave={async values => { const result = await createAssignment({ ...values, candidateId: candidate.id }, module); onSaved(result.data); }} /></>}
   </div>;
 }
-function SelectedCandidatePicker({ accountId, onSelect }: { accountId: string; onSelect: (item: SelectedCandidate) => void }) {
+function SelectedCandidatePicker({ accountId, onSelect, module }: { accountId: string; onSelect: (item: SelectedCandidate) => void; module: AssignmentModule }) {
   const [search, setSearch] = useState(""); const [query, setQuery] = useState(""); const [page, setPage] = useState(1); const [version, setVersion] = useState(0);
-  const request = useCallback((signal: AbortSignal) => getSelectedCandidates(query, page, signal), [query, page]);
+  const request = useCallback((signal: AbortSignal) => getSelectedCandidates(query, page, signal, module), [query, page, module]);
   const { data, loading, error } = useBusinessResource(`${accountId}:${query}:${page}:${version}`, request);
   return <div><form className="zb-att-filters zb-att-filters--search" onSubmit={e => { e.preventDefault(); setQuery(search.trim()); setPage(1); }}><label><span>Search selected candidates</span><input value={search} onChange={e => setSearch(e.target.value)} maxLength={100} placeholder="Name, company or role" /></label><button type="submit" className="zb-biz-button zb-biz-button--secondary">Search</button></form>{loading ? <AttendanceLoading /> : error ? <AttendanceError admin error={error} retry={() => setVersion(v => v + 1)} /> : data && <>{!data.total ? <p>No unassigned selected candidates match this view. The business must select a shared profile first.</p> : <ul className="zb-att-picker">{data.items.map(item => <li key={item.id}><button type="button" onClick={() => onSelect(item)}><span><strong>{item.name}</strong><small>{item.jobTitle} · {item.requirement.companyName} · {item.requirement.jobLocation}</small></span><Plus aria-hidden="true" /></button></li>)}</ul>}<AttendancePages page={data.page} totalPages={data.totalPages} onChange={setPage} /></>}<p className="zb-att-muted">Only selected people on open requirements owned by active business accounts can be assigned.</p></div>;
 }
@@ -47,14 +47,14 @@ export function AssignmentForm({ assignment, defaultLocation = "", onSave }: { a
       {assignment && <label><span>Reason for changing settings *</span><textarea required minLength={3} maxLength={1500} rows={2} value={note} onChange={e => setNote(e.target.value)} /></label>}{error && <p role="alert" className="zb-biz-error">{error}</p>}<button className="zb-biz-button" type="submit">{busy ? "Saving…" : assignment ? assignment.cancelledAt ? "Save and reactivate assignment" : "Save assignment settings" : "Create assignment"}</button>
     </fieldset></form>;
 }
-export function AssignmentSettings({ assignment, settingsLocked, onChanged }: { assignment: Assignment; settingsLocked: boolean; onChanged: () => void }) {
+export function AssignmentSettings({ assignment, settingsLocked, onChanged, module = "attendance" }: { assignment: Assignment; settingsLocked: boolean; onChanged: () => void; module?: AssignmentModule }) {
   const [action, setAction] = useState("end"); const [endDate, setEndDate] = useState(assignment.endDate); const [note, setNote] = useState("");
   const [error, setError] = useState(""); const [notice, setNotice] = useState(""); const [busy, setBusy] = useState(false);
   async function submit(event: FormEvent) { event.preventDefault(); if (busy) return; setBusy(true); setError(""); try {
-    if (action === "cancel") await cancelAssignment(assignment.id, assignment.revision, note); else await endAssignment(assignment.id, assignment.revision, endDate, note);
+    if (action === "cancel") await cancelAssignment(assignment.id, assignment.revision, note, module); else await endAssignment(assignment.id, assignment.revision, endDate, note, module);
     setNotice(action === "cancel" ? "Assignment cancelled." : "Assignment end date saved."); onChanged();
   } catch (error) { setError(attendanceError(error)); } finally { setBusy(false); } }
-  return <details className="zb-att-settings"><summary>Assignment settings & end date</summary>{notice && <p role="status" className="zb-att-success">{notice}</p>}{!settingsLocked ? <AssignmentForm key={assignment.revision} assignment={assignment} onSave={async (values, note) => { await updateAssignment(assignment.id, { ...values, revision: assignment.revision, note }); setNotice("Assignment settings saved."); onChanged(); }} /> : <p className="zb-att-notice">This assignment has attendance or correction history. Its schedule is preserved. You can end future roster dates below.</p>}
+  return <details className="zb-att-settings"><summary>Assignment settings & end date</summary>{notice && <p role="status" className="zb-att-success">{notice}</p>}{!settingsLocked ? <AssignmentForm key={assignment.revision} assignment={assignment} onSave={async (values, note) => { await updateAssignment(assignment.id, { ...values, revision: assignment.revision, note }, module); setNotice("Assignment settings saved."); onChanged(); }} /> : <p className="zb-att-notice">This assignment has attendance or correction history. Its schedule is preserved. You can end future roster dates below.</p>}
     {!assignment.cancelledAt && <form className="zb-att-form" onSubmit={submit}><fieldset disabled={busy}><h3>End or cancel assignment</h3><label><span>Action</span><select value={action} onChange={e => setAction(e.target.value)}><option value="end">End on a chosen date</option>{!settingsLocked && <option value="cancel">Cancel assignment without history</option>}</select></label>{action === "end" && <label><span>Last included date *</span><input required type="date" min={assignment.startDate} max={assignment.endDate} value={endDate} onChange={e => setEndDate(e.target.value)} /></label>}<label><span>Reason *</span><textarea required minLength={3} maxLength={1500} rows={2} value={note} onChange={e => setNote(e.target.value)} /></label><p className="zb-att-muted">Recorded dates and correction history will be preserved. Ending an assignment removes later dates from the roster.</p><label className="zb-att-confirm"><input type="checkbox" required />I have checked this change with the operations team.</label>{error && <p role="alert" className="zb-biz-error">{error}</p>}<button className="zb-biz-button zb-biz-button--secondary" type="submit">{busy ? "Saving…" : action === "end" ? "Save last working date" : "Cancel assignment"}</button></fieldset></form>}
   </details>;
 }

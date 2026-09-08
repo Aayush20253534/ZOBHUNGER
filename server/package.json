@@ -27,7 +27,8 @@
     "test:cache": "node --import tsx --test tests/cache.test.ts tests/cache.integration.test.ts",
     "cache:clear": "node --import tsx scripts/clear-job-cache.ts",
     "test:candidates": "npm run build && node --experimental-test-module-mocks --test tests/business-candidates.integration.test.mjs",
-    "test:attendance": "npm run build && node --experimental-test-module-mocks --test tests/business-attendance.integration.test.mjs"
+    "test:attendance": "npm run build && node --experimental-test-module-mocks --test tests/business-attendance.integration.test.mjs",
+    "test:deployments": "npm run build && node --experimental-test-module-mocks --test tests/business-deployments.integration.test.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

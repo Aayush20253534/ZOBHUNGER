@@ -244,7 +244,8 @@ export function AdminDashboard() {
         </div>
         <div className="zb-admin-actions">
           <Link href="/admin/candidate-management"><UsersRound aria-hidden="true" />Candidate sharing &amp; reviews</Link>
-          <Link href="/admin/attendance"><CalendarCheck2 aria-hidden="true" />Assignments &amp; attendance</Link>
+          <Link href="/admin/deployments"><BriefcaseBusiness aria-hidden="true" />Deployment &amp; team roster</Link>
+          <Link href="/admin/attendance"><CalendarCheck2 aria-hidden="true" />Attendance &amp; corrections</Link>
           <button type="button" onClick={() => void load()} disabled={loading}>
             <RefreshCw aria-hidden="true" /> Refresh
           </button>

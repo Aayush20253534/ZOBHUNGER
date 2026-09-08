@@ -11,3 +11,4 @@ import "./business-dashboard.schema.test.js";
 import "./business-requirements.schema.test.js";
 import "./business-candidates.schema.test.js";
 import "./business-attendance.schema.test.js";
+import "./business-deployments.schema.test.js";
