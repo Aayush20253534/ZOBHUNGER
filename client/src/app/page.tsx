@@ -3,6 +3,7 @@ import { BrandExperiencePreview } from "@/components/home/BrandExperiencePreview
 import { Hero } from "@/components/home/Hero";
 import { HomeCaseStudyProof } from "@/components/home/HomeCaseStudyProof";
 import { HomeExecutionModel } from "@/components/home/HomeExecutionModel";
+import { HomeExecutionStories } from "@/components/home/HomeExecutionStories";
 import { HomeBusinessOverview } from "@/components/home/HomeBusinessOverview";
 import { HomePresencePreview } from "@/components/home/HomePresencePreview";
 import { home } from "@/data/home";
@@ -21,6 +22,7 @@ export default function Page() {
     <div className="zb-home">
       <Hero />
       <BrandExperiencePreview />
+      <HomeExecutionStories />
       <HomeBusinessOverview />
       <HomeExecutionModel />
       <HomeCaseStudyProof />
