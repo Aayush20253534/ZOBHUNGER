@@ -612,3 +612,182 @@ body:has(.zb-placement-portal-restricted-page) .zb-footer {
     max-height: 220px;
   }
 }
+
+
+/* Compact authentication pages: keep portal access focused and viewport-friendly. */
+.zb-portal-page:has(.zb-login-layout) {
+  padding-bottom: 1.5rem;
+}
+
+.zb-portal-page:has(.zb-login-layout) .zb-portal-heading {
+  margin-bottom: 0.85rem;
+}
+
+.zb-portal-page:has(.zb-login-layout) .zb-portal-heading .zb-page-heading {
+  max-width: 46rem;
+}
+
+.zb-portal-page:has(.zb-login-layout) .zb-portal-heading .zb-page-heading h1 {
+  max-width: none;
+  font-size: clamp(1.8rem, 3.1vw, 2.65rem);
+  line-height: 1.04;
+}
+
+.zb-portal-page:has(.zb-login-layout) .zb-portal-heading .zb-page-description {
+  max-width: 44rem;
+  margin-top: 0.6rem;
+  font-size: 0.94rem;
+  line-height: 1.48;
+}
+
+.zb-login-layout {
+  width: min(100%, 62rem);
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+.zb-login-form {
+  gap: 0.8rem;
+  padding: clamp(1.05rem, 2vw, 1.35rem);
+  border-radius: 0.75rem;
+}
+
+.zb-login-form-heading {
+  gap: 0.7rem;
+  margin-bottom: 0.05rem;
+}
+
+.zb-login-form-heading .zb-icon-tile,
+.zb-account-type-list .zb-icon-tile {
+  width: 2.45rem;
+  height: 2.45rem;
+  flex: 0 0 2.45rem;
+}
+
+.zb-login-form-heading .zb-icon-tile svg,
+.zb-account-type-list .zb-icon-tile svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.zb-login-form-heading h2 {
+  font-size: 1.35rem;
+  line-height: 1.15;
+}
+
+.zb-login-form-heading .zb-eyebrow {
+  margin-bottom: 0.25rem;
+  font-size: 0.7rem;
+}
+
+.zb-login-form label {
+  gap: 0.35rem;
+  font-size: 0.88rem;
+}
+
+.zb-login-form input {
+  min-height: 2.65rem;
+  padding: 0.62rem 0.78rem;
+  border-radius: 0.5rem;
+  font-size: 0.94rem;
+}
+
+.zb-password-field {
+  position: relative;
+  display: block;
+}
+
+.zb-password-field input {
+  padding-right: 2.8rem;
+}
+
+.zb-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.45rem;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--zb-muted);
+  cursor: pointer;
+}
+
+.zb-password-toggle:hover,
+.zb-password-toggle:focus-visible {
+  background: var(--zb-soft);
+  color: var(--zb-action);
+  outline: none;
+}
+
+.zb-password-toggle svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.zb-login-submit {
+  min-height: 2.55rem;
+  padding: 0.58rem 0.85rem;
+  font-size: 0.91rem;
+}
+
+.zb-login-security-note {
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.zb-account-access-summary {
+  padding: clamp(1.05rem, 2vw, 1.35rem);
+  border-radius: 0.75rem;
+}
+
+.zb-account-access-summary > h2 {
+  margin-top: 0.2rem;
+  font-size: 1.3rem;
+}
+
+.zb-account-type-list {
+  gap: 0;
+  margin-top: 0.75rem;
+}
+
+.zb-account-type-list article {
+  gap: 0.7rem;
+  padding: 0.72rem 0;
+}
+
+.zb-account-type-list h3 {
+  font-size: 0.9rem;
+}
+
+.zb-account-type-list p {
+  margin-top: 0.18rem;
+  font-size: 0.82rem;
+  line-height: 1.42;
+}
+
+.zb-login-error {
+  padding: 0.65rem 0.75rem;
+  font-size: 0.86rem;
+}
+
+@media (min-width: 900px) {
+  .zb-login-layout {
+    grid-template-columns: minmax(0, 0.95fr) minmax(20rem, 1.05fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .zb-portal-page:has(.zb-login-layout) .zb-portal-heading .zb-page-heading h1 {
+    font-size: clamp(1.75rem, 8.5vw, 2.3rem);
+  }
+
+  .zb-portal-page:has(.zb-login-layout) .zb-portal-heading .zb-page-description {
+    font-size: 0.9rem;
+  }
+}

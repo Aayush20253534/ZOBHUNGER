@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LockKeyhole, LogIn } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, LogIn } from "lucide-react";
 import { ApiError } from "@/lib/api";
 import { login } from "@/services/auth.service";
 
@@ -19,6 +19,7 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -66,14 +67,25 @@ export function LoginForm() {
 
       <label>
         <span>Password</span>
-        <input
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          placeholder="Enter your password"
-          required
-        />
+        <span className="zb-password-field">
+          <input
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Enter your password"
+            required
+          />
+          <button
+            className="zb-password-toggle"
+            type="button"
+            onClick={() => setShowPassword((visible) => !visible)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-pressed={showPassword}
+          >
+            {showPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+          </button>
+        </span>
       </label>
 
       {error && (
