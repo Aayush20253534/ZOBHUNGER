@@ -1,5 +1,5 @@
 .zb-experience-page {
-  --zb-experience-space: clamp(2.5rem, 4vw, 3.75rem);
+  --zb-experience-space: clamp(2rem, 4vw, 3.25rem);
   min-width: 0;
   overflow-wrap: break-word;
 }
@@ -10,7 +10,7 @@
   align-items: center;
   gap: 0.35rem 0.55rem;
   list-style: none;
-  margin: 0 0 1.75rem;
+  margin: 0 0 1.25rem;
   padding: 0;
   color: var(--zb-muted);
   font-size: 0.8125rem;
@@ -43,19 +43,45 @@
 .zb-experience-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1.5rem;
+  gap: 1.75rem;
+  align-items: center;
 }
 
-.zb-experience-hero .zb-page-heading h1 {
-  max-width: 13ch;
+.zb-experience-hero .zb-experience-hero-copy {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.zb-experience-page .zb-experience-hero .zb-experience-hero-copy h1 {
+  max-width: 17ch;
+  margin: 0;
+  font-size: clamp(2.25rem, 4.2vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.zb-experience-hero .zb-experience-hero-copy .zb-page-description {
+  max-width: 39rem;
+  margin: 1rem 0 0;
+  font-size: clamp(1rem, 1.3vw, 1.0625rem);
+  line-height: 1.65;
+}
+
+.zb-experience-hero .zb-experience-hero-copy .zb-page-actions {
+  margin-top: 1.25rem;
 }
 
 .zb-experience-hero-panel {
   display: flex;
   flex-direction: column;
-  justify-content: end;
-  min-height: 20rem;
-  padding: clamp(1.5rem, 4vw, 2.5rem);
+  align-self: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(1.25rem, 2.3vw, 1.75rem);
   border-radius: var(--zb-radius);
   background:
     linear-gradient(150deg, #461820 0%, #6d202b 58%, #c8202f 135%);
@@ -63,22 +89,26 @@
 }
 
 .zb-experience-hero-panel .zb-eyebrow {
+  margin: 0;
   color: var(--zb-highlight);
+  font-size: 0.6875rem;
+  line-height: 1.5;
 }
 
 .zb-experience-hero-panel h2 {
-  max-width: 14ch;
-  margin: 0.7rem 0 0;
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-  line-height: 1.15;
-  letter-spacing: -0.04em;
+  margin: 0.65rem 0 0;
+  font-size: clamp(1.4rem, 2.1vw, 1.65rem);
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
 }
 
 .zb-experience-hero-panel p {
   max-width: 35rem;
-  margin: 1rem 0 0;
+  margin: 0.65rem 0 0;
   color: var(--zb-on-panel-muted);
-  line-height: 1.7;
+  font-size: 0.9375rem;
+  line-height: 1.6;
 }
 
 .zb-experience-section {
@@ -92,27 +122,40 @@
 }
 
 .zb-experience-pillar {
-  padding: 1.35rem;
-  border-top: 2px solid var(--zb-soft-border);
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  align-content: start;
+  column-gap: 0.8rem;
+  min-width: 0;
+  padding: 1.2rem;
+  border: 1px solid var(--zb-border);
+  border-radius: var(--zb-radius);
+  background: #fff;
 }
 
 .zb-experience-pillar > svg {
-  width: 1.4rem;
-  height: 1.4rem;
+  grid-row: span 2;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.6rem;
+  border-radius: 0.65rem;
+  background: var(--zb-soft);
   color: var(--zb-action);
 }
 
 .zb-experience-pillar h2 {
-  margin: 0.85rem 0 0;
-  font-size: 1.05rem;
-  line-height: 1.4;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 750;
+  line-height: 1.35;
 }
 
 .zb-experience-pillar p {
+  grid-column: 2;
   margin: 0.45rem 0 0;
   color: var(--zb-muted);
-  font-size: 0.9375rem;
-  line-height: 1.7;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 .zb-experience-section-heading {
@@ -125,8 +168,9 @@
 
 .zb-experience-section-heading h2 {
   margin: 0.35rem 0 0;
-  font-size: clamp(1.8rem, 3vw, 2.45rem);
-  line-height: 1.18;
+  font-size: clamp(1.65rem, 2.7vw, 2rem);
+  font-weight: 750;
+  line-height: 1.22;
   letter-spacing: -0.035em;
 }
 
@@ -134,6 +178,35 @@
   max-width: 34rem;
   margin: 0;
   color: var(--zb-muted);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
+.zb-experience-partners {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.5vw, 1.75rem);
+  min-width: 0;
+  padding: clamp(1.75rem, 3vw, 2.5rem) clamp(0.75rem, 2vw, 1.5rem);
+  background: #fff;
+}
+
+.zb-experience-partners > h2 {
+  margin: 0;
+  color: #111;
+  font-size: clamp(1.25rem, 4.6vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  word-spacing: 0.06em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.zb-experience-partners .zb-experience-case-link {
+  display: flex;
+  justify-content: center;
+  margin: 0;
 }
 
 .zb-experience-groups {
@@ -250,33 +323,26 @@
 }
 
 @media (min-width: 760px) {
+  .zb-experience-section-heading {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  }
+}
+
+@media (min-width: 900px) {
   .zb-experience-pillars {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .zb-experience-section-heading {
-    grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.75fr);
   }
 }
 
 @media (min-width: 960px) {
   .zb-experience-hero {
-    grid-template-columns: minmax(0, 1.2fr) minmax(24rem, 0.8fr);
-    gap: clamp(2rem, 3.5vw, 3.5rem);
-    align-items: start;
-  }
-
-  .zb-experience-hero .zb-page-heading {
-    padding-top: 0.5rem;
-  }
-
-  .zb-experience-hero .zb-page-heading h1 {
-    font-size: clamp(3rem, 4.4vw, 3.9rem);
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr);
+    gap: clamp(1.75rem, 3vw, 2.5rem);
   }
 
   .zb-experience-hero-panel {
-    min-height: 22rem;
-    transform: translateY(-0.35rem);
+    max-width: 28rem;
+    justify-self: end;
   }
 
   .zb-experience-groups {
@@ -309,7 +375,7 @@
 
 .zb-core-capability-card {
   min-width: 0;
-  padding: clamp(1.2rem, 2.5vw, 1.55rem);
+  padding: clamp(1.15rem, 2vw, 1.4rem);
   border: 1px solid var(--zb-border);
   border-radius: calc(var(--zb-radius) - 0.15rem);
   background: #fff;
@@ -345,8 +411,9 @@
 }
 
 .zb-core-capability-card h3 {
-  margin: 1rem 0 0;
+  margin: 0.8rem 0 0;
   font-size: 1rem;
+  font-weight: 750;
   line-height: 1.4;
 }
 
@@ -361,7 +428,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
-  padding: clamp(1.5rem, 4vw, 2.5rem);
+  padding: clamp(1.5rem, 3vw, 2rem);
   border-radius: var(--zb-radius);
   background: var(--zb-panel);
   color: #fff;
@@ -372,18 +439,20 @@
 }
 
 .zb-why-brands-intro h2 {
-  max-width: 14ch;
+  max-width: 22ch;
   margin: 0.55rem 0 0;
-  font-size: clamp(1.9rem, 3.4vw, 2.8rem);
-  line-height: 1.12;
-  letter-spacing: -0.04em;
+  font-size: clamp(1.6rem, 2.6vw, 2rem);
+  font-weight: 750;
+  line-height: 1.22;
+  letter-spacing: -0.03em;
 }
 
 .zb-why-brands-intro > p {
   max-width: 40rem;
-  margin: 1rem 0 1.25rem;
+  margin: 0.85rem 0 1.15rem;
   color: var(--zb-on-panel-muted);
-  line-height: 1.7;
+  font-size: 0.9375rem;
+  line-height: 1.65;
 }
 
 .zb-why-brands-list {
@@ -429,9 +498,9 @@
   }
 
   .zb-why-brands {
-    grid-template-columns: minmax(0, 1fr) minmax(28rem, 0.9fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
-    gap: clamp(2rem, 4vw, 4rem);
+    gap: clamp(1.5rem, 3vw, 2.5rem);
   }
 }
 
@@ -440,21 +509,26 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.55rem;
-  margin-top: 1.5rem;
-  padding-top: 1.2rem;
+  margin: 1rem 0 0;
+  padding: 1rem 0 0;
   border-top: 1px solid #ffffff2b;
+  list-style: none;
 }
 
-.zb-experience-hero-flow > div {
+.zb-experience-hero-flow > li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   min-width: 0;
-  padding: 0.7rem 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.65rem;
   border: 1px solid #ffffff20;
   border-radius: 0.6rem;
   background: #ffffff0b;
 }
 
 .zb-experience-hero-flow span {
-  display: block;
+  flex: none;
   color: var(--zb-highlight);
   font-size: 0.68rem;
   font-weight: 800;
@@ -463,9 +537,11 @@
 
 .zb-experience-hero-flow strong {
   display: block;
-  margin-top: 0.15rem;
+  min-width: 0;
   color: #fff;
-  font-size: 0.88rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  white-space: nowrap;
 }
 
 .zb-experience-group {
@@ -533,11 +609,11 @@
   display: flex;
   min-width: 0;
   flex-direction: column;
-  padding: clamp(1.35rem, 3vw, 1.9rem);
+  padding: clamp(1.15rem, 2.2vw, 1.5rem);
   border: 1px solid var(--zb-border);
   border-radius: var(--zb-radius);
   background: #fff;
-  box-shadow: 0 12px 34px rgb(39 33 38 / 5%);
+  box-shadow: 0 4px 16px rgb(39 33 38 / 3%);
 }
 
 .zb-experience-project-brandline {
@@ -579,30 +655,30 @@
 
 .zb-experience-project-brandline > div > span {
   display: block;
-  overflow: hidden;
   color: var(--zb-muted);
   font-size: 0.72rem;
   font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.45;
 }
 
 .zb-experience-project-brandline strong {
   display: block;
   margin-top: 0.1rem;
-  font-size: 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.4;
 }
 
 .zb-experience-project-copy {
-  padding: 1.25rem 0 0.8rem;
+  padding: 1rem 0;
 }
 
 .zb-experience-project-copy h3 {
-  max-width: 22ch;
+  max-width: 30ch;
   margin: 0.4rem 0 0;
-  font-size: clamp(1.45rem, 2.6vw, 2rem);
-  line-height: 1.16;
-  letter-spacing: -0.035em;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
 }
 
 .zb-experience-project-copy p {
@@ -612,11 +688,50 @@
   line-height: 1.68;
 }
 
+.zb-experience-project-details {
+  margin-top: auto;
+  border-block: 1px solid var(--zb-border);
+}
+
+.zb-experience-project-details > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.65rem 0;
+  color: var(--zb-ink);
+  font-size: 0.875rem;
+  font-weight: 700;
+  list-style: none;
+  cursor: pointer;
+}
+
+.zb-experience-project-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.zb-experience-project-details > summary:focus-visible {
+  outline: 2px solid var(--zb-action);
+  outline-offset: 3px;
+}
+
+.zb-experience-project-details > summary svg {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  color: var(--zb-action);
+}
+
+.zb-experience-project-details[open] > summary svg {
+  transform: rotate(180deg);
+}
+
 .zb-experience-project-flow {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
-  margin: 0.35rem 0 1.25rem;
+  margin: 0 0 0.5rem;
   padding: 0;
   list-style: none;
   counter-reset: none;
@@ -664,7 +779,8 @@
   align-items: center;
   gap: 0.45rem;
   align-self: flex-start;
-  margin-top: auto;
+  min-height: 2.75rem;
+  margin-top: 0.65rem;
   color: var(--zb-action);
   font-size: 0.88rem;
   font-weight: 800;
@@ -681,9 +797,25 @@
   height: 1rem;
 }
 
-@media (min-width: 640px) {
-  .zb-experience-hero-flow {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+.zb-experience-page .zb-cta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
+}
+
+.zb-experience-page .zb-cta h2 {
+  font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+}
+
+.zb-experience-page .zb-cta > .zb-action-link {
+  justify-self: start;
+}
+
+@media (min-width: 760px) {
+  .zb-experience-page .zb-cta {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2rem;
   }
 }
 

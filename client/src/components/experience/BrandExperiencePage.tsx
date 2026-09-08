@@ -2,9 +2,8 @@ import { ArrowRight, BriefcaseBusiness, MapPinned, UsersRound } from "lucide-rea
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
-import { PageShell } from "@/components/common/PageShell";
 import { CoreCapabilitiesSection } from "@/components/experience/CoreCapabilitiesSection";
-import { BrandLogoMarquee } from "@/components/experience/BrandLogoMarquee";
+import { TrustedPartnerMarquee } from "@/components/experience/TrustedPartnerMarquee";
 import { ExperienceProjectCard } from "@/components/experience/ExperienceProjectCard";
 import { WhyBrandsSection } from "@/components/experience/WhyBrandsSection";
 import { brandExperienceIntro } from "@/data/brand-experience";
@@ -43,32 +42,31 @@ export function BrandExperiencePage() {
       />
 
       <section className="zb-experience-hero" aria-labelledby="brand-experience-title">
-        <PageShell
-          eyebrow={brandExperienceIntro.eyebrow}
-          title={brandExperienceIntro.title}
-          description={brandExperienceIntro.description}
-          actions={
+        <header className="zb-page-heading zb-experience-hero-copy">
+          <span className="zb-eyebrow">{brandExperienceIntro.eyebrow}</span>
+          <h1 id="brand-experience-title">{brandExperienceIntro.title}</h1>
+          <p className="zb-page-description">{brandExperienceIntro.description}</p>
+          <div className="zb-page-actions">
             <ActionLink href="/contact">
               Discuss a project <ArrowRight className="size-4" aria-hidden="true" />
             </ActionLink>
-          }
-        />
-        <aside className="zb-experience-hero-panel" aria-label="Experience overview">
+          </div>
+        </header>
+        <aside className="zb-experience-hero-panel" aria-labelledby="experience-overview-title">
           <span className="zb-eyebrow">From brief to field execution</span>
-          <h2>Built around real operating requirements.</h2>
+          <h2 id="experience-overview-title">One team. Every step.</h2>
           <p>
-            Our experience spans customer acquisition, manpower deployment,
-            audits, sampling, seller onboarding, training and consumer
-            engagement across multiple sectors.
+            From your brief to teams in the market, with onboarding, field
+            delivery and reporting managed together.
           </p>
-          <div className="zb-experience-hero-flow" aria-label="Typical execution pattern">
+          <ol className="zb-experience-hero-flow" aria-label="Typical execution pattern">
             {["Brief", "Mobilise", "Execute", "Report"].map((step, index) => (
-              <div key={step}>
+              <li key={step}>
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <strong>{step}</strong>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </aside>
       </section>
 
@@ -86,20 +84,11 @@ export function BrandExperiencePage() {
       </section>
 
       <section
-        className="zb-experience-section"
-        aria-labelledby="experience-groups-title"
+        className="zb-experience-section zb-experience-partners"
+        aria-labelledby="experience-partners-title"
       >
-        <div className="zb-experience-section-heading">
-          <div>
-            <span className="zb-eyebrow">Across sectors</span>
-            <h2 id="experience-groups-title">Execution experience across families & markets.</h2>
-          </div>
-          <p>
-            All approved brand marks are presented together in one moving experience wall,
-            with detailed project stories separated below.
-          </p>
-        </div>
-        <BrandLogoMarquee />
+        <h2 id="experience-partners-title">Our Trusted Partners</h2>
+        <TrustedPartnerMarquee />
         <div className="zb-experience-case-link">
           <ActionLink href="/case-studies" variant="secondary">
             Explore case studies <ArrowRight className="size-4" aria-hidden="true" />
@@ -111,11 +100,11 @@ export function BrandExperiencePage() {
         <div className="zb-experience-section-heading">
           <div>
             <span className="zb-eyebrow">Project proof</span>
-            <h2 id="experience-project-stories">See how the work was structured.</h2>
+            <h2 id="experience-project-stories">Execution in practice.</h2>
           </div>
           <p>
-            Selected approved project stories connect the brand name to the actual
-            objective, field execution and outcome rather than leaving proof as a logo wall.
+            Explore the objective, field approach and delivery steps behind
+            selected assignments.
           </p>
         </div>
         <div className="zb-experience-project-grid">
