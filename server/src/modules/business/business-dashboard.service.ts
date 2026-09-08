@@ -3,26 +3,13 @@ import { prisma } from "../../config/db.js";
 import { HttpError } from "../../utils/http-error.js";
 import type { DashboardQuery } from "./business-dashboard.schema.js";
 import { dashboardPeriod, requirementStatuses, statusChange } from "./business-dashboard.utils.js";
+import { editableRequirementFields, ownedRequirements, ownedRequirementSql as ownedSql, requirementSummarySelect as summarySelect } from "./business-requirement-access.js";
 
 const PAGE_SIZE = 6;
-const summarySelect = {
-  id: true, serviceRequired: true, workforceCount: true, locations: true,
-  jobLocation: true, projectDuration: true, status: true, createdAt: true, updatedAt: true,
-} satisfies Prisma.WorkforceRequirementSelect;
-
-function ownedRequirements(userId: string): Prisma.WorkforceRequirementWhereInput {
-  // An explicit company association takes precedence over the submitting user.
-  // Never claim guest submissions by a matching business email.
-  return { OR: [
-    { businessProfile: { is: { userId } } },
-    { businessProfileId: null, submittedByUserId: userId },
-  ] };
-}
-
-function ownedSql(userId: string) {
-  return Prisma.sql`(b."userId" = ${userId} OR (r."businessProfileId" IS NULL AND r."submittedByUserId" = ${userId}))`;
-}
-
+type RequirementActivity = { id: string; createdAt: Date } & (
+  { kind: "updated"; fields: string[] } |
+  { kind: "status" | "withdrawn"; from: typeof requirementStatuses[number]; to: typeof requirementStatuses[number]; reason?: string }
+);
 export async function getBusinessDashboard(userId: string, query: DashboardQuery, now = new Date()) {
   const period = dashboardPeriod(query.range, now);
   const owned = { ...ownedRequirements(userId), createdAt: { lte: now } };
@@ -90,15 +77,29 @@ export async function getBusinessRequirement(userId: string, id: string) {
     });
     if (!requirement) throw new HttpError(404, "This requirement is not available in your business account.", { code: "REQUIREMENT_NOT_FOUND" });
     const logs = await tx.auditLog.findMany({
-      where: { entityType: "WorkforceRequirement", entityId: requirement.id, action: "WORKFORCE_REQUIREMENT_STATUS_CHANGED" },
-      select: { id: true, createdAt: true, metadata: true },
+      where: { entityType: "WorkforceRequirement", entityId: requirement.id, action: { in: ["WORKFORCE_REQUIREMENT_STATUS_CHANGED", "WORKFORCE_REQUIREMENT_UPDATED"] } },
+      select: { id: true, createdAt: true, metadata: true, action: true },
       orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 21,
     });
     // Only the status pair is exposed. Internal actors, IPs and extra metadata stay private.
     const history = logs.slice(0, 20).flatMap(log => {
+      if (log.action !== "WORKFORCE_REQUIREMENT_STATUS_CHANGED") return [];
       const change = statusChange(log.metadata);
       return change ? [{ id: log.id, createdAt: log.createdAt, ...change }] : [];
     }).reverse();
-    return { requirement, history, hasEarlierHistory: logs.length > 20 };
+    const activity = logs.slice(0, 20).flatMap<RequirementActivity>(log => {
+      const metadata = log.metadata && typeof log.metadata === "object" && !Array.isArray(log.metadata) ? log.metadata : {};
+      if (log.action === "WORKFORCE_REQUIREMENT_UPDATED") {
+        const changedFields = metadata.fields;
+        const fields = Array.isArray(changedFields) ? editableRequirementFields.filter(field => changedFields.includes(field)) : [];
+        return [{ id: log.id, createdAt: log.createdAt, kind: "updated", fields }];
+      }
+      const change = statusChange(metadata);
+      if (!change) return [];
+      const withdrawn = change.to === "CLOSED" && metadata.source === "BUSINESS_WITHDRAWAL";
+      return [{ id: log.id, createdAt: log.createdAt, kind: withdrawn ? "withdrawn" : "status", ...change,
+        ...(withdrawn && typeof metadata.reason === "string" ? { reason: metadata.reason.slice(0, 600) } : {}) }];
+    }).reverse();
+    return { requirement, history, activity, hasEarlierHistory: logs.length > 20 };
   }, { isolationLevel: "RepeatableRead" });
 }

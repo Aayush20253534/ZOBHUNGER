@@ -158,6 +158,9 @@ model WorkforceRequirement {
   expectedStartAt   DateTime?
   details           String
   status            RequirementStatus @default(NEW)
+  revision          Int               @default(0)
+  submissionKey     String?           @unique
+  submissionHash    String?
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
 

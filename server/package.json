@@ -18,6 +18,7 @@
     "check:business": "node scripts/check-business-api.mjs",
     "test:business": "npm run build && node --experimental-test-module-mocks --test tests/business.integration.test.mjs",
     "test:dashboard": "npm run build && node --experimental-test-module-mocks --test tests/business-dashboard.integration.test.mjs",
+    "test:requirements": "npm run build && node --experimental-test-module-mocks --test tests/business-requirements.integration.test.mjs",
     "test:smoke": "node scripts/smoke-api.mjs",
     "verify": "npm run test && npm run build",
     "test:cache": "node --import tsx --test tests/cache.test.ts tests/cache.integration.test.ts",

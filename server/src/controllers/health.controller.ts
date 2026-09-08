@@ -7,7 +7,7 @@ export const getHealth: RequestHandler = (_req, res) => {
     apiSuccessResponse("API is healthy", {
       status: "ok",
       service: "zobhunger-api",
-      features: { businessPortal: true, businessDashboard: true },
+      features: { businessPortal: true, businessDashboard: true, businessRequirements: true },
       uptimeSeconds: Math.floor(process.uptime()),
       timestamp: new Date().toISOString(),
     }),

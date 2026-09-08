@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft, CircleAlert, LockKeyhole, RefreshCw } from "lucide-react";
 import { ApiError, type ApiSuccessEnvelope } from "@/lib/api";
+import { solutions } from "@/data/solutions";
+import { industries } from "@/data/industries";
 import type { RequirementStatus, RequirementSummary } from "@/types/business-dashboard.types";
 
 export const statusInfo: Record<RequirementStatus, { label: string; color: string; description: string }> = {
@@ -13,6 +15,8 @@ export const statusInfo: Record<RequirementStatus, { label: string; color: strin
   CLOSED: { label: "Closed", color: "#796a80", description: "This request has been closed. This status does not confirm hiring or deployment." },
 };
 export const count = (value: number) => new Intl.NumberFormat("en-IN").format(value);
+export const requirementServiceLabel = (value: string) => solutions.find(item => item.slug === value)?.label ?? value;
+export const requirementIndustryLabel = (value: string) => industries.find(item => item.slug === value)?.title ?? value;
 export function businessDate(value: string, withTime = false) {
   return new Intl.DateTimeFormat("en-IN", {
     timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric",

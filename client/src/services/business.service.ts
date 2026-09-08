@@ -2,6 +2,7 @@ import { ApiError, apiFetch, type ApiSuccessEnvelope } from "@/lib/api";
 import type { AuthUser } from "@/types/auth.types";
 import type { BusinessProfile, BusinessProfileInput, BusinessWorkspace } from "@/types/business.types";
 import type { BusinessDashboardData, BusinessRequirementData, DashboardRange, RequirementFilter } from "@/types/business-dashboard.types";
+import type { BusinessRequirementInput, BusinessRequirementReceipt, BusinessRequirementsData, BusinessRequirementsQuery } from "@/types/business-requirements.types";
 
 const json = (body: unknown) => ({ method: "POST", headers: { "X-Requested-With": "XMLHttpRequest" }, body: JSON.stringify(body) });
 
@@ -36,6 +37,19 @@ export function getBusinessDashboard(query: { range: DashboardRange; status: Req
 export function getBusinessRequirement(id: string, signal?: AbortSignal) {
   return businessRequest<ApiSuccessEnvelope<BusinessRequirementData>>(`/business/requirements/${encodeURIComponent(id)}`, { signal });
 }
+export function getBusinessRequirements(query: BusinessRequirementsQuery, signal?: AbortSignal) {
+  const params = new URLSearchParams({ query: query.query, status: query.status, sort: query.sort, page: String(query.page) });
+  return businessRequest<ApiSuccessEnvelope<BusinessRequirementsData>>(`/business/requirements?${params}`, { signal });
+}
+export function createBusinessRequirement(input: BusinessRequirementInput, requestKey: string) {
+  return businessRequest<ApiSuccessEnvelope<BusinessRequirementReceipt>>("/business/requirements", json({ ...input, requestKey }));
+}
+export function updateBusinessRequirement(id: string, input: BusinessRequirementInput, revision: number) {
+  return businessRequest<ApiSuccessEnvelope<BusinessRequirementReceipt>>(`/business/requirements/${encodeURIComponent(id)}`, { ...json({ ...input, revision }), method: "PUT" });
+}
+export function withdrawBusinessRequirement(id: string, revision: number, reason: string) {
+  return businessRequest<ApiSuccessEnvelope<BusinessRequirementReceipt>>(`/business/requirements/${encodeURIComponent(id)}/withdraw`, json({ revision, reason }));
+}
 export function saveBusinessProfile(input: BusinessProfileInput) {
   return businessRequest<ApiSuccessEnvelope<{ profile: BusinessProfile }>>("/business/profile", { ...json(input), method: "PUT" });
 }
@@ -48,7 +62,7 @@ export function resetBusinessPassword(token: string, password: string) {
 
 // Only internal, implemented destinations are accepted after authentication.
 export function businessDestination(candidate: string | null) {
-  return candidate && (["/business", "/business/dashboard", "/business/onboarding", "/business/company", "/business/account"].includes(candidate)
-    || /^\/business\/requirements\/[a-zA-Z0-9_-]{1,64}$/.test(candidate))
+  return candidate && (["/business", "/business/dashboard", "/business/requirements", "/business/onboarding", "/business/company", "/business/account"].includes(candidate)
+    || /^\/business\/requirements\/[a-zA-Z0-9_-]{1,64}(?:\/edit)?$/.test(candidate))
     ? candidate : "/business";
 }

@@ -1,3 +1,5 @@
+import type { BusinessRequirementActivity } from "./business-requirements.types";
+
 export type RequirementStatus = "NEW" | "CONTACTED" | "QUALIFIED" | "CLOSED";
 export type RequirementFilter = "ALL" | RequirementStatus;
 export type DashboardRange = 7 | 30 | 90;
@@ -10,6 +12,7 @@ export interface RequirementSummary {
   jobLocation: string;
   projectDuration: string;
   status: RequirementStatus;
+  revision: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -30,5 +33,6 @@ export interface BusinessRequirementData {
     industry: string; expectedStartAt: string | null; details: string;
   };
   history: { id: string; createdAt: string; from: RequirementStatus; to: RequirementStatus }[];
+  activity: BusinessRequirementActivity[];
   hasEarlierHistory: boolean;
 }

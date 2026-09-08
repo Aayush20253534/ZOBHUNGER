@@ -12,10 +12,11 @@ async function withApi(override, run) {
     seen.push({ method: req.method, path: req.url, body: text, cookie: req.headers.cookie });
     const path = req.url.replace(/^\/api\/v1/, "");
     const custom = override(path, req.method);
-    const status = custom?.status ?? (path === "/health" ? 200 : req.method === "GET" ? 401 : 400);
+    const protectedRoute = path.startsWith("/business/");
+    const status = custom?.status ?? (path === "/health" ? 200 : protectedRoute ? 401 : 400);
     const body = custom?.body ?? (path === "/health"
-      ? { success: true, data: { features: { businessPortal: true, businessDashboard: true } } }
-      : { success: false, error: { code: req.method === "GET" ? "UNAUTHENTICATED" : "VALIDATION_ERROR" } });
+      ? { success: true, data: { features: { businessPortal: true, businessDashboard: true, businessRequirements: true } } }
+      : { success: false, error: { code: protectedRoute ? "UNAUTHENTICATED" : "VALIDATION_ERROR" } });
     res.writeHead(status, { "Content-Type": "application/json" });
     res.end(JSON.stringify(body));
   });
@@ -27,10 +28,10 @@ async function withApi(override, run) {
 test("deployment check probes real route methods without login data or cookies", async () => {
   await withApi(() => undefined, async (base, seen) => {
     const results = await checkBusinessRoutes(base);
-    assert.equal(results.length, 8);
+    assert.equal(results.length, 12);
     assert.ok(seen.some(request => request.path.endsWith("/auth/business-login") && request.method === "POST"));
     assert.ok(seen.every(request => !request.cookie));
-    assert.ok(seen.filter(request => request.method === "POST").every(request => request.body === "{}"));
+    assert.ok(seen.filter(request => request.method !== "GET").every(request => request.body === "{}"));
   });
 });
 test("a healthy old API is rejected when it lacks the business deployment marker", async () => {
@@ -47,3 +48,9 @@ test("a route accidentally made public cannot satisfy the protected workspace ch
   await withApi(path => path === "/business/workspace" ? { status: 200 } : undefined,
     base => assert.rejects(checkBusinessRoutes(base), /expected 401, received 200/));
 });
+for (const [method, path] of [["GET", "/business/requirements"], ["POST", "/business/requirements"], ["PUT", "/business/requirements/deployment-check"], ["POST", "/business/requirements/deployment-check/withdraw"]]) {
+  test(`deployment check rejects missing ${method} ${path}`, async () => {
+    await withApi((actualPath, actualMethod) => actualPath === path && actualMethod === method ? { status: 404 } : undefined,
+      base => assert.rejects(checkBusinessRoutes(base), /received 404/));
+  });
+}

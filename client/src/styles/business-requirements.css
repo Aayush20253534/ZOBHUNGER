@@ -1,0 +1,193 @@
+/* P2.3 — requirement workspace, editor and withdrawal confirmation. */
+.zb-biz-nav a[aria-current="location"] { background: #fbeaf0; color: #a52645; font-weight: 750; }
+.zb-req { min-width: 0; }
+.zb-req :is(button, input, textarea, select, summary, a):focus-visible, .zb-req-withdraw-dialog :focus-visible { outline: 3px solid #ae1f3c; outline-offset: 3px; }
+.zb-req button:disabled { cursor: default; }
+.zb-req-flow-banner { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 0.7rem; padding: 1.2rem; margin-bottom: 1.3rem; border: 1px solid #ead4df; border-radius: 1rem; background: linear-gradient(115deg, #fff, #fff0f5); }
+.zb-req-flow-banner > div { display: flex; align-items: center; gap: 0.65rem; min-width: 0; }
+.zb-req-flow-banner svg { width: 1.4rem; height: 1.4rem; color: #a42b4b; }
+.zb-req-flow-banner strong { font-size: 0.78rem; color: #6f3c54; line-height: 1.5; }
+.zb-req-flow-banner span { color: #a78698; font-size: 0.68rem; }
+.zb-req-controls { display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; }
+.zb-req-search { display: flex; flex: 1 1 20rem; align-items: center; gap: 0.6rem; padding-left: 0.85rem; min-width: 0; border: 1px solid #ded0da; border-radius: 0.65rem; background: #fff; }
+.zb-req-search > svg { color: #95778b; }
+.zb-req-search input { flex: 1; width: 0; min-width: 0; padding: 0.75rem 0; min-height: 2.9rem; border: 0; background: transparent; font: inherit; font-size: 0.82rem; }
+.zb-req-search > button { min-height: 2.9rem; padding: 0.65rem 0.9rem; border: 0; border-left: 1px solid #e8dce3; border-radius: 0 0.6rem 0.6rem 0; background: #fff6f9; color: #933653; font-size: 0.8rem; font-weight: 750; }
+.zb-req-status-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.zb-req-status-filters button { display: flex; align-items: center; gap: 0.65rem; min-height: 2.75rem; padding: 0.5rem 0.8rem; border: 1px solid #e2d5df; border-radius: 0.6rem; background: #fff; color: #755266; font-size: 0.8rem; }
+.zb-req-status-filters strong { min-width: 1.3rem; border-radius: 0.35rem; padding: 0.1rem 0.3rem; background: #f7eef4; font-size: 0.7rem; text-align: center; font-variant-numeric: tabular-nums; }
+.zb-req-status-filters button[aria-pressed="true"] { border-color: #a62647; background: #572537; color: #fff; }
+.zb-req-status-filters button[aria-pressed="true"] strong { background: #ffffff20; color: #fff; }
+.zb-req-filter-note { margin-block: 0.7rem 1rem !important; color: #7d6876; font-size: 0.73rem; }
+.zb-req-results-heading { display: flex; justify-content: space-between; align-items: center; gap: 0.65rem; margin-bottom: 0.9rem; color: #725868; font-size: 0.78rem; min-height: 2.75rem; }
+.zb-req-results-heading > p { min-width: 0; }
+.zb-req-results-heading button { display: inline-flex; align-items: center; gap: 0.3rem; flex-shrink: 0; min-height: 2.75rem; padding: 0.4rem; border: 0; background: transparent; color: #b0284b; font-size: 0.76rem; }
+.zb-req-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; list-style: none; margin: 0; padding: 0; }
+.zb-req-card-grid > li { display: flex; min-width: 0; }
+.zb-req-card { display: flex; flex-direction: column; width: 100%; min-width: 0; padding: 1.25rem; border: 1px solid #e6d7e0; border-radius: 1rem; background: #fff; transition: border-color 160ms ease, box-shadow 160ms ease; }
+.zb-req-card:hover { border-color: #c18a9f; box-shadow: 0 8px 24px #6c253714; }
+.zb-req-card-top { display: flex; justify-content: space-between; gap: 0.5rem; align-items: center; margin-bottom: 0.9rem; }
+.zb-req-card h2 { font-size: 1.1rem; line-height: 1.4; text-wrap: initial; }
+.zb-req-card-reference { display: block; margin-top: 0.3rem; font-size: 0.66rem; letter-spacing: 0.035em; color: #846375; }
+.zb-req-card-people { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.35rem; padding-block: 1rem; margin-block: 0.75rem; border-block: 1px solid #f0e6ec; }
+.zb-req-card-people strong { color: #7d2d48; font-size: 1.75rem; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+.zb-req-card-people > span { font-size: 0.72rem; color: #856376; }
+.zb-req-card-people > svg { margin-left: auto; align-self: center; color: #bb7a96; }
+.zb-req-card > p { display: flex; align-items: flex-start; gap: 0.45rem; margin-bottom: 0.6rem; color: #6b5362; font-size: 0.78rem; }
+.zb-req-card > p > svg { width: 1rem; height: 1rem; margin-top: 0.1rem; color: #a7748b; }
+.zb-req-card-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.65rem; margin-top: auto; padding-top: 1rem; font-size: 0.67rem; color: #7d6574; }
+.zb-req-card-bottom > span:last-child { display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 750; color: #af2449; }
+.zb-req-card-bottom svg { width: 0.9rem; height: 0.9rem; }
+.zb-req-pagination { margin-top: 1.2rem; }
+.zb-req-empty { display: grid; justify-items: center; gap: 0.95rem; padding: 2.5rem; text-align: center; background: radial-gradient(ellipse at 80% 0, #ffedf4, transparent 65%), #fff; }
+.zb-req-empty h2 { font-size: 1.45rem; }
+.zb-req-empty > p { max-width: 36rem; font-size: 0.86rem; color: #7b596e; }
+.zb-req-back { padding: 0; margin-bottom: 1rem; border: 0; background: transparent; }
+.zb-req-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.1rem; padding: 0; margin-bottom: 1.4rem !important; list-style: none; }
+.zb-req-steps > li { position: relative; display: flex; align-items: center; gap: 0.65rem; padding: 0.9rem; border: 1px solid #e6d8e2; border-radius: 0.75rem; background: #fff; min-width: 0; }
+.zb-req-steps > li:not(:last-child)::after { content: ""; position: absolute; left: 100%; top: 50%; width: 1.1rem; height: 1px; background: #d7b7c8; }
+.zb-req-steps li > span { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; flex-shrink: 0; border-radius: 0.7rem; background: #f5ebf2; color: #a06a85; font-size: 0.75rem; font-weight: 750; }
+.zb-req-steps li > div { min-width: 0; }
+.zb-req-steps small { display: block; font-size: 0.55rem; letter-spacing: 0.12em; color: #977a8e; }
+.zb-req-steps strong { display: block; font-size: 0.85rem; line-height: 1.5; color: #806073; }
+.zb-req-steps li[aria-current="step"] { border-color: #c87898; background: #fff6f9; box-shadow: 0 4px 12px #6c233408; }
+.zb-req-steps li[aria-current="step"] > span { color: #fff; background: #bb2544; }
+.zb-req-steps li[aria-current="step"] strong { color: #81233d; }
+.zb-req-steps li[data-complete="true"] > span { color: #7c2c4e; background: #f0dce8; }
+.zb-req-editor-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(14rem, 0.85fr); gap: 1.2rem; align-items: start; }
+.zb-req-form { padding: 1.4rem; }
+.zb-req-form-heading { display: flex; gap: 0.8rem; align-items: center; margin-bottom: 1.4rem; }
+.zb-req-form-heading h2 { font-size: 1.35rem; text-wrap: initial; }
+.zb-req-form-heading p { margin-top: 0.3rem; color: #785b6f; font-size: 0.8rem; }
+.zb-req-form-fields { display: grid; gap: 1.2rem; min-width: 0; margin: 0; padding: 0; border: 0; }
+.zb-req-field-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.zb-req-field { display: grid; align-content: start; gap: 0.4rem; min-width: 0; }
+.zb-req-field > label, .zb-req-service-field > legend { font-size: 0.8rem; color: #593548; font-weight: 700; }
+.zb-req-field label > span, .zb-req-service-field > legend > span { color: #b32746; }
+.zb-req-field :is(input, textarea) { width: 100%; min-width: 0; min-height: 2.9rem; padding: 0.72rem 0.8rem; border: 1px solid #ddccd8; border-radius: 0.6rem; background: #fff; color: #38232e; font: inherit; font-size: 0.875rem; line-height: 1.6; }
+.zb-req-field textarea { resize: vertical; min-height: 7rem; }
+.zb-req-field :is(input, textarea)[aria-invalid="true"] { border-color: #bb2446; }
+.zb-req-field :is(input, textarea)::placeholder { color: #947e8b; }
+.zb-req-hint { color: #7d6375; font-size: 0.73rem; line-height: 1.6; }
+.zb-req-field-error { color: #a81f3d; font-size: 0.77rem; line-height: 1.6; }
+.zb-req-service-field { min-width: 0; padding: 0; border: 0; margin: 0; }
+.zb-req-service-field > legend { margin-bottom: 0.7rem; }
+.zb-req-service-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.55rem; }
+.zb-req-service-options > label { position: relative; cursor: pointer; min-width: 0; }
+.zb-req-service-options input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; }
+.zb-req-service-options label > span { display: flex; align-items: center; gap: 0.6rem; min-height: 3.3rem; padding: 0.75rem; border: 1px solid #e4d6df; border-radius: 0.65rem; background: #fff; color: #785267; }
+.zb-req-service-options strong { font-size: 0.78rem; font-weight: 650; line-height: 1.4; }
+.zb-req-service-options svg { color: #a86785; }
+.zb-req-service-options input:checked + span { border-color: #b95075; background: #fff0f5; box-shadow: inset 0 0 0 1px #b95075; color: #862641; }
+.zb-req-service-options input:checked + span > svg { color: #b1264a; }
+.zb-req-service-options input:focus-visible + span { outline: 3px solid #a31f3e; outline-offset: 3px; }
+.zb-req-service-field > .zb-req-field, .zb-req-service-field > .zb-req-field-error { margin-top: 0.8rem; }
+.zb-req-section-label { display: flex; align-items: center; gap: 0.65rem; }
+.zb-req-section-label > svg { color: #a6355e; }
+.zb-req-section-label h3 { font-size: 0.95rem; text-wrap: initial; }
+.zb-req-section-label p, .zb-req-section-label > span { color: #87677d; font-size: 0.73rem; }
+.zb-req-section-label > span { margin-left: auto; }
+.zb-req-location-fields { display: grid; gap: 0.8rem; }
+.zb-req-location-fields > div { display: flex; align-items: flex-start; gap: 0.5rem; }
+.zb-req-location-fields .zb-req-field { flex: 1; }
+.zb-req-remove-location { display: grid; place-items: center; width: 2.9rem; height: 2.9rem; flex-shrink: 0; margin-top: 1.7rem; border: 1px solid #e6cad8; border-radius: 0.6rem; color: #b34266; background: #fff5f8; }
+.zb-req-add-location { justify-self: start; padding: 0; background: transparent; border: 0; font-size: 0.8rem; }
+.zb-req-contact-intro { font-size: 0.82rem; color: #7a5a70; }
+.zb-req-review { padding: 1rem; border: 1px solid #ead4e1; border-radius: 0.75rem; background: #fcf5f9; }
+.zb-req-review > div:first-child { display: flex; align-items: center; gap: 0.5rem; color: #8b3354; margin-bottom: 0.65rem; }
+.zb-req-review h3 { font-size: 0.88rem; }
+.zb-req-review dl { display: grid; gap: 0.65rem; }
+.zb-req-review dl > div { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr); gap: 1rem; font-size: 0.77rem; }
+.zb-req-review dt { color: #8b6b7f; }
+.zb-req-review dd { color: #68405a; font-weight: 650; }
+.zb-req-review details { margin-top: 0.85rem; border-top: 1px solid #ead7e3; }
+.zb-req-review summary { cursor: pointer; padding: 0.8rem 0; min-height: 2.75rem; font-size: 0.77rem; color: #97294d; font-weight: 700; }
+.zb-req-review details > p { white-space: pre-wrap; font-size: 0.82rem; line-height: 1.8; color: #735369; }
+.zb-req-form-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.5rem; padding-top: 1.1rem; border-top: 1px solid #eee0e9; }
+.zb-req-form-actions .zb-biz-button { font-size: 0.8rem; }
+.zb-req-form-footnote { font-size: 0.71rem; color: #846679; margin-top: 1rem !important; }
+.zb-req-edit-note { border-left: 3px solid #bd597d; padding: 0.7rem 0.9rem; background: #fcf0f6; font-size: 0.77rem; color: #8c3e5d; margin-bottom: 1rem !important; }
+.zb-req-form-error { display: grid; gap: 0.6rem; padding: 1rem; margin-bottom: 1rem; border: 1px solid #d191a6; border-radius: 0.65rem; background: #fff2f7; color: #9c2445; font-size: 0.82rem; }
+.zb-req-form-side { border: 1px solid #e4c9d9; border-radius: 1rem; background: linear-gradient(145deg, #fff8fb, #f6e8f1); overflow: hidden; min-width: 0; }
+.zb-req-form-side > figure { position: relative; }
+.zb-biz .zb-req-form-side .zb-execution-image { height: 8.5rem; aspect-ratio: auto; }
+.zb-req-form-side figcaption { position: absolute; bottom: 0.5rem; left: 0.6rem; padding: 0.25rem 0.4rem; border-radius: 0.3rem; color: #fff; background: #42142ccf; font-size: 0.52rem; }
+.zb-req-form-side-copy { padding: 1.2rem; }
+.zb-req-form-side-copy h2 { font-size: 1.15rem; margin-block: 0.55rem 0.9rem; text-wrap: initial; }
+.zb-req-preview-people { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem; padding-block: 0.9rem; margin-bottom: 0.85rem; border-block: 1px solid #e7cddd; color: #aa3b68; }
+.zb-req-preview-people strong { font-size: 1.75rem; line-height: 1; letter-spacing: -0.05em; color: #802b50; font-variant-numeric: tabular-nums; }
+.zb-req-preview-people > span { font-size: 0.73rem; }
+.zb-req-form-side-copy > p:not(.zb-biz-eyebrow) { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.7rem; color: #805971; font-size: 0.77rem; }
+.zb-req-side-note { display: flex; gap: 0.5rem; padding-top: 0.9rem; border-top: 1px solid #e5ccdc; color: #7d576f; font-size: 0.73rem; }
+.zb-req-side-note > svg { color: #a23c69; }
+.zb-req-success { display: grid; justify-items: center; gap: 1rem; max-width: 43rem; margin: 2rem auto; padding: 2.5rem; text-align: center; background: radial-gradient(ellipse at 80% 0, #ffedf5, transparent 60%), #fff; }
+.zb-req-success-icon { display: grid; place-items: center; width: 4.5rem; height: 4.5rem; border: 1px solid #e1c5d7; border-radius: 1.25rem; color: #a82b50; background: #fff0f7; }
+.zb-req-success-icon svg { width: 2.3rem; height: 2.3rem; }
+.zb-req-success > p:not(.zb-biz-eyebrow) { font-size: 0.88rem; color: #7e5872; max-width: 34rem; }
+.zb-req-receipt-id { max-width: 100%; font-size: 0.74rem; color: #775169; overflow-wrap: anywhere; }
+.zb-req-success .zb-biz-actions { justify-content: center; }
+.zb-req-detail-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-bottom: 1.2rem; }
+.zb-req-closed-note { padding: 0.8rem 1rem; margin-bottom: 1.2rem !important; border: 1px solid #e4d4df; border-radius: 0.65rem; background: #f9f0f6; color: #79586e; font-size: 0.8rem; }
+.zb-req-withdraw-dialog { width: min(32rem, calc(100vw - 2rem)); max-height: calc(100dvh - 3rem); padding: 1.5rem; border: 1px solid #dbc0d1; border-radius: 1rem; background: #fff; color: #4d283c; margin: auto; overflow-y: auto; box-shadow: 0 20px 70px #280b2660; }
+.zb-req-withdraw-dialog::backdrop { background: #27112280; backdrop-filter: blur(3px); }
+.zb-req-dialog-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.zb-req-dialog-heading > button { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border: 1px solid #e8d5e0; border-radius: 0.6rem; background: #fff; color: #976580; }
+.zb-req-withdraw-dialog h2 { font-size: 1.35rem; margin-bottom: 0.75rem; }
+.zb-req-withdraw-dialog form > p { font-size: 0.85rem; color: #7d576e; margin-bottom: 1rem; }
+.zb-req-withdraw-dialog label { display: block; margin-top: 1.2rem; margin-bottom: 0.45rem; font-size: 0.8rem; font-weight: 700; }
+.zb-req-withdraw-dialog textarea { width: 100%; min-height: 6.5rem; padding: 0.75rem; border: 1px solid #dcc4d3; border-radius: 0.65rem; background: #fff; font: inherit; font-size: 1rem; resize: vertical; }
+.zb-req-withdraw-dialog .zb-req-form-actions { margin-top: 1rem; }
+.zb-req-withdraw-dialog .zb-req-field-error { margin-top: 0.75rem; color: #ab2343; }
+
+@media (max-width: 1200px) and (min-width: 801px) {
+  .zb-req-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .zb-req-editor-grid { grid-template-columns: minmax(0, 1fr); }
+  .zb-req-form-side { display: grid; grid-template-columns: 10rem minmax(0, 1fr); }
+  .zb-biz .zb-req-form-side .zb-execution-image { height: 100%; min-height: 12rem; }
+  .zb-req-flow-banner > div { flex-wrap: wrap; gap: 0.5rem; }
+  .zb-req-flow-banner strong { flex-basis: 100%; }
+}
+@media (max-width: 800px) {
+  .zb-req-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .zb-req-editor-grid { grid-template-columns: minmax(0, 1fr); }
+  .zb-req-form-side { display: grid; grid-template-columns: 9rem minmax(0, 1fr); }
+  .zb-biz .zb-req-form-side .zb-execution-image { height: 100%; min-height: 12rem; }
+  .zb-req-field :is(input, textarea), .zb-req-search input { font-size: 1rem; }
+}
+@media (max-width: 620px) {
+  .zb-req-card-grid { grid-template-columns: minmax(0, 1fr); }
+  .zb-req-card { padding: 1.15rem; }
+  .zb-req-flow-banner { gap: 0.5rem; padding: 0.95rem; }
+  .zb-req-flow-banner > div { flex-wrap: wrap; gap: 0.35rem; }
+  .zb-req-flow-banner strong { flex-basis: 100%; font-size: 0.72rem; }
+  .zb-req-flow-banner svg { width: 1.15rem; height: 1.15rem; }
+  .zb-req-flow-banner > span { display: none; }
+  .zb-req-flow-banner { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .zb-req-search { flex-basis: 100%; }
+  .zb-req-status-filters { gap: 0.4rem; }
+  .zb-req-status-filters button { flex: 1 1 6rem; justify-content: space-between; font-size: 0.77rem; }
+  .zb-req-steps { gap: 0.6rem; }
+  .zb-req-steps > li { flex-direction: column; align-items: flex-start; gap: 0.55rem; padding: 0.7rem; }
+  .zb-req-steps > li:not(:last-child)::after { width: 0.6rem; top: 1.8rem; }
+  .zb-req-steps strong { font-size: 0.73rem; }
+  .zb-req-steps small { display: none; }
+  .zb-req-form { padding: 1.1rem; }
+  .zb-req-form-heading { align-items: flex-start; gap: 0.65rem; }
+  .zb-req-form-heading h2 { font-size: 1.2rem; }
+  .zb-req-field-pair { grid-template-columns: minmax(0, 1fr); }
+  .zb-req-service-options strong { font-size: 0.75rem; }
+  .zb-req-service-options label > span { gap: 0.45rem; padding: 0.7rem 0.6rem; }
+  .zb-req-service-options svg { width: 1rem; height: 1rem; }
+  .zb-req-form-side { grid-template-columns: minmax(0, 1fr); }
+  .zb-biz .zb-req-form-side .zb-execution-image { height: 8rem; min-height: 0; }
+  .zb-req-review dl > div { grid-template-columns: minmax(0, 1fr); gap: 0.2rem; }
+  .zb-req-form-actions > .zb-biz-button { flex: 1 1 8rem; }
+  .zb-req-empty, .zb-req-success { padding: 1.5rem; }
+  .zb-req-success { margin-block: 0; }
+  .zb-req-success .zb-biz-actions > a { width: 100%; }
+  .zb-req-detail-actions > :is(a, button) { width: 100%; }
+  .zb-req-withdraw-dialog { padding: 1.1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zb-req-card { transition: none; }
+}

@@ -8,6 +8,7 @@ import {
   UserRole,
 } from "../../generated/prisma/client.js";
 import { prisma } from "../../config/db.js";
+import { HttpError } from "../../utils/http-error.js";
 import type {
   ListAdminJobsQuery,
   ListApplicationsQuery,
@@ -329,10 +330,12 @@ export async function updateRequirementStatusWithAudit(
     if (!current) return null;
     if (current.status === status) return { entity: current, changed: false };
 
-    const updated = await tx.workforceRequirement.update({
-      where: { id },
-      data: { status },
+    const changed = await tx.workforceRequirement.updateMany({
+      where: { id, revision: current.revision },
+      data: { status, revision: { increment: 1 } },
     });
+    if (changed.count !== 1) throw new HttpError(409, "This requirement changed. Refresh and review it before updating the status.", { code: "REQUIREMENT_CHANGED" });
+    const updated = await tx.workforceRequirement.findUniqueOrThrow({ where: { id } });
 
     await tx.auditLog.create({
       data: {
