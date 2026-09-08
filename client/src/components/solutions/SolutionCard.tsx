@@ -1,45 +1,19 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  CalendarClock,
-  Flag,
-  Headset,
-  Megaphone,
-  Store,
-  TrendingUp,
-  UsersRound,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ExecutionImage } from "@/components/common/ExecutionImage";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { executionVisuals } from "@/data/execution-visuals";
+import { solutionCoverVisuals } from "@/data/solution-cover-visuals";
 import { solutionVisuals } from "@/data/solution-visuals";
 import type { SolutionSummary } from "@/types/catalog.types";
 import type { SolutionSlug } from "@/types/solution-detail.types";
-
-const icons = {
-  "workforce-solutions": UsersRound,
-  "sales-force": TrendingUp,
-  "promoter-solutions": Megaphone,
-  "retail-execution": Store,
-  "brand-activation": Flag,
-  "business-operations": Headset,
-  "gig-workforce": CalendarClock,
-};
-
-const cardNumbers: Record<SolutionSlug, string> = {
-  "workforce-solutions": "01",
-  "sales-force": "02",
-  "promoter-solutions": "03",
-  "retail-execution": "04",
-  "brand-activation": "05",
-  "business-operations": "06",
-  "gig-workforce": "07",
-};
+import "@/styles/solution-covers.css";
 
 export function SolutionCard({ solution }: { solution: SolutionSummary }) {
   const slug = solution.slug as SolutionSlug;
-  const Icon = icons[slug] ?? UsersRound;
   const visual = solutionVisuals[slug];
+  const cover = executionVisuals[solutionCoverVisuals[slug]];
 
   return (
     <Link
@@ -48,16 +22,11 @@ export function SolutionCard({ solution }: { solution: SolutionSummary }) {
       aria-label={`Explore ${solution.label}`}
     >
       <Card className="zb-card zb-solution-showcase-card">
-        <div className="zb-solution-card-graphic" aria-hidden="true">
-          <span className="zb-solution-card-icon-wrap">
-            <Icon />
-          </span>
-          <span className="zb-solution-card-graphic-line" />
-          <span className="zb-solution-card-dot zb-solution-card-dot--one" />
-          <span className="zb-solution-card-dot zb-solution-card-dot--two" />
-          <span className="zb-solution-card-dot zb-solution-card-dot--three" />
-          <strong>{cardNumbers[slug]}</strong>
-        </div>
+        <ExecutionImage
+          visual={cover}
+          className="zb-solution-card-cover"
+          sizes="(min-width: 1280px) 380px, (min-width: 1100px) 30vw, (min-width: 640px) 45vw, calc(100vw - 80px)"
+        />
 
         <div className="zb-card-top zb-solution-card-heading-row">
           <Badge className="zb-chip" data-tone="accent">

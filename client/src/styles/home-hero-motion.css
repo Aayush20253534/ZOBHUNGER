@@ -1,83 +1,203 @@
-/* Run once on a fresh render, including refresh, without waiting for JavaScript.
-   Static content is the default for reduced motion, printing and older browsers. */
+/* A deliberate entrance, then quiet continuous motion around the work image.
+   Copy and calls to action settle once; animation never changes the layout. */
+.zb-home-hero .zb-home-hero-figure {
+  position: relative;
+  border-color: var(--zb-soft-border);
+  box-shadow: 0 18px 48px rgb(91 21 34 / 14%);
+}
+
+.zb-hero-motion-toggle {
+  position: absolute;
+  z-index: 3;
+  top: .65rem;
+  right: .65rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  min-height: 2.75rem;
+  padding: .5rem .7rem;
+  border: 1px solid #ffffff60;
+  border-radius: 999px;
+  background: #30151eef;
+  color: #fff;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.zb-hero-motion-toggle svg { width: .85rem; height: .85rem; }
+.zb-hero-motion-toggle:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+.zb-hero-execution-rail {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .6rem;
+  padding: 1.1rem .8rem .9rem;
+  background: #fff8f9;
+}
+
+.zb-hero-execution-rail > span {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: .2rem;
+  min-width: 0;
+  text-align: center;
+  color: var(--zb-ink);
+}
+
+.zb-hero-execution-rail > span > svg {
+  box-sizing: content-box;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: .5rem;
+  margin-bottom: .2rem;
+  border: 1px solid #e6a9b3;
+  border-radius: .7rem;
+  background: #fff;
+  color: var(--zb-action);
+}
+
+.zb-hero-execution-rail strong { font-size: .8125rem; }
+.zb-hero-execution-rail small { color: var(--zb-muted); font-size: .75rem; }
+
+.zb-hero-rail-line {
+  position: absolute;
+  top: 2.15rem;
+  left: 17%;
+  right: 17%;
+  height: 2px;
+  background: #ecc0c8;
+}
+
+.zb-hero-rail-line > span {
+  position: absolute;
+  width: .7rem;
+  height: .7rem;
+  top: -.28rem;
+  left: 0;
+  border-radius: 50%;
+  background: var(--zb-action);
+  box-shadow: 0 0 0 4px #f5d9df;
+}
+
 @media screen and (prefers-reduced-motion: no-preference) {
-  .zb-home-hero-copy > :is(
-    .zb-eyebrow,
-    h1,
-    .zb-home-hero-description,
-    .zb-home-hero-actions,
-    .zb-home-worker-link
-  ),
+  .zb-home-hero-copy > :is(.zb-eyebrow, h1, .zb-home-hero-description, .zb-home-hero-actions, .zb-home-worker-link),
   .zb-home-hero > :is(.zb-home-hero-figure, .zb-home-hero-footer) {
-    animation: zb-home-hero-enter 600ms cubic-bezier(0.22, 1, 0.36, 1)
+    animation: zb-home-hero-enter 1400ms cubic-bezier(.16, 1, .3, 1)
       var(--zb-hero-enter-delay, 0ms) 1 backwards;
   }
 
   .zb-home-hero-copy > .zb-eyebrow {
-    --zb-hero-enter-y: -10px;
+    --zb-hero-enter-y: -28px;
+    --zb-hero-enter-opacity: .45;
   }
 
   .zb-home-hero-copy > h1 {
-    --zb-hero-enter-y: -18px;
-    --zb-hero-enter-delay: 60ms;
-    /* Keep the main heading readable from the first paint. */
-    --zb-hero-enter-opacity: 0.6;
+    --zb-hero-enter-y: 44px;
+    --zb-hero-enter-delay: 160ms;
+    /* Keep the headline readable from the first paint. */
+    --zb-hero-enter-opacity: .65;
   }
 
-  .zb-home-hero-description {
-    --zb-hero-enter-delay: 120ms;
+  .zb-home-hero-copy > .zb-home-hero-description {
+    --zb-hero-enter-y: 32px;
+    --zb-hero-enter-delay: 440ms;
+    --zb-hero-enter-opacity: .5;
   }
 
-  .zb-home-hero-actions {
-    --zb-hero-enter-delay: 180ms;
+  .zb-home-hero-copy > .zb-home-hero-actions {
+    --zb-hero-enter-y: 28px;
+    --zb-hero-enter-delay: 660ms;
   }
 
-  .zb-home-worker-link {
-    --zb-hero-enter-delay: 230ms;
-  }
+  .zb-home-hero-copy > .zb-home-worker-link { --zb-hero-enter-delay: 820ms; }
 
-  .zb-home-hero-figure {
-    --zb-hero-enter-x: 18px;
-    --zb-hero-enter-y: 0px;
-    --zb-hero-enter-delay: 90ms;
-    /* The priority image stays visible while it settles into position. */
+  .zb-home-hero > .zb-home-hero-figure {
+    --zb-hero-enter-x: -36px;
+    --zb-hero-enter-y: 24px;
+    --zb-hero-enter-rotate: -2deg;
+    --zb-hero-enter-scale: .96;
+    --zb-hero-enter-delay: 300ms;
     --zb-hero-enter-opacity: 1;
+    animation-duration: 1800ms;
   }
 
-  .zb-home-hero-footer {
-    --zb-hero-enter-y: 10px;
-    --zb-hero-enter-delay: 260ms;
+  .zb-home-hero > .zb-home-hero-footer {
+    --zb-hero-enter-y: 20px;
+    --zb-hero-enter-delay: 1000ms;
   }
 
-  /* Reveal focused links without restarting the animation when focus leaves. */
+  .zb-home-hero-figure[data-motion-ready="true"] .zb-hero-motion-toggle { display: inline-flex; }
+
+  .zb-home-hero-figure .zb-home-hero-image img {
+    animation: zb-hero-image-drift 14s ease-in-out 2s infinite alternate;
+    animation-play-state: paused;
+  }
+
+  .zb-home-hero-figure .zb-hero-rail-line > span {
+    animation: zb-hero-trace 9s ease-in-out 2s infinite;
+    animation-play-state: paused;
+  }
+
+  .zb-home-hero-figure .zb-hero-execution-rail > span > svg {
+    animation: zb-hero-stage 9s ease-in-out 2s infinite;
+    animation-play-state: paused;
+  }
+
+  .zb-home-hero-figure .zb-hero-execution-rail > span:nth-of-type(2) > svg { animation-delay: 5s; }
+  .zb-home-hero-figure .zb-hero-execution-rail > span:nth-of-type(3) > svg { animation-delay: 8s; }
+
+  .zb-home-hero-figure[data-motion-ready="true"][data-motion-paused="false"] :is(
+    .zb-home-hero-image img,
+    .zb-hero-rail-line > span,
+    .zb-hero-execution-rail > span > svg
+  ) {
+    animation-play-state: running;
+  }
+
+  /* Keyboard focus is immediate, including during the staged entrance. */
   .zb-home-hero .zb-home-hero-actions:focus-within,
   .zb-home-hero .zb-home-worker-link:focus-within,
-  .zb-home-hero .zb-home-hero-footer:focus-within {
+  .zb-home-hero .zb-home-hero-footer:focus-within,
+  .zb-home-hero .zb-home-hero-figure:focus-within {
     opacity: 1 !important;
     transform: none !important;
   }
 }
 
-/* Follow the stacked hero layout without extending the mobile page sideways. */
-@media (max-width: 899px) {
-  .zb-home-hero-figure {
+@media screen and (max-width: 899px) and (prefers-reduced-motion: no-preference) {
+  .zb-home-hero > .zb-home-hero-figure {
     --zb-hero-enter-x: 0px;
-    --zb-hero-enter-y: 12px;
+    --zb-hero-enter-rotate: 0deg;
   }
 }
 
 @keyframes zb-home-hero-enter {
   from {
-    opacity: var(--zb-hero-enter-opacity, 0);
-    transform: translate3d(
-      var(--zb-hero-enter-x, 0px),
-      var(--zb-hero-enter-y, 12px),
-      0
-    );
+    opacity: var(--zb-hero-enter-opacity, .25);
+    transform: translate3d(var(--zb-hero-enter-x, 0px), var(--zb-hero-enter-y, 20px), 0)
+      rotate(var(--zb-hero-enter-rotate, 0deg)) scale(var(--zb-hero-enter-scale, 1));
   }
+  to { opacity: 1; transform: translate3d(0, 0, 0) rotate(0) scale(1); }
+}
 
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
+@keyframes zb-hero-image-drift {
+  from { transform: scale(1); }
+  to { transform: scale(1.045); }
+}
+
+@keyframes zb-hero-trace {
+  0%, 12% { transform: translateX(0); left: 0; opacity: 1; }
+  40%, 48% { transform: translateX(-50%); left: 50%; opacity: 1; }
+  76%, 90% { transform: translateX(-100%); left: 100%; opacity: 1; }
+  94%, 100% { transform: translateX(-100%); left: 100%; opacity: 0; }
+}
+
+@keyframes zb-hero-stage {
+  0%, 27% { background: #8b2035; color: #fff; border-color: #8b2035; }
+  36%, 100% { background: #fff; color: var(--zb-action); border-color: #e6a9b3; }
 }

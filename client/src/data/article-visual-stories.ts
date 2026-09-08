@@ -32,8 +32,8 @@ export interface ArticleVisualStory {
 // evidence. Explicit slug mappings keep unrelated future articles unchanged.
 const articleVisualStories = {
   "build-a-field-workforce-that-performs-from-day-one": {
-    cover: "field-executives",
-    coverCaption: "Role clarity connects the customer conversation with the follow-up the business needs.",
+    cover: "workforce-hiring",
+    coverCaption: "A practical screening conversation connects the candidate's experience with the work expected from day one.",
     service: "workforce-solutions",
     serviceLabel: "Workforce Solutions",
     example: {
@@ -58,8 +58,8 @@ const articleVisualStories = {
     },
   },
   "operating-system-for-distributed-workforce-management": {
-    cover: "field-executives",
-    coverCaption: "A distributed team needs a shared understanding of the task, the record and the next owner.",
+    cover: "operations-coordination",
+    coverCaption: "Coordinators turn field updates into clear actions, with a shared understanding of the record and its next owner.",
     service: "business-operations",
     serviceLabel: "Business Operations",
     example: {
@@ -110,8 +110,8 @@ const articleVisualStories = {
     },
   },
   "gig-workforce-at-scale-speed-quality-control": {
-    cover: "survey",
-    coverCaption: "A short field assignment works best when the task and the required submission are clear before it begins.",
+    cover: "last-mile-delivery",
+    coverCaption: "From a delivery handover to a market visit, flexible assignments need a clear task and a check before work begins.",
     service: "gig-workforce",
     serviceLabel: "Gig Workforce",
     example: {

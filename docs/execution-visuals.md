@@ -27,10 +27,10 @@ of a completed client engagement.
 - Styles: `client/src/styles/execution-image.css`.
 - Each catalog entry includes a title, descriptive alt text, a caption and three activity steps.
 
-The homepage hero now consumes the field-executive asset through the shared
-component. The existing Part 2 entrance animation still applies to its figure.
-The other scenes are ready for the homepage, service, blog and case-study layouts
-in the following parts. Creating the assets does not insert those layouts yet.
+The homepage hero consumes the field-executive asset through the shared component.
+Parts 4–7 use these scenes across the homepage, service stories, blogs and case
+studies. Part 7 extends the image set and replaces the earlier hero entrance with
+a longer sequence and controllable continuous motion.
 
 ## Reuse
 
@@ -100,3 +100,53 @@ Primary scene: In a welcoming Indian outdoor retail market, a female ZOBHUNGER p
 ### Card and field executives
 
 Primary scene: At the entrance to a busy Indian neighbourhood retail market, two ZOBHUNGER field executives, one woman and one man in matching red polos and dark trousers, are helping an adult customer understand a generic card-service offering. The female executive shows an open brochure with a simple unbranded blank sample card illustration and neutral graphic blocks, with no rates, promises, numbers or readable fine print. The male executive holds a tablet ready to record the enquiry and listens. The customer in everyday clothing asks a question and points to the brochure. Show actual respectful product explanation and field lead capture, not a team portrait. Their ZOBHUNGER uniforms and practical market surroundings should immediately convey trained field staff working with customers on the ground.
+
+
+## Part 7 additions: service covers and case-study scenes
+
+Mode: built-in image generation, five independent new landscape scenes, without
+reference images. The results were visually inspected for the work interaction,
+faces, hands and the ZOBHUNGER wordmark. No creative edits were made after generation.
+Sharp converted each image to the same three WebP sizes at quality 82, effort 6.
+The five additions total approximately 1.05 MiB across all 15 variants; a 600px
+variant is approximately 29–40 KB. Original PNGs are not needed at runtime.
+
+| Catalog key | Placement | Asset paths (under `client/public/images/execution/`) |
+| --- | --- | --- |
+| `workforce-hiring` | Workforce recruitment | `workforce-hiring-600.webp`, `workforce-hiring-1200.webp`, `workforce-hiring-1536.webp` |
+| `operations-coordination` | Operations coordination | `operations-coordination-600.webp`, `operations-coordination-1200.webp`, `operations-coordination-1536.webp` |
+| `product-demonstration` | In-store product demonstration | `product-demonstration-600.webp`, `product-demonstration-1200.webp`, `product-demonstration-1536.webp` |
+| `last-mile-delivery` | Delivery workforce | `last-mile-delivery-600.webp`, `last-mile-delivery-1200.webp`, `last-mile-delivery-1536.webp` |
+| `mobility-onboarding` | Mobility partner onboarding | `mobility-onboarding-600.webp`, `mobility-onboarding-1200.webp`, `mobility-onboarding-1536.webp` |
+
+The service catalogue uses explicit cover mappings in
+`client/src/data/solution-cover-visuals.ts`. Recruitment, operations and gig-workforce
+articles now use the new scenes; the other article covers retain the relevant
+field-sales, retail and sampling scenes from Part 3. All eight case studies use
+activity-specific photographs through `client/src/data/case-study-visuals.ts`.
+
+### Part 7 common prompt
+
+Use case: photorealistic-natural.
+Asset type: professional ZOBHUNGER website service-card, blog and case-study cover.
+Create a polished but candid editorial photograph, landscape 1536x1024, of fictional adult Indian people doing real work. Natural daylight, believable Indian working environment, crisp faces and hands, realistic skin and fabric textures, warm neutral setting with burgundy accents. All ZOBHUNGER staff wear neat deep burgundy-red polo shirts with the small exact white embroidered uppercase word "ZOBHUNGER" on the left chest (Z O B H U N G E R), charcoal trousers and a simple dark lanyard with anonymous ID. Other people wear ordinary appropriate clothing. Wide balanced composition, all essential faces, uniforms and the work interaction fit comfortably in the middle horizontal band for responsive cover cropping; keep extra space above heads and below hands. People focused on the task, natural body language, no staged handshake or posing at camera. No added titles, captions, watermarks, legible personal details, real client logos or invented readable dashboard metrics. No collage, no diagram, no split panels, no glossy 3D rendering.
+
+### Workforce recruitment
+
+Scene: Inside a modest bright Indian recruitment office, a female ZOBHUNGER recruiter talks with an adult male job candidate across a desk. She listens and reviews a simple role checklist on a clipboard; he discusses the assignment and holds a plain document folder. A closed laptop and pen on desk, soft out-of-focus office context. The visible interaction should clearly communicate screening and explaining a workforce assignment, respectful and practical.
+
+### Operations coordination
+
+Scene: At a bright Indian operations office, a female ZOBHUNGER coordinator and a male ZOBHUNGER colleague review field updates together at a laptop. One points to a simple anonymous task list on screen while the other notes the next action beside a tablet. A blurred planning board in the background with simple location pins and no legible numbers. Convey coordination, checking records, assigning follow-up and supporting distributed market teams. Faces and both branded polo chest areas are visible.
+
+### In-store product demonstration
+
+Scene: In a contemporary everyday Indian consumer electronics store, a female ZOBHUNGER in-store promoter demonstrates an unbranded small portable speaker to an adult male shopper at the counter. She points to its controls and explains its features as the shopper listens and tries a button. Clean shelves with unbranded boxed electronics in the background. Focus on the product, the natural interaction, and the clearly readable embroidered company wordmark. No sample food, no crowd.
+
+### Delivery workforce
+
+Scene: At an Indian neighbourhood parcel dispatch point, a male ZOBHUNGER field coordinator scans a generic barcode label on a sealed brown parcel while handing it to an adult delivery rider in a plain dark work jacket. The rider's helmet is worn with visor up or held safely; a stationary delivery scooter and neat parcel racks appear in the background. Both people are safely standing, focused on the handover. No moving vehicle, no identifiable address, no delivery-platform logos. Convey parcel handover and preparing a delivery assignment.
+
+### Mobility partner onboarding
+
+Scene: Outside a small Indian mobility partner support point, a female ZOBHUNGER onboarding executive helps an adult male prospective rider understand a simple registration form on a tablet. The rider holds a plain helmet and stands beside his safely parked scooter; the executive points at a form field while explaining the process. A modest street-side office in background, no legible shop names. Make the tablet guidance and rider onboarding unmistakable, with natural focused expressions, the embroidered company wordmark visible, no parcel boxes and no moving vehicle.

@@ -1,0 +1,12 @@
+/* Real activity fills the cover; the service and process remain below it. */
+.zb-solution-showcase-card .zb-solution-card-cover {
+  flex-shrink: 0;
+  min-width: 0;
+  aspect-ratio: 3 / 2;
+  border: 1px solid var(--zb-soft-border);
+  border-radius: .78rem;
+}
+
+.zb-solution-showcase-card .zb-solution-card-cover img {
+  object-fit: cover;
+}

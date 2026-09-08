@@ -12,11 +12,11 @@ import {
 import { ActionLink } from "@/components/common/ActionLink";
 import { ExecutionImage } from "@/components/common/ExecutionImage";
 import { SectionHeading } from "@/components/common/SectionHeading";
-import { executionVisuals } from "@/data/execution-visuals";
+import { executionVisuals, type ExecutionVisualId } from "@/data/execution-visuals";
 import { homeExecutionStories } from "@/data/home-execution-stories";
 import "@/styles/home-execution-stories.css";
 
-const storyIcons = {
+const storyIcons: Partial<Record<ExecutionVisualId, typeof ClipboardList>> = {
   survey: ClipboardList,
   audit: ClipboardCheck,
   "seller-onboarding": Store,
@@ -50,7 +50,7 @@ export function HomeExecutionStories() {
         <fieldset className="zb-home-stories-choices">
           <legend className="sr-only">Choose an execution activity</legend>
           {homeExecutionStories.map((story, index) => {
-            const Icon = storyIcons[story.id];
+            const Icon = storyIcons[story.id] ?? BriefcaseBusiness;
             return (
               <label className="zb-home-story-choice" key={story.id}>
                 <input

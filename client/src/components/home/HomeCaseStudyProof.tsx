@@ -1,72 +1,42 @@
 import Link from "next/link";
-import { ArrowUpRight, BriefcaseBusiness, CheckCircle2, QrCode, ShoppingBag } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
+import { ExecutionImage } from "@/components/common/ExecutionImage";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { caseStudies } from "@/data/case-studies";
-
-const caseStudyIcons = {
-  "digital-merchant-onboarding-qr-deployment": QrCode,
-  "marketplace-seller-acquisition": ShoppingBag,
-} as const;
+import { getCaseStudyVisualStory } from "@/data/case-study-visuals";
+import { executionVisuals } from "@/data/execution-visuals";
+import "@/styles/home-case-stories.css";
 
 export function HomeCaseStudyProof() {
   return (
-    <section
-      className="zb-home-section zb-home-project-proof"
-      aria-labelledby="home-project-proof-title"
-    >
+    <section className="zb-home-section zb-home-project-proof" aria-labelledby="home-project-proof-title">
       <SectionHeading
         id="home-project-proof-title"
-        eyebrow="Project proof"
+        eyebrow="Execution stories"
         title="See how execution takes shape in the field."
-        description="Representative sector stories show the challenge, execution model and outcome behind each engagement type."
-        action={
-          <ActionLink href="/case-studies" variant="text">
-            Explore case studies
-          </ActionLink>
-        }
+        description="Explore representative project models from the first field interaction to the client handover."
+        action={<ActionLink href="/case-studies" variant="text">Explore case studies</ActionLink>}
       />
-
       <div className="zb-home-project-grid">
         {caseStudies.slice(0, 2).map((study) => {
-          const flow = study.solution.slice(0, 4);
-          const ProjectIcon =
-            caseStudyIcons[study.slug as keyof typeof caseStudyIcons] ?? BriefcaseBusiness;
+          const story = getCaseStudyVisualStory(study.slug);
           return (
-            <Link
-              href={`/case-studies/${study.slug}`}
-              className="zb-home-project-card"
-              key={study.slug}
-            >
-              <div className="zb-home-project-brand">
-                <span aria-hidden="true">
-                  <ProjectIcon />
-                </span>
-                <div>
-                  <small>{study.category}</small>
-                  <strong>{study.industry}</strong>
-                </div>
-              </div>
-
+            <Link href={`/case-studies/${study.slug}`} className="zb-home-project-card zb-home-case-story" key={study.slug}>
+              {story && <ExecutionImage visual={executionVisuals[story.cover]} sizes="(min-width: 1280px) 540px, (min-width: 760px) 44vw, calc(100vw - 88px)" />}
               <div className="zb-home-project-copy">
-                <span className="zb-eyebrow">{study.clientType}</span>
+                <span className="zb-eyebrow">{study.category}</span>
                 <h3>{study.title}</h3>
-                <p>{study.about}</p>
+                <p>{story?.introduction ?? study.about}</p>
               </div>
-
-              <ol className="zb-home-project-flow" aria-label={`${study.title} solution preview`}>
-                {flow.map((step: string, index: number) => (
-                  <li key={step}>
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <CheckCircle2 aria-hidden="true" />
-                    <p>{step}</p>
-                  </li>
-                ))}
-              </ol>
-
-              <span className="zb-home-project-link">
-                View case study <ArrowUpRight aria-hidden="true" />
-              </span>
+              {story && (
+                <ol className="zb-home-case-stages" aria-label={`${study.title} execution preview`}>
+                  {story.stages.map((step, index) => (
+                    <li key={step.title}><span>{String(index + 1).padStart(2, "0")}</span><strong>{step.title}</strong></li>
+                  ))}
+                </ol>
+              )}
+              <span className="zb-home-project-link">Follow the execution<ArrowUpRight aria-hidden="true" /></span>
             </Link>
           );
         })}

@@ -1,16 +1,29 @@
 import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
+import { ExecutionImage } from "@/components/common/ExecutionImage";
 import type { CaseStudy } from "@/data/case-studies";
+import { getCaseStudyVisualStory } from "@/data/case-study-visuals";
+import { executionVisuals } from "@/data/execution-visuals";
+import "@/styles/case-study-storytelling.css";
 
 export function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
+  const story = getCaseStudyVisualStory(study.slug);
   return (
-    <article className="zb-case-card zb-case-card-compact">
+    <article className="zb-case-card zb-case-card-compact zb-case-card-visual">
+      {story && (
+        <div className="zb-case-card-cover">
+          <ExecutionImage
+            visual={executionVisuals[story.cover]}
+            sizes="(min-width: 1280px) 380px, (min-width: 1080px) 30vw, (min-width: 760px) 44vw, calc(100vw - 80px)"
+          />
+        </div>
+      )}
       <div className="zb-case-card-topline">
         <span>{String(index + 1).padStart(2, "0")}</span>
         <span>{study.category}</span>
       </div>
 
-      <h3>{study.title}</h3>
+      <h3><Link href={`/case-studies/${study.slug}`}>{study.title}</Link></h3>
       <p>{study.about}</p>
 
       <div className="zb-case-card-meta">
@@ -25,12 +38,12 @@ export function CaseStudyCard({ study, index }: { study: CaseStudy; index: numbe
       </ul>
 
       <div className="zb-case-card-outcome">
-        <span>Outcome glimpse</span>
+        <span>Intended outcome</span>
         <p>{study.results[0]}</p>
       </div>
 
       <Link href={`/case-studies/${study.slug}`} className="zb-case-card-link">
-        View brief case study <ArrowUpRight aria-hidden="true" />
+        Follow the execution <ArrowUpRight aria-hidden="true" />
       </Link>
     </article>
   );

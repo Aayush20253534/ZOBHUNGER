@@ -58,6 +58,36 @@ export const executionVisuals = {
     caption: "Field executives explain the offering, answer questions and record enquiries for follow-up.",
     steps: ["Explain the offering", "Answer questions", "Record follow-up"],
   }),
+  "workforce-hiring": createVisual("workforce-hiring", {
+    title: "Workforce recruitment",
+    alt: "AI illustration of a ZOBHUNGER recruiter discussing a role with a candidate and reviewing a screening checklist.",
+    caption: "A recruiter listens to the candidate, checks role suitability and explains the next step.",
+    steps: ["Explain the role", "Screen the candidate", "Coordinate joining"],
+  }),
+  "operations-coordination": createVisual("operations-coordination", {
+    title: "Operations coordination",
+    alt: "AI illustration of two ZOBHUNGER coordinators reviewing field updates on a laptop and noting the next action.",
+    caption: "Coordinators review field updates, resolve questions and assign the next action.",
+    steps: ["Receive field updates", "Assign the follow-up", "Review completion"],
+  }),
+  "product-demonstration": createVisual("product-demonstration", {
+    title: "In-store product demonstrations",
+    alt: "AI illustration of a ZOBHUNGER promoter explaining a portable speaker while a shopper tries its controls in an electronics store.",
+    caption: "A promoter demonstrates the product, invites the shopper to try it and answers questions.",
+    steps: ["Introduce the product", "Demonstrate its use", "Answer shopper questions"],
+  }),
+  "last-mile-delivery": createVisual("last-mile-delivery", {
+    title: "Delivery workforce",
+    alt: "AI illustration of a ZOBHUNGER coordinator scanning a parcel during a handover to a delivery rider at a dispatch point.",
+    caption: "A coordinator checks the parcel handover with a rider before the delivery assignment begins.",
+    steps: ["Brief the assignment", "Check the handover", "Support the route"],
+  }),
+  "mobility-onboarding": createVisual("mobility-onboarding", {
+    title: "Mobility partner onboarding",
+    alt: "AI illustration of a ZOBHUNGER executive guiding a prospective mobility partner through registration on a tablet beside a parked scooter.",
+    caption: "An executive guides the partner through registration and explains the steps before activation.",
+    steps: ["Explain the opportunity", "Support registration", "Check activation readiness"],
+  }),
 } as const;
 
 export type ExecutionVisualId = keyof typeof executionVisuals;

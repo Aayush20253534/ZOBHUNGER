@@ -1,0 +1,16 @@
+.zb-home-case-story > .zb-execution-image { border-radius: .7rem; }
+.zb-home-case-stages {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .65rem 1rem;
+  margin: 0;
+  padding: 1rem 0;
+  border-block: 1px solid var(--zb-border);
+  list-style: none;
+}
+.zb-home-case-stages li { display: flex; align-items: baseline; gap: .5rem; min-width: 0; }
+.zb-home-case-stages li > span { color: var(--zb-action); font-size: .75rem; font-weight: 750; }
+.zb-home-case-stages strong { font-size: .875rem; font-weight: 650; line-height: 1.45; }
+@media (max-width: 380px) {
+  .zb-home-case-stages { grid-template-columns: minmax(0, 1fr); }
+}
