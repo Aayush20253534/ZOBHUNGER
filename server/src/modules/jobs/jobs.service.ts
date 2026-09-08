@@ -1,4 +1,5 @@
 import { HttpError } from "../../utils/http-error.js";
+import { jobCache } from "../../services/job-cache.service.js";
 import type { CreateJobApplicationInput, ListJobsQuery } from "./jobs.schema.js";
 import {
   createJobApplication,
@@ -9,28 +10,30 @@ import {
 } from "./jobs.repository.js";
 
 export async function listPublicJobs(filters: ListJobsQuery) {
-  const { items, total } = await findPublicJobs(filters);
-  const totalPages = Math.ceil(total / filters.pageSize);
-
-  return {
-    items,
-    total,
-    page: filters.page,
-    pageSize: filters.pageSize,
-    totalPages,
-  };
+  return jobCache.remember("public-list", filters, async () => {
+    const { items, total } = await findPublicJobs(filters);
+    return {
+      items,
+      total,
+      page: filters.page,
+      pageSize: filters.pageSize,
+      totalPages: Math.ceil(total / filters.pageSize),
+    };
+  });
 }
 
 export async function getPublicJob(slug: string) {
-  const job = await findPublicJobBySlug(slug);
+  return jobCache.remember("public-detail", slug, async () => {
+    const job = await findPublicJobBySlug(slug);
 
-  if (!job) {
-    throw new HttpError(404, "Job not found or no longer available", {
-      code: "JOB_NOT_FOUND",
-    });
-  }
+    if (!job) {
+      throw new HttpError(404, "Job not found or no longer available", {
+        code: "JOB_NOT_FOUND",
+      });
+    }
 
-  return job;
+    return job;
+  });
 }
 
 function isUniqueConstraintError(error: unknown): boolean {

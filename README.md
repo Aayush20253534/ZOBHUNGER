@@ -100,3 +100,8 @@ npm run smoke:server
 - `server/docs/TESTING.md` - automated tests and Phase 1 QA checklist
 - `server/docs/DEPLOYMENT.md` - production database/environment/deployment notes
 - `client/README.md` - frontend configuration
+## Redis performance setup
+
+Optional job catalogue caching and navigation improvements are documented in
+[docs/redis-performance.md](docs/redis-performance.md), including local Docker,
+hosted Redis configuration, cache invalidation and verification commands.

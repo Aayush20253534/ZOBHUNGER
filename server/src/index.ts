@@ -1,10 +1,12 @@
 import { app } from "./app.js";
 import { connectDatabase, disconnectDatabase } from "./config/db.js";
 import { env } from "./config/env.js";
+import { startRedis, stopRedis } from "./config/redis.js";
 import { logger } from "./utils/logger.js";
 
 async function startServer(): Promise<void> {
   await connectDatabase();
+  startRedis();
 
   const server = app.listen(env.PORT, () => {
     logger.info("server.started", { port: env.PORT, environment: env.NODE_ENV });
@@ -18,6 +20,7 @@ async function startServer(): Promise<void> {
 
     server.close(async (error) => {
       try {
+        stopRedis();
         await disconnectDatabase();
       } finally {
         if (error) {
@@ -44,6 +47,7 @@ process.on("unhandledRejection", (reason) => {
 
 startServer().catch(async (error) => {
   logger.error("server.start.failed", error);
+  stopRedis();
   await disconnectDatabase().catch(() => undefined);
   process.exit(1);
 });

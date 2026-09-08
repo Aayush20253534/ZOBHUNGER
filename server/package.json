@@ -14,7 +14,9 @@
     "db:studio": "prisma studio",
     "test": "tsx --test tests/all.test.ts",
     "test:smoke": "node scripts/smoke-api.mjs",
-    "verify": "npm run test && npm run build"
+    "verify": "npm run test && npm run build",
+    "test:cache": "node --import tsx --test tests/cache.test.ts tests/cache.integration.test.ts",
+    "cache:clear": "node --import tsx scripts/clear-job-cache.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
@@ -29,6 +31,7 @@
     "jsonwebtoken": "^9.0.2",
     "node-mailjet": "^6.0.11",
     "pg": "^8.23.0",
+    "redis": "6.2.1",
     "zod": "^4.5.4"
   },
   "devDependencies": {

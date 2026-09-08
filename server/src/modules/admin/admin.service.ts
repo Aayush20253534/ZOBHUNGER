@@ -10,6 +10,7 @@ import { env } from "../../config/env.js";
 import { sendOperationalEmail } from "../../services/email.service.js";
 import { hashPassword } from "../../utils/password.js";
 import { HttpError } from "../../utils/http-error.js";
+import { jobCache } from "../../services/job-cache.service.js";
 import type {
   ListAdminJobsQuery,
   ListApplicationsQuery,
@@ -175,6 +176,9 @@ export async function changeJobStatus(
     throw new HttpError(404, "Job not found", { code: "JOB_NOT_FOUND" });
   }
 
+  // The transaction has committed before invalidating all open-role read models.
+  // A Redis outage must not turn a successful database write into an HTTP error.
+  await jobCache.invalidate();
   return result;
 }
 

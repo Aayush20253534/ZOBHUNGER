@@ -1,5 +1,6 @@
 import { Prisma } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
+import { jobCache } from "../../services/job-cache.service.js";
 import { findOwnedPlacementCandidate } from "./placement-candidates.repository.js";
 import { findPlacementCellPortalProfile } from "./placement-cells.repository.js";
 import {
@@ -21,7 +22,8 @@ async function approvedPlacementCellForUser(userId: string) {
 
 export async function getPlacementOpportunities(userId: string, query: PlacementOpportunityQuery) {
   await approvedPlacementCellForUser(userId);
-  return listPlacementOpportunities(query);
+  // Only the common job catalogue is cached, after checking current access.
+  return jobCache.remember("placement-list", query, () => listPlacementOpportunities(query));
 }
 
 export async function submitPlacementCandidateToOpportunity(userId: string, jobReference: string, input: PlacementOpportunityApplicationInput) {

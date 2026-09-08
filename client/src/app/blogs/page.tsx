@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Form from "next/form";
 import {
   ArrowUpRight,
   BookOpen,
@@ -130,7 +131,7 @@ export default async function BlogPage({
           </span>
         </div>
 
-        <form action="/blogs" method="get" className="zb-insights-search">
+        <Form action="/blogs" className="zb-insights-search">
           <div className="zb-field">
             <label htmlFor="insight-query">Search insights</label>
             <Input
@@ -156,7 +157,7 @@ export default async function BlogPage({
               Clear filters
             </ActionLink>
           )}
-        </form>
+        </Form>
 
         <nav className="zb-topic-filters" aria-label="Insight topics">
           <Link
