@@ -1,4 +1,5 @@
-.zb-presence-page {
+.zb-presence-page,
+.zb-presence-network {
   --zb-presence-panel: #461820;
   --zb-presence-soft: #fff5f6;
 }
