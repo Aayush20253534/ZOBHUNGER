@@ -791,3 +791,349 @@ body:has(.zb-placement-portal-restricted-page) .zb-footer {
     font-size: 0.9rem;
   }
 }
+
+/* Modern authentication experience: Portal Access + Institution Partner Login. */
+.zb-auth-page {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 70rem);
+  margin: 0 auto;
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.zb-auth-page::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 4.25rem -2rem auto;
+  height: min(32rem, 68vh);
+  border-radius: 2rem;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(207, 29, 43, 0.12), transparent 34%),
+    radial-gradient(circle at 8% 80%, rgba(207, 29, 43, 0.06), transparent 34%),
+    linear-gradient(135deg, rgba(255, 247, 247, 0.96), rgba(255, 255, 255, 0.72));
+  pointer-events: none;
+}
+
+.zb-auth-page .zb-portal-heading {
+  margin: 0 auto 1rem;
+  text-align: center;
+}
+
+.zb-auth-page .zb-portal-heading .zb-page-heading {
+  max-width: 49rem;
+  margin-inline: auto;
+}
+
+.zb-auth-page .zb-portal-heading .zb-page-heading h1 {
+  max-width: none;
+  font-size: clamp(2rem, 3.7vw, 3.05rem);
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+}
+
+.zb-auth-page .zb-portal-heading .zb-page-description {
+  max-width: 43rem;
+  margin: 0.65rem auto 0;
+  color: #6f6767;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.zb-auth-page .zb-login-layout {
+  width: min(100%, 66rem);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.zb-auth-page .zb-login-form,
+.zb-auth-page .zb-account-access-summary {
+  min-height: 100%;
+  border-radius: 1rem;
+  box-shadow: 0 1.2rem 3.5rem rgba(46, 27, 29, 0.08);
+}
+
+.zb-auth-page .zb-login-form {
+  position: relative;
+  overflow: hidden;
+  gap: 0.95rem;
+  padding: clamp(1.3rem, 2.5vw, 1.75rem);
+  border: 1px solid rgba(119, 31, 41, 0.13);
+  border-top: 1px solid rgba(119, 31, 41, 0.13);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+}
+
+.zb-auth-page .zb-login-form::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--zb-action), #7b1722 60%, #e7a2a9);
+}
+
+.zb-auth-page .zb-login-form-heading {
+  gap: 0.8rem;
+  padding-bottom: 0.95rem;
+  margin-bottom: 0.05rem;
+  border-bottom: 1px solid #eee8e8;
+}
+
+.zb-auth-page .zb-login-form-heading .zb-icon-tile {
+  width: 2.8rem;
+  height: 2.8rem;
+  flex-basis: 2.8rem;
+  border: 1px solid rgba(207, 29, 43, 0.12);
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, #fff4f5, #ffe9eb);
+  color: var(--zb-action);
+}
+
+.zb-auth-page .zb-login-form-heading h2 {
+  font-size: 1.42rem;
+  letter-spacing: -0.035em;
+}
+
+.zb-auth-page .zb-login-form label {
+  gap: 0.42rem;
+  color: #352d2e;
+  font-size: 0.84rem;
+  font-weight: 720;
+}
+
+.zb-auth-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.zb-auth-input-wrap > svg:first-child {
+  position: absolute;
+  z-index: 1;
+  left: 0.82rem;
+  width: 1rem;
+  height: 1rem;
+  color: #9a8f90;
+  pointer-events: none;
+}
+
+.zb-auth-page .zb-login-form .zb-auth-input-wrap input {
+  min-height: 2.9rem;
+  padding-left: 2.45rem;
+  border: 1px solid #ded7d8;
+  border-radius: 0.65rem;
+  background: #fcfbfb;
+  box-shadow: inset 0 1px 1px rgba(46, 27, 29, 0.02);
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.zb-auth-page .zb-login-form .zb-password-field input {
+  padding-right: 3rem;
+}
+
+.zb-auth-page .zb-login-form .zb-auth-input-wrap input::placeholder {
+  color: #aaa1a2;
+}
+
+.zb-auth-page .zb-login-form .zb-auth-input-wrap input:hover {
+  border-color: #cfc5c6;
+  background: #fff;
+}
+
+.zb-auth-page .zb-login-form .zb-auth-input-wrap input:focus {
+  border-color: rgba(207, 29, 43, 0.72);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(207, 29, 43, 0.08);
+}
+
+.zb-auth-page .zb-password-toggle {
+  right: 0.48rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+}
+
+.zb-auth-page .zb-login-submit {
+  min-height: 2.9rem;
+  margin-top: 0.1rem;
+  border-radius: 0.65rem;
+  border-color: #a91422;
+  background: linear-gradient(135deg, #d51f30, #a91422);
+  box-shadow: 0 0.55rem 1.25rem rgba(176, 20, 34, 0.18);
+  font-size: 0.92rem;
+  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+}
+
+.zb-auth-page .zb-login-submit:not(:disabled):hover {
+  transform: translateY(-1px);
+  filter: brightness(0.98);
+  box-shadow: 0 0.75rem 1.5rem rgba(176, 20, 34, 0.22);
+}
+
+.zb-auth-page .zb-login-submit:focus-visible {
+  outline: 3px solid rgba(207, 29, 43, 0.2);
+  outline-offset: 2px;
+}
+
+.zb-auth-page .zb-login-security-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding-top: 0.1rem;
+  color: #817778;
+  font-size: 0.75rem;
+}
+
+.zb-auth-page .zb-login-security-note svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  margin-top: 0.08rem;
+  flex: none;
+  color: var(--zb-action);
+}
+
+.zb-auth-page .zb-account-access-summary {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.35rem, 2.5vw, 1.8rem);
+  border: 1px solid #5b2027;
+  background:
+    radial-gradient(circle at 100% 0, rgba(255, 255, 255, 0.12), transparent 32%),
+    linear-gradient(145deg, #4a151c 0%, #661b25 52%, #7f1d29 100%);
+  color: #fff;
+}
+
+.zb-auth-page .zb-account-access-summary::after {
+  content: "";
+  position: absolute;
+  right: -4.5rem;
+  bottom: -5rem;
+  width: 14rem;
+  height: 14rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2.8rem rgba(255, 255, 255, 0.025),
+    0 0 0 5.6rem rgba(255, 255, 255, 0.018);
+  pointer-events: none;
+}
+
+.zb-auth-page .zb-account-access-summary > .zb-eyebrow {
+  position: relative;
+  z-index: 1;
+  color: #ffb8bf;
+}
+
+.zb-auth-page .zb-account-access-summary > h2 {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.25rem;
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1.15;
+}
+
+.zb-auth-page .zb-account-type-list {
+  position: relative;
+  z-index: 1;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.zb-auth-page .zb-account-type-list article {
+  gap: 0.72rem;
+  padding: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(4px);
+}
+
+.zb-auth-page .zb-account-type-list article:first-child {
+  padding-top: 0.82rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.zb-auth-page .zb-account-type-list .zb-icon-tile {
+  width: 2.35rem;
+  height: 2.35rem;
+  flex-basis: 2.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.62rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.zb-auth-page .zb-account-type-list h3 {
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.zb-auth-page .zb-account-type-list p {
+  margin-top: 0.22rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.zb-auth-page .zb-login-error {
+  padding: 0.7rem 0.8rem;
+  border-radius: 0.6rem;
+  font-size: 0.82rem;
+}
+
+@media (min-width: 900px) {
+  .zb-auth-page .zb-login-layout {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  .zb-auth-page--placement .zb-login-layout {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  }
+}
+
+@media (max-width: 899px) {
+  .zb-auth-page::before {
+    inset-inline: -0.75rem;
+  }
+
+  .zb-auth-page .zb-login-layout {
+    max-width: 35rem;
+  }
+
+  .zb-auth-page .zb-account-access-summary {
+    order: 2;
+  }
+}
+
+@media (max-width: 620px) {
+  .zb-auth-page {
+    padding-bottom: 2rem;
+  }
+
+  .zb-auth-page::before {
+    top: 3rem;
+    height: 28rem;
+    border-radius: 1.25rem;
+  }
+
+  .zb-auth-page .zb-portal-heading {
+    text-align: left;
+  }
+
+  .zb-auth-page .zb-portal-heading .zb-page-heading,
+  .zb-auth-page .zb-portal-heading .zb-page-description {
+    margin-inline: 0;
+  }
+
+  .zb-auth-page .zb-portal-heading .zb-page-heading h1 {
+    font-size: clamp(1.8rem, 9vw, 2.35rem);
+  }
+
+  .zb-auth-page .zb-login-form,
+  .zb-auth-page .zb-account-access-summary {
+    border-radius: 0.85rem;
+  }
+}

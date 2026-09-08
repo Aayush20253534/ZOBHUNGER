@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, LockKeyhole, LogIn } from "lucide-react";
+import { Eye, EyeOff, KeyRound, LockKeyhole, LogIn, Mail, ShieldCheck } from "lucide-react";
 import { ApiError } from "@/lib/api";
 import { login } from "@/services/auth.service";
 
@@ -55,19 +55,23 @@ export function LoginForm() {
 
       <label>
         <span>Email address</span>
-        <input
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="admin@zobhunger.com"
-          required
-        />
+        <span className="zb-auth-input-wrap">
+          <Mail aria-hidden="true" />
+          <input
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="name@company.com"
+            required
+          />
+        </span>
       </label>
 
       <label>
         <span>Password</span>
-        <span className="zb-password-field">
+        <span className="zb-password-field zb-auth-input-wrap">
+          <KeyRound aria-hidden="true" />
           <input
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
@@ -100,7 +104,8 @@ export function LoginForm() {
       </button>
 
       <p className="zb-login-security-note">
-        Authentication uses the secure httpOnly cookie issued by the backend.
+        <ShieldCheck aria-hidden="true" />
+        Protected sign-in using secure httpOnly session cookies.
       </p>
     </form>
   );

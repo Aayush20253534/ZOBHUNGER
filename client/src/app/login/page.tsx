@@ -34,7 +34,7 @@ const accountTypes = [
 
 export default function LoginPage() {
   return (
-    <div className="zb-portal-page">
+    <div className="zb-portal-page zb-auth-page zb-auth-page--portal">
       <Breadcrumbs
         items={[{ label: "Home", href: "/" }, { label: "Portal access" }]}
       />
