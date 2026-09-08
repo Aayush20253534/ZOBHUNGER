@@ -954,3 +954,171 @@
     transition: none;
   }
 }
+
+/* Compact service catalogue cards: keep execution steps legible on laptop widths. */
+.zb-solution-showcase-card {
+  gap: 0.82rem;
+  padding: clamp(1rem, 1.35vw, 1.3rem);
+}
+
+.zb-solution-card-graphic {
+  min-height: 4.85rem;
+  padding: 0.78rem;
+  border-radius: 0.78rem;
+}
+
+.zb-solution-card-graphic > strong {
+  right: 0.8rem;
+  top: 0.55rem;
+  font-size: 2.15rem;
+}
+
+.zb-solution-card-icon-wrap {
+  width: 3.05rem;
+  height: 3.05rem;
+  border-radius: 0.82rem;
+}
+
+.zb-solution-card-icon-wrap svg {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.zb-solution-card-graphic-line {
+  left: 3.7rem;
+}
+
+.zb-solution-card-heading-row {
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+}
+
+.zb-solution-card-heading-row .zb-chip {
+  max-width: 66%;
+  white-space: nowrap;
+}
+
+.zb-solution-card-kicker {
+  flex: 0 0 auto;
+  font-size: 0.61rem;
+  letter-spacing: 0.065em;
+  white-space: nowrap;
+}
+
+.zb-solution-card-copy-block {
+  gap: 0.4rem;
+}
+
+.zb-solution-showcase-card .zb-card-title {
+  font-size: clamp(1.2rem, 1.55vw, 1.45rem);
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.zb-solution-showcase-card .zb-card-copy {
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.zb-solution-card-flow {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: visible;
+  border-radius: 0.75rem;
+}
+
+.zb-solution-card-flow-step {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  min-width: 0;
+  padding: 0.68rem 0.58rem;
+}
+
+.zb-solution-card-step-number {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.6rem;
+  height: 1.55rem;
+  padding: 0 0.28rem;
+  border-radius: 0.45rem;
+  background: rgba(200, 32, 47, 0.09);
+  color: var(--zb-action);
+  font-size: 0.58rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.zb-solution-card-flow-step strong {
+  min-width: 0;
+  overflow: visible;
+  color: var(--zb-ink);
+  font-size: 0.69rem;
+  font-weight: 760;
+  line-height: 1.15;
+  text-overflow: clip;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.zb-solution-card-flow-arrow {
+  right: -0.43rem;
+  width: 0.84rem;
+  height: 0.84rem;
+}
+
+.zb-solution-card-tags {
+  gap: 0.34rem;
+}
+
+.zb-solution-card-tags .zb-chip {
+  padding: 0.34rem 0.62rem;
+  font-size: 0.66rem;
+  line-height: 1.15;
+}
+
+.zb-solution-card-cta {
+  min-height: 2.55rem;
+  padding-top: 0.45rem;
+}
+
+.zb-solution-card-cta > span:first-child {
+  font-size: 0.88rem;
+}
+
+@media (min-width: 1100px) and (max-width: 1320px) {
+  .zb-solution-card-flow-step {
+    gap: 0.3rem;
+    padding-inline: 0.45rem;
+  }
+
+  .zb-solution-card-step-number {
+    min-width: 1.42rem;
+    padding-inline: 0.2rem;
+    font-size: 0.54rem;
+  }
+
+  .zb-solution-card-flow-step strong {
+    font-size: 0.64rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .zb-solution-card-heading-row {
+    align-items: flex-start;
+  }
+
+  .zb-solution-card-heading-row .zb-chip {
+    max-width: 70%;
+  }
+
+  .zb-solution-card-flow-step strong {
+    white-space: normal;
+  }
+}

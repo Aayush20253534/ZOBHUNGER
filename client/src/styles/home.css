@@ -1039,6 +1039,11 @@
   margin-bottom: 1.25rem;
 }
 
+.zb-home-presence-network-card {
+  align-self: stretch;
+  min-height: 0;
+}
+
 .zb-home-presence-board {
   display: grid;
   gap: 0.9rem;

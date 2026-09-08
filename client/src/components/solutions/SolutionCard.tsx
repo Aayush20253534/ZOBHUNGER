@@ -3,7 +3,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   CalendarClock,
-  CheckCircle2,
   Flag,
   Headset,
   Megaphone,
@@ -75,13 +74,10 @@ export function SolutionCard({ solution }: { solution: SolutionSummary }) {
         <div className="zb-solution-card-flow" aria-label={`${solution.label} execution preview`}>
           {visual.stages.slice(0, 3).map((stage, index) => (
             <div className="zb-solution-card-flow-step" key={stage}>
-              <span className="zb-solution-card-flow-icon" aria-hidden="true">
-                <CheckCircle2 />
+              <span className="zb-solution-card-step-number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
               </span>
-              <div>
-                <small>{String(index + 1).padStart(2, "0")}</small>
-                <strong>{stage}</strong>
-              </div>
+              <strong>{stage}</strong>
               {index < 2 ? <ArrowRight className="zb-solution-card-flow-arrow" aria-hidden="true" /> : null}
             </div>
           ))}

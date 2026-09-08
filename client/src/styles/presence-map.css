@@ -11,7 +11,7 @@
 
   position: relative;
   width: 100%;
-  max-width: 31rem;
+  max-width: 29rem;
   min-width: 0;
   margin-inline: auto;
 }
@@ -19,8 +19,8 @@
 .zb-footprint-map svg {
   display: block;
   width: 100%;
-  height: auto;
-  max-height: 24rem;
+  height: 100%;
+  max-height: 22rem;
   overflow: visible;
 }
 
@@ -149,11 +149,11 @@
 }
 
 .zb-footprint-map--compact {
-  max-width: 26rem;
+  max-width: 25rem;
 }
 
 .zb-footprint-map--compact svg {
-  max-height: 18.75rem;
+  max-height: 17.5rem;
 }
 
 /* The same map also appears on the dark homepage presence card. */

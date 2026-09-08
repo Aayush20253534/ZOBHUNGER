@@ -1,9 +1,7 @@
-import { ArrowUpRight, Route } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { SectionHeading } from "@/components/common/SectionHeading";
-import { OperatingFootprintMap } from "@/components/presence/OperatingFootprintMap";
-import "@/styles/presence-map.css";
-
+import { OperatingFootprintPanel } from "@/components/presence/OperatingFootprintPanel";
 
 export function HomePresencePreview() {
   return (
@@ -23,25 +21,7 @@ export function HomePresencePreview() {
         </ActionLink>
       </div>
 
-      <div className="zb-home-presence-board" aria-label="ZOBHUNGER presence summary">
-        <div className="zb-home-presence-board-head">
-          <div>
-            <span className="zb-eyebrow">Operating footprint</span>
-            <strong>One network. Five coordination points.</strong>
-          </div>
-          <span className="zb-home-presence-route-icon" aria-hidden="true">
-            <Route />
-          </span>
-        </div>
-
-        <div className="zb-home-presence-map-wrap">
-          <OperatingFootprintMap compact />
-        </div>
-
-        <div className="zb-home-presence-board-foot">
-          <small>Workforce + field execution coordination across priority Indian markets</small>
-        </div>
-      </div>
+      <OperatingFootprintPanel className="zb-home-presence-network-card" />
     </section>
   );
 }
