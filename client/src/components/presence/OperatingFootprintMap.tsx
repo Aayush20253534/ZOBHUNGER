@@ -70,7 +70,11 @@ const markers: Marker[] = [
 
 const headquarters = markers.find((marker) => marker.tone === "hq")!;
 
-export function OperatingFootprintMap() {
+export function OperatingFootprintMap({
+  showLegend = true,
+}: {
+  showLegend?: boolean;
+}) {
   return (
     <div className="zb-card-container">
       {/* Background Decorator Circle */}
@@ -193,19 +197,21 @@ export function OperatingFootprintMap() {
       </div>
 
       {/* Footer / Legend Section */}
-      <div className="zb-footprint-map-legend">
-        <div className="zb-legend-items">
-          <span>
-            <i data-tone="hq" /> Headquarters
-          </span>
-          <span>
-            <i data-tone="market" /> Branch / market presence
-          </span>
+      {showLegend ? (
+        <div className="zb-footprint-map-legend">
+          <div className="zb-legend-items">
+            <span>
+              <i data-tone="hq" /> Headquarters
+            </span>
+            <span>
+              <i data-tone="market" /> Branch / market presence
+            </span>
+          </div>
+          <p className="zb-legend-subtext">
+            Workforce + field execution coordination
+          </p>
         </div>
-        <p className="zb-legend-subtext">
-          Workforce + field execution coordination
-        </p>
-      </div>
+      ) : null}
     </div>
   );
 }
