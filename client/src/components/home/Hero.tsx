@@ -9,7 +9,7 @@ export function Hero() {
       <div className="zb-home-hero-copy">
         <p className="zb-eyebrow">{home.hero.eyebrow}</p>
         <h1 id="home-heading">
-          {home.hero.title} <span>{home.hero.emphasis}</span>
+          {home.hero.title}
         </h1>
         <p className="zb-home-hero-description">{home.hero.description}</p>
         <div className="zb-home-hero-actions">
