@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { CTASection } from "@/components/common/CTASection";
-import { AudienceSection } from "@/components/home/AudienceSection";
 import { BrandExperiencePreview } from "@/components/home/BrandExperiencePreview";
-import { ExecutionStrengthsPreview } from "@/components/home/ExecutionStrengthsPreview";
 import { Hero } from "@/components/home/Hero";
-import { HowItWorks } from "@/components/home/HowItWorks";
+import { HomeCaseStudyProof } from "@/components/home/HomeCaseStudyProof";
+import { HomeExecutionModel } from "@/components/home/HomeExecutionModel";
+import { HomePresencePreview } from "@/components/home/HomePresencePreview";
 import { IndustriesPreview } from "@/components/home/IndustriesPreview";
 import { ServicesOverview } from "@/components/home/ServicesOverview";
-import { TechnologyPreview } from "@/components/home/TechnologyPreview";
 import { WhyZobhunger } from "@/components/home/WhyZobhunger";
 import { home } from "@/data/home";
 import { site } from "@/data/site";
+import "@/styles/solutions.css";
 import "@/styles/home.css";
 
 export const metadata: Metadata = {
@@ -31,20 +31,19 @@ export default function Page() {
   return (
     <div className="zb-home">
       <Hero />
-      <ServicesOverview />
-      <WhyZobhunger />
-      <HowItWorks />
-      <IndustriesPreview />
       <BrandExperiencePreview />
-      <ExecutionStrengthsPreview />
-      <AudienceSection />
-      <TechnologyPreview />
+      <ServicesOverview />
+      <HomeExecutionModel />
+      <IndustriesPreview />
+      <HomeCaseStudyProof />
+      <HomePresencePreview />
+      <WhyZobhunger />
       <div className="zb-home-final-cta">
         <CTASection
-          title={home.cta.title}
-          description={home.cta.description}
-          href="/contact"
-          label="Talk to our team"
+          title="Need a workforce that can execute?"
+          description="Share the role, market and work you need completed. We’ll help shape the right workforce and execution plan."
+          href="/hire-workforce"
+          label="Hire workforce"
         />
       </div>
     </div>

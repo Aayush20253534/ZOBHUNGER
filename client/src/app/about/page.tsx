@@ -3,7 +3,7 @@ import { getPageMetadata } from "@/lib/page-metadata";
 
 export const metadata = getPageMetadata(
   "About ZOBHUNGER",
-  "ZOBHUNGER is building an integrated workforce, sales and business execution platform for businesses and workers across India.",
+  "Learn how ZOBHUNGER connects workforce, deployment and on-ground business execution across sales, retail, activation and operations.",
   "/about",
 );
 

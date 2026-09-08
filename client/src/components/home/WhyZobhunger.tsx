@@ -1,11 +1,9 @@
 import {
   ChartNoAxesCombined,
-  ClipboardCheck,
   Layers3,
   MapPinned,
   Network,
   ScanSearch,
-  Settings2,
   UsersRound,
 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
@@ -17,9 +15,7 @@ const icons = {
   locations: MapPinned,
   hiring: ScanSearch,
   management: UsersRound,
-  attendance: ClipboardCheck,
   reporting: ChartNoAxesCombined,
-  scale: Settings2,
 };
 
 export function WhyZobhunger() {
@@ -32,8 +28,8 @@ export function WhyZobhunger() {
         <p className="zb-eyebrow">{home.why.eyebrow}</p>
         <h2 id="home-why-heading">{home.why.title}</h2>
         <p>{home.why.description}</p>
-        <ActionLink href="/for-business" variant="light">
-          Work with ZOBHUNGER
+        <ActionLink href="/hire-workforce" variant="light">
+          Start a requirement
         </ActionLink>
       </div>
       <ul className="zb-home-benefits">

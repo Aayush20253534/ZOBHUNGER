@@ -52,7 +52,7 @@ export function IndustriesPreview() {
         }
       />
       <div className="zb-home-industries-grid">
-        {industries.map((industry) => {
+        {industries.slice(0, 8).map((industry) => {
           const Icon = icons[industry.slug] ?? Package;
           return (
             <Link
@@ -82,8 +82,8 @@ export function IndustriesPreview() {
               <MessageSquareText />
             </span>
             <div>
-              <h3>Have a different requirement?</h3>
-              <p>Tell us about your business.</p>
+              <h3>Need another market?</h3>
+              <p>Explore the full industry list or tell us what you need.</p>
             </div>
             <ArrowUpRight
               className="zb-home-industry-arrow"

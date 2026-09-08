@@ -1,11 +1,11 @@
 /** Homepage copy adapted from the client's Phase 1 brief. No invented performance figures. */
 export const home = {
   hero: {
-    eyebrow: "India’s workforce & business execution platform",
-    title: "Build, deploy & manage your workforce.",
-    emphasis: "All in one platform.",
+    eyebrow: "India’s workforce & field execution partner",
+    title: "Build, deploy & execute with the right workforce.",
+    emphasis: "From people to performance.",
     description:
-      "ZOBHUNGER helps businesses hire, deploy and manage workforce, sales teams, promoters, field executives, marketing teams and business operations across India.",
+      "ZOBHUNGER helps businesses build and deploy workforce, sales, promoter and field teams around the work that needs to happen in market.",
     engagements: [
       { title: "Permanent", description: "Build your core team" },
       { title: "Contract", description: "Support a defined period" },
@@ -20,64 +20,52 @@ export const home = {
     },
   },
   solutions: {
-    eyebrow: "Our solutions",
-    title: "The right people. The right execution.",
+    eyebrow: "Our services",
+    title: "Services built around the work you need done.",
     description:
-      "From building a sales team to running a retail campaign, find the support your business needs in one place.",
+      "From workforce deployment and sales teams to retail execution and brand activation, connect people with a clear operating plan.",
   },
   why: {
     eyebrow: "Why ZOBHUNGER",
-    title: "One partner for workforce and business execution.",
+    title: "One partner. From workforce to execution.",
     description:
-      "Your requirement connects hiring, deployment and delivery. Bring those conversations together, with a team built around your work.",
+      "Bring hiring, deployment and field delivery into one coordinated plan, with teams shaped around the assignment rather than a generic staffing brief.",
     benefits: [
       {
         id: "platform",
-        title: "One platform",
+        title: "Connected execution",
         description:
-          "Bring staffing and business execution into one coordinated plan.",
+          "Keep workforce, deployment and delivery aligned to one operating brief.",
       },
       {
         id: "services",
-        title: "Multiple services",
+        title: "Multiple service models",
         description:
-          "Connect recruitment, sales, promoters, retail and operations.",
+          "Connect staffing, sales, promoters, retail, activation and operations as needed.",
       },
       {
         id: "locations",
-        title: "Multi-city workforce",
+        title: "Market-led coordination",
         description:
-          "Plan roles and deployment around the locations your business needs.",
+          "Plan people and activity around the locations where the work needs to happen.",
       },
       {
         id: "hiring",
-        title: "Focused hiring",
+        title: "Requirement-led hiring",
         description:
-          "Define the role and screening criteria before sourcing begins.",
+          "Define the role, skills and availability before candidate sourcing begins.",
       },
       {
         id: "management",
-        title: "Workforce management",
+        title: "On-ground coordination",
         description:
-          "Coordinate onboarding, responsibilities and day-to-day team support.",
-      },
-      {
-        id: "attendance",
-        title: "Attendance tracking",
-        description:
-          "Agree the attendance records and work updates your project needs.",
+          "Connect onboarding, responsibilities and field activity to the assignment plan.",
       },
       {
         id: "reporting",
-        title: "Performance reporting",
+        title: "Structured reporting",
         description:
-          "Set reporting expectations around the activities that matter to you.",
-      },
-      {
-        id: "scale",
-        title: "Scalable teams",
-        description:
-          "Shape team size and engagement around campaigns, projects and demand.",
+          "Agree the execution updates and review points that matter to the engagement.",
       },
     ],
   },
@@ -121,9 +109,9 @@ export const home = {
   },
   industries: {
     eyebrow: "Industries we serve",
-    title: "Different industries. One connected approach.",
+    title: "Built for the way different markets operate.",
     description:
-      "Build your team around the way your sector works, from shop floors and sales territories to support operations.",
+      "From retail counters and sales territories to operations and customer acquisition, teams are structured around how the sector actually works.",
   },
   audiences: {
     business: {

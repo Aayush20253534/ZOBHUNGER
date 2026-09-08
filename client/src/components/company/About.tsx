@@ -1,110 +1,377 @@
 import Link from "next/link";
-import { ArrowUpRight, Compass, FileText, ShieldCheck, Target } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Building2,
+  CheckCircle2,
+  Compass,
+  MapPin,
+  ShieldCheck,
+  Target,
+} from "lucide-react";
+
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
-import { CTASection } from "@/components/common/CTASection";
-import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
-import { Card } from "@/components/ui/card";
+
 import { company } from "@/data/company";
-import { capabilityStatement, complianceCredentials } from "@/data/compliance";
+import {
+  brandStrengths,
+  coreCapabilities,
+} from "@/data/core-capabilities";
+import { complianceCredentials } from "@/data/compliance";
 import { site } from "@/data/site";
-import { solutions } from "@/data/solutions";
+
 import "@/styles/company.css";
+
+const executionModel = [
+  "Requirement",
+  "Planning",
+  "Workforce",
+  "Deployment",
+  "Execution",
+  "Measurement",
+] as const;
+
+const capabilityLinks = [
+  "/workforce-solutions",
+  "/retail-execution",
+  "/brand-activation",
+  "/sales-force",
+  "/brand-activation",
+  "/business-operations",
+] as const;
+
+const presence = [
+  {
+    label: "Headquarters",
+    value: "Ghazipur, Uttar Pradesh",
+    icon: Building2,
+  },
+  {
+    label: "Presence",
+    value: "Delhi",
+    icon: MapPin,
+  },
+  {
+    label: "Presence",
+    value: "Mumbai",
+    icon: MapPin,
+  },
+  {
+    label: "Presence",
+    value: "Bihar",
+    icon: MapPin,
+  },
+] as const;
 
 export function About() {
   return (
-    <div className="zb-company">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "About" }]} />
-      <div className="zb-company-hero zb-about-hero">
-        <PageShell
-          eyebrow="About ZOBHUNGER"
-          title="Building a smarter workforce ecosystem."
-          description={company.description}
-          actions={
-            <ActionLink href="/for-business">
-              Work with ZOBHUNGER{" "}
-              <ArrowUpRight className="size-4" aria-hidden="true" />
+    <div className="zb-company zb-about-page">
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "About" },
+        ]}
+      />
+
+      {/* HERO */}
+      <section
+        className="zb-about-hero-new"
+        aria-labelledby="about-title"
+      >
+        <div className="zb-about-hero-copy">
+          <span className="zb-eyebrow">About ZOBHUNGER</span>
+
+          <h1 id="about-title">
+            Built for workforce.{" "}
+            <span>Designed for execution.</span>
+          </h1>
+
+          <p>
+            ZOBHUNGER helps businesses build, deploy and coordinate
+            teams across workforce, sales, retail, activation and
+            business operations.
+          </p>
+
+          <div className="zb-about-hero-actions">
+            <ActionLink href="/solutions">
+              Explore services
+              <ArrowUpRight aria-hidden="true" />
+            </ActionLink>
+
+            <ActionLink
+              href="/presence"
+              variant="secondary"
+            >
+              Our presence
+            </ActionLink>
+          </div>
+        </div>
+
+        <aside
+          className="zb-about-hero-panel"
+          aria-label="ZOBHUNGER operating idea"
+        >
+          <span className="zb-eyebrow">
+            Our operating idea
+          </span>
+
+          <strong>{site.tagline}</strong>
+
+          <p>
+            Start with the requirement, build the right team and
+            keep execution connected to the work the business
+            needs completed.
+          </p>
+
+          <div
+            className="zb-about-hero-track"
+            aria-hidden="true"
+          >
+            <span>People</span>
+            <i />
+
+            <span>Market</span>
+            <i />
+
+            <span>Execution</span>
+          </div>
+        </aside>
+      </section>
+
+      {/* WHO WE ARE */}
+      <section
+        className="zb-company-section zb-about-intro"
+        aria-labelledby="about-who-title"
+      >
+        <div>
+          <span className="zb-eyebrow">Who we are</span>
+
+          <h2 id="about-who-title">
+            A workforce and business execution partner.
+          </h2>
+        </div>
+
+        <div className="zb-about-intro-copy">
+          <p>{company.description}</p>
+
+          <p>
+            The role is only one part of the assignment. We
+            connect people with deployment, coordination and
+            on-ground activity so businesses can plan around the
+            outcome they need, not just the vacancy they need
+            filled.
+          </p>
+
+          <ul aria-label="ZOBHUNGER focus areas">
+            <li>Workforce</li>
+            <li>Sales</li>
+            <li>Retail</li>
+            <li>Field operations</li>
+            <li>Brand activation</li>
+            <li>Business operations</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* EXECUTION MODEL */}
+      <section
+        className="zb-company-section zb-about-execution"
+        aria-labelledby="about-execution-title"
+      >
+        <SectionHeading
+          id="about-execution-title"
+          eyebrow="Our execution model"
+          title="One connected path from brief to measurable work."
+          description="The operating model keeps workforce decisions connected to deployment and delivery instead of treating hiring as the finish line."
+        />
+
+        <ol className="zb-about-execution-track">
+          {executionModel.map((step, index) => (
+            <li key={step}>
+              <span>
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
+              <strong>{step}</strong>
+
+              {index < executionModel.length - 1 ? (
+                <ArrowRight aria-hidden="true" />
+              ) : null}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* MISSION + VISION */}
+      <section
+        className="zb-company-section zb-about-purpose-grid"
+        aria-label="Mission and vision"
+      >
+        <article className="zb-about-purpose-card">
+          <Target aria-hidden="true" />
+
+          <span className="zb-eyebrow">
+            Our mission
+          </span>
+
+          <h2>{company.mission}</h2>
+
+          <p>
+            Make it easier for businesses to move from a
+            requirement to a team that is ready to perform the
+            work.
+          </p>
+        </article>
+
+        <article className="zb-about-purpose-card zb-about-purpose-card--dark">
+          <Compass aria-hidden="true" />
+
+          <span className="zb-eyebrow">
+            Our vision
+          </span>
+
+          <h2>{company.vision}</h2>
+
+          <p>
+            Connect businesses, people and execution through a
+            clearer, more coordinated operating ecosystem.
+          </p>
+        </article>
+      </section>
+
+      {/* CORE CAPABILITIES */}
+      <section
+        className="zb-company-section"
+        aria-labelledby="about-capabilities-title"
+      >
+        <SectionHeading
+          id="about-capabilities-title"
+          eyebrow="Core capabilities"
+          title="Capabilities built around on-ground delivery."
+          description="A connected mix of manpower, field execution, acquisition, activation and operational support."
+          action={
+            <ActionLink
+              href="/solutions"
+              variant="text"
+            >
+              Explore all services
             </ActionLink>
           }
         />
-        <aside className="zb-company-statement zb-about-statement" aria-label="Our approach">
-          <span className="zb-eyebrow">People and execution, connected</span>
-          <p>{site.tagline}</p>
-          <span>
-            One approach across workforce, sales and business operations.
+
+        <div className="zb-about-capability-grid">
+          {coreCapabilities.map((capability, index) => {
+            const href =
+              capabilityLinks[index] ?? "/solutions";
+
+            return (
+              <Link
+                href={href}
+                key={capability.id}
+              >
+                <span>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+
+                <h3>{capability.title}</h3>
+
+                <p>{capability.description}</p>
+
+                <ArrowUpRight aria-hidden="true" />
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* PRESENCE */}
+      <section
+        className="zb-company-section zb-about-presence"
+        aria-labelledby="about-presence-title"
+      >
+        <div className="zb-about-presence-copy">
+          <span className="zb-eyebrow">
+            Our presence
           </span>
-        </aside>
-      </div>
-      <section
-        className="zb-company-section zb-company-grid"
-        data-columns="2"
-        aria-label="Mission and vision"
-      >
-        <Card className="zb-card zb-company-purpose">
-          <Target className="zb-card-icon" aria-hidden="true" />
-          <h2>Our mission</h2>
-          <p>{company.mission}</p>
-        </Card>
-        <Card className="zb-card zb-company-purpose">
-          <Compass className="zb-card-icon" aria-hidden="true" />
-          <h2>Our vision</h2>
-          <p>{company.vision}</p>
-        </Card>
-      </section>
-      <section
-        className="zb-company-section"
-        aria-labelledby="about-approach-title"
-      >
-        <SectionHeading
-          id="about-approach-title"
-          eyebrow="The way we approach the work"
-          title="Built around the assignment."
-          description="The role is one part of a bigger operating plan. We bring the requirement, the people and the work into focus together."
-        />
-        <div className="zb-company-grid" data-columns="3">
-          {company.principles.map((item, index) => (
-            <article className="zb-company-principle" key={item.title}>
-              <span className="zb-company-index" aria-hidden="true">
-                0{index + 1}
-              </span>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-      <section
-        className="zb-company-section"
-        aria-labelledby="about-solutions-title"
-      >
-        <SectionHeading
-          id="about-solutions-title"
-          eyebrow="One connected offering"
-          title="Seven services. A shared purpose."
-          description="Support for the people you need and the work your business needs to get done."
-        />
-        <div className="zb-company-service-links">
-          {solutions.map((solution) => (
-            <Link key={solution.slug} href={"/" + solution.slug}>
-              {solution.label}
-              <ArrowUpRight className="size-4" aria-hidden="true" />
-            </Link>
-          ))}
-        </div>
-      </section>
-      <section className="zb-company-section zb-company-note" aria-labelledby="about-experience-title">
-        <div>
-          <h2 id="about-experience-title">Experience shaped by work in the field.</h2>
+
+          <h2 id="about-presence-title">
+            Execution stays closer to the market.
+          </h2>
+
           <p>
-            Explore selected brand experience across e-commerce, logistics,
-            fintech, banking, retail, activation and digital services.
+            ZOBHUNGER is building a focused operating footprint
+            anchored in Ghazipur, Uttar Pradesh, with presence
+            across priority markets.
+          </p>
+
+          <ActionLink
+            href="/presence"
+            variant="secondary"
+          >
+            Explore our presence
+            <ArrowUpRight aria-hidden="true" />
+          </ActionLink>
+        </div>
+
+        <div className="zb-about-presence-grid">
+          {presence.map((location) => {
+            const Icon = location.icon;
+
+            return (
+              <article
+                key={`${location.label}-${location.value}`}
+              >
+                <Icon aria-hidden="true" />
+
+                <small>{location.label}</small>
+
+                <strong>{location.value}</strong>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* WHY ZOBHUNGER */}
+      <section
+        className="zb-company-section zb-about-why"
+        aria-labelledby="about-why-title"
+      >
+        <div className="zb-about-why-copy">
+          <span className="zb-eyebrow">
+            Why ZOBHUNGER
+          </span>
+
+          <h2 id="about-why-title">
+            Built around execution, not disconnected
+            hand-offs.
+          </h2>
+
+          <p>
+            The aim is simple: make it easier to coordinate the
+            people, market activity and reporting needed around
+            a business requirement.
           </p>
         </div>
-        <ActionLink href="/brand-experience" variant="secondary">
-          Explore brand experience
-        </ActionLink>
+
+        <ul>
+          {brandStrengths.map((strength, index) => (
+            <li key={strength}>
+              <span>
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
+              <CheckCircle2 aria-hidden="true" />
+
+              <strong>{strength}</strong>
+            </li>
+          ))}
+        </ul>
       </section>
+
+      {/* CORPORATE CREDENTIALS */}
       <section
         className="zb-company-section"
         id="certifications"
@@ -113,63 +380,74 @@ export function About() {
         <SectionHeading
           id="about-certifications-title"
           eyebrow="Certifications & corporate credentials"
-          title="Built on recognised standards and registered credentials."
-          description="A concise view of the certifications and statutory credentials reflected in ZOBHUNGER's corporate capability statement."
+          title="Registered credentials and supporting standards."
+          description="A concise view of the certifications and statutory credentials reflected in ZOBHUNGER's corporate records."
         />
+
         <div className="zb-compliance-grid">
           {complianceCredentials.map((credential) => (
-            <article className="zb-compliance-card" key={credential.title}>
-              <span className="zb-compliance-icon" aria-hidden="true">
+            <article
+              className="zb-compliance-card"
+              key={credential.title}
+            >
+              <span
+                className="zb-compliance-icon"
+                aria-hidden="true"
+              >
                 <ShieldCheck />
               </span>
+
               <div>
-                <span className="zb-compliance-label">{credential.label}</span>
+                <span className="zb-compliance-label">
+                  {credential.label}
+                </span>
+
                 <h3>{credential.title}</h3>
+
                 <p>{credential.description}</p>
               </div>
             </article>
           ))}
         </div>
       </section>
+
+      {/* FINAL CTA */}
       <section
-        className="zb-company-section zb-company-note"
-        aria-labelledby="about-partner-title"
+        className="zb-company-section zb-about-final-panel"
+        aria-labelledby="about-final-title"
       >
         <div>
-          <h2 id="about-partner-title">Bring your expertise into the network.</h2>
-          <p>
-            Experienced professionals, consultants and business specialists can
-            explore flexible project-led collaboration through our Independent
-            Business Partner Program.
-          </p>
-        </div>
-        <ActionLink href="/become-a-partner" variant="secondary">
-          Become a Partner
-        </ActionLink>
-      </section>
-      <section
-        className="zb-company-section zb-company-note"
-        aria-labelledby="about-technology-title"
-      >
-        <div>
-          <h2 id="about-technology-title">
-            Building toward a connected platform.
+          <span className="zb-eyebrow">
+            Build with ZOBHUNGER
+          </span>
+
+          <h2 id="about-final-title">
+            Build your next execution team with us.
           </h2>
+
           <p>
-            Dedicated client, worker and internal operations tools are part of
-            our product direction. Explore what is planned for future releases.
+            Looking for workforce support, or considering a
+            career inside ZOBHUNGER? Start with the route that
+            fits what you need.
           </p>
         </div>
-        <ActionLink href="/technology" variant="secondary">
-          Our technology vision
-        </ActionLink>
+
+        <div>
+          <ActionLink
+            href="/hire-workforce"
+            variant="light"
+          >
+            Hire workforce
+          </ActionLink>
+
+          <ActionLink
+            href="/careers"
+            variant="secondary"
+          >
+            Explore careers
+          </ActionLink>
+        </div>
       </section>
-      <div className="zb-company-section">
-        <CTASection
-          title="Let's start with your business."
-          description="Tell us where you need people, execution or operational support."
-        />
-      </div>
     </div>
   );
 }

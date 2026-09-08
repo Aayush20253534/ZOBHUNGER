@@ -17,7 +17,7 @@ export function Hero() {
             Hire workforce <ArrowUpRight aria-hidden="true" />
           </ActionLink>
           <ActionLink href="/solutions" variant="secondary">
-            Explore solutions
+            Explore services
           </ActionLink>
         </div>
         <p className="zb-home-worker-link">
