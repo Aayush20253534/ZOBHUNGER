@@ -1,4 +1,5 @@
 import type { Article } from "@/types/article.types";
+import { getArticleVisualText } from "@/data/article-visual-stories";
 
 function article(
   input: Omit<Article, "readingMinutes" | "isPublished" | "isSample">,
@@ -6,6 +7,7 @@ function article(
   const words = [
     input.excerpt,
     input.takeaway,
+    getArticleVisualText(input.slug),
     ...input.sections.flatMap((section) => [
       section.heading,
       ...section.paragraphs,

@@ -1,0 +1,424 @@
+/* Article photography and diagrams reuse local assets and render on the server. */
+.zb-article-card-visual.zb-blog-card-cover {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  background: var(--zb-soft);
+}
+
+.zb-article-card-visual.zb-blog-card-cover::before,
+.zb-article-card-visual.zb-blog-card-cover::after {
+  display: none;
+}
+
+.zb-blog-feature {
+  width: 100%;
+  max-width: 32.5rem;
+  justify-self: center;
+  align-self: center;
+  border: 1px solid var(--zb-border);
+  border-radius: 1rem;
+  background: var(--zb-surface);
+  box-shadow: 0 0.9rem 2.4rem var(--zb-shadow-subtle);
+  overflow: hidden;
+}
+
+.zb-blog-feature > a {
+  display: block;
+  color: var(--zb-ink);
+  text-decoration: none;
+}
+
+.zb-editorial .zb-blog-feature > a:focus-visible {
+  outline: 3px solid var(--zb-action);
+  outline-offset: -5px;
+  border-radius: inherit;
+}
+
+.zb-blog-feature-copy {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.25rem;
+}
+
+.zb-blog-feature-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem 1rem;
+  color: var(--zb-muted);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.zb-blog-feature-meta > span:first-child {
+  color: var(--zb-action);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.zb-blog-feature h2 {
+  margin: 0;
+  color: var(--zb-ink);
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+.zb-blog-feature-read {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--zb-border);
+  color: var(--zb-action);
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.zb-blog-feature-read svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 auto;
+}
+
+.zb-blog-feature a:hover h2 {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+
+.zb-blog-article-intro {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.zb-blog-heading-copy {
+  min-width: 0;
+}
+
+.zb-editorial .zb-article-heading--illustrated .zb-page-heading h1 {
+  max-width: 23ch;
+  font-size: clamp(1.9rem, 3.3vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.zb-editorial .zb-article-heading--illustrated .zb-page-description {
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.zb-blog-cover {
+  min-width: 0;
+  margin: 0;
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 0.85rem;
+  background: var(--zb-surface);
+  overflow: hidden;
+}
+
+.zb-blog-cover figcaption {
+  padding: 0.85rem 1rem;
+  color: var(--zb-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.zb-blog-field-example,
+.zb-blog-workflow {
+  min-width: 0;
+  margin: 1.5rem 0 0;
+  padding: clamp(1rem, 2vw, 1.35rem);
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 0.85rem;
+  background: #fffafa;
+  scroll-margin-top: 7rem;
+}
+
+.zb-blog-field-example {
+  container: zb-blog-example / inline-size;
+}
+
+.zb-blog-example-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.zb-blog-example-layout > * {
+  min-width: 0;
+}
+
+.zb-blog-example-layout figure {
+  margin: 0;
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 0.65rem;
+  background: #fff;
+  overflow: hidden;
+}
+
+.zb-blog-example-layout figcaption {
+  padding: 0.6rem 0.8rem;
+  color: var(--zb-muted);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.zb-blog-field-example .zb-eyebrow,
+.zb-blog-workflow .zb-eyebrow {
+  margin-bottom: 0.55rem;
+  font-size: 0.68rem;
+}
+
+.zb-blog-field-example h3,
+.zb-blog-workflow h3 {
+  margin: 0;
+  color: var(--zb-ink);
+  font-size: clamp(1.15rem, 1.7vw, 1.45rem);
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+}
+
+.zb-article-body .zb-blog-field-example header > p {
+  margin: 0.7rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
+.zb-blog-example-record {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  margin: 1.25rem 0 0;
+}
+
+.zb-blog-example-record > div {
+  min-width: 0;
+  padding-top: 0.8rem;
+  border-top: 2px solid var(--zb-soft-border);
+}
+
+.zb-blog-example-record dt {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--zb-ink);
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.zb-blog-example-record dt > span {
+  color: var(--zb-action);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.zb-blog-example-record dd {
+  margin: 0.5rem 0 0;
+  color: var(--zb-muted);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.zb-blog-workflow {
+  container: zb-blog-workflow / inline-size;
+  background:
+    linear-gradient(#c8202f05 1px, transparent 1px),
+    linear-gradient(90deg, #c8202f05 1px, transparent 1px),
+    #fff;
+  background-size: 1.4rem 1.4rem;
+}
+
+.zb-blog-workflow-track {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zb-blog-workflow-track > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.65rem;
+  background: #fff;
+  box-shadow: 0 0.25rem 0.75rem var(--zb-shadow-subtle);
+}
+
+.zb-blog-workflow-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--zb-action);
+}
+
+.zb-blog-workflow-marker > svg {
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0.5rem;
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 0.55rem;
+  background: var(--zb-soft);
+}
+
+.zb-blog-workflow-marker > span {
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.zb-blog-workflow-track h4 {
+  margin: 0;
+  color: var(--zb-ink);
+  font-size: 0.9375rem;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.zb-article-body .zb-blog-workflow-track p {
+  margin: 0.4rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.zb-blog-workflow-arrow {
+  position: absolute;
+  left: 1.5rem;
+  bottom: -1.2rem;
+  width: 1rem;
+  height: 1rem;
+  color: var(--zb-action);
+  transform: rotate(90deg);
+}
+
+.zb-blog-workflow-feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--zb-soft-border);
+  border-radius: 0.65rem;
+  background: var(--zb-soft);
+}
+
+.zb-blog-workflow-feedback > svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+  color: var(--zb-action);
+}
+
+.zb-blog-workflow-feedback strong {
+  color: var(--zb-ink);
+  font-size: 0.875rem;
+}
+
+.zb-article-body .zb-blog-workflow-feedback p {
+  margin: 0.35rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.zb-article-sidebar nav a.zb-blog-toc-visual {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.4rem;
+  border-radius: 0.4rem;
+  background: var(--zb-soft);
+  color: var(--zb-action);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.zb-blog-toc-visual svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+}
+
+/* Container sizes keep the article graphics legible beside the reading path. */
+@container zb-blog-example (min-width: 540px) {
+  .zb-blog-example-layout {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  .zb-blog-example-record {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container zb-blog-workflow (min-width: 540px) {
+  .zb-blog-workflow-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zb-blog-workflow-arrow {
+    display: none;
+  }
+}
+
+@container zb-blog-workflow (min-width: 760px) {
+  .zb-blog-workflow-track {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .zb-blog-workflow-track > li {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+  }
+
+  .zb-blog-workflow-marker {
+    flex-direction: row;
+  }
+
+  .zb-blog-workflow-arrow {
+    display: block;
+    top: 1.7rem;
+    right: -1.15rem;
+    bottom: auto;
+    left: auto;
+    transform: none;
+  }
+}
+
+@media (min-width: 960px) {
+  .zb-blog-feature {
+    justify-self: end;
+  }
+
+  .zb-article-heading--illustrated .zb-blog-article-intro {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  }
+}
+
+@media print {
+  .zb-blog-cover,
+  .zb-blog-field-example,
+  .zb-blog-workflow {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+}

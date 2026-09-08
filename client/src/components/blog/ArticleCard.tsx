@@ -10,7 +10,11 @@ import {
   UsersRound,
   Workflow
 } from "lucide-react";
+import { ExecutionImage } from "@/components/common/ExecutionImage";
+import { getArticleVisualStory } from "@/data/article-visual-stories";
+import { executionVisuals } from "@/data/execution-visuals";
 import type { ArticleCategory, ArticleSummary } from "@/types/article.types";
+import "@/styles/blog-storytelling.css";
 
 const categoryIcons: Record<ArticleCategory, typeof BookOpen> = {
   "Hiring Trends": UsersRound,
@@ -30,6 +34,7 @@ export function ArticleCard({
   index?: number;
 }) {
   const CategoryIcon = categoryIcons[article.category] ?? BookOpen;
+  const visualStory = getArticleVisualStory(article.slug);
 
   return (
     <article className="zb-article-card">
@@ -39,20 +44,29 @@ export function ArticleCard({
         className="zb-article-card-link"
         aria-label={`Read ${article.title}`}
       >
-        <div className="zb-article-card-visual" aria-hidden="true">
-        <span className="zb-article-card-icon">
-          <CategoryIcon />
-        </span>
-        <span className="zb-article-card-index">
-          {String(index ?? 1).padStart(2, "0")}
-        </span>
-        <span className="zb-article-card-line" />
-      </div>
+        {visualStory ? (
+          <div className="zb-article-card-visual zb-blog-card-cover">
+            <ExecutionImage
+              visual={executionVisuals[visualStory.cover]}
+              sizes="(min-width: 1280px) 390px, (min-width: 1000px) 30vw, (min-width: 640px) 45vw, calc(100vw - 40px)"
+            />
+          </div>
+        ) : (
+          <div className="zb-article-card-visual" aria-hidden="true">
+            <span className="zb-article-card-icon">
+              <CategoryIcon />
+            </span>
+            <span className="zb-article-card-index">
+              {String(index ?? 1).padStart(2, "0")}
+            </span>
+            <span className="zb-article-card-line" />
+          </div>
+        )}
 
         <div className="zb-article-card-top">
         <p className="zb-eyebrow">{article.category}</p>
         <span className="zb-chip">
-          Deep dive
+          {visualStory ? "Visual guide" : "Deep dive"}
         </span>
       </div>
 

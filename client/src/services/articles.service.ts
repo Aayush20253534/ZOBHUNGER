@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { mockArticles } from "@/mocks/articles";
+import { getArticleVisualText } from "@/data/article-visual-stories";
 import type {
   Article,
   ArticleFilters,
@@ -54,7 +55,7 @@ export async function getArticles(
       item.isPublished &&
       (!query ||
         normalise(
-          `${item.title} ${item.excerpt} ${item.category} ${item.takeaway} ${item.sections
+          `${item.title} ${item.excerpt} ${item.category} ${item.takeaway} ${getArticleVisualText(item.slug)} ${item.sections
             .map((section) => `${section.heading} ${section.paragraphs.join(" ")} ${(section.points ?? []).join(" ")}`)
             .join(" ")}`,
         ).includes(query)) &&

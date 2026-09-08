@@ -14,6 +14,8 @@ import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
 import { ArticleResults } from "@/components/blog/ArticleResults";
+import { BlogFeaturedStory } from "@/components/blog/BlogFeaturedStory";
+import { getArticleVisualStory } from "@/data/article-visual-stories";
 import { Input } from "@/components/ui/input";
 import { articleCategories } from "@/types/article.types";
 import {
@@ -57,6 +59,7 @@ export default async function BlogPage({
 }) {
   const filters = parseArticleFilters(await searchParams);
   const list = await getArticles(filters);
+  const featuredArticle = list.items.find((article) => getArticleVisualStory(article.slug));
 
   return (
     <>
@@ -75,6 +78,12 @@ export default async function BlogPage({
         >
         </PageShell>
 
+        {featuredArticle ? (
+          <BlogFeaturedStory
+            article={featuredArticle}
+            label={filters.query || filters.category || list.page > 1 ? "From these results" : "Featured guide"}
+          />
+        ) : (
         <aside
           className="zb-premium-hero-card zb-insights-hero-card zb-insights-editorial-map"
           aria-labelledby="insights-intro-title"
@@ -114,6 +123,7 @@ export default async function BlogPage({
             <ArrowUpRight aria-hidden="true" className="size-4" />
           </ActionLink>
         </aside>
+        )}
       </div>
 
       <section

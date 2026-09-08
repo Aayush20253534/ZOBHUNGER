@@ -1,16 +1,28 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   ArrowLeft,
   BookOpen,
   Clock3,
+  Image as ImageIcon,
   Layers3,
+  Workflow,
 } from "lucide-react";
+import {
+  ArticleCover,
+  ArticleFieldExample,
+  ArticleWorkflow,
+  articleExampleAnchor,
+  articleWorkflowAnchor,
+} from "@/components/blog/ArticleVisuals";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
 import { getPageMetadata } from "@/lib/page-metadata";
 import { site } from "@/data/site";
+import { getArticleVisualStory } from "@/data/article-visual-stories";
+import { executionVisuals } from "@/data/execution-visuals";
 import { mockArticles } from "@/mocks/articles";
 import { getArticleForPage } from "@/services/articles.service";
 
@@ -23,25 +35,34 @@ export function generateStaticParams() {
 }
 
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await getArticleForPage((await params).slug);
   if (!article?.isPublished)
     return {
       title: "Guide not found",
       robots: { index: false, follow: false },
     };
+  const metadata = getPageMetadata(
+    article.title,
+    article.excerpt,
+    `/blog/${encodeURIComponent(article.slug)}`,
+  );
+  const story = getArticleVisualStory(article.slug);
+  if (!story) return metadata;
+  const cover = executionVisuals[story.cover];
+  const image = { url: `${site.url}${cover.src}`, width: cover.width, height: cover.height, alt: cover.alt };
+
   return {
-    ...getPageMetadata(
-      article.title,
-      article.excerpt,
-      `/blog/${encodeURIComponent(article.slug)}`,
-    ),
+    ...metadata,
+    openGraph: { ...metadata.openGraph, type: "article", images: [image] },
+    twitter: { ...metadata.twitter, card: "summary_large_image", images: [image] },
   };
 }
 
 export default async function ArticlePage({ params }: Props) {
   const article = await getArticleForPage((await params).slug);
   if (!article?.isPublished) notFound();
+  const visualStory = getArticleVisualStory(article.slug);
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -49,6 +70,7 @@ export default async function ArticlePage({ params }: Props) {
     headline: article.title,
     description: article.excerpt,
     articleSection: article.category,
+    image: visualStory ? `${site.url}${executionVisuals[visualStory.cover].src}` : undefined,
     mainEntityOfPage: `${site.url}/blog/${encodeURIComponent(article.slug)}`,
     publisher: {
       "@type": "Organization",
@@ -72,7 +94,9 @@ export default async function ArticlePage({ params }: Props) {
       />
 
       <article>
-        <div className="zb-article-heading zb-article-heading--premium">
+        <div className={`zb-article-heading zb-article-heading--premium${visualStory ? " zb-article-heading--illustrated" : ""}`}>
+          <div className="zb-blog-article-intro">
+            <div className="zb-blog-heading-copy">
           <PageShell
             eyebrow={article.category}
             title={article.title}
@@ -83,7 +107,7 @@ export default async function ArticlePage({ params }: Props) {
             <div>
               <span aria-hidden="true"><BookOpen /></span>
               <small>Format</small>
-              <strong>Editorial deep dive</strong>
+              <strong>{visualStory ? "Illustrated guide" : "Editorial deep dive"}</strong>
             </div>
             <div>
               <span aria-hidden="true"><Clock3 /></span>
@@ -96,7 +120,9 @@ export default async function ArticlePage({ params }: Props) {
               <strong>{article.sections.length} sections</strong>
             </div>
           </div>
-
+            </div>
+            {visualStory && <ArticleCover story={visualStory} />}
+          </div>
         </div>
 
         <div className="zb-article-layout">
@@ -128,6 +154,13 @@ export default async function ArticlePage({ params }: Props) {
                     ))}
                   </ul>
                 ) : null}
+
+                {visualStory?.example.sectionId === section.id && (
+                  <ArticleFieldExample example={visualStory.example} />
+                )}
+                {visualStory?.workflow.sectionId === section.id && (
+                  <ArticleWorkflow workflow={visualStory.workflow} />
+                )}
               </section>
             ))}
           </div>
@@ -140,6 +173,16 @@ export default async function ArticlePage({ params }: Props) {
                 {article.sections.map((section) => (
                   <li key={section.id}>
                     <a href={`#${section.id}`}>{section.heading}</a>
+                    {visualStory?.example.sectionId === section.id && (
+                      <a className="zb-blog-toc-visual" href={`#${articleExampleAnchor}`}>
+                        <ImageIcon aria-hidden="true" /> Field example
+                      </a>
+                    )}
+                    {visualStory?.workflow.sectionId === section.id && (
+                      <a className="zb-blog-toc-visual" href={`#${articleWorkflowAnchor}`}>
+                        <Workflow aria-hidden="true" /> Visual workflow
+                      </a>
+                    )}
                   </li>
                 ))}
               </ol>
@@ -151,7 +194,10 @@ export default async function ArticlePage({ params }: Props) {
               <p>
                 Bring the roles, locations and timeline into one conversation.
               </p>
-              <ActionLink href="/hire-workforce" variant="light">
+              <ActionLink
+                href={visualStory ? `/hire-workforce?service=${encodeURIComponent(visualStory.service)}` : "/hire-workforce"}
+                variant="light"
+              >
                 Share your brief
               </ActionLink>
             </div>
@@ -163,8 +209,8 @@ export default async function ArticlePage({ params }: Props) {
         <CTASection
           title="What does the next assignment need?"
           description="Explore the services that can support your team and your business."
-          href="/solutions"
-          label="Explore our services"
+          href={visualStory ? `/${visualStory.service}` : "/solutions"}
+          label={visualStory ? `Explore ${visualStory.serviceLabel}` : "Explore our services"}
         />
       </div>
 
