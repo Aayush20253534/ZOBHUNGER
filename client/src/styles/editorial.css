@@ -628,6 +628,46 @@
   left: 66%;
 }
 
+/* Blog hero final fit: keep the primary CTA above the fold on laptop/desktop. */
+.zb-page-content .zb-editorial-hero--premium {
+  margin-top: -1.5rem;
+}
+
+.zb-editorial-hero--premium .zb-page-heading > .zb-eyebrow {
+  margin-bottom: 0.7rem;
+}
+
+.zb-editorial-hero--premium .zb-page-description {
+  margin-top: 0.8rem;
+}
+
+.zb-editorial-hero--premium .zb-page-actions {
+  margin-top: 1rem;
+}
+
+.zb-insights-editorial-map > .zb-action-link[data-variant="text"] {
+  margin-top: 0.55rem;
+}
+
+@media (min-width: 960px) {
+  .zb-page-content .zb-editorial-hero--premium {
+    gap: clamp(1.5rem, 2.5vw, 2.5rem);
+    align-items: start;
+  }
+
+  .zb-page-content .zb-editorial-hero--premium .zb-page-heading h1 {
+    max-width: 12.5ch;
+    font-size: clamp(2.7rem, 3.55vw, 3.35rem);
+    line-height: 1.03;
+  }
+
+  .zb-page-content .zb-editorial-hero--premium .zb-page-description {
+    max-width: 46rem;
+    font-size: 0.98rem;
+    line-height: 1.55;
+  }
+}
+
 .zb-article-card-link {
   display: flex;
   flex: 1;

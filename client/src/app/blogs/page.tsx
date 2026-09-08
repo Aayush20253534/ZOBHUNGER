@@ -5,7 +5,6 @@ import {
   BriefcaseBusiness,
   Route,
   Search,
-  Sparkles,
   UsersRound,
 } from "lucide-react";
 import { ActionButton } from "@/components/common/ActionButton";
@@ -107,14 +106,6 @@ export default async function BlogPage({
                 </article>
               );
             })}
-          </div>
-
-          <div className="zb-insights-feature-strip">
-            <Sparkles aria-hidden="true" />
-            <p>
-              <strong>Useful over ornamental.</strong> Clear guidance for real
-              operating choices, without consulting-deck fog.
-            </p>
           </div>
 
           <ActionLink href="#insights-search" variant="text">
