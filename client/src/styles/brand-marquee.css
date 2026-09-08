@@ -108,6 +108,49 @@
   display: none;
 }
 
+
+/* Homepage brand experience: show every company once in a static grid. */
+.zb-brand-marquee--static .zb-brand-marquee-window {
+  overflow: visible;
+  mask-image: none;
+}
+
+.zb-brand-marquee--static .zb-brand-marquee-static-grid {
+  width: 100%;
+}
+
+.zb-brand-marquee--static .zb-brand-marquee-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0;
+}
+
+.zb-brand-marquee--static .zb-brand-marquee-track li {
+  min-width: 0;
+  width: 100%;
+  min-height: 3.8rem;
+}
+
+@media (max-width: 1120px) {
+  .zb-brand-marquee--static .zb-brand-marquee-track {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .zb-brand-marquee--static .zb-brand-marquee-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .zb-brand-marquee--static .zb-brand-marquee-track {
+    grid-template-columns: 1fr;
+  }
+}
+
 @keyframes zb-brand-marquee-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }

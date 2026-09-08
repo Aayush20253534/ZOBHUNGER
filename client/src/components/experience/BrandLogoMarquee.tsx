@@ -32,14 +32,20 @@ function LogoTrack({ hidden = false }: { hidden?: boolean }) {
 export function BrandLogoMarquee({ compact = false }: { compact?: boolean }) {
   return (
     <div
-      className={`zb-brand-marquee${compact ? " zb-brand-marquee--compact" : ""}`}
+      className={`zb-brand-marquee${compact ? " zb-brand-marquee--compact zb-brand-marquee--static" : ""}`}
       aria-label="Execution experience across brands and markets"
     >
       <div className="zb-brand-marquee-window">
-        <div className="zb-brand-marquee-moving-row">
-          <LogoTrack />
-          <LogoTrack hidden />
-        </div>
+        {compact ? (
+          <div className="zb-brand-marquee-static-grid">
+            <LogoTrack />
+          </div>
+        ) : (
+          <div className="zb-brand-marquee-moving-row">
+            <LogoTrack />
+            <LogoTrack hidden />
+          </div>
+        )}
       </div>
       <p className="zb-brand-marquee-note">
         Brand names indicate project or execution experience and do not imply an exclusive or ongoing partnership.
