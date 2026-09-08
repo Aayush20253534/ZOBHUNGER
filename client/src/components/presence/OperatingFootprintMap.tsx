@@ -16,9 +16,9 @@ const markers = [
     x: 142.3,
     y: 139.6,
     tone: "market",
-    labelX: 14,
-    labelY: -26,
-    labelWidth: 68,
+    labelX: 16,
+    labelY: -30,
+    labelWidth: 72,
   },
   {
     name: "Ghazipur",
@@ -26,9 +26,9 @@ const markers = [
     x: 201.1,
     y: 179.1,
     tone: "hq",
-    labelX: -92,
-    labelY: -31,
-    labelWidth: 82,
+    labelX: -98,
+    labelY: -6,
+    labelWidth: 86,
   },
   {
     name: "Bihar",
@@ -36,9 +36,9 @@ const markers = [
     x: 217.9,
     y: 179,
     tone: "market",
-    labelX: 16,
-    labelY: 10,
-    labelWidth: 66,
+    labelX: 18,
+    labelY: 12,
+    labelWidth: 70,
   },
   {
     name: "Mumbai",
@@ -46,9 +46,9 @@ const markers = [
     x: 101,
     y: 264.2,
     tone: "market",
-    labelX: 14,
-    labelY: -25,
-    labelWidth: 72,
+    labelX: 16,
+    labelY: -8,
+    labelWidth: 76,
   },
   {
     name: "Bengaluru",
@@ -56,9 +56,9 @@ const markers = [
     x: 146,
     y: 343.9,
     tone: "market",
-    labelX: 14,
-    labelY: -25,
-    labelWidth: 84,
+    labelX: -98,
+    labelY: -6,
+    labelWidth: 86,
   },
 ] as const;
 
@@ -104,76 +104,85 @@ export function OperatingFootprintMap({
           </filter>
         </defs>
 
-        <g
-          className="zb-footprint-country"
-          filter="url(#zb-map-shadow)"
-          transform={`translate(${MAP_CENTER_X} 0) scale(${MAP_X_SCALE} 1) translate(${-MAP_CENTER_X} 0)`}
-        >
-          <path className="zb-footprint-map-shape" d={INDIA_OUTLINE} />
-          <path className="zb-footprint-map-grid" d={INDIA_OUTLINE} />
+        <g className="zb-footprint-scene" transform="translate(0 -12)">
+          <g
+            className="zb-footprint-country"
+            filter="url(#zb-map-shadow)"
+            transform={`translate(${MAP_CENTER_X} 0) scale(${MAP_X_SCALE} 1) translate(${-MAP_CENTER_X} 0)`}
+          >
+            <path className="zb-footprint-map-shape" d={INDIA_OUTLINE} />
+            <path className="zb-footprint-map-grid" d={INDIA_OUTLINE} />
 
-          <g className="zb-footprint-islands" aria-hidden="true">
-            <circle cx="99" cy="374" r="2.1" />
-            <circle cx="96.5" cy="387" r="1.5" />
-            <ellipse cx="292" cy="340" rx="2.1" ry="4.1" />
-            <ellipse cx="294" cy="354" rx="1.8" ry="3.7" />
-            <ellipse cx="296" cy="369" rx="1.6" ry="3.4" />
-            <ellipse cx="297.5" cy="386" rx="1.4" ry="3.1" />
-            <ellipse cx="299" cy="402" rx="1.25" ry="2.8" />
-          </g>
-        </g>
-
-        <g className="zb-footprint-routes" aria-hidden="true">
-          {markers
-            .filter((marker) => marker.tone !== "hq")
-            .map((marker) => {
-              const startX = mapX(headquarters.x);
-              const endX = mapX(marker.x);
-
-              return (
-                <path
-                  key={marker.name}
-                  d={`M ${startX} ${headquarters.y} Q ${(startX + endX) / 2 + 8} ${(headquarters.y + marker.y) / 2 - 8} ${endX} ${marker.y}`}
-                />
-              );
-            })}
-        </g>
-
-        {markers.map((marker) => {
-          const leaderX = marker.labelX < 0 ? marker.labelX + marker.labelWidth : marker.labelX;
-          const leaderY = marker.labelY + 16;
-
-          return (
-            <g
-              key={marker.name}
-              className={`zb-footprint-marker zb-footprint-marker--${marker.tone}`}
-              transform={`translate(${mapX(marker.x)} ${marker.y})`}
-            >
-              <circle className="zb-footprint-marker-pulse" r="14" />
-              <circle className="zb-footprint-marker-ring" r="7.8" />
-              <circle className="zb-footprint-marker-dot" r="3.8" filter="url(#zb-marker-glow)" />
-              <line
-                className="zb-footprint-marker-leader"
-                x1="6"
-                y1="0"
-                x2={leaderX}
-                y2={leaderY}
-              />
-              <g
-                className="zb-footprint-marker-label"
-                transform={`translate(${marker.labelX} ${marker.labelY})`}
-              >
-                <rect width={marker.labelWidth} height="32" rx="8" />
-                <text x="9" y="13" className="zb-footprint-marker-name">
-                  {marker.name}
-                </text>
-                <text x="9" y="24" className="zb-footprint-marker-detail">
-                  {marker.detail}
-                </text>
-              </g>
+            <g className="zb-footprint-islands" aria-hidden="true">
+              <circle cx="99" cy="374" r="2.1" />
+              <circle cx="96.5" cy="387" r="1.5" />
+              <ellipse cx="292" cy="340" rx="2.1" ry="4.1" />
+              <ellipse cx="294" cy="354" rx="1.8" ry="3.7" />
+              <ellipse cx="296" cy="369" rx="1.6" ry="3.4" />
+              <ellipse cx="297.5" cy="386" rx="1.4" ry="3.1" />
+              <ellipse cx="299" cy="402" rx="1.25" ry="2.8" />
             </g>
-          );
-        })}
+          </g>
+
+          <g className="zb-footprint-routes" aria-hidden="true">
+            {markers
+              .filter((marker) => marker.tone !== "hq")
+              .map((marker) => {
+                const startX = mapX(headquarters.x);
+                const endX = mapX(marker.x);
+
+                return (
+                  <path
+                    key={marker.name}
+                    d={`M ${startX} ${headquarters.y} Q ${(startX + endX) / 2 + 8} ${(headquarters.y + marker.y) / 2 - 8} ${endX} ${marker.y}`}
+                  />
+                );
+              })}
+          </g>
+
+          {markers.map((marker) => {
+            const leaderX =
+              marker.labelX < 0
+                ? marker.labelX + marker.labelWidth
+                : marker.labelX;
+            const leaderY = marker.labelY + 16;
+
+            return (
+              <g
+                key={marker.name}
+                className={`zb-footprint-marker zb-footprint-marker--${marker.tone}`}
+                transform={`translate(${mapX(marker.x)} ${marker.y})`}
+              >
+                <circle className="zb-footprint-marker-pulse" r="14" />
+                <circle className="zb-footprint-marker-ring" r="7.8" />
+                <circle
+                  className="zb-footprint-marker-dot"
+                  r="3.8"
+                  filter="url(#zb-marker-glow)"
+                />
+                <line
+                  className="zb-footprint-marker-leader"
+                  x1="6"
+                  y1="0"
+                  x2={leaderX}
+                  y2={leaderY}
+                />
+                <g
+                  className="zb-footprint-marker-label"
+                  transform={`translate(${marker.labelX} ${marker.labelY})`}
+                >
+                  <rect width={marker.labelWidth} height="32" rx="8" />
+                  <text x="9" y="13" className="zb-footprint-marker-name">
+                    {marker.name}
+                  </text>
+                  <text x="9" y="24" className="zb-footprint-marker-detail">
+                    {marker.detail}
+                  </text>
+                </g>
+              </g>
+            );
+          })}
+        </g>
       </svg>
 
       {showLegend ? (
