@@ -10,6 +10,7 @@ import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { SolutionCard } from "@/components/solutions/SolutionCard";
 import { SolutionExecutionVisual } from "@/components/solutions/SolutionExecutionVisual";
+import { SolutionFieldStories } from "@/components/solutions/SolutionFieldStories";
 import { Card } from "@/components/ui/card";
 import { industries } from "@/data/industries";
 import { solutionDetails } from "@/data/solution-details";
@@ -66,12 +67,14 @@ export function SolutionDetail({ slug }: { slug: string }) {
         className="zb-solution-jump-nav"
         aria-label={`${solution.label} page sections`}
       >
+        <a href="#solution-in-action">See the work</a>
         <a href="#solution-services">Services</a>
         <a href={`#${detail.focus.id}`}>{detail.focus.label}</a>
         <a href="#solution-process">Execution flow</a>
         <a href="#solution-case-study">Case study</a>
         <a href="#solution-industries">Industries</a>
       </nav>
+      <SolutionFieldStories slug={solution.slug} />
       <section
         id="solution-services"
         className="zb-solution-section"

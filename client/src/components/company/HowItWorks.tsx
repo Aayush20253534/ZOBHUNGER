@@ -2,9 +2,9 @@ import { ArrowUpRight } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
-import { ProcessFlow } from "@/components/common/ProcessFlow";
+import { DeliveryJourney } from "@/components/company/DeliveryJourney";
 import { PageShell } from "@/components/common/PageShell";
-import { briefChecklist, deliverySteps } from "@/data/company";
+import { briefChecklist } from "@/data/company";
 import "@/styles/company.css";
 
 export function HowItWorks() {
@@ -18,19 +18,18 @@ export function HowItWorks() {
         title="From requirement to execution."
         description="A clear brief is the starting point. The delivery process connects sourcing, selection, deployment and the updates your business needs along the way."
         actions={
-          <ActionLink href="/hire-workforce">
-            Start with your requirement{" "}
-            <ArrowUpRight className="size-4" aria-hidden="true" />
-          </ActionLink>
+          <>
+            <ActionLink href="/hire-workforce">
+              Start with your requirement{" "}
+              <ArrowUpRight className="size-4" aria-hidden="true" />
+            </ActionLink>
+            <ActionLink href="#delivery-journey" variant="secondary">
+              Explore the delivery journey
+            </ActionLink>
+          </>
         }
       />
-      <section aria-label="The delivery process">
-        <h2 className="sr-only">The delivery process</h2>
-        <ProcessFlow
-          steps={deliverySteps}
-          label="Six steps from requirement to execution"
-        />
-      </section>
+      <DeliveryJourney />
       <section
         className="zb-company-section zb-company-brief"
         aria-labelledby="process-brief-title"
