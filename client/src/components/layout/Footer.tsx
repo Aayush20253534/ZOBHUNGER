@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { site } from "@/data/site";
 import { solutions } from "@/data/solutions";
@@ -35,6 +36,57 @@ const resourceLinks = [
   { label: "Technology vision", href: "/technology" },
 ] as const;
 
+const footerGroups = [
+  { title: "Company", label: "Company links in footer", links: companyLinks },
+  {
+    title: "Services",
+    label: "Services in footer",
+    links: [
+      { label: "Our Services", href: "/solutions" },
+      ...solutions.map((solution) => ({
+        label: solution.label,
+        href: `/${solution.slug}`,
+      })),
+    ],
+  },
+  { title: "Opportunities", label: "Opportunity links in footer", links: opportunityLinks },
+  { title: "Partnerships", label: "Partnership links in footer", links: partnershipLinks },
+  { title: "Resources", label: "Resource links in footer", links: resourceLinks },
+] as const;
+
+function FooterLinks({ links }: { links: readonly { href: string; label: string }[] }) {
+  return (
+    <ul>
+      {links.map((link) => (
+        <li key={link.href}>
+          <Link href={link.href}>{link.label}</Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function FooterLinkGroup({ group }: { group: (typeof footerGroups)[number] }) {
+  return (
+    <>
+      <nav className="zb-footer-desktop-group" aria-label={group.label}>
+        <h2>{group.title}</h2>
+        <FooterLinks links={group.links} />
+      </nav>
+      {/* Native disclosures work on phones without extra client JavaScript.
+          CSS exposes only one version of each group at a time. */}
+      <details className="zb-footer-mobile-group">
+        <summary>
+          <h2>{group.title}<ChevronDown aria-hidden="true" /></h2>
+        </summary>
+        <nav aria-label={group.label}>
+          <FooterLinks links={group.links} />
+        </nav>
+      </details>
+    </>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="zb-footer">
@@ -50,63 +102,7 @@ export function Footer() {
             </ActionLink>
           </div>
 
-          <nav aria-label="Company links in footer">
-            <h2>Company</h2>
-            <ul>
-              {companyLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href}>{link.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav aria-label="Services in footer">
-            <h2>Services</h2>
-            <ul>
-              <li>
-                <Link href="/solutions">Our Services</Link>
-              </li>
-              {solutions.map((solution) => (
-                <li key={solution.slug}>
-                  <Link href={`/${solution.slug}`}>{solution.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav aria-label="Opportunity links in footer">
-            <h2>Opportunities</h2>
-            <ul>
-              {opportunityLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href}>{link.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav aria-label="Partnership links in footer">
-            <h2>Partnerships</h2>
-            <ul>
-              {partnershipLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href}>{link.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav aria-label="Resource links in footer">
-            <h2>Resources</h2>
-            <ul>
-              {resourceLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href}>{link.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          {footerGroups.map((group) => <FooterLinkGroup key={group.title} group={group} />)}
         </div>
         <div className="zb-footer-bottom">
           <p>

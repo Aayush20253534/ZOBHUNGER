@@ -1,6 +1,7 @@
 /* Shared phone refinements. The root class keeps these rules stronger than
    route styles regardless of the order Next loads their CSS during navigation. */
 .zb-presence-mobile-key { display: none; }
+.zb-footer-mobile-group { display: none; }
 
 /* The sheet is also used on tablets and short landscape screens. */
 .zb-site .zb-mobile-drawer {
@@ -74,7 +75,24 @@
   }
   .zb-site .zb-header-inner { gap: 0.75rem; min-height: 4.5rem; }
   .zb-site .zb-header-brand { min-width: 0; }
-  .zb-site .zb-header .zb-mobile-trigger { min-height: 2.75rem; padding: 0.6rem 0.8rem; gap: 0.4rem; font-size: 0.85rem; }
+  /* Override the shared action-link display rule that exposes the desktop CTA.
+     Hire Workforce remains available in the mobile drawer and page content. */
+  .zb-site .zb-header .zb-header-primary-action { display: none; }
+  .zb-site .zb-header .zb-mobile-trigger {
+    display: inline-flex;
+    flex: 0 0 2.75rem;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    min-width: 2.75rem;
+    height: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0;
+    gap: 0;
+    border-radius: 0.65rem;
+  }
+  .zb-site .zb-header .zb-mobile-trigger > svg { width: 1.35rem; height: 1.35rem; flex-shrink: 0; }
+  .zb-site .zb-header .zb-mobile-trigger > span { display: none; }
 
   .zb-site .zb-page-content :is(.zb-page-heading, .zb-section-heading) { min-width: 0; }
   body.zb-site .zb-page-content h1,
@@ -217,13 +235,27 @@
   .zb-site .zb-page-content :is(.zb-placement-portal-header, .zb-candidate-panel-title) { flex-wrap: wrap; gap: 0.75rem; }
   .zb-site .zb-page-content :is(.zb-field, .zb-contact-office-detail, .zb-admin-row, .zb-placement-portal-grid) :is(a, dd, p) { overflow-wrap: anywhere; }
 
-  .zb-site .zb-footer { padding-block: 2.5rem 1.25rem; }
-  .zb-site .zb-footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 1rem; }
-  .zb-site .zb-footer-intro { grid-column: 1 / -1; }
-  .zb-site .zb-footer-grid > nav { min-width: 0; }
-  .zb-site .zb-footer h2 { font-size: 0.9rem; }
-  .zb-site .zb-footer li a { min-height: 2.75rem; padding-block: 0.5rem; font-size: 0.8rem; line-height: 1.5; overflow-wrap: break-word; }
-  .zb-site .zb-footer-bottom { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  /* Each footer section has its own full-width disclosure, avoiding unequal
+     columns and the accumulated outer + inner padding on small screens. */
+  .zb-site .zb-footer { margin-top: 2.5rem; padding-block: 0; }
+  .zb-site .zb-footer-grid { grid-template-columns: minmax(0, 1fr); gap: 0; padding-block: 2rem 0.75rem; }
+  .zb-site .zb-footer-intro { grid-column: 1 / -1; max-width: 100%; padding-bottom: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid #ffffff26; }
+  .zb-site .zb-footer-intro p { margin-block: 0.85rem 1rem; font-size: 0.9rem; line-height: 1.65; }
+  .zb-site .zb-footer-intro .zb-action-link { width: 100%; max-width: 20rem; }
+  .zb-site .zb-footer-grid > .zb-footer-desktop-group { display: none; }
+  .zb-site .zb-footer-grid > .zb-footer-mobile-group { display: block; min-width: 0; border-bottom: 1px solid #ffffff26; }
+  .zb-site .zb-footer-mobile-group:last-child { border-bottom: 0; }
+  .zb-site .zb-footer-mobile-group > summary { padding: 0.85rem 0; min-height: 3.25rem; cursor: pointer; list-style: none; }
+  .zb-site .zb-footer-mobile-group > summary::-webkit-details-marker { display: none; }
+  .zb-site .zb-footer-mobile-group > summary h2 { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin: 0; color: #fff; font-size: 0.95rem; line-height: 1.5; }
+  .zb-site .zb-footer-mobile-group > summary svg { width: 1.1rem; height: 1.1rem; flex-shrink: 0; color: var(--zb-on-panel-muted); }
+  .zb-site .zb-footer-mobile-group[open] > summary svg { transform: rotate(180deg); }
+  .zb-site .zb-footer-mobile-group > summary:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 0.25rem; }
+  .zb-site .zb-footer-mobile-group > nav { min-width: 0; padding-bottom: 0.75rem; }
+  .zb-site .zb-footer-mobile-group ul { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; }
+  .zb-site .zb-footer-mobile-group li { min-width: 0; }
+  .zb-site .zb-footer-mobile-group li a { display: flex; width: 100%; min-height: 2.75rem; padding: 0.6rem 0; font-size: 0.875rem; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; }
+  .zb-site .zb-footer-bottom { flex-direction: column; align-items: flex-start; gap: 0.45rem; padding-block: 1rem max(1.25rem, env(safe-area-inset-bottom)); font-size: 0.75rem; }
 }
 
 @media (max-width: 479px) {
@@ -233,6 +265,5 @@
 }
 
 @media (max-width: 359px) {
-  .zb-site .zb-footer-grid { grid-template-columns: minmax(0, 1fr); }
   .zb-site .zb-page-content .zb-admin-stats { grid-template-columns: minmax(0, 1fr); }
 }
