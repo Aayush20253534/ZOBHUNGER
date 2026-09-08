@@ -8,18 +8,11 @@ import {
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { PageShell } from "@/components/common/PageShell";
+import { site } from "@/data/site";
 import { ContactForm } from "@/components/forms/ContactForm";
 import "@/styles/company.css";
 
-const publicContact = {
-  email: "help@zobhungr.com",
-  phoneLabel: "+91-548-4051917",
-  phoneHref: "tel:+915484051917",
-  address:
-    "Vijay Villa, 258, Nawapura, CISF Colony, Opium Factory Road, Ghazipur, Uttar Pradesh 233001",
-  mapsHref:
-    "https://www.google.com/maps/search/?api=1&query=Vijay+Villa+258+Nawapura+CISF+Colony+Opium+Factory+Road+Ghazipur+Uttar+Pradesh+233001",
-} as const;
+const publicContact = site.publicContact;
 
 export function ContactPageContent({
   serviceRequired,
@@ -77,7 +70,8 @@ export function ContactPageContent({
                   <a
                     href={publicContact.mapsHref}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
+                    aria-label="Open head office in Google Maps (opens in a new tab)"
                   >
                     Open in Maps
                     <ArrowUpRight aria-hidden="true" />

@@ -35,20 +35,20 @@ export function PlacementPortalGuard({ children }: { children: ReactNode }) {
 
   if (state === "checking") {
     return (
-      <main className="zb-placement-portal-access-page">
+      <div className="zb-placement-portal-access-page">
         <section className="zb-placement-portal-access-card" aria-live="polite">
           <span className="zb-placement-portal-access-icon"><LockKeyhole aria-hidden="true" /></span>
           <p className="zb-eyebrow">Institution Partner Portal</p>
           <h1>Checking access</h1>
           <p>Verifying your approved institution partner session.</p>
         </section>
-      </main>
+      </div>
     );
   }
 
   if (state === "denied") {
     return (
-      <main className="zb-placement-portal-restricted-page">
+      <div className="zb-placement-portal-restricted-page">
         <section className="zb-placement-portal-restricted-card" aria-label="Restricted placement portal">
           <Image
             className="zb-placement-portal-restricted-image"
@@ -60,13 +60,13 @@ export function PlacementPortalGuard({ children }: { children: ReactNode }) {
             sizes="(max-width: 640px) 260px, 360px"
           />
         </section>
-      </main>
+      </div>
     );
   }
 
   if (state === "error") {
     return (
-      <main className="zb-placement-portal-access-page">
+      <div className="zb-placement-portal-access-page">
         <section className="zb-placement-portal-access-card">
           <span className="zb-placement-portal-access-icon"><LockKeyhole aria-hidden="true" /></span>
           <p className="zb-eyebrow">Portal unavailable</p>
@@ -76,7 +76,7 @@ export function PlacementPortalGuard({ children }: { children: ReactNode }) {
             Institution Partner Login
           </Link>
         </section>
-      </main>
+      </div>
     );
   }
 

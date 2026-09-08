@@ -2,13 +2,20 @@ import type { MetadataRoute } from "next";
 import { site } from "@/data/site";
 
 export default function robots(): MetadataRoute.Robots {
-  // Keep public marketing pages discoverable while excluding private workspaces.
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/design-system", "/admin", "/placement-portal"],
+      disallow: [
+        "/admin",
+        "/design-system",
+        "/login",
+        "/placement-cell-login",
+        "/placement-cell-partnership/apply",
+        "/placement-portal",
+      ],
     },
     sitemap: `${site.url}/sitemap.xml`,
+    host: site.url,
   };
 }

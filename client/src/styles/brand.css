@@ -912,3 +912,59 @@ body > main[class] {
     transition: none;
   }
 }
+
+/* Part 10: final accessibility, responsive and motion-safety pass. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html body[class] {
+  overflow-x: clip;
+}
+
+.zb-page-content {
+  scroll-margin-top: calc(var(--zb-header-height) + 1rem);
+}
+
+.zb-page-content:focus {
+  outline: none;
+}
+
+:where(
+  a[href],
+  button:not(:disabled),
+  input:not(:disabled),
+  select:not(:disabled),
+  textarea:not(:disabled),
+  summary,
+  [tabindex]:not([tabindex="-1"])
+):focus-visible {
+  outline: 2px solid var(--zb-action);
+  outline-offset: 3px;
+}
+
+:where(section, article, aside, nav, div)[id] {
+  scroll-margin-top: calc(var(--zb-header-height) + 1rem);
+}
+
+@media (max-width: 639px) {
+  .zb-footer li a {
+    min-height: 2.75rem;
+  }
+
+  .zb-footer-grid {
+    gap: 1.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

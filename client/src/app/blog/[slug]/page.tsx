@@ -10,6 +10,7 @@ import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
 import { getPageMetadata } from "@/lib/page-metadata";
+import { site } from "@/data/site";
 import { getArticleForPage } from "@/services/articles.service";
 import { getEditorialDataMode } from "@/services/adapters";
 
@@ -38,8 +39,26 @@ export default async function ArticlePage({ params }: Props) {
   const article = await getArticleForPage((await params).slug);
   if (!article?.isPublished) notFound();
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt,
+    articleSection: article.category,
+    mainEntityOfPage: `${site.url}/blog/${encodeURIComponent(article.slug)}`,
+    publisher: {
+      "@type": "Organization",
+      name: site.name,
+      url: site.url,
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },

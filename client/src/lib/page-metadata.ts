@@ -7,6 +7,8 @@ export function getPageMetadata(
   path: string,
 ): Metadata {
   const url = site.url + path;
+  const socialTitle = `${title} | ${site.name}`;
+
   return {
     title,
     description,
@@ -15,9 +17,14 @@ export function getPageMetadata(
       type: "website",
       locale: "en_IN",
       siteName: site.name,
-      title: title + " | " + site.name,
+      title: socialTitle,
       description,
       url,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: socialTitle,
+      description,
     },
   };
 }

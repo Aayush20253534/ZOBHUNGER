@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import "./globals.css";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
+import { Navbar } from "@/components/layout/Navbar";
 import { site } from "@/data/site";
+import "./globals.css";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  colorScheme: "light",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -15,11 +16,27 @@ export const metadata: Metadata = {
   description: site.description,
   applicationName: site.name,
   category: "business",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
     type: "website",
     locale: "en_IN",
     siteName: site.name,
     url: site.url,
+    title: site.name,
+    description: site.description,
+  },
+  twitter: {
+    card: "summary_large_image",
     title: site.name,
     description: site.description,
   },
@@ -30,8 +47,26 @@ const organizationSchema = {
   "@type": "Organization",
   name: site.name,
   url: site.url,
+  logo: `${site.url}/Logo/Logo.png`,
   description: site.description,
   slogan: site.tagline,
+  email: site.publicContact.email,
+  telephone: site.publicContact.phoneLabel,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: site.publicContact.streetAddress,
+    addressLocality: site.publicContact.addressLocality,
+    addressRegion: site.publicContact.addressRegion,
+    postalCode: site.publicContact.postalCode,
+    addressCountry: site.publicContact.addressCountry,
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer support",
+    email: site.publicContact.email,
+    telephone: site.publicContact.phoneLabel,
+    areaServed: "IN",
+  },
   knowsAbout: [
     "Workforce solutions",
     "Recruitment",
@@ -46,14 +81,16 @@ const organizationSchema = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
+    <html lang="en">
       <body className="min-h-screen bg-background text-foreground antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
         <Navbar />
-        <main className="mx-auto min-h-[70vh] max-w-6xl px-6 py-12">{children}</main>
+        <main className="mx-auto min-h-[70vh] max-w-6xl px-6 py-12">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

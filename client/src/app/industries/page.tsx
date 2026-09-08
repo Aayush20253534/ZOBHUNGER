@@ -1,21 +1,12 @@
-import type { Metadata } from "next";
 import { IndustriesOverview } from "@/components/industries/IndustriesOverview";
 import { industriesOverview } from "@/data/industry-details";
-import { site } from "@/data/site";
+import { getPageMetadata } from "@/lib/page-metadata";
 
-export const metadata: Metadata = {
-  title: "Industries We Serve",
-  description: industriesOverview.description,
-  alternates: { canonical: `${site.url}/industries` },
-  openGraph: {
-    type: "website",
-    locale: "en_IN",
-    siteName: site.name,
-    title: `Industries We Serve | ${site.name}`,
-    description: industriesOverview.description,
-    url: `${site.url}/industries`,
-  },
-};
+export const metadata = getPageMetadata(
+  "Industries We Serve",
+  industriesOverview.description,
+  "/industries",
+);
 
 export default function Page() {
   return <IndustriesOverview />;

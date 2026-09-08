@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { CTASection } from "@/components/common/CTASection";
 import { BrandExperiencePreview } from "@/components/home/BrandExperiencePreview";
 import { Hero } from "@/components/home/Hero";
@@ -9,23 +8,15 @@ import { IndustriesPreview } from "@/components/home/IndustriesPreview";
 import { ServicesOverview } from "@/components/home/ServicesOverview";
 import { WhyZobhunger } from "@/components/home/WhyZobhunger";
 import { home } from "@/data/home";
-import { site } from "@/data/site";
+import { getPageMetadata } from "@/lib/page-metadata";
 import "@/styles/solutions.css";
 import "@/styles/home.css";
 
-export const metadata: Metadata = {
-  title: "Workforce, Sales & Business Execution",
-  description: home.hero.description,
-  alternates: { canonical: `${site.url}/` },
-  openGraph: {
-    type: "website",
-    locale: "en_IN",
-    siteName: site.name,
-    url: `${site.url}/`,
-    title: "ZOBHUNGER | Workforce, Sales & Business Execution",
-    description: home.hero.description,
-  },
-};
+export const metadata = getPageMetadata(
+  "Workforce, Sales & Business Execution",
+  home.hero.description,
+  "/",
+);
 
 export default function Page() {
   return (
