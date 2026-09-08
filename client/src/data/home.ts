@@ -3,7 +3,6 @@ export const home = {
   hero: {
     eyebrow: "India’s workforce & field execution partner",
     title: "Build, deploy & execute with the right workforce.",
-    emphasis: "From people to performance.",
     description:
       "ZOBHUNGER helps businesses build and deploy workforce, sales, promoter and field teams around the work that needs to happen in market.",
     engagements: [
