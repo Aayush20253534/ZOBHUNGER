@@ -1,4 +1,5 @@
 import { prisma } from "../../config/db.js";
+import { guardAssignedCandidate } from "../attendance/attendance.guards.js";
 import { Prisma, type BusinessCandidateStatus } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
 import { ownedRequirements } from "../business/business-requirement-access.js";
@@ -150,6 +151,7 @@ export async function reviewCandidate(access: CandidateAccess, id: string, input
     if (current.revision !== input.revision) throw changed();
     const status = input.action === "STATUS" ? input.status : input.action === "INTERVIEW" ? "INTERVIEW_REQUESTED" : current.status;
     const rescheduling = input.action === "INTERVIEW" && current.status === "INTERVIEW_REQUESTED";
+    if (status !== current.status && current.status === "SELECTED") await guardAssignedCandidate(tx, id);
     if (input.action !== "FEEDBACK" && !rescheduling && !transitions[current.status].includes(status)) {
       throw new HttpError(409, "This decision is not available at the current stage. Reopen a completed review before changing its decision.", { code: "INVALID_CANDIDATE_TRANSITION" });
     }
@@ -174,6 +176,7 @@ export async function revokeCandidate(userId: string, id: string, input: { revis
     const row = await tx.businessCandidate.findUnique({ where: { id }, select: { requirementId: true } });
     if (!row) throw unavailable();
     await lockRequirement(tx, row.requirementId);
+    await guardAssignedCandidate(tx, id);
     const result = await tx.businessCandidate.updateMany({ where: { id, revision: input.revision, revokedAt: null }, data: { revokedAt: new Date(), revision: { increment: 1 } } });
     if (result.count !== 1) throw changed();
     await tx.candidateEvent.create({ data: { candidateId: id, kind: "ACCESS_REVOKED", actorRole: "ADMIN", note: input.note } });

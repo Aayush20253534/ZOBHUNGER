@@ -43,6 +43,19 @@ enum CandidateEventKind {
   ACCESS_REVOKED
 }
 
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LEAVE
+  OFF
+}
+
+enum AttendanceCorrectionStatus {
+  OPEN
+  RESOLVED
+  REJECTED
+}
+
 enum ApplicationStatus {
   SUBMITTED
   REVIEWED
@@ -184,6 +197,7 @@ model WorkforceRequirement {
   businessProfile BusinessProfile? @relation(fields: [businessProfileId], references: [id], onDelete: SetNull)
 
   candidates BusinessCandidate[]
+  assignments WorkforceAssignment[]
 
   @@index([status, createdAt])
   @@index([businessEmail])
@@ -402,6 +416,7 @@ model BusinessCandidate {
   requirement WorkforceRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
   application JobApplication        @relation(fields: [applicationId], references: [id], onDelete: Cascade)
   events      CandidateEvent[]
+  assignment  WorkforceAssignment?
 
   @@unique([requirementId, applicationId])
   @@index([requirementId, revokedAt, status, updatedAt, id], map: "BusinessCandidate_requirement_stage_updated_idx")
@@ -425,4 +440,92 @@ model CandidateEvent {
   candidate BusinessCandidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
 
   @@index([candidateId, createdAt, id])
+}
+
+// Assignment creation is an explicit operations action after selection.
+// Dates are calendar dates; shift minutes and working days use Asia/Kolkata.
+model WorkforceAssignment {
+  id             String   @id @default(cuid())
+  candidateId    String   @unique
+  requirementId  String
+  name           String
+  role           String
+  location       String
+  supervisor     String
+  startDate      DateTime @db.Date
+  endDate        DateTime @db.Date
+  shiftStart     Int
+  shiftEnd       Int
+  graceMinutes   Int      @default(10)
+  workingDays    Int[]    @default([1, 2, 3, 4, 5, 6])
+  cancelledAt    DateTime?
+  revision       Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  candidate      BusinessCandidate    @relation(fields: [candidateId], references: [id], onDelete: Restrict)
+  requirement    WorkforceRequirement @relation(fields: [requirementId], references: [id], onDelete: Restrict)
+  attendance     AttendanceRecord[]
+  corrections    AttendanceCorrection[]
+
+  @@index([requirementId, startDate, endDate])
+  @@index([cancelledAt, startDate, endDate])
+}
+
+model AttendanceRecord {
+  id             String           @id @default(cuid())
+  assignmentId   String
+  date           DateTime         @db.Date
+  status         AttendanceStatus
+  checkInAt      DateTime?
+  checkOutAt     DateTime?
+  breakMinutes   Int              @default(0)
+  workedMinutes  Int?
+  lateMinutes    Int              @default(0)
+  note           String
+  revision       Int              @default(0)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  assignment WorkforceAssignment @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
+  events     AttendanceEvent[]
+
+  @@unique([assignmentId, date])
+  @@index([date, status])
+}
+
+model AttendanceEvent {
+  id             String           @id @default(cuid())
+  recordId       String
+  status         AttendanceStatus
+  checkInAt      DateTime?
+  checkOutAt     DateTime?
+  breakMinutes   Int
+  workedMinutes  Int?
+  lateMinutes    Int
+  note           String
+  source         String
+  createdAt      DateTime         @default(now())
+
+  record AttendanceRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+
+  @@index([recordId, createdAt, id])
+}
+
+model AttendanceCorrection {
+  id             String                     @id @default(cuid())
+  assignmentId   String
+  date           DateTime                   @db.Date
+  openKey        String?                    @unique
+  recordRevision Int?
+  reason         String
+  status         AttendanceCorrectionStatus @default(OPEN)
+  resolution     String?
+  createdAt      DateTime                   @default(now())
+  updatedAt      DateTime                   @updatedAt
+
+  assignment WorkforceAssignment @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
+
+  @@index([assignmentId, date, createdAt])
+  @@index([status, createdAt])
 }

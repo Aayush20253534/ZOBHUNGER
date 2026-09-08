@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { guardRequirementAssignments } from "../attendance/attendance.guards.js";
 import { Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../../config/db.js";
 import { HttpError } from "../../utils/http-error.js";
@@ -95,10 +96,12 @@ export async function updateBusinessRequirement(userId: string, id: string, inpu
 
 export async function withdrawBusinessRequirement(userId: string, id: string, input: WithdrawBusinessRequirement) {
   return prisma.$transaction(async tx => {
+    await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "WorkforceRequirement" WHERE "id" = ${id} FOR UPDATE`);
     const current = await tx.workforceRequirement.findFirst({ where: { ...ownedRequirements(userId), id } });
     if (!current) throw missing();
     if (current.status === "CLOSED") throw closed();
     if (current.revision !== input.revision) throw conflict();
+    await guardRequirementAssignments(tx, id);
     const changed = await tx.workforceRequirement.updateMany({
       where: { ...ownedRequirements(userId), id, revision: input.revision, status: current.status },
       data: { status: "CLOSED", revision: { increment: 1 } },

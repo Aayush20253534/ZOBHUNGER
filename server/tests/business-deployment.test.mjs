@@ -15,7 +15,7 @@ async function withApi(override, run) {
     const protectedRoute = path.startsWith("/business/");
     const status = custom?.status ?? (path === "/health" ? 200 : protectedRoute ? 401 : 400);
     const body = custom?.body ?? (path === "/health"
-      ? { success: true, data: { features: { businessPortal: true, businessDashboard: true, businessRequirements: true, businessCandidates: true } } }
+      ? { success: true, data: { features: { businessPortal: true, businessDashboard: true, businessRequirements: true, businessCandidates: true, businessAttendance: true } } }
       : { success: false, error: { code: protectedRoute ? "UNAUTHENTICATED" : "VALIDATION_ERROR" } });
     res.writeHead(status, { "Content-Type": "application/json" });
     res.end(JSON.stringify(body));
@@ -28,7 +28,7 @@ async function withApi(override, run) {
 test("deployment check probes real route methods without login data or cookies", async () => {
   await withApi(() => undefined, async (base, seen) => {
     const results = await checkBusinessRoutes(base);
-    assert.equal(results.length, 15);
+    assert.equal(results.length, 20);
     assert.ok(seen.some(request => request.path.endsWith("/auth/business-login") && request.method === "POST"));
     assert.ok(seen.every(request => !request.cookie));
     assert.ok(seen.filter(request => request.method !== "GET").every(request => request.body === "{}"));
@@ -38,7 +38,7 @@ test("a healthy old API is rejected when it lacks the business deployment marker
   await withApi(path => path === "/health" ? { body: { success: true, data: { status: "ok" } } } : undefined,
     base => assert.rejects(checkBusinessRoutes(base), /latest backend commit/));
 });
-for (const missing of ["/business/workspace", "/business/profile", "/business/dashboard", "/business/requirements/deployment-check", "/auth/business-login", "/auth/business/forgot-password", "/auth/business/reset-password"]) {
+for (const missing of ["/business/attendance", "/business/attendance/corrections", "/business/attendance/assignments/deployment-check", "/business/attendance/assignments/deployment-check/day", "/business/attendance/assignments/deployment-check/corrections", "/business/workspace", "/business/profile", "/business/dashboard", "/business/requirements/deployment-check", "/auth/business-login", "/auth/business/forgot-password", "/auth/business/reset-password"]) {
   test(`deployment check rejects missing ${missing}`, async () => {
     await withApi(path => path === missing ? { status: 404 } : undefined,
       base => assert.rejects(checkBusinessRoutes(base), error => error.message.includes(missing) && error.message.includes("404")));

@@ -28,7 +28,7 @@ try {
   server = app.listen(0, "127.0.0.1");
   await once(server, "listening");
   await checkBusinessRoutes(`http://127.0.0.1:${server.address().port}/api/v1`);
-  console.log("Business route check passed: access, dashboard, requirement list/create/edit/withdraw, candidate list/profile/review, profile and recovery are mounted.");
+  console.log("Business route check passed: access, dashboard, requirements, candidates, attendance, corrections, profile and recovery are mounted.");
 } catch (error) {
   console.error("Business route check failed:", error instanceof Error ? error.message : "Unable to load the compiled API.");
   console.error("From server/, run npm ci --include=dev, then npm run deploy. Start the service with npm start.");

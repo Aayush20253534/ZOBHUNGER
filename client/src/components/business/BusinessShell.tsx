@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { ArrowUpRight, Building2, CircleHelp, ClipboardList, LayoutDashboard, LogOut, Menu, ShieldCheck, UsersRound, UserRound } from "lucide-react";
+import { ArrowUpRight, Building2, CalendarCheck2, CircleHelp, ClipboardList, LayoutDashboard, LogOut, Menu, ShieldCheck, UsersRound, UserRound } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useBusiness } from "./BusinessProvider";
 import { BusinessWordmark } from "./BusinessUI";
 
-const links = [{ href: "/business/dashboard", label: "Dashboard", icon: LayoutDashboard }, { href: "/business/requirements", label: "Requirements", icon: ClipboardList }, { href: "/business/candidates", label: "Candidates", icon: UsersRound }, { href: "/business/company", label: "Company profile", icon: Building2 }, { href: "/business/account", label: "Account & security", icon: UserRound }];
+const links = [{ href: "/business/dashboard", label: "Dashboard", icon: LayoutDashboard }, { href: "/business/requirements", label: "Requirements", icon: ClipboardList }, { href: "/business/candidates", label: "Candidates", icon: UsersRound }, { href: "/business/attendance", label: "Attendance", icon: CalendarCheck2 }, { href: "/business/company", label: "Company profile", icon: Building2 }, { href: "/business/account", label: "Account & security", icon: UserRound }];
 
 export function BusinessShell({ children }: { children: ReactNode }) {
   const { user, profile, signOut } = useBusiness();
@@ -20,7 +20,7 @@ export function BusinessShell({ children }: { children: ReactNode }) {
     setSigningOut(true); setError("");
     try { await signOut(); } catch { setError("Sign out didn't finish. Please try again."); setSigningOut(false); }
   }
-  const navigation = <nav className="zb-biz-nav" aria-label="Business workspace">{links.map(({ href, label, icon: Icon }) => <Link key={href} href={href} aria-current={pathname === href ? "page" : (href === "/business/requirements" || href === "/business/candidates") && pathname.startsWith(`${href}/`) ? "location" : undefined} onClick={() => setOpen(false)}><Icon aria-hidden="true" />{label}</Link>)}</nav>;
+  const navigation = <nav className="zb-biz-nav" aria-label="Business workspace">{links.map(({ href, label, icon: Icon }) => <Link key={href} href={href} aria-current={pathname === href ? "page" : pathname.startsWith(`${href}/`) ? "location" : undefined} onClick={() => setOpen(false)}><Icon aria-hidden="true" />{label}</Link>)}</nav>;
   const account = <div className="zb-biz-sidebar-account"><span className="zb-biz-avatar" aria-hidden="true">{(profile?.companyName || user.email).slice(0, 1).toUpperCase()}</span><div><strong>{profile?.companyName || "Your business"}</strong><span>{user.email}</span></div></div>;
   const signOutButton = <button type="button" className="zb-biz-signout" onClick={handleSignOut} disabled={signingOut}><LogOut aria-hidden="true" />{signingOut ? "Signing out…" : "Sign out"}</button>;
   return <div className="zb-biz-shell">

@@ -8,6 +8,7 @@ import {
   UserRole,
 } from "../../generated/prisma/client.js";
 import { prisma } from "../../config/db.js";
+import { guardRequirementAssignments } from "../attendance/attendance.guards.js";
 import { HttpError } from "../../utils/http-error.js";
 import type {
   ListAdminJobsQuery,
@@ -326,9 +327,12 @@ export async function updateRequirementStatusWithAudit(
   context: AuditContext,
 ) {
   return prisma.$transaction(async (tx) => {
+    await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "WorkforceRequirement" WHERE "id" = ${id} FOR UPDATE`);
     const current = await tx.workforceRequirement.findUnique({ where: { id } });
     if (!current) return null;
     if (current.status === status) return { entity: current, changed: false };
+
+    if (status === "CLOSED") await guardRequirementAssignments(tx, id);
 
     const changed = await tx.workforceRequirement.updateMany({
       where: { id, revision: current.revision },

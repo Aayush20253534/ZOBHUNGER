@@ -1,0 +1,20 @@
+"use client";
+
+import Link from "next/link";
+import { useCallback, useState } from "react";
+import { ArrowUpRight, MessageSquareMore, RefreshCw } from "lucide-react";
+import { getCorrections } from "@/services/attendance.service";
+import type { Correction } from "@/types/attendance.types";
+import { businessDate, useBusinessResource } from "../BusinessDashboardUI";
+import { AttendanceError, attendanceHref, AttendanceLoading, AttendancePages } from "./AttendanceUI";
+
+export function AttendanceCorrections({ admin, accountId, requirementId }: { admin: boolean; accountId: string; requirementId?: string }) {
+  const [search, setSearch] = useState(""); const [query, setQuery] = useState(""); const [page, setPage] = useState(1);
+  const [status, setStatus] = useState<Correction["status"] | "ALL">("OPEN"); const [version, setVersion] = useState(0);
+  const request = useCallback((signal: AbortSignal) => getCorrections(admin, query, page, status, signal, requirementId), [admin, query, page, status, requirementId]);
+  const { data, loading, error } = useBusinessResource(`${accountId}:${admin}:${requirementId}:${query}:${page}:${status}:${version}`, request);
+  return <section><div className="zb-att-section-heading"><div><h2>Correction requests</h2><p>{admin ? "Review each request against the daily record, then save a decision." : "Follow your requests from submission to the recorded decision."}</p></div><button type="button" disabled={loading} onClick={() => setVersion(v => v + 1)} className="zb-att-icon-button" aria-label="Refresh corrections"><RefreshCw aria-hidden="true" /></button></div>
+    <form className="zb-att-filters zb-att-filters--short" onSubmit={e => { e.preventDefault(); setQuery(search.trim()); setPage(1); }}><label><span>Find a request</span><input maxLength={100} value={search} onChange={e => setSearch(e.target.value)} placeholder="Person, site or company" /></label><label><span>Review status</span><select value={status} onChange={e => { setStatus(e.target.value as typeof status); setPage(1); }}><option value="OPEN">Awaiting review</option><option value="RESOLVED">Resolved</option><option value="REJECTED">Declined</option><option value="ALL">All requests</option></select></label><button className="zb-biz-button zb-biz-button--secondary" type="submit">Search</button></form>
+    {loading ? <AttendanceLoading /> : error ? <AttendanceError admin={admin} error={error} retry={() => setVersion(v => v + 1)} /> : data && <><p className="zb-att-result-line" role="status">{data.total} correction requests</p>{!data.total ? <div className="zb-att-empty"><MessageSquareMore aria-hidden="true" /><h3>No requests in this view</h3><p>{status === "OPEN" && !query ? "There are no corrections waiting for review. Requests will appear here when a business flags a daily record." : "Try another status or search."}</p></div> : <div className="zb-att-correction-grid">{data.items.map(item => <article className="zb-att-correction-card" key={item.id}><div><span className="zb-att-correction-status" data-status={item.status}>{item.status === "OPEN" ? "Awaiting review" : item.status === "RESOLVED" ? "Resolved" : "Declined"}</span><time dateTime={item.date}>{businessDate(item.date)}</time></div><h3>{item.assignment.name}</h3><p>{item.assignment.role} · {item.assignment.location}{admin ? ` · ${item.assignment.requirement.companyName}` : ""}</p><blockquote>{item.reason}</blockquote>{item.resolution && <div className="zb-att-decision"><strong>Operations decision</strong><p className="zb-att-preserve">{item.resolution}</p><small>{businessDate(item.updatedAt, true)}</small></div>}<footer><small>Requested {businessDate(item.createdAt, true)}</small><Link className="zb-att-record-link" href={attendanceHref(admin, item.assignmentId, item.date)}>{admin && item.status === "OPEN" ? "Review record" : "View record"}<ArrowUpRight aria-hidden="true" /></Link></footer></article>)}</div>}<AttendancePages page={data.page} totalPages={data.totalPages} onChange={setPage} /></>}
+  </section>;
+}

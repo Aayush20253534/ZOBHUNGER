@@ -1,4 +1,5 @@
 import { businessCandidatesRouter } from "../candidates/candidates.routes.js";
+import { businessAttendanceRouter } from "../attendance/attendance.routes.js";
 import { Router, type RequestHandler } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
@@ -16,6 +17,7 @@ import { createBusinessRequirementSchema, updateBusinessRequirementSchema, withd
 import { createBusinessRequirement, updateBusinessRequirement, withdrawBusinessRequirement, listBusinessRequirements } from "./business-requirements.service.js";
 
 export const businessRouter = Router();
+businessRouter.use("/attendance", businessAttendanceRouter);
 businessRouter.use("/candidates", businessCandidatesRouter);
 businessRouter.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
 // Guard real routes individually so missing routes still return 404. Build and

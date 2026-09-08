@@ -7,6 +7,7 @@ import {
   BriefcaseBusiness,
   Building2,
   ClipboardList,
+  CalendarCheck2,
   Inbox,
   Handshake,
   LogOut,
@@ -243,6 +244,7 @@ export function AdminDashboard() {
         </div>
         <div className="zb-admin-actions">
           <Link href="/admin/candidate-management"><UsersRound aria-hidden="true" />Candidate sharing &amp; reviews</Link>
+          <Link href="/admin/attendance"><CalendarCheck2 aria-hidden="true" />Assignments &amp; attendance</Link>
           <button type="button" onClick={() => void load()} disabled={loading}>
             <RefreshCw aria-hidden="true" /> Refresh
           </button>
