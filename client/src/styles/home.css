@@ -1553,3 +1553,66 @@
     transform: none;
   }
 }
+
+/* Client revision: brand proof reads first, then the logo wall gets the full width. */
+.zb-home-experience {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.zb-home-experience-intro .zb-section-heading,
+.zb-home-experience-intro .zb-section-heading p {
+  max-width: none;
+}
+
+.zb-home-experience-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 1rem 2rem;
+}
+
+.zb-home-experience-proof {
+  max-width: none;
+  margin-bottom: 0;
+}
+
+.zb-home-brand-board {
+  width: 100%;
+  min-height: 0;
+  padding: clamp(1.15rem, 2.4vw, 1.6rem);
+}
+
+.zb-home-brand-board .zb-brand-marquee-window {
+  mask-image: linear-gradient(90deg, transparent, #000 2.5%, #000 97.5%, transparent);
+}
+
+/* Replace the old connector diagram with a cleaner India footprint visual. */
+.zb-home-presence-board {
+  min-height: 0;
+}
+
+.zb-home-presence-map-wrap {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-height: 17.5rem;
+  padding: 0.15rem 0 0.35rem;
+}
+
+.zb-home-presence-board-foot {
+  justify-content: center;
+}
+
+.zb-home-presence-board-foot small {
+  flex-basis: auto;
+  margin: 0;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .zb-home-experience-meta {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+}

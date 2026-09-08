@@ -102,7 +102,13 @@ export function Footer() {
             <ul>
               {resourceLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}>{link.label}</Link>
+                  {link.href === "/blogs" ? (
+                    <a href="/blogs" aria-label="Open the ZOBHUNGER Blog">
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link href={link.href}>{link.label}</Link>
+                  )}
                 </li>
               ))}
             </ul>

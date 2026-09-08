@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  Building2,
   ClipboardCheck,
   MapPin,
   Navigation,
@@ -11,8 +10,10 @@ import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
+import { OperatingFootprintMap } from "@/components/presence/OperatingFootprintMap";
 import { getPageMetadata } from "@/lib/page-metadata";
 import "@/styles/presence.css";
+import "@/styles/presence-map.css";
 
 export const metadata = getPageMetadata(
   "Our Presence",
@@ -136,65 +137,8 @@ export default function PresencePage() {
             </div>
           </div>
 
-          <div className="zb-presence-network-canvas" aria-hidden="true">
-            <span className="zb-presence-network-halo zb-presence-network-halo--outer" />
-            <span className="zb-presence-network-halo zb-presence-network-halo--inner" />
-            <span className="zb-presence-network-line zb-presence-network-line--north" />
-            <span className="zb-presence-network-line zb-presence-network-line--west" />
-            <span className="zb-presence-network-line zb-presence-network-line--east" />
-            <span className="zb-presence-network-line zb-presence-network-line--south" />
-
-            <span className="zb-presence-network-node zb-presence-network-node--hq">
-              <span className="zb-presence-network-node-icon">
-                <Building2 />
-              </span>
-              <span className="zb-presence-network-node-copy">
-                <small>Coordination hub</small>
-                <strong>Ghazipur</strong>
-                <em>Headquarters</em>
-              </span>
-              <b>HQ</b>
-            </span>
-            <span className="zb-presence-network-node zb-presence-network-node--delhi">
-              <span className="zb-presence-network-node-icon">
-                <MapPin />
-              </span>
-              <span className="zb-presence-network-node-copy">
-                <small>North market</small>
-                <strong>Delhi</strong>
-              </span>
-              <b>DEL</b>
-            </span>
-            <span className="zb-presence-network-node zb-presence-network-node--mumbai">
-              <span className="zb-presence-network-node-icon">
-                <MapPin />
-              </span>
-              <span className="zb-presence-network-node-copy">
-                <small>West market</small>
-                <strong>Mumbai</strong>
-              </span>
-              <b>MUM</b>
-            </span>
-            <span className="zb-presence-network-node zb-presence-network-node--bihar">
-              <span className="zb-presence-network-node-icon">
-                <MapPin />
-              </span>
-              <span className="zb-presence-network-node-copy">
-                <small>East market</small>
-                <strong>Bihar</strong>
-              </span>
-              <b>BIH</b>
-            </span>
-            <span className="zb-presence-network-node zb-presence-network-node--bengaluru">
-              <span className="zb-presence-network-node-icon">
-                <MapPin />
-              </span>
-              <span className="zb-presence-network-node-copy">
-                <small>South market</small>
-                <strong>Bengaluru</strong>
-              </span>
-              <b>BLR</b>
-            </span>
+          <div className="zb-presence-map-wrap">
+            <OperatingFootprintMap showLegend={false} />
           </div>
 
           <div className="zb-presence-network-footer">

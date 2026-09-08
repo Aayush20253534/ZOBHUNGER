@@ -1065,3 +1065,23 @@
     transform: none;
   }
 }
+
+/* Client revision: show operating presence on an India map instead of a node diagram. */
+.zb-presence-map-wrap {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-height: 24rem;
+  padding: 0.35rem 0 0.5rem;
+}
+
+.zb-presence-network-footer {
+  justify-content: center;
+}
+
+@media (max-width: 700px) {
+  .zb-presence-map-wrap {
+    min-height: 18rem;
+  }
+}

@@ -1,13 +1,9 @@
-import { ArrowUpRight, Building2, MapPin, Route } from "lucide-react";
+import { ArrowUpRight, Route } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { SectionHeading } from "@/components/common/SectionHeading";
+import { OperatingFootprintMap } from "@/components/presence/OperatingFootprintMap";
+import "@/styles/presence-map.css";
 
-const markets = [
-  { name: "Delhi", region: "North market", code: "DEL" },
-  { name: "Mumbai", region: "West market", code: "MUM" },
-  { name: "Bihar", region: "East market", code: "BIH" },
-  { name: "Bengaluru", region: "South market", code: "BLR" },
-] as const;
 
 export function HomePresencePreview() {
   return (
@@ -38,38 +34,12 @@ export function HomePresencePreview() {
           </span>
         </div>
 
-        <div className="zb-home-presence-network" aria-hidden="true">
-          <span className="zb-home-presence-connector zb-home-presence-connector--one" />
-          <span className="zb-home-presence-connector zb-home-presence-connector--two" />
-          <span className="zb-home-presence-connector zb-home-presence-connector--three" />
-          <span className="zb-home-presence-connector zb-home-presence-connector--four" />
-
-          <article className="zb-home-presence-hq">
-            <span className="zb-home-presence-node-icon"><Building2 /></span>
-            <small>Headquarters</small>
-            <strong>Ghazipur</strong>
-            <em>Uttar Pradesh</em>
-          </article>
-
-          {markets.map((market, index) => (
-            <article
-              className={`zb-home-presence-market zb-home-presence-market--${index + 1}`}
-              key={market.name}
-            >
-              <span className="zb-home-presence-node-icon"><MapPin /></span>
-              <div>
-                <small>{market.region}</small>
-                <strong>{market.name}</strong>
-              </div>
-              <b>{market.code}</b>
-            </article>
-          ))}
+        <div className="zb-home-presence-map-wrap">
+          <OperatingFootprintMap compact />
         </div>
 
         <div className="zb-home-presence-board-foot">
-          <span><i /> Headquarters</span>
-          <span><i data-tone="market" /> Market presence</span>
-          <small>Workforce + field execution coordination</small>
+          <small>Workforce + field execution coordination across priority Indian markets</small>
         </div>
       </div>
     </section>

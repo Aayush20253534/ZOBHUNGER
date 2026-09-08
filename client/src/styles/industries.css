@@ -225,3 +225,60 @@
     gap: 3rem;
   }
 }
+
+/* Client revision: keep the Industries hero visible as one complete first-screen section. */
+@media (min-width: 960px) {
+  .zb-industries .zb-breadcrumbs {
+    margin-bottom: 0.65rem;
+  }
+
+  .zb-industries .zb-industry-hero {
+    gap: clamp(1.4rem, 2.2vw, 2rem);
+    align-items: center;
+  }
+
+  .zb-industries .zb-industry-hero .zb-page-heading h1 {
+    max-width: 15ch;
+    font-size: clamp(3rem, 4.5vw, 4.45rem);
+    line-height: 1.02;
+  }
+
+  .zb-industries .zb-industry-hero .zb-page-description {
+    max-width: 46rem;
+    margin-top: 0.85rem;
+    font-size: 1.02rem;
+    line-height: 1.55;
+  }
+
+  .zb-industries .zb-industry-hero .zb-page-actions {
+    margin-top: 1rem;
+  }
+
+  .zb-industries .zb-industry-hero .zb-intro-panel {
+    padding: 1.35rem 1.45rem;
+  }
+
+  .zb-industries .zb-industry-hero .zb-intro-panel-top {
+    margin-bottom: 0.65rem;
+  }
+
+  .zb-industries .zb-industry-hero .zb-intro-panel-description {
+    margin-top: 0.55rem;
+    line-height: 1.45;
+  }
+
+  .zb-industries .zb-industry-hero .zb-intro-panel dl {
+    gap: 0.45rem;
+    margin-top: 0.85rem;
+  }
+
+  .zb-industries .zb-industry-hero .zb-intro-panel dl > div {
+    padding: 0.62rem 0.85rem;
+  }
+
+  .zb-industries .zb-industry-hero .zb-intro-panel dd {
+    margin-top: 0.12rem;
+    font-size: 0.92rem;
+    line-height: 1.35;
+  }
+}
