@@ -205,3 +205,85 @@
     display: none;
   }
 }
+
+/* Home-page trusted-partner strip: one continuous row of clean brand marks. */
+@keyframes zb-brand-compact-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.zb-brand-marquee--compact {
+  --zb-marquee-gap: clamp(1.6rem, 4vw, 4.5rem);
+  --zb-marquee-card-width: clamp(7.5rem, 12vw, 10rem);
+  width: 100%;
+  padding: 0;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-rows {
+  display: block;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-window {
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-moving-row--compact {
+  animation: zb-brand-compact-scroll 70s linear infinite;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-track {
+  align-items: center;
+  gap: var(--zb-marquee-gap);
+  padding-right: var(--zb-marquee-gap);
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-track li {
+  justify-content: center;
+  min-height: 4.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-name {
+  display: none;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-logo {
+  flex: 0 0 auto;
+  width: clamp(4.75rem, 8vw, 7rem);
+  height: 3.5rem;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.zb-brand-marquee--compact .zb-brand-marquee-controls,
+.zb-brand-marquee--compact .zb-brand-marquee-note {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .zb-brand-marquee--compact {
+    --zb-marquee-gap: 1.5rem;
+    --zb-marquee-card-width: 7rem;
+  }
+
+  .zb-brand-marquee--compact .zb-brand-marquee-logo {
+    width: 4.5rem;
+    height: 3rem;
+  }
+}

@@ -512,120 +512,32 @@
   background: #fff4f4;
 }
 
-/* Extended Phase 1: brand experience. Keep social proof compact on the home
-   page and move the full categorised list to the dedicated experience page. */
+/* Trusted partners: clean white logo strip matching the client reference. */
 .zb-home-experience {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.5rem;
-  padding: clamp(1.35rem, 3.5vw, 2.4rem);
-  border: 1px solid var(--zb-soft-border);
-  border-radius: var(--zb-radius);
-  background: linear-gradient(145deg, #fff 0%, #fff7f8 100%);
-}
-
-.zb-home-experience-intro {
-  min-width: 0;
-}
-
-.zb-home-experience-intro .zb-section-heading {
-  margin-bottom: 1rem;
-}
-
-.zb-home-experience-intro .zb-section-heading p {
-  max-width: 42rem;
-}
-
-.zb-home-experience-proof {
-  display: flex;
-  align-items: start;
-  gap: 0.75rem;
-  max-width: 42rem;
-  margin: 1rem 0 1.25rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--zb-soft-border);
-}
-
-.zb-home-experience-proof svg {
-  flex: 0 0 auto;
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-top: 0.15rem;
-  color: var(--zb-action);
-}
-
-.zb-home-experience-proof p {
-  margin: 0;
-  color: var(--zb-muted);
-  font-size: 0.92rem;
-  line-height: 1.65;
-}
-
-.zb-home-brand-board {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-  padding: clamp(1.2rem, 3vw, 1.7rem);
-  border-radius: calc(var(--zb-radius) - 0.15rem);
-  background: var(--zb-panel);
-  color: #fff;
+  gap: clamp(1.6rem, 3vw, 2.4rem);
+  padding: clamp(2rem, 5vw, 4.5rem) clamp(1rem, 3vw, 2rem);
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: #fff;
 }
 
-.zb-home-brand-board-label {
-  color: var(--zb-highlight);
-  font-size: 0.75rem;
-  font-weight: 750;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.zb-home-brand-board > ul {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.55rem;
-  margin: 1rem 0;
-  padding: 0;
-  list-style: none;
-}
-
-.zb-home-brand-board > ul > li {
-  display: grid;
-  place-items: center;
-  min-height: 3rem;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid #ffffff2b;
-  border-radius: 0.5rem;
-  background: #ffffff0c;
-  color: #fff;
-  font-size: 0.82rem;
-  font-weight: 700;
-  line-height: 1.25;
+.zb-home-experience-title {
+  margin: 0;
+  color: var(--zb-ink);
+  font-size: clamp(2rem, 4vw, 3.35rem);
+  font-weight: 850;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
   text-align: center;
 }
 
-.zb-home-brand-board > p {
-  margin: 0;
-  color: var(--zb-on-panel-muted);
-  font-size: 0.8rem;
-}
-
-@media (min-width: 760px) {
-  .zb-home-brand-board > ul {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 960px) {
-  .zb-home-experience {
-    grid-template-columns: minmax(0, 0.9fr) minmax(30rem, 1.1fr);
-    gap: clamp(2rem, 3.5vw, 3.5rem);
-    align-items: stretch;
-  }
-
-  .zb-home-brand-board > ul {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+.zb-home-experience-action {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.15rem;
 }
 
 /* Extended Phase 1 Part 3: compact execution-strength proof on the home page. */

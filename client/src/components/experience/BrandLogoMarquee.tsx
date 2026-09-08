@@ -66,9 +66,27 @@ function LogoTrack({
 }
 
 export function BrandLogoMarquee({ compact = false }: { compact?: boolean }) {
+  if (compact) {
+    return (
+      <div
+        className="zb-brand-marquee zb-brand-marquee--compact"
+        aria-label="Trusted partner brands"
+      >
+        <BrandMarqueeMotion>
+          <div className="zb-brand-marquee-window">
+            <div className="zb-brand-marquee-moving-row zb-brand-marquee-moving-row--compact">
+              <LogoTrack brands={allBrands} />
+              <LogoTrack brands={allBrands} hidden />
+            </div>
+          </div>
+        </BrandMarqueeMotion>
+      </div>
+    );
+  }
+
   return (
     <div
-      className={`zb-brand-marquee${compact ? " zb-brand-marquee--compact" : ""}`}
+      className="zb-brand-marquee"
       aria-label="Execution experience across brands and markets"
     >
       <style>{animationStyles}</style>
