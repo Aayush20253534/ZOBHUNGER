@@ -5,11 +5,20 @@ import {
   BarChart3,
   BriefcaseBusiness,
   ClipboardCheck,
+  Landmark,
   MapPinned,
   Megaphone,
+  MonitorSmartphone,
+  PackageCheck,
+  RadioTower,
   ScanSearch,
+  Settings2,
+  ShoppingBag,
   Store,
+  Truck,
+  UserRoundCheck,
   UsersRound,
+  UtensilsCrossed,
 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { industries } from "@/data/industries";
@@ -39,7 +48,30 @@ const capabilities = [
       "Run sampling, promoter-led campaigns and on-ground consumer engagement with clear execution plans.",
     icon: Megaphone,
   },
+  {
+    title: "Business operations",
+    description:
+      "Build customer support, telecalling, back-office and coordination teams around day-to-day operations.",
+    icon: Settings2,
+  },
+  {
+    title: "Gig workforce",
+    description:
+      "Mobilise flexible teams for short assignments, seasonal demand and project-based execution.",
+    icon: UserRoundCheck,
+  },
 ] as const;
+
+const industryIcons = {
+  fmcg: PackageCheck,
+  retail: Store,
+  "e-commerce": ShoppingBag,
+  "bfsi-fintech": Landmark,
+  telecom: RadioTower,
+  logistics: Truck,
+  "food-beverage": UtensilsCrossed,
+  "consumer-electronics": MonitorSmartphone,
+} as const;
 
 const reasons = [
   {
@@ -152,16 +184,28 @@ export function HomeBusinessOverview() {
         </div>
 
         <div className="zb-home-overview-industry-list" aria-label="Industries we serve">
-          {industries.slice(0, 8).map((industry, index) => (
-            <Link key={industry.slug} href={`/industries/${industry.slug}`}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              {industry.title}
-              <ArrowUpRight aria-hidden="true" />
-            </Link>
-          ))}
+          {industries.slice(0, 8).map((industry, index) => {
+            const Icon = industryIcons[industry.slug as keyof typeof industryIcons];
+
+            return (
+              <Link key={industry.slug} href={`/industries/${industry.slug}`}>
+                <span className="zb-home-overview-industry-icon" aria-hidden="true">
+                  <Icon />
+                </span>
+                <span className="zb-home-overview-industry-number">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <strong>{industry.title}</strong>
+                <ArrowUpRight aria-hidden="true" />
+              </Link>
+            );
+          })}
           <Link href="/industries" className="zb-home-overview-industry-more">
-            <span>+3</span>
-            More industries
+            <span className="zb-home-overview-industry-icon" aria-hidden="true">
+              <BriefcaseBusiness />
+            </span>
+            <span className="zb-home-overview-industry-number">+3</span>
+            <strong>More industries</strong>
             <ArrowUpRight aria-hidden="true" />
           </Link>
         </div>

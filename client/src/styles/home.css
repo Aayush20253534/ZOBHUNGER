@@ -1922,3 +1922,77 @@
     min-height: 0;
   }
 }
+
+/* =========================================================
+   HOME OVERVIEW - INDUSTRY + CASE STUDY ICON REFINEMENT
+   ========================================================= */
+
+.zb-home-overview-capabilities {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.zb-home-overview-capability {
+  min-height: 9.75rem;
+}
+
+.zb-home-overview-industry-list a {
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  min-height: 4.75rem;
+}
+
+.zb-home-overview-industry-icon {
+  display: grid;
+  place-items: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  flex: 0 0 auto;
+  border-radius: 0.62rem;
+  background: #fff1f2;
+  color: var(--zb-action);
+}
+
+.zb-home-overview-industry-icon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.zb-home-overview-industry-list a > .zb-home-overview-industry-number {
+  color: var(--zb-action);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.zb-home-overview-industry-list a > strong {
+  min-width: 0;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.zb-home-overview-industry-more .zb-home-overview-industry-icon {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.zb-home-project-brand > span svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  stroke-width: 1.9;
+}
+
+@media (max-width: 1280px) {
+  .zb-home-overview-capabilities {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .zb-home-overview-capabilities {
+    grid-template-columns: 1fr;
+  }
+
+  .zb-home-overview-industry-list a {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+  }
+}

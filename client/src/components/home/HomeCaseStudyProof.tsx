@@ -1,8 +1,13 @@
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { ArrowUpRight, BriefcaseBusiness, CheckCircle2, QrCode, ShoppingBag } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { caseStudies } from "@/data/case-studies";
+
+const caseStudyIcons = {
+  "digital-merchant-onboarding-qr-deployment": QrCode,
+  "marketplace-seller-acquisition": ShoppingBag,
+} as const;
 
 export function HomeCaseStudyProof() {
   return (
@@ -25,6 +30,8 @@ export function HomeCaseStudyProof() {
       <div className="zb-home-project-grid">
         {caseStudies.slice(0, 2).map((study) => {
           const flow = study.solution.slice(0, 4);
+          const ProjectIcon =
+            caseStudyIcons[study.slug as keyof typeof caseStudyIcons] ?? BriefcaseBusiness;
           return (
             <Link
               href={`/case-studies/${study.slug}`}
@@ -32,7 +39,9 @@ export function HomeCaseStudyProof() {
               key={study.slug}
             >
               <div className="zb-home-project-brand">
-                <span aria-hidden="true">{study.industry.slice(0, 1)}</span>
+                <span aria-hidden="true">
+                  <ProjectIcon />
+                </span>
                 <div>
                   <small>{study.category}</small>
                   <strong>{study.industry}</strong>
