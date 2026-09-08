@@ -1996,3 +1996,64 @@
     grid-template-columns: auto auto minmax(0, 1fr) auto;
   }
 }
+
+/* =========================================================
+   HOME OVERVIEW - STACK WHY CHOOSE US BELOW WHAT WE DO
+   ========================================================= */
+.zb-home-business-overview-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.zb-home-overview-panel--why {
+  min-height: 0;
+}
+
+@media (min-width: 960px) {
+  .zb-home-overview-panel--why {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.28fr);
+    grid-template-areas:
+      "head reasons"
+      "title reasons"
+      "cta reasons";
+    align-items: start;
+    gap: 0.65rem clamp(2rem, 4vw, 4rem);
+  }
+
+  .zb-home-overview-panel--why .zb-home-overview-panel-head {
+    grid-area: head;
+    margin-bottom: 0;
+  }
+
+  .zb-home-overview-panel--why .zb-home-overview-feature-title {
+    grid-area: title;
+    max-width: 17ch;
+    align-self: center;
+  }
+
+  .zb-home-overview-panel--why .zb-home-overview-reasons {
+    grid-area: reasons;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    margin: 0;
+    border-top: 0;
+    border-left: 1px solid #ffffff24;
+  }
+
+  .zb-home-overview-panel--why .zb-home-overview-reasons > div {
+    min-height: 6.7rem;
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid #ffffff24;
+  }
+
+  .zb-home-overview-panel--why .zb-home-overview-reasons > div:nth-child(odd) {
+    border-right: 1px solid #ffffff24;
+  }
+
+  .zb-home-overview-panel--why .zb-action-link {
+    grid-area: cta;
+    align-self: end;
+    justify-self: start;
+    margin-top: 0.4rem;
+  }
+}

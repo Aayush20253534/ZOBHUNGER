@@ -214,3 +214,48 @@
     max-height: 18rem;
   }
 }
+
+/* Reference visual refinement: larger, cleaner India silhouette with soft routes. */
+.zb-presence-network .zb-footprint-map {
+  --zb-map-fill-start: #fff6f7;
+  --zb-map-fill-end: #f6d7db;
+  --zb-map-outline: #7c2935;
+  --zb-map-grid-color: rgba(124, 41, 53, 0.045);
+  --zb-map-route: rgba(210, 31, 43, 0.34);
+  --zb-map-label-bg: rgba(75, 24, 33, 0.96);
+}
+
+.zb-presence-network .zb-footprint-map-shape {
+  stroke-width: 1.9;
+}
+
+.zb-presence-network .zb-footprint-map-grid {
+  opacity: 0.34;
+}
+
+.zb-presence-network .zb-footprint-routes path {
+  stroke-width: 1.2;
+  stroke-dasharray: 5 6;
+}
+
+.zb-presence-network .zb-footprint-marker-pulse {
+  r: 12;
+}
+
+.zb-presence-network .zb-footprint-marker-ring {
+  stroke-width: 1.8;
+}
+
+.zb-presence-network .zb-footprint-marker-label rect {
+  filter: drop-shadow(0 5px 8px rgba(70, 24, 32, 0.16));
+}
+
+.zb-presence-network .zb-footprint-marker-name {
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.zb-presence-network .zb-footprint-marker-detail {
+  font-size: 6.7px;
+  font-weight: 760;
+}

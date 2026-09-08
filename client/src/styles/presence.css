@@ -1223,3 +1223,201 @@
     min-height: 0;
   }
 }
+
+/* =========================================================
+   OPERATING FOOTPRINT - REFERENCE MAP COMPOSITION
+   Matches the supplied visual: title/status above a large India map and a
+   centered legend below, all inside one soft red grid card.
+   ========================================================= */
+.zb-presence-network {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 0;
+  min-height: 0;
+  padding: clamp(1.5rem, 3vw, 2.2rem);
+  border-color: rgba(210, 31, 43, 0.22);
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(circle at 82% 10%, rgba(210, 31, 43, 0.13) 0 13rem, transparent 13.1rem),
+    linear-gradient(145deg, #ffffff 0%, #fffafa 56%, #fff1f3 100%);
+  box-shadow: 0 1.1rem 2.8rem rgba(38, 22, 27, 0.08);
+}
+
+.zb-presence-network::after {
+  background-size: 2.25rem 2.25rem;
+  opacity: 0.9;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 92%, transparent 100%);
+}
+
+.zb-presence-network-header {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+.zb-presence-network-header .zb-eyebrow {
+  margin-bottom: 0.55rem;
+  color: var(--zb-action);
+  font-size: clamp(0.72rem, 1vw, 0.88rem);
+  font-weight: 850;
+  letter-spacing: 0.11em;
+}
+
+.zb-presence-network-header h2 {
+  max-width: 17ch;
+  font-size: clamp(1.8rem, 3vw, 2.65rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+}
+
+.zb-presence-network-status {
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+  gap: 0.85rem;
+  width: auto;
+  min-width: 17.5rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(70, 24, 32, 0.1);
+  border-radius: 1.15rem;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0.9rem 2rem rgba(38, 22, 27, 0.08);
+}
+
+.zb-presence-network-status .zb-presence-network-icon {
+  width: 3.4rem;
+  height: 3.4rem;
+  min-width: 3.4rem;
+  border-radius: 0.95rem;
+  background: linear-gradient(145deg, #6b202c, #461820);
+  box-shadow: 0 0.55rem 1.15rem rgba(70, 24, 32, 0.18);
+}
+
+.zb-presence-network-status .zb-presence-network-icon svg {
+  width: 1.55rem;
+  height: 1.55rem;
+}
+
+.zb-presence-network-status-copy > small {
+  color: #6f6a6e;
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.zb-presence-network-status-value {
+  gap: 0.45rem;
+}
+
+.zb-presence-network-status-value > strong {
+  font-size: 1.55rem;
+  color: #641c28;
+}
+
+.zb-presence-network-status-value > span {
+  max-width: none;
+  color: var(--zb-ink);
+  font-size: 0.8rem;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.zb-presence-map-wrap {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: auto;
+  min-height: clamp(25rem, 46vw, 36rem);
+  padding: 0.2rem 0 0;
+}
+
+.zb-presence-map-wrap .zb-footprint-map {
+  width: min(100%, 38rem);
+  max-width: 38rem;
+  height: auto;
+}
+
+.zb-presence-map-wrap .zb-footprint-map svg {
+  position: static;
+  width: 100%;
+  height: auto;
+  max-height: 34rem;
+}
+
+.zb-presence-network-footer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem 1.2rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(70, 24, 32, 0.12);
+  color: #666168;
+  font-size: 0.78rem;
+}
+
+.zb-presence-network-footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.zb-presence-network-footer i {
+  width: 0.62rem;
+  height: 0.62rem;
+  border-radius: 999px;
+  background: #d21f2b;
+}
+
+.zb-presence-network-footer i[data-tone="hq"] {
+  background: #461820;
+}
+
+.zb-presence-network-footer small {
+  flex-basis: 100%;
+  margin: 0;
+  color: #777178;
+  font-size: 0.76rem;
+  text-align: center;
+}
+
+/* The reference composition should stay intact when the panel is used on home. */
+.zb-home-presence-network-card {
+  width: 100%;
+}
+
+@media (min-width: 960px) {
+  .zb-presence-hero {
+    grid-template-columns: minmax(20rem, 0.72fr) minmax(34rem, 1.28fr);
+    align-items: center;
+  }
+
+  .zb-home-presence {
+    align-items: center;
+  }
+}
+
+@media (max-width: 760px) {
+  .zb-presence-network-header {
+    grid-template-columns: 1fr;
+  }
+
+  .zb-presence-network-status {
+    width: fit-content;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .zb-presence-network-status-value > span {
+    white-space: normal;
+  }
+
+  .zb-presence-map-wrap {
+    min-height: 24rem;
+  }
+}
