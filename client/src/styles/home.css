@@ -1450,3 +1450,106 @@
     margin-left: 0;
   }
 }
+
+
+/* =========================================================
+   HOME PRESENCE NETWORK - FIVE POINT BALANCED LAYOUT
+   ========================================================= */
+
+.zb-home-presence-board {
+  min-height: 24.75rem;
+}
+
+.zb-home-presence-network {
+  min-height: 15.8rem;
+  margin-top: 0.15rem;
+}
+
+/* Four branches are arranged around the Ghazipur hub so no card collides. */
+.zb-home-presence-connector--one {
+  width: 19%;
+  transform: rotate(-90deg);
+}
+
+.zb-home-presence-connector--two {
+  width: 35%;
+  transform: rotate(180deg);
+}
+
+.zb-home-presence-connector--three {
+  width: 35%;
+  transform: rotate(0deg);
+}
+
+.zb-home-presence-connector--four {
+  width: 19%;
+  transform: rotate(90deg);
+}
+
+.zb-home-presence-market {
+  min-width: 7.35rem;
+  padding: 0.58rem 0.62rem;
+  gap: 0.45rem;
+}
+
+.zb-home-presence-market .zb-home-presence-node-icon {
+  width: 1.85rem;
+  height: 1.85rem;
+}
+
+.zb-home-presence-market strong {
+  font-size: 0.74rem;
+}
+
+.zb-home-presence-market small {
+  font-size: 0.51rem;
+}
+
+.zb-home-presence-market b {
+  padding: 0.2rem 0.3rem;
+  font-size: 0.49rem;
+}
+
+.zb-home-presence-market--1 {
+  left: 50%;
+  right: auto;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.zb-home-presence-market--2 {
+  left: 0;
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+}
+
+.zb-home-presence-market--3 {
+  right: 0;
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+}
+
+.zb-home-presence-market--4 {
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+.zb-home-presence-board-foot small {
+  flex-basis: 100%;
+  margin-left: 0;
+  line-height: 1.3;
+}
+
+@media (max-width: 520px) {
+  .zb-home-presence-market--1,
+  .zb-home-presence-market--2,
+  .zb-home-presence-market--3,
+  .zb-home-presence-market--4 {
+    position: static;
+    width: 100%;
+    transform: none;
+  }
+}

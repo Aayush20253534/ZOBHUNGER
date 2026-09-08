@@ -1009,3 +1009,11 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+
+/* Five-point company presence layout: HQ across the top, four markets below. */
+@media (min-width: 700px) {
+  .zb-about-presence-grid article:first-child {
+    grid-column: 1 / -1;
+  }
+}

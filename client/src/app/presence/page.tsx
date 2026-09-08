@@ -53,6 +53,14 @@ const locations = [
       "Strengthening regional workforce and field execution support across eastern markets.",
     className: "",
   },
+  {
+    label: "Branch presence",
+    title: "Bengaluru, Karnataka",
+    shortLabel: "South",
+    description:
+      "Supporting workforce, sales and execution requirements across a key southern business market.",
+    className: "",
+  },
 ] as const;
 
 const executionSteps = [
@@ -121,7 +129,7 @@ export default function PresencePage() {
                 <small>Execution network</small>
 
                 <span className="zb-presence-network-status-value">
-                  <strong>4</strong>
+                  <strong>5</strong>
                   <span>coordination points</span>
                 </span>
               </div>
@@ -134,6 +142,7 @@ export default function PresencePage() {
             <span className="zb-presence-network-line zb-presence-network-line--north" />
             <span className="zb-presence-network-line zb-presence-network-line--west" />
             <span className="zb-presence-network-line zb-presence-network-line--east" />
+            <span className="zb-presence-network-line zb-presence-network-line--south" />
 
             <span className="zb-presence-network-node zb-presence-network-node--hq">
               <span className="zb-presence-network-node-icon">
@@ -175,6 +184,16 @@ export default function PresencePage() {
                 <strong>Bihar</strong>
               </span>
               <b>BIH</b>
+            </span>
+            <span className="zb-presence-network-node zb-presence-network-node--bengaluru">
+              <span className="zb-presence-network-node-icon">
+                <MapPin />
+              </span>
+              <span className="zb-presence-network-node-copy">
+                <small>South market</small>
+                <strong>Bengaluru</strong>
+              </span>
+              <b>BLR</b>
             </span>
           </div>
 

@@ -964,3 +964,104 @@
     white-space: normal;
   }
 }
+
+/* =========================================================
+   BENGALURU + COMPACT NETWORK LAYOUT
+   ========================================================= */
+
+/* Keep the status chip informative without letting it crowd the heading. */
+.zb-presence-network-status {
+  grid-template-columns: 2.3rem minmax(0, 1fr);
+  gap: 0.55rem;
+  width: 11.6rem;
+  min-width: 11.6rem;
+  padding: 0.5rem 0.58rem;
+  border-radius: 0.82rem;
+}
+
+.zb-presence-network-status .zb-presence-network-icon {
+  width: 2.3rem;
+  height: 2.3rem;
+  min-width: 2.3rem;
+  border-radius: 0.68rem;
+}
+
+.zb-presence-network-status .zb-presence-network-icon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.zb-presence-network-status-copy {
+  gap: 0.12rem;
+}
+
+.zb-presence-network-status-copy > small {
+  font-size: 0.5rem;
+  letter-spacing: 0.055em;
+}
+
+.zb-presence-network-status-value {
+  gap: 0.28rem;
+}
+
+.zb-presence-network-status-value > strong {
+  font-size: 1rem;
+}
+
+.zb-presence-network-status-value > span {
+  max-width: 5.7rem;
+  font-size: 0.59rem;
+  line-height: 1.12;
+  white-space: normal;
+}
+
+/* Fifth spoke for Bengaluru. This is a schematic execution network, not a map. */
+.zb-presence-network-line--south {
+  width: 14%;
+  transform: rotate(90deg);
+}
+
+.zb-presence-network-node--bengaluru {
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+/* Keep the five physical-location cards balanced: HQ first, four branches below. */
+@media (min-width: 680px) {
+  .zb-presence-location-card--hq {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 960px) {
+  .zb-presence-location-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .zb-presence-network-status {
+    width: 10.9rem;
+    min-width: 10.9rem;
+  }
+
+  .zb-presence-network-status-value > span {
+    max-width: 5rem;
+    font-size: 0.56rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .zb-presence-network-status {
+    width: fit-content;
+    min-width: 0;
+  }
+
+  .zb-presence-network-node--bengaluru {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    transform: none;
+  }
+}

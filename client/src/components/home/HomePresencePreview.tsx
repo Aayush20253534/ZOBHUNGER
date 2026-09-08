@@ -6,6 +6,7 @@ const markets = [
   { name: "Delhi", region: "North market", code: "DEL" },
   { name: "Mumbai", region: "West market", code: "MUM" },
   { name: "Bihar", region: "East market", code: "BIH" },
+  { name: "Bengaluru", region: "South market", code: "BLR" },
 ] as const;
 
 export function HomePresencePreview() {
@@ -30,7 +31,7 @@ export function HomePresencePreview() {
         <div className="zb-home-presence-board-head">
           <div>
             <span className="zb-eyebrow">Operating footprint</span>
-            <strong>One network. Four coordination points.</strong>
+            <strong>One network. Five coordination points.</strong>
           </div>
           <span className="zb-home-presence-route-icon" aria-hidden="true">
             <Route />
@@ -41,6 +42,7 @@ export function HomePresencePreview() {
           <span className="zb-home-presence-connector zb-home-presence-connector--one" />
           <span className="zb-home-presence-connector zb-home-presence-connector--two" />
           <span className="zb-home-presence-connector zb-home-presence-connector--three" />
+          <span className="zb-home-presence-connector zb-home-presence-connector--four" />
 
           <article className="zb-home-presence-hq">
             <span className="zb-home-presence-node-icon"><Building2 /></span>

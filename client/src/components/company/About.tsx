@@ -61,6 +61,11 @@ const presence = [
     value: "Bihar",
     icon: MapPin,
   },
+  {
+    label: "Presence",
+    value: "Bengaluru",
+    icon: MapPin,
+  },
 ] as const;
 
 export function About() {
