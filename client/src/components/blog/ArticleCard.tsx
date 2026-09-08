@@ -33,7 +33,13 @@ export function ArticleCard({
 
   return (
     <article className="zb-article-card">
-      <div className="zb-article-card-visual" aria-hidden="true">
+      <Link
+        href={`/blog/${encodeURIComponent(article.slug)}`}
+        prefetch
+        className="zb-article-card-link"
+        aria-label={`Read ${article.title}`}
+      >
+        <div className="zb-article-card-visual" aria-hidden="true">
         <span className="zb-article-card-icon">
           <CategoryIcon />
         </span>
@@ -43,22 +49,18 @@ export function ArticleCard({
         <span className="zb-article-card-line" />
       </div>
 
-      <div className="zb-article-card-top">
+        <div className="zb-article-card-top">
         <p className="zb-eyebrow">{article.category}</p>
         <span className="zb-chip">
-          {article.isSample ? "Sample guide" : "Insight"}
+          Deep dive
         </span>
       </div>
 
-      <h3>
-        <Link href={`/blog/${encodeURIComponent(article.slug)}`}>
-          {article.title}
-        </Link>
-      </h3>
+        <h3>{article.title}</h3>
 
-      <p className="zb-article-excerpt">{article.excerpt}</p>
+        <p className="zb-article-excerpt">{article.excerpt}</p>
 
-      <div className="zb-article-card-footer">
+        <div className="zb-article-card-footer">
         <span>
           <Clock3 aria-hidden="true" />
           {article.readingMinutes} min read
@@ -68,6 +70,7 @@ export function ArticleCard({
           <ArrowUpRight />
         </span>
       </div>
+      </Link>
     </article>
   );
 }

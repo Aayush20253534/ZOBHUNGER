@@ -11,10 +11,17 @@ import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
 import { getPageMetadata } from "@/lib/page-metadata";
 import { site } from "@/data/site";
+import { mockArticles } from "@/mocks/articles";
 import { getArticleForPage } from "@/services/articles.service";
-import { getEditorialDataMode } from "@/services/adapters";
 
 type Props = { params: Promise<{ slug: string }> };
+
+export function generateStaticParams() {
+  return mockArticles
+    .filter((article) => article.isPublished)
+    .map((article) => ({ slug: article.slug }));
+}
+
 
 export async function generateMetadata({ params }: Props) {
   const article = await getArticleForPage((await params).slug);
@@ -29,9 +36,6 @@ export async function generateMetadata({ params }: Props) {
       article.excerpt,
       `/blog/${encodeURIComponent(article.slug)}`,
     ),
-    ...(getEditorialDataMode() === "mock" || article.isSample
-      ? { robots: { index: false, follow: false } }
-      : {}),
   };
 }
 
@@ -75,11 +79,11 @@ export default async function ArticlePage({ params }: Props) {
             description={article.excerpt}
           />
 
-          <div className="zb-article-summary-strip" aria-label="Guide summary">
+          <div className="zb-article-summary-strip" aria-label="Article summary">
             <div>
               <span aria-hidden="true"><BookOpen /></span>
               <small>Format</small>
-              <strong>{article.isSample ? "Sample guide" : "Practical insight"}</strong>
+              <strong>Editorial deep dive</strong>
             </div>
             <div>
               <span aria-hidden="true"><Clock3 /></span>
@@ -89,16 +93,10 @@ export default async function ArticlePage({ params }: Props) {
             <div>
               <span aria-hidden="true"><Layers3 /></span>
               <small>Sections</small>
-              <strong>{article.sections.length} practical steps</strong>
+              <strong>{article.sections.length} sections</strong>
             </div>
           </div>
 
-          {article.isSample && (
-            <p className="zb-inline-notice">
-              Editorial sample for review; not an approved ZOBHUNGER
-              publication.
-            </p>
-          )}
         </div>
 
         <div className="zb-article-layout">

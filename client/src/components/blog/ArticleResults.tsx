@@ -24,8 +24,8 @@ export function ArticleResults({
         </h2>
         <p role="status">
           {list.total
-            ? `${first}–${first + list.items.length - 1} of ${list.total} guides`
-            : "No matching guides"}
+            ? `${first}–${first + list.items.length - 1} of ${list.total} articles`
+            : "No matching articles"}
         </p>
       </div>
       {list.items.length ? (
@@ -40,7 +40,7 @@ export function ArticleResults({
         </div>
       ) : (
         <EmptyState
-          title="No guides match your search"
+          title="No articles match your search"
           description="Try another keyword or choose a different topic."
           action={
             <ActionLink href="/blogs" variant="secondary">

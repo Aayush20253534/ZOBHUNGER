@@ -23,7 +23,6 @@ import {
 } from "@/lib/article-filters";
 import { getPageMetadata } from "@/lib/page-metadata";
 import { getArticles } from "@/services/articles.service";
-import { getEditorialDataMode } from "@/services/adapters";
 
 const editorialLanes = [
   {
@@ -44,16 +43,11 @@ const editorialLanes = [
 ] as const;
 
 export function generateMetadata() {
-  return {
-    ...getPageMetadata(
-      "Blog",
-      "Practical guides to hiring, workforce management, sales and business execution.",
-      "/blogs",
-    ),
-    ...(getEditorialDataMode() === "mock"
-      ? { robots: { index: false, follow: false } }
-      : {}),
-  };
+  return getPageMetadata(
+    "Blog",
+    "Practical, detailed insights on hiring, workforce management, sales, retail execution and business operations.",
+    "/blogs",
+  );
 }
 
 export default async function BlogPage({
@@ -63,8 +57,6 @@ export default async function BlogPage({
 }) {
   const filters = parseArticleFilters(await searchParams);
   const list = await getArticles(filters);
-  const isPreview =
-    getEditorialDataMode() === "mock" || list.items.some((article) => article.isSample);
 
   return (
     <>
@@ -73,20 +65,14 @@ export default async function BlogPage({
       <div className="zb-editorial-hero zb-editorial-hero--premium">
         <PageShell
           eyebrow="Blog"
-          title="Useful thinking for people, markets and execution."
-          description="Practical perspectives on hiring, workforce coordination, field execution and the operating decisions behind better delivery."
+          title="Ideas for building teams and executing better in the real world."
+          description="Detailed, practical perspectives on hiring, distributed workforce management, field sales, retail execution and the systems that turn plans into measurable work."
           actions={
             <ActionLink href="#insights-search" variant="secondary">
               Explore insights
             </ActionLink>
           }
         >
-          {isPreview && (
-            <p className="zb-inline-notice">
-              Seeded editorial samples for review. They are loaded from the
-              database in API mode, but are not approved company publications.
-            </p>
-          )}
         </PageShell>
 
         <aside
@@ -146,10 +132,10 @@ export default async function BlogPage({
         <div className="zb-insights-controls-heading">
           <div>
             <span className="zb-eyebrow">Insight library</span>
-            <h2>Find the topic that matches the work ahead.</h2>
+            <h2>Deep dives for the work you are trying to improve.</h2>
           </div>
           <span className="zb-insights-guide-count">
-            {list.total} {list.total === 1 ? "guide" : "guides"}
+            {list.total} {list.total === 1 ? "article" : "articles"}
           </span>
         </div>
 
