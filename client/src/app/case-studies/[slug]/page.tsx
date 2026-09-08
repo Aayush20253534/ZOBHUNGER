@@ -10,7 +10,7 @@ export function generateStaticParams() { return caseStudies.map(({ slug }) => ({
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const study = getCaseStudy((await params).slug); if (!study) notFound();
   return getPageMetadata(
-    `${study.brand} Case Study`,
+    `${study.title} Case Study`,
     study.summary,
     `/case-studies/${study.slug}`,
   );
