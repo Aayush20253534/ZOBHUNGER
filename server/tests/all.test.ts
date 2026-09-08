@@ -7,3 +7,4 @@ import "./role.middleware.test.js";
 import "./partners.schema.test.js";
 import "./cache.test.js";
 import "./business.schema.test.js";
+import "./business-dashboard.schema.test.js";

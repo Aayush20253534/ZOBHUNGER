@@ -1,6 +1,7 @@
 import { ApiError, apiFetch, type ApiSuccessEnvelope } from "@/lib/api";
 import type { AuthUser } from "@/types/auth.types";
 import type { BusinessProfile, BusinessProfileInput, BusinessWorkspace } from "@/types/business.types";
+import type { BusinessDashboardData, BusinessRequirementData, DashboardRange, RequirementFilter } from "@/types/business-dashboard.types";
 
 const json = (body: unknown) => ({ method: "POST", headers: { "X-Requested-With": "XMLHttpRequest" }, body: JSON.stringify(body) });
 
@@ -8,7 +9,7 @@ async function businessRequest<T>(path: string, options?: RequestInit): Promise<
   try {
     return await apiFetch<T>(path, options);
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) {
+    if (error instanceof ApiError && error.status === 404 && (!error.code || error.code === "ROUTE_NOT_FOUND")) {
       throw new ApiError(
         "The business workspace is temporarily unavailable. Please try again shortly or contact our team. If you already created an account, you can use it once access is restored.",
         404,
@@ -28,6 +29,13 @@ export function registerBusiness(email: string, password: string) {
 export function getBusinessWorkspace() {
   return businessRequest<ApiSuccessEnvelope<BusinessWorkspace>>("/business/workspace");
 }
+export function getBusinessDashboard(query: { range: DashboardRange; status: RequirementFilter; page: number }, signal?: AbortSignal) {
+  const params = new URLSearchParams({ range: String(query.range), status: query.status, page: String(query.page) });
+  return businessRequest<ApiSuccessEnvelope<BusinessDashboardData>>(`/business/dashboard?${params}`, { signal });
+}
+export function getBusinessRequirement(id: string, signal?: AbortSignal) {
+  return businessRequest<ApiSuccessEnvelope<BusinessRequirementData>>(`/business/requirements/${encodeURIComponent(id)}`, { signal });
+}
 export function saveBusinessProfile(input: BusinessProfileInput) {
   return businessRequest<ApiSuccessEnvelope<{ profile: BusinessProfile }>>("/business/profile", { ...json(input), method: "PUT" });
 }
@@ -40,6 +48,7 @@ export function resetBusinessPassword(token: string, password: string) {
 
 // Only internal, implemented destinations are accepted after authentication.
 export function businessDestination(candidate: string | null) {
-  return candidate && ["/business", "/business/onboarding", "/business/company", "/business/account"].includes(candidate)
+  return candidate && (["/business", "/business/dashboard", "/business/onboarding", "/business/company", "/business/account"].includes(candidate)
+    || /^\/business\/requirements\/[a-zA-Z0-9_-]{1,64}$/.test(candidate))
     ? candidate : "/business";
 }
