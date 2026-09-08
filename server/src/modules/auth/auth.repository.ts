@@ -1,5 +1,6 @@
 import { prisma } from "../../config/db.js";
 import { UserRole } from "../../generated/prisma/client.js";
+import { HttpError } from "../../utils/http-error.js";
 
 export function findUserByEmail(email: string) {
   return prisma.user.findUnique({ where: { email } });
@@ -19,6 +20,14 @@ export function createUser(input: { email: string; phone?: string; passwordHash:
   });
 }
 
-export function markLogin(id: string) {
-  return prisma.user.update({ where: { id }, data: { lastLoginAt: new Date() } });
+export async function markLogin(id: string, sessionVersion: number) {
+  try {
+    // Do not issue a fresh session if the password changed during verification.
+    return await prisma.user.update({ where: { id, sessionVersion, isActive: true }, data: { lastLoginAt: new Date() } });
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === "P2025") {
+      throw new HttpError(401, "Your account changed during sign-in. Please try again.", { code: "SESSION_EXPIRED" });
+    }
+    throw error;
+  }
 }

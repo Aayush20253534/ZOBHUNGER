@@ -1,0 +1,269 @@
+/* Scoped workspace styles; public website layouts keep their existing theme. */
+body.zb-site > main.zb-business-root { width: 100%; max-width: none; margin: 0; padding: 0; min-height: 100dvh; }
+.zb-biz { --biz-border: #e9e3e5; --biz-muted: #67616a; min-width: 0; color: #27232a; background: #f7f6f8; font-size: 0.9375rem; line-height: 1.6; }
+.zb-biz *, .zb-biz *::before, .zb-biz *::after { box-sizing: border-box; }
+.zb-biz :is(h1, h2, h3, p, figure, dl, dd, ol) { margin: 0; }
+.zb-biz :is(h1, h2, h3) { font-weight: 750; letter-spacing: -0.035em; text-wrap: balance; }
+body.zb-site .zb-business-root .zb-biz h1 { font-size: clamp(1.85rem, 3vw, 2.65rem); line-height: 1.16; overflow-wrap: anywhere; }
+.zb-biz h2 { font-size: 1.22rem; line-height: 1.35; }
+.zb-biz h3 { font-size: 1rem; line-height: 1.4; }
+.zb-biz svg { width: 1.15rem; height: 1.15rem; flex-shrink: 0; stroke-width: 1.8; }
+.zb-biz a, .zb-biz button { -webkit-tap-highlight-color: transparent; }
+.zb-biz button { cursor: pointer; font: inherit; }
+.zb-biz button:disabled { cursor: wait; opacity: 0.65; }
+.zb-biz :is(a, button, input):focus-visible { outline: 3px solid #bc2339; outline-offset: 4px; }
+.zb-biz :is(a, p, dd, h2, h3, strong) { overflow-wrap: anywhere; }
+.zb-biz-wordmark { display: block; width: fit-content; color: #27232a; font-size: 1.65rem; font-weight: 850; letter-spacing: -0.06em; line-height: 1.1; }
+.zb-biz-wordmark > span { color: #c8202f; }
+.zb-biz-wordmark small { display: block; margin-top: 0.5rem; font-size: 0.55rem; font-weight: 750; letter-spacing: 0.18em; color: #777079; }
+.zb-biz .zb-biz-eyebrow { color: #b31c30; font-size: 0.67rem; font-weight: 800; letter-spacing: 0.12em; line-height: 1.5; }
+.zb-biz-muted { color: var(--biz-muted); }
+.zb-biz-icon { width: 2.6rem; height: 2.6rem; border: 1px solid #f1d8dc; border-radius: 0.85rem; background: #fff1f3; color: #b51c31; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.zb-biz-icon--large { width: 3.3rem; height: 3.3rem; border-radius: 1rem; }
+.zb-biz-icon--large svg { width: 1.5rem; height: 1.5rem; }
+.zb-biz .zb-biz-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.65rem; min-height: 2.85rem; padding: 0.8rem 1.15rem; border: 1px solid #bd2033; border-radius: 0.65rem; color: #fff; background: #c8202f; font-size: 0.85rem; font-weight: 750; line-height: 1.4; text-align: center; transition: background 160ms ease, box-shadow 160ms ease; }
+.zb-biz .zb-biz-button:hover:not(:disabled) { background: #a61b2b; box-shadow: 0 5px 15px #9e1b2920; }
+.zb-biz .zb-biz-button--secondary { color: #453a42; background: #fff; border-color: #d4cbd0; }
+.zb-biz .zb-biz-button--secondary:hover:not(:disabled) { background: #fff1f3; }
+.zb-biz-text-link { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; color: #b51c31; font-weight: 750; font-size: 0.85rem; }
+.zb-biz-text-link:hover, .zb-biz-auth-switch a:hover, .zb-biz-other-account:hover { text-decoration: underline; text-underline-offset: 4px; }
+.zb-biz-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+.zb-biz-security { display: flex; align-items: flex-start; gap: 0.55rem; color: var(--biz-muted); font-size: 0.75rem; }
+.zb-biz-security svg { color: #97515f; margin-top: 0.05rem; }
+.zb-biz-card { min-width: 0; padding: 1.5rem; border: 1px solid var(--biz-border); border-radius: 1.15rem; background: #fff; box-shadow: 0 6px 24px #39182804; }
+.zb-biz-card-heading { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.zb-biz-card-heading h2 { flex: 1 1 auto; }
+.zb-biz-pill { display: inline-flex; align-items: center; gap: 0.4rem; width: fit-content; max-width: 100%; padding: 0.4rem 0.7rem; border: 1px solid #ebd3d9; border-radius: 2rem; color: #803142; background: #fff7f9; font-size: 0.68rem; font-weight: 750; line-height: 1.4; }
+.zb-biz-pill svg { width: 0.95rem; height: 0.95rem; }
+.zb-biz-error { margin-block: 1rem !important; padding: 0.85rem 1rem; border: 1px solid #df9da7; border-radius: 0.6rem; color: #9c2030; background: #fff0f2; font-size: 0.85rem; }
+.zb-biz-success-inline { display: flex; align-items: center; gap: 0.5rem; margin-block: 1rem !important; padding: 0.85rem; border-radius: 0.65rem; color: #286044; background: #eef8f1; font-size: 0.83rem; }
+.zb-biz-success, .zb-biz-notice { display: grid; justify-items: start; gap: 1rem; margin-top: 1.5rem; padding: 1.3rem; background: #f7f4f6; border: 1px solid var(--biz-border); border-radius: 0.9rem; }
+.zb-biz-success > svg { width: 2rem; height: 2rem; color: #286044; }
+.zb-biz-spin { animation: zb-biz-spin 1s linear infinite; }
+@keyframes zb-biz-spin { to { transform: rotate(360deg); } }
+
+/* Access pages */
+.zb-biz-access { max-width: 76rem; margin-inline: auto; padding: 2rem 2.5rem 1rem; min-height: 100dvh; }
+.zb-biz-access-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 2rem; }
+.zb-biz-back { display: inline-flex; align-items: center; gap: 0.55rem; min-height: 2.75rem; font-size: 0.78rem; color: #6f6470; }
+.zb-biz-access-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 3.7rem; align-items: center; }
+.zb-biz-access-story { padding: 2.1rem; border-radius: 1.5rem; background: radial-gradient(ellipse at 0 0, #f9e0e4 0, transparent 70%), #efeaed; overflow: hidden; }
+.zb-biz-access-story h2 { margin-top: 0.8rem; font-size: clamp(2rem, 3.8vw, 3.3rem); line-height: 1.06; }
+.zb-biz-access-story > p:not(.zb-biz-eyebrow) { color: #6f5d66; font-size: 0.85rem; line-height: 1.7; margin-top: 1rem; max-width: 26rem; }
+.zb-biz-access-image { margin-top: 1.5rem !important; border-radius: 1rem; overflow: hidden; box-shadow: 0 14px 35px #622c3412; }
+.zb-biz .zb-biz-access-image .zb-execution-image { aspect-ratio: 1.8; }
+.zb-biz-access-image figcaption { display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; justify-content: space-between; padding: 0.65rem 0.9rem; background: #461820; color: #fff; font-size: 0.65rem; font-weight: 700; }
+.zb-biz-access-image figcaption span { color: #e6c6ce; font-size: 0.58rem; font-weight: 500; }
+.zb-biz-story-features { display: flex; flex-wrap: wrap; gap: 0.65rem 1rem; margin-top: 1.2rem; }
+.zb-biz-story-features span { display: flex; align-items: center; gap: 0.35rem; font-size: 0.65rem; font-weight: 750; color: #6b3945; }
+.zb-biz-story-features svg { width: 1rem; height: 1rem; }
+.zb-biz-access-form { min-width: 0; width: 100%; max-width: 26rem; padding-block: 1rem; }
+.zb-biz-access-form > .zb-biz-eyebrow { margin-top: 1.15rem; }
+.zb-biz-access-form > h1 { margin-top: 0.55rem; }
+.zb-biz-access-form > .zb-biz-muted { margin-top: 0.8rem; font-size: 0.88rem; }
+.zb-biz-form { display: grid; gap: 1rem; margin-top: 1.5rem; }
+.zb-biz-field { display: grid; gap: 0.4rem; min-width: 0; }
+.zb-biz-field > span:first-child { font-size: 0.8rem; font-weight: 750; color: #463b44; }
+.zb-biz .zb-biz-field input { width: 100%; min-width: 0; min-height: 3rem; padding: 0.7rem 0.85rem; border: 1px solid #cfc4cb; border-radius: 0.6rem; color: #27232a; background: #fff; font: inherit; font-size: 1rem; line-height: 1.4; }
+.zb-biz-field input::placeholder { color: #867c85; font-size: 0.88rem; }
+.zb-biz-password { display: flex; position: relative; }
+.zb-biz .zb-biz-password input { padding-right: 3.2rem; }
+.zb-biz-password button { position: absolute; right: 0.2rem; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border: 0; background: transparent; color: #81707b; border-radius: 0.45rem; }
+.zb-biz-field-hint { font-size: 0.73rem; color: var(--biz-muted); margin-top: 0.75rem !important; }
+.zb-biz-form .zb-biz-field-hint { margin-top: -0.5rem !important; }
+.zb-biz-form > .zb-biz-text-link { justify-self: end; margin-top: -0.45rem; }
+.zb-biz-auth-switch { margin-top: 1.4rem !important; font-size: 0.8rem; color: var(--biz-muted); }
+.zb-biz-auth-switch a { color: #ad2034; font-weight: 750; }
+.zb-biz-access-form > .zb-biz-security { margin-top: 1.4rem; }
+.zb-biz-other-account { display: block; padding-top: 1rem; color: #756972; font-size: 0.7rem; }
+.zb-biz-access-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin-top: 2rem; padding-top: 1rem; color: #7c727a; font-size: 0.7rem; }
+.zb-biz-access-footer a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+
+/* Protected workspace */
+.zb-biz-shell { display: grid; grid-template-columns: 15rem minmax(0, 1fr); min-height: 100dvh; }
+.zb-biz-sidebar { position: sticky; top: 0; height: 100dvh; overflow-y: auto; display: flex; flex-direction: column; padding: 2rem 1.1rem 1.25rem; border-right: 1px solid var(--biz-border); background: #fff; }
+.zb-biz-sidebar > .zb-biz-wordmark { margin-inline: 0.5rem; }
+.zb-biz-sidebar-account { display: flex; align-items: center; gap: 0.65rem; min-width: 0; padding: 1rem 0.7rem; margin-block: 2rem 1.5rem; background: #f8f5f7; border: 1px solid #eee7eb; border-radius: 0.85rem; }
+.zb-biz-avatar { display: grid; place-items: center; flex-shrink: 0; width: 2.1rem; height: 2.1rem; border-radius: 0.7rem; background: #461820; color: #fff; font-size: 0.82rem; font-weight: 800; }
+.zb-biz-sidebar-account > div { min-width: 0; }
+.zb-biz-sidebar-account strong { display: block; font-size: 0.75rem; line-height: 1.4; }
+.zb-biz-sidebar-account div > span { display: block; overflow-wrap: anywhere; font-size: 0.64rem; margin-top: 0.2rem; color: #7a6b76; }
+.zb-biz-nav-label { padding-left: 0.85rem; color: #9a8994; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.15em; }
+.zb-biz-nav { display: grid; gap: 0.4rem; margin-top: 0.65rem; }
+.zb-biz-nav a { display: flex; align-items: center; gap: 0.7rem; min-height: 2.9rem; padding: 0.8rem 0.85rem; border-radius: 0.65rem; font-size: 0.78rem; font-weight: 700; color: #746773; }
+.zb-biz-nav a:hover { color: #ad2135; background: #fdf3f5; }
+.zb-biz-nav a[aria-current="page"] { color: #b32035; background: #fff0f3; box-shadow: inset 3px 0 #c8202f; }
+.zb-biz-sidebar-bottom { margin-top: auto; padding-top: 2rem; display: grid; gap: 0.65rem; }
+.zb-biz-sidebar-bottom > a { display: flex; align-items: center; gap: 0.55rem; min-height: 2.75rem; padding: 0.65rem; font-size: 0.73rem; color: #776771; }
+.zb-biz-sidebar-bottom > a > svg:last-child { margin-left: auto; }
+.zb-biz-signout { display: flex; align-items: center; gap: 0.65rem; min-height: 2.75rem; padding: 0.65rem; border: 0; background: transparent; color: #7c4a58; text-align: left; font-size: 0.77rem !important; }
+.zb-biz-workarea { min-width: 0; display: flex; flex-direction: column; }
+.zb-biz-topbar { display: flex; align-items: center; gap: 1.25rem; min-height: 4.65rem; padding: 0.7rem clamp(1.25rem, 3vw, 3rem); border-bottom: 1px solid var(--biz-border); background: #ffffffde; }
+.zb-biz-topbar-title { font-size: 0.82rem; font-weight: 700; margin-right: auto; }
+.zb-biz-session { display: flex; align-items: center; gap: 0.4rem; color: #766270; font-size: 0.66rem; }
+.zb-biz-topbar-site { display: flex; align-items: center; gap: 0.35rem; min-height: 2.75rem; font-size: 0.72rem; font-weight: 700; }
+.zb-biz-content { min-width: 0; width: 100%; max-width: 78rem; margin-inline: auto; padding: 2rem clamp(1.25rem, 3vw, 3rem); outline: none; flex: 1; }
+.zb-biz-heading { margin-bottom: 1.6rem; }
+.zb-biz-heading h1 { margin-top: 0.5rem; }
+.zb-biz-heading > .zb-biz-muted { margin-top: 0.6rem; font-size: 0.86rem; }
+.zb-biz-welcome-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); overflow: hidden; border: 1px solid #edd5dc; border-radius: 1.25rem; background: #f9e9ed; }
+.zb-biz-welcome { padding: 1.6rem 1.9rem; background: radial-gradient(ellipse at 0 100%, #f1d2db 0, transparent 75%); }
+.zb-biz-welcome h2 { font-size: clamp(1.65rem, 2.9vw, 2.6rem); line-height: 1.12; margin-top: 1rem; }
+.zb-biz-welcome > p { max-width: 29rem; margin-top: 0.8rem; color: #785866; font-size: 0.83rem; }
+.zb-biz-welcome .zb-biz-button { margin-top: 1.1rem; }
+.zb-biz-work-image { min-width: 0; position: relative; background: #461820; }
+.zb-biz .zb-biz-work-image .zb-execution-image { height: 100%; min-height: 16rem; aspect-ratio: auto; }
+.zb-biz-work-image figcaption { position: absolute; inset: auto 0 0; padding: 2rem 1.3rem 1rem; background: linear-gradient(transparent, #271219df); color: #fff; display: grid; gap: 0.15rem; }
+.zb-biz-work-image figcaption > span { font-size: 0.8rem; font-weight: 750; }
+.zb-biz-work-image figcaption > small { font-size: 0.6rem; color: #ebd9de; }
+.zb-biz-overview-grid { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 1.25rem; margin-top: 1.25rem; }
+.zb-biz-icon-link { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; margin-left: auto; color: #8a5b6c; border-radius: 0.6rem; }
+.zb-biz-icon-link:hover { background: #f9edf1; }
+.zb-biz-profile-progress { display: flex; align-items: center; gap: 1.1rem; margin-block: 1rem; }
+.zb-biz-ring { --completion: 0%; width: 4.9rem; height: 4.9rem; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(#c8202f var(--completion), #f3e7ec 0); flex-shrink: 0; }
+.zb-biz-ring span { display: grid; place-items: center; width: 4.1rem; height: 4.1rem; border-radius: 50%; background: #fff; font-size: 1.1rem; font-weight: 800; }
+.zb-biz-profile-progress p { font-size: 0.73rem; margin-top: 0.3rem; color: var(--biz-muted); }
+.zb-biz-profile-location { display: flex; align-items: center; gap: 0.4rem; color: #866471; font-size: 0.78rem; margin-bottom: 0.65rem; }
+.zb-biz-checklist { display: grid; list-style: none; padding: 0; }
+.zb-biz-checklist li { display: flex; align-items: center; gap: 0.8rem; padding: 0.85rem 0; border-top: 1px solid #f0e9ed; }
+.zb-biz-checklist li:first-child { border: 0; padding-top: 0.25rem; }
+.zb-biz-checklist li > span { display: grid; place-items: center; width: 2rem; height: 2rem; flex-shrink: 0; border: 1px solid #e8d6df; border-radius: 50%; color: #a06b7b; font-size: 0.72rem; font-weight: 750; }
+.zb-biz-checklist li[data-complete="true"] > span { background: #f8e7ed; border-color: #f8e7ed; color: #b02b45; }
+.zb-biz-checklist h3 { font-size: 0.81rem; letter-spacing: -0.015em; }
+.zb-biz-checklist h3 a { display: inline-flex; padding-block: 0.4rem; text-decoration: underline; text-decoration-color: #d4b8c3; text-underline-offset: 4px; }
+.zb-biz-checklist p { font-size: 0.72rem; color: #8a7884; }
+.zb-biz-checklist li > svg { margin-left: auto; color: #b18b9a; }
+.zb-biz-help-strip { display: flex; align-items: center; gap: 0.65rem; padding: 1.1rem 0.25rem; color: #8a7784; }
+.zb-biz-help-strip p { font-size: 0.7rem; flex: 1; }
+.zb-biz-help-strip > a { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; color: #944459; font-size: 0.71rem; font-weight: 700; }
+.zb-biz-workspace-footer { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem 1rem; padding: 0.8rem clamp(1.25rem, 3vw, 3rem) max(0.8rem, env(safe-area-inset-bottom)); color: #8c7b88; font-size: 0.65rem; }
+.zb-biz-workspace-footer a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+.zb-biz-mobile-menu { display: none; }
+.zb-biz-menu-trigger { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border: 1px solid #ded1d8; border-radius: 0.6rem; background: #fff; }
+.zb-site .zb-biz-drawer { width: min(88vw, 20rem); max-width: 100%; height: 100dvh; padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom)); overflow-y: auto; background: #fff; gap: 0.5rem; }
+.zb-biz-drawer .zb-biz-sidebar-account { margin-block: 1rem; }
+.zb-biz-drawer [data-slot="sheet-header"] { padding: 1rem 2rem 0.5rem 0.5rem; }
+.zb-biz-drawer [data-slot="sheet-close"] { width: 2.75rem; height: 2.75rem; }
+.zb-biz-gate { display: grid; align-content: start; justify-items: center; gap: 3rem; max-width: 40rem; min-height: 100dvh; padding: 3rem 1.25rem; margin-inline: auto; }
+.zb-biz-gate > .zb-biz-card { display: grid; justify-items: start; gap: 1rem; width: 100%; }
+
+/* Company setup and account */
+.zb-biz-setup-grid { display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); gap: 1.5rem; align-items: start; }
+.zb-biz-setup-guide { padding: 1.6rem; background: radial-gradient(ellipse at 0 0, #ffeaef 0, transparent 70%), #f0e9ee; border: 1px solid #ead6df; border-radius: 1.1rem; }
+.zb-biz-setup-guide h2 { font-size: 1.65rem; margin-top: 1rem; }
+.zb-biz-setup-guide > p { font-size: 0.81rem; margin-top: 0.8rem; color: #7f6576; }
+.zb-biz-steps { display: grid; list-style: none; padding: 0; margin-top: 1.7rem !important; }
+.zb-biz-steps li { display: flex; align-items: center; gap: 0.9rem; position: relative; padding-block: 0.7rem; color: #a68c9d; }
+.zb-biz-steps li:not(:last-child)::after { content: ""; position: absolute; left: 1.25rem; top: 3.15rem; bottom: -0.9rem; width: 1px; background: #d9bac9; }
+.zb-biz-steps li > span { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; flex-shrink: 0; border: 1px solid #dbbccb; border-radius: 0.8rem; background: #f6eef3; }
+.zb-biz-steps li[aria-current="step"] { color: #6b2037; }
+.zb-biz-steps li[aria-current="step"] > span { background: #c8202f; color: #fff; border-color: #c8202f; box-shadow: 0 5px 13px #c8202f20; }
+.zb-biz-steps li[data-complete="true"] { color: #9a3a58; }
+.zb-biz-steps strong, .zb-biz-steps small { display: block; }
+.zb-biz-steps small { font-size: 0.57rem; font-weight: 750; letter-spacing: 0.08em; }
+.zb-biz-steps strong { font-size: 0.85rem; }
+.zb-biz-setup-note { display: flex; gap: 0.6rem; margin-top: 1.5rem; padding-top: 1.1rem; border-top: 1px solid #ddc8d4; color: #947686; font-size: 0.71rem; }
+.zb-biz-form-title { margin-bottom: 1.4rem; }
+.zb-biz-form-title h2 { margin-top: 0.45rem; font-size: 1.4rem; outline-offset: 4px; }
+.zb-biz-form-title > p:last-child { margin-top: 0.4rem; font-size: 0.82rem; color: var(--biz-muted); }
+.zb-biz-fields { min-width: 0; display: grid; gap: 1.15rem; padding: 0; border: 0; }
+.zb-biz-field-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.zb-biz-form-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 0.75rem; padding-top: 1.5rem; margin-top: 1.5rem; border-top: 1px solid #eee3ea; }
+.zb-biz-details { display: grid; }
+.zb-biz-details > div { display: grid; grid-template-columns: minmax(0, 0.6fr) minmax(0, 1fr); gap: 1rem; align-items: start; padding-block: 0.85rem; border-bottom: 1px solid #f1eaf0; font-size: 0.83rem; }
+.zb-biz-details > div:last-child { border: 0; }
+.zb-biz-details dt { color: #8a7583; }
+.zb-biz-details dd { min-width: 0; font-weight: 650; }
+.zb-biz-details dd .zb-biz-text-link { min-height: 0; }
+.zb-biz-company-grid { display: grid; grid-template-columns: minmax(0, 0.65fr) minmax(0, 1.35fr); gap: 1.5rem; align-items: start; }
+.zb-biz-company-identity { display: grid; justify-items: start; gap: 0.85rem; padding: 2rem 1.5rem; border: 1px solid #ead1dd; border-radius: 1.15rem; background: radial-gradient(ellipse at 0 0, #f9dce6, transparent 70%), #f2e9ef; }
+.zb-biz-company-monogram { display: grid; place-items: center; width: 4.75rem; height: 4.75rem; margin-bottom: 1rem; border: 5px solid #fff9fb; border-radius: 1.3rem; background: #461820; color: #fff; font-size: 1.5rem; font-weight: 800; box-shadow: 0 8px 25px #6f29451a; }
+.zb-biz-company-identity h2 { font-size: 1.7rem; }
+.zb-biz-company-identity > p:not(.zb-biz-eyebrow) { color: #977487; font-size: 0.83rem; }
+.zb-biz-company-identity .zb-biz-pill { margin-top: 0.75rem; }
+.zb-biz-empty { display: grid; justify-items: center; gap: 1rem; max-width: 42rem; margin: 2rem auto; padding: 2.5rem; text-align: center; }
+.zb-biz-empty p { max-width: 29rem; color: var(--biz-muted); }
+.zb-biz-account-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; align-items: start; }
+.zb-biz-account-grid .zb-biz-card > p { font-size: 0.82rem; color: var(--biz-muted); }
+.zb-biz-account-grid .zb-biz-security { margin-top: 1.25rem; font-size: 0.75rem !important; }
+.zb-biz-recovery-email { display: flex; gap: 0.65rem; align-items: center; min-width: 0; margin-block: 1.2rem; padding: 0.8rem; border: 1px solid #e9dae3; border-radius: 0.65rem; color: #896778; background: #faf6f9; }
+.zb-biz-recovery-email span { min-width: 0; overflow-wrap: anywhere; font-size: 0.8rem; }
+
+@media (min-width: 801px) and (max-height: 780px) {
+  .zb-biz-access { padding-top: 1.1rem; }
+  .zb-biz-access-header { padding-bottom: 1.25rem; }
+  .zb-biz-access-story { padding: 1.5rem; }
+  .zb-biz-access-story h2 { font-size: 2.6rem; }
+  .zb-biz .zb-biz-access-image .zb-execution-image { aspect-ratio: 2.15; }
+}
+@media (max-width: 1100px) {
+  .zb-biz-shell { grid-template-columns: 13rem minmax(0, 1fr); }
+  .zb-biz-sidebar .zb-biz-wordmark { font-size: 1.4rem; }
+  .zb-biz-welcome { padding: 1.5rem; }
+  .zb-biz-access-grid { gap: 2.2rem; }
+  .zb-biz-overview-grid, .zb-biz-account-grid { grid-template-columns: minmax(0, 1fr); }
+  .zb-biz-help-strip { flex-wrap: wrap; }
+  .zb-biz-setup-grid { grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr); gap: 1rem; }
+}
+@media (max-width: 800px) {
+  .zb-biz-shell { display: block; }
+  .zb-biz-sidebar { display: none; }
+  .zb-biz-mobile-menu { display: block; }
+  .zb-biz-topbar { position: sticky; top: 0; z-index: 20; padding: 0.65rem 1.15rem; min-height: 4rem; gap: 0.8rem; background: #fff; }
+  .zb-biz-session { display: none; }
+  .zb-biz-content { padding: 1.5rem 1.15rem; }
+  .zb-biz-workarea { min-height: 100dvh; }
+  .zb-biz-access { padding: 1.2rem; }
+  .zb-biz-access-header { padding-bottom: 1.5rem; }
+  .zb-biz-access-grid { display: flex; flex-direction: column; gap: 1.8rem; }
+  .zb-biz-access-form { max-width: 31rem; order: -1; padding-block: 0; }
+  .zb-biz-access-story { width: 100%; max-width: 31rem; padding: 1.6rem; }
+  .zb-biz-access-story h2 { font-size: 2.15rem; }
+  .zb-biz-back { font-size: 0.7rem; }
+  .zb-biz-wordmark { font-size: 1.4rem; }
+  .zb-biz-wordmark small { font-size: 0.49rem; }
+  .zb-biz-overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+}
+@media (max-width: 620px) {
+  body.zb-site .zb-business-root .zb-biz h1 { font-size: clamp(1.7rem, 7vw, 2.15rem); line-height: 1.18; }
+  .zb-biz-heading { margin-bottom: 1.3rem; }
+  .zb-biz-heading > .zb-biz-muted { font-size: 0.83rem; }
+  .zb-biz-card { padding: 1.15rem; border-radius: 1rem; }
+  .zb-biz-card-heading { gap: 0.65rem; }
+  .zb-biz-card-heading h2 { font-size: 1.08rem; }
+  .zb-biz-welcome-grid, .zb-biz-overview-grid, .zb-biz-setup-grid, .zb-biz-company-grid { grid-template-columns: minmax(0, 1fr); }
+  .zb-biz-welcome { padding: 1.35rem; }
+  .zb-biz-welcome h2 { font-size: 2rem; }
+  .zb-biz-work-image { max-height: 13rem; }
+  .zb-biz .zb-biz-work-image .zb-execution-image { min-height: 0; height: 13rem; }
+  .zb-biz-help-strip { align-items: flex-start; }
+  .zb-biz-help-strip > a { flex-basis: 100%; }
+  .zb-biz-help-strip p { min-width: 0; }
+  .zb-biz-setup-guide { padding: 1.1rem; }
+  .zb-biz-setup-guide > :is(.zb-biz-icon, h2, p), .zb-biz-setup-note { display: none; }
+  .zb-biz-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; margin-top: 0 !important; }
+  .zb-biz-steps li { flex-direction: column; align-items: center; gap: 0.5rem; padding: 0; text-align: center; }
+  .zb-biz-steps li:not(:last-child)::after { left: calc(50% + 1.6rem); right: calc(-50% + 1.4rem); top: 1.25rem; height: 1px; width: auto; bottom: auto; }
+  .zb-biz-steps strong { font-size: 0.76rem; }
+  .zb-biz-steps small { font-size: 0.52rem; }
+  .zb-biz-details > div { grid-template-columns: minmax(0, 1fr); gap: 0.3rem; padding-block: 0.8rem; }
+  .zb-biz-details dt { font-size: 0.73rem; }
+  .zb-biz-field-pair { grid-template-columns: minmax(0, 1fr); }
+  .zb-biz-form-actions { margin-top: 1.15rem; padding-top: 1.15rem; }
+  .zb-biz-form-actions > button { flex: 1 1 8rem; }
+  .zb-biz-company-identity { gap: 0.65rem; padding: 1.3rem; }
+  .zb-biz-company-monogram { width: 3.8rem; height: 3.8rem; margin-bottom: 0.35rem; }
+  .zb-biz-empty { padding: 1.5rem; margin-block: 0; }
+  .zb-biz-account-grid .zb-biz-button { width: 100%; }
+  .zb-biz-workspace-footer { font-size: 0.6rem; }
+}
+@media (max-width: 359px) {
+  .zb-biz-access-header { flex-wrap: wrap; gap: 0.5rem; }
+  .zb-biz-topbar { padding-inline: 0.8rem; gap: 0.6rem; }
+  .zb-biz-content { padding-inline: 0.8rem; }
+  .zb-biz-topbar-title { font-size: 0.73rem; }
+  .zb-biz-topbar-site { font-size: 0.65rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zb-biz *, .zb-biz *::before, .zb-biz *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

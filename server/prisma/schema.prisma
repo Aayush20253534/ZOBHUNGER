@@ -53,6 +53,7 @@ model User {
   email           String           @unique
   phone           String?          @unique
   passwordHash    String
+  sessionVersion  Int              @default(0)
   role            UserRole
   isActive        Boolean          @default(true)
   emailVerifiedAt DateTime?
@@ -66,6 +67,7 @@ model User {
   applications          JobApplication[]        @relation("WorkerApplications")
   createdJobs           Job[]                   @relation("JobCreator")
   auditLogs             AuditLog[]              @relation("AuditActor")
+  passwordResetToken    PasswordResetToken?
 
   @@index([role, isActive])
   @@index([createdAt])
@@ -79,11 +81,14 @@ model BusinessProfile {
   phone         String?
   industry      String?
   city          String?
+  state         String?
   website       String?
+  onboardedAt   DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requirements WorkforceRequirement[]
 
   @@index([companyName])
   @@index([industry])
@@ -108,6 +113,18 @@ model WorkerProfile {
   @@index([city, isAvailable])
 }
 
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+}
+
 model ContactEnquiry {
   id              String   @id @default(cuid())
   name            String
@@ -127,6 +144,7 @@ model ContactEnquiry {
 model WorkforceRequirement {
   id                String            @id @default(cuid())
   submittedByUserId String?
+  businessProfileId String?
   companyName       String
   contactPerson     String
   businessEmail     String
@@ -144,10 +162,12 @@ model WorkforceRequirement {
   updatedAt         DateTime          @updatedAt
 
   submittedBy User? @relation("RequirementSubmitter", fields: [submittedByUserId], references: [id], onDelete: SetNull)
+  businessProfile BusinessProfile? @relation(fields: [businessProfileId], references: [id], onDelete: SetNull)
 
   @@index([status, createdAt])
   @@index([businessEmail])
   @@index([submittedByUserId])
+  @@index([businessProfileId, createdAt])
 }
 
 model Job {

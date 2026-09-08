@@ -1,6 +1,6 @@
-import { createRequirement } from "./requirements.repository.js";
+import { createRequirement, type RequirementOwner } from "./requirements.repository.js";
 import type { CreateRequirementInput } from "./requirements.schema.js";
 
-export async function submitRequirement(input: CreateRequirementInput) {
-  return createRequirement(input);
+export async function submitRequirement(input: CreateRequirementInput, owner?: RequirementOwner) {
+  return createRequirement(input, owner);
 }

@@ -1,10 +1,18 @@
 import "dotenv/config";
 import { z } from "zod";
 
+function optionalSetting<T extends z.ZodType>(schema: T) {
+  return z.preprocess(value => typeof value === "string" && !value.trim() ? undefined : value, schema.optional());
+}
+
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().min(1).max(65_535).default(5000),
   CLIENT_ORIGIN: z.string().min(1).default("http://localhost:3000"),
+  PUBLIC_APP_URL: optionalSetting(z.string().trim().url().refine((value) => {
+    const url = new URL(value);
+    return ["http:", "https:"].includes(url.protocol) && !url.username && !url.password;
+  }, "PUBLIC_APP_URL must be an http(s) frontend URL")),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   REDIS_URL: z.preprocess(
     (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
@@ -37,11 +45,11 @@ const envSchema = z.object({
     .default(process.env.NODE_ENV === "production" ? "true" : "false")
     .transform((value) => value === "true"),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
-  MAILJET_API_KEY: z.string().trim().min(1).optional(),
-  MAILJET_SECRET_KEY: z.string().trim().min(1).optional(),
-  MAIL_FROM_EMAIL: z.string().trim().email().optional(),
+  MAILJET_API_KEY: optionalSetting(z.string().trim().min(1)),
+  MAILJET_SECRET_KEY: optionalSetting(z.string().trim().min(1)),
+  MAIL_FROM_EMAIL: optionalSetting(z.string().trim().email()),
   MAIL_FROM_NAME: z.string().trim().min(1).max(120).default("ZOBHUNGER"),
-  SALES_TEAM_EMAIL: z.string().trim().email().optional(),
+  SALES_TEAM_EMAIL: optionalSetting(z.string().trim().email()),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

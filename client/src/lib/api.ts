@@ -27,7 +27,10 @@ export async function apiFetch<T>(
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(`${apiBaseUrl.replace(/\/$/, "")}${path}`, {
+  // Browser requests use the Next rewrite, so httpOnly cookies belong to the site.
+  // Server-rendered public content can continue calling Express directly.
+  const base = typeof window === "undefined" ? apiBaseUrl.replace(/\/$/, "") : "/api/backend";
+  const response = await fetch(`${base}${path}`, {
     ...options,
     headers,
     credentials: options.credentials ?? "include",

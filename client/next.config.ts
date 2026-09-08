@@ -13,6 +13,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  async rewrites() {
+    // Keep browser authentication first-party even when Express is hosted separately.
+    const api = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1").replace(/\/+$/, "");
+    return [{ source: "/api/backend/:path*", destination: `${api}/:path*` }];
+  },
   async headers() {
     return [
       {

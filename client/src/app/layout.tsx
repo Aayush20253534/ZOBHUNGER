@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
+import { SiteFrame } from "@/components/layout/SiteFrame";
 import { site } from "@/data/site";
 import "./globals.css";
 import "@/styles/mobile.css";
@@ -88,11 +87,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-        <Navbar />
-        <main className="mx-auto min-h-[70vh] max-w-6xl px-6 py-12">
-          {children}
-        </main>
-        <Footer />
+        <SiteFrame>{children}</SiteFrame>
       </body>
     </html>
   );

@@ -3,7 +3,7 @@ import { env } from "../../config/env.js";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import { signAccessToken } from "../../utils/jwt.js";
 import type { LoginInput, RegisterInput } from "./auth.schema.js";
-import { loginPlacementCellUser, loginUser, registerUser } from "./auth.service.js";
+import { loginBusinessUser, loginPlacementCellUser, loginUser, registerUser } from "./auth.service.js";
 
 function authCookieOptions() {
   const production = env.NODE_ENV === "production";
@@ -15,8 +15,8 @@ function authCookieOptions() {
   };
 }
 
-function setAuthCookie(res: Response, user: { id: string; role: unknown }) {
-  const token = signAccessToken({ sub: user.id, role: user.role as "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL" });
+function setAuthCookie(res: Response, user: { id: string; role: unknown; sessionVersion: number }) {
+  const token = signAccessToken({ sub: user.id, role: user.role as "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL", version: user.sessionVersion });
   res.cookie(env.AUTH_COOKIE_NAME, token, {
     ...authCookieOptions(),
     maxAge: env.AUTH_COOKIE_MAX_AGE_MS,
@@ -48,4 +48,10 @@ export const placementCellLoginController: RequestHandler = async (_req, res) =>
   const user = await loginPlacementCellUser(res.locals.validated.body as LoginInput);
   setAuthCookie(res, user);
   res.status(200).json(apiSuccessResponse("Institution partner login successful", { user }));
+};
+
+export const businessLoginController: RequestHandler = async (_req, res) => {
+  const user = await loginBusinessUser(res.locals.validated.body as LoginInput);
+  setAuthCookie(res, user);
+  res.status(200).json(apiSuccessResponse("Business login successful", { user }));
 };

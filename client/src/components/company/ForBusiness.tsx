@@ -48,6 +48,9 @@ export function ForBusiness() {
               <ActionLink href="/solutions" variant="secondary">
                 Explore solutions
               </ActionLink>
+              <ActionLink href="/business/login" variant="text">
+                Business workspace <ArrowUpRight aria-hidden="true" className="size-4" />
+              </ActionLink>
             </>
           }
         />

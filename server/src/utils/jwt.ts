@@ -3,6 +3,7 @@ import { env } from "../config/env.js";
 
 export interface AccessTokenPayload {
   sub: string;
+  version?: number;
   role: "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL";
 }
 
@@ -17,5 +18,6 @@ export function verifyAccessToken(token: string): AccessTokenPayload {
   if (typeof decoded !== "object" || typeof decoded.sub !== "string" || typeof decoded.role !== "string") {
     throw new Error("Invalid token payload");
   }
-  return { sub: decoded.sub, role: decoded.role as AccessTokenPayload["role"] };
+  if (decoded.version !== undefined && (!Number.isInteger(decoded.version) || decoded.version < 0)) throw new Error("Invalid token version");
+  return { version: decoded.version ?? 0, sub: decoded.sub, role: decoded.role as AccessTokenPayload["role"] };
 }

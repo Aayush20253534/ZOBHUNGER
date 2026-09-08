@@ -18,17 +18,17 @@ const accountTypes = [
   {
     title: "Business account",
     icon: Building2,
-    copy: "Authentication is active. The full business workspace remains a later-phase portal.",
+    copy: "Access your business workspace, set up your company profile and manage your account.",
   },
   {
     title: "Worker account",
     icon: UserRound,
-    copy: "Authentication is active. The full worker workspace remains a later-phase portal.",
+    copy: "Sign in to explore workforce opportunities. Your dedicated worker workspace is being developed.",
   },
   {
     title: "Admin account",
     icon: ShieldCheck,
-    copy: "Authentication and the Phase 1 admin dashboard are active now.",
+    copy: "Access the operations dashboard with an authorised administrator account.",
   },
 ] as const;
 
@@ -41,8 +41,8 @@ export default function LoginPage() {
       <div className="zb-portal-heading">
         <PageShell
           eyebrow="Portal access"
-          title="Secure access is now connected."
-          description="Sign in with an account stored in PostgreSQL. Admin users can access the Phase 1 operations dashboard; business and worker account authentication is ready for the later workspaces."
+          title="Your work starts here."
+          description="Sign in to the workspace connected to your account. Business users can manage their company details and administrators can access operations."
         />
       </div>
 
