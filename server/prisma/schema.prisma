@@ -27,6 +27,22 @@ enum JobStatus {
   CLOSED
 }
 
+enum BusinessCandidateStatus {
+  SHARED
+  SHORTLISTED
+  INTERVIEW_REQUESTED
+  SELECTED
+  REJECTED
+}
+
+enum CandidateEventKind {
+  SHARED
+  STATUS_CHANGED
+  INTERVIEW_REQUESTED
+  FEEDBACK
+  ACCESS_REVOKED
+}
+
 enum ApplicationStatus {
   SUBMITTED
   REVIEWED
@@ -167,6 +183,8 @@ model WorkforceRequirement {
   submittedBy User? @relation("RequirementSubmitter", fields: [submittedByUserId], references: [id], onDelete: SetNull)
   businessProfile BusinessProfile? @relation(fields: [businessProfileId], references: [id], onDelete: SetNull)
 
+  candidates BusinessCandidate[]
+
   @@index([status, createdAt])
   @@index([businessEmail])
   @@index([submittedByUserId])
@@ -223,6 +241,8 @@ model JobApplication {
   workerUser                User?                     @relation("WorkerApplications", fields: [workerUserId], references: [id], onDelete: SetNull)
   placementCandidate        PlacementCandidate?       @relation(fields: [placementCandidateId], references: [id], onDelete: SetNull)
   placementCellApplication  PlacementCellApplication? @relation("PlacementCellApplications", fields: [placementCellApplicationId], references: [id], onDelete: SetNull)
+
+  businessCandidates BusinessCandidate[]
 
   @@unique([jobId, email])
   @@index([jobId, status, createdAt])
@@ -357,4 +377,52 @@ model PlacementCandidate {
   @@index([placementCellApplicationId, createdAt])
   @@index([placementCellApplicationId, fullName])
   @@index([placementCellApplicationId, city])
+}
+
+// An admin-approved snapshot for one requirement. Application review remains
+// independent: a company's decision must not change another company's pipeline.
+model BusinessCandidate {
+  id            String                  @id @default(cuid())
+  requirementId String
+  applicationId String
+  name          String
+  city          String?
+  experience    String?
+  skills        String[]                @default([])
+  resumeUrl     String?
+  availableFrom DateTime?
+  summary       String
+  jobTitle      String
+  status        BusinessCandidateStatus @default(SHARED)
+  revision      Int                     @default(0)
+  revokedAt     DateTime?
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
+  requirement WorkforceRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  application JobApplication        @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  events      CandidateEvent[]
+
+  @@unique([requirementId, applicationId])
+  @@index([requirementId, revokedAt, status, updatedAt, id], map: "BusinessCandidate_requirement_stage_updated_idx")
+  @@index([updatedAt, id])
+  @@index([applicationId])
+}
+
+model CandidateEvent {
+  id            String                  @id @default(cuid())
+  candidateId   String
+  kind          CandidateEventKind
+  actorRole     UserRole
+  fromStatus    BusinessCandidateStatus?
+  toStatus      BusinessCandidateStatus?
+  note          String
+  interviewAt   DateTime?
+  interviewMode String?
+  interviewDetails String?
+  createdAt     DateTime                @default(now())
+
+  candidate BusinessCandidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId, createdAt, id])
 }

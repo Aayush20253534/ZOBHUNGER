@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   BriefcaseBusiness,
@@ -237,10 +238,11 @@ export function AdminDashboard() {
       <div className="zb-admin-toolbar">
         <div>
           <p className="zb-eyebrow">Authenticated administrator</p>
-          <h1>Phase 1 operations dashboard</h1>
+          <h1>Operations dashboard</h1>
           <p>{user?.email}</p>
         </div>
         <div className="zb-admin-actions">
+          <Link href="/admin/candidate-management"><UsersRound aria-hidden="true" />Candidate sharing &amp; reviews</Link>
           <button type="button" onClick={() => void load()} disabled={loading}>
             <RefreshCw aria-hidden="true" /> Refresh
           </button>

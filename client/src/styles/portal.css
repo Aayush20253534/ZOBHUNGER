@@ -180,7 +180,7 @@
   box-shadow: 0 0 0 3px rgba(207, 29, 43, 0.1);
 }
 .zb-login-submit,
-.zb-admin-actions button,
+.zb-admin-actions :is(button, a),
 .zb-admin-state button {
   display: inline-flex;
   align-items: center;
@@ -421,7 +421,7 @@
   margin-top: 0.35rem;
   font-size: 0.95rem;
 }
-.zb-admin-actions button {
+.zb-admin-actions :is(button, a) {
   min-height: 2.55rem;
   padding: 0.62rem 0.9rem;
   font-size: 0.95rem;

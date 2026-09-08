@@ -1,4 +1,7 @@
 const checks = [
+  { method: "GET", path: "/business/candidates", status: 401, code: "UNAUTHENTICATED" },
+  { method: "GET", path: "/business/candidates/deployment-check", status: 401, code: "UNAUTHENTICATED" },
+  { method: "POST", path: "/business/candidates/deployment-check/reviews", status: 401, code: "UNAUTHENTICATED" },
   { method: "GET", path: "/health", status: 200 },
   { method: "GET", path: "/business/workspace", status: 401, code: "UNAUTHENTICATED" },
   { method: "GET", path: "/business/profile", status: 401, code: "UNAUTHENTICATED" },
@@ -40,8 +43,8 @@ export async function checkBusinessRoutes(baseUrl) {
     if (check.code && (body.success !== false || body.error?.code !== check.code)) {
       throw new Error(`${check.path} did not reach the expected authentication or validation handler.`);
     }
-    if (check.path === "/health" && (body.success !== true || body.data?.features?.businessPortal !== true || body.data?.features?.businessDashboard !== true || body.data?.features?.businessRequirements !== true)) {
-      throw new Error("This API does not report business requirement management. Deploy the latest backend commit and check NEXT_PUBLIC_API_URL.");
+    if (check.path === "/health" && (body.success !== true || body.data?.features?.businessPortal !== true || body.data?.features?.businessDashboard !== true || body.data?.features?.businessRequirements !== true || body.data?.features?.businessCandidates !== true)) {
+      throw new Error("This API does not report business candidate tracking. Deploy the latest backend commit and check NEXT_PUBLIC_API_URL.");
     }
     results.push({ method: check.method, path: check.path, status: response.status });
   }

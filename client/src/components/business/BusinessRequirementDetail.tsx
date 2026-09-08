@@ -26,6 +26,7 @@ export function BusinessRequirementDetail({ id }: { id: string }) {
     {item && data && <>
       <header className="zb-dash-heading"><div><p className="zb-biz-eyebrow">YOUR REQUIREMENT BRIEF</p><h1>{requirementServiceLabel(item.serviceRequired)}</h1><p>{item.companyName} <span aria-hidden="true">·</span> Submitted {businessDate(item.createdAt)}</p></div><StatusBadge status={item.status} /></header>
       <BusinessRequirementActions item={item} onChanged={refresh} />
+      <Link className="zb-biz-text-link" href={`/business/requirements/${item.id}/candidates`}><UsersRound aria-hidden="true" />Review candidates for this requirement<ArrowRight aria-hidden="true" /></Link>
       <div className="zb-dash-detail-summary">
         <div><UsersRound aria-hidden="true" /><span>People requested<strong>{count(item.workforceCount)}</strong></span></div>
         <div><MapPin aria-hidden="true" /><span>Requested locations<strong>{count(requirementLocations(item).length)}</strong></span></div>
