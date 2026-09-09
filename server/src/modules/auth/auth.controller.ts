@@ -2,8 +2,8 @@ import type { RequestHandler, Response } from "express";
 import { env } from "../../config/env.js";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import { signAccessToken } from "../../utils/jwt.js";
-import type { LoginInput, RegisterInput } from "./auth.schema.js";
-import { loginBusinessUser, loginPlacementCellUser, loginUser, registerUser } from "./auth.service.js";
+import type { BusinessLoginInput, LoginInput, RegisterInput } from "./auth.schema.js";
+import { changeBusinessPassword, loginBusinessUser, loginPlacementCellUser, loginUser, registerUser } from "./auth.service.js";
 
 function authCookieOptions() {
   const production = env.NODE_ENV === "production";
@@ -51,7 +51,14 @@ export const placementCellLoginController: RequestHandler = async (_req, res) =>
 };
 
 export const businessLoginController: RequestHandler = async (_req, res) => {
-  const user = await loginBusinessUser(res.locals.validated.body as LoginInput);
+  const user = await loginBusinessUser(res.locals.validated.body as BusinessLoginInput);
   setAuthCookie(res, user);
   res.status(200).json(apiSuccessResponse("Business login successful", { user }));
+};
+
+export const changeBusinessPasswordController: RequestHandler = async (_req, res) => {
+  const { currentPassword, password } = res.locals.validated.body;
+  const user = await changeBusinessPassword(res.locals.authUser.id, currentPassword, password);
+  setAuthCookie(res, user);
+  res.json(apiSuccessResponse("Password changed. Your business workspace is ready.", { user }));
 };

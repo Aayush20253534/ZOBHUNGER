@@ -67,27 +67,8 @@ export const partnerEarningModels = [
 ] as const;
 
 export const partnerProcess = [
-  {
-    step: "01",
-    title: "Apply",
-    description: "Submit your profile and area of specialization.",
-  },
-  {
-    step: "02",
-    title: "Connect",
-    description:
-      "Our team reviews your profile and connects with you to understand your expertise and potential contribution.",
-  },
-  {
-    step: "03",
-    title: "Collaborate",
-    description:
-      "Explore relevant business opportunities, projects, clients or areas where you can contribute.",
-  },
-  {
-    step: "04",
-    title: "Grow Together",
-    description:
-      "Earn based on mutually agreed project contribution and commercial terms.",
-  },
+  { step: "01", title: "Apply", description: "Submit your business details, professional profile and partnership interests." },
+  { step: "02", title: "Company review", description: "Our team evaluates your application and contacts you if more information is needed." },
+  { step: "03", title: "Approval & Partner ID", description: "After approval, your account is created and a unique Partner ID and temporary password are issued." },
+  { step: "04", title: "Your first login", description: "Sign in, change the temporary password and open your Business Portal workspace." },
 ] as const;

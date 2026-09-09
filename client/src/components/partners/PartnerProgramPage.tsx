@@ -1,3 +1,4 @@
+import { ApplicationJourney } from "@/components/common/ApplicationJourney";
 import {
   ArrowDown,
   ArrowRight,
@@ -38,11 +39,11 @@ export function PartnerProgramPage() {
           <p className="zb-page-description">{partnerProgramIntro.description}</p>
           <div className="zb-page-actions">
             <ActionLink href="#partner-application">
-              Explore partnership opportunities
+              Apply to Become a Partner
               <ArrowDown className="size-4" aria-hidden="true" />
             </ActionLink>
-            <ActionLink href="/contact" variant="secondary">
-              Talk to our team
+            <ActionLink href="/business/login" variant="secondary">
+              Approved partner login
             </ActionLink>
           </div>
         </header>
@@ -214,12 +215,14 @@ export function PartnerProgramPage() {
           <span className="zb-eyebrow">Partner application</span>
           <h2 id="partner-application-title">Ready to explore a partnership?</h2>
           <p>
-            Tell us about your professional background, specialization and how
-            you would like to contribute. The application is designed to help
-            our team understand where a relevant collaboration may exist.
+            Share your business details, professional background and partnership
+            interests. Our team will review your application before creating a
+            Business Portal account. Approved partners receive a unique Partner ID
+            and a temporary password, which must be changed on first login.
           </p>
         </div>
         <div className="zb-partner-application-form-wrap">
+          <ApplicationJourney kind="partner" />
           <PartnerApplicationForm />
         </div>
       </section>

@@ -3,10 +3,10 @@ import {
   ArrowUpRight,
   BriefcaseBusiness,
   Building2,
-  ClipboardList,
-  LayoutDashboard,
+  ClipboardCheck,
+  KeyRound,
   LogIn,
-  UserRoundPlus,
+  Handshake,
   Megaphone,
   Store,
   Users,
@@ -33,14 +33,14 @@ const icons = {
 };
 
 const gettingStarted = [
-  { title: "Create your account", description: "Register with your business email and password, then add your company details.", icon: UserRoundPlus },
-  { title: "Share your requirement", description: "Add the roles, people and locations you need. Save a draft when you need more time.", icon: ClipboardList },
-  { title: "Follow the work", description: "Review candidates, see deployments, approve attendance and download reports.", icon: LayoutDashboard },
+  { title: "Apply to partner", description: "Share your company, experience and partnership interests. No account or password is needed to apply.", icon: Handshake },
+  { title: "Company review", description: "Our team reviews your application and contacts you if more information is needed.", icon: ClipboardCheck },
+  { title: "Activate your access", description: "After approval, receive your unique Partner ID and temporary password. Change it on your first login.", icon: KeyRound },
 ] as const;
 
 const accountQuestions = [
-  { question: "How do I create a business account?", answer: "Choose Register your business on this page, sign up with your email and password, and complete your company profile. You can then submit requirements or save them as drafts." },
-  { question: "Where do I log in next time?", answer: "Use Business login at the top of this page or in the For business section of the website footer. Sign in with the email and password you registered with." },
+  { question: "How do I create a business account?", answer: "Submit the Become a Partner application. Our company team reviews it in the admin portal. After approval, your account is created and your Partner ID and temporary password are issued. You must choose a new password on your first login." },
+  { question: "Where do I log in next time?", answer: "Use Business login at the top of this page or in the For business section of the website footer. Sign in with your Partner ID and password. An approved account email also works." },
 ] as const;
 
 export function ForBusiness() {
@@ -53,10 +53,10 @@ export function ForBusiness() {
         <PageShell
           eyebrow="For business · Your company workspace"
           title="Build your team. Manage the work."
-          description="Hire, deploy and stay connected to your team with ZOBHUNGER. Create a business account to manage requirements, review candidates and follow field execution in one workspace."
+          description="Hire, deploy and stay connected to your team with ZOBHUNGER. Apply to become a partner. Once approved, access one workspace to manage requirements, review candidates and follow field execution."
           actions={
             <>
-              <ActionLink href="/business/register"><UserRoundPlus aria-hidden="true" className="size-4" />Register your business</ActionLink>
+              <ActionLink href="/become-a-partner#partner-application"><Handshake aria-hidden="true" className="size-4" />Become a Partner</ActionLink>
               <ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Business login</ActionLink>
             </>
           }
@@ -179,8 +179,8 @@ export function ForBusiness() {
         ))}
       </section>
       <section className="zb-company-section zb-business-entry-cta" aria-labelledby="business-account-cta-title">
-        <div><h2 id="business-account-cta-title">Your next team starts here.</h2><p>Create your business account and bring your requirements, people and work updates together.</p></div>
-        <div><ActionLink href="/business/register" variant="light"><UserRoundPlus aria-hidden="true" className="size-4" />Register your business</ActionLink><ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Business login</ActionLink></div>
+        <div><h2 id="business-account-cta-title">Your next team starts here.</h2><p>Apply for business access and bring your requirements, people and work updates together after approval.</p></div>
+        <div><ActionLink href="/become-a-partner#partner-application" variant="light"><Handshake aria-hidden="true" className="size-4" />Become a Partner</ActionLink><ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Business login</ActionLink></div>
       </section>
     </div>
   );

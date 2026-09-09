@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, ChevronDown, ClipboardList, LogIn, UserRoundPlus, type LucideIcon } from "lucide-react";
+import { Building2, ChevronDown, ClipboardList, LogIn, Handshake, type LucideIcon } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { site } from "@/data/site";
 import { solutions } from "@/data/solutions";
@@ -8,7 +8,7 @@ import "@/styles/footer-business.css";
 type FooterLink = { href: string; label: string; icon?: LucideIcon };
 const businessLinks = [
   { label: "For business", href: "/for-business", icon: Building2 },
-  { label: "Register your business", href: "/business/register", icon: UserRoundPlus },
+  { label: "Become a Partner", href: "/become-a-partner#partner-application", icon: Handshake },
   { label: "Business login", href: "/business/login", icon: LogIn },
   { label: "Hire workforce", href: "/hire-workforce", icon: ClipboardList },
 ] as const satisfies readonly FooterLink[];
@@ -25,6 +25,7 @@ const companyLinks = [
 const opportunityLinks = [
   { label: "For workers", href: "/for-workers" },
   { label: "Jobs & opportunities", href: "/jobs" },
+  { label: "Submit your CV / profile", href: "/careers/apply" },
   { label: "How it works", href: "/how-it-works" },
   { label: "Portal access", href: "/login" },
 ] as const;

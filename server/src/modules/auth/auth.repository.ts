@@ -14,6 +14,10 @@ export function findUserById(id: string) {
   return prisma.user.findUnique({ where: { id } });
 }
 
+export function findUserByPartnerCode(partnerCode: string) {
+  return prisma.user.findUnique({ where: { partnerCode } });
+}
+
 export function createUser(input: { email: string; phone?: string; passwordHash: string; role: "BUSINESS" | "WORKER" }) {
   return prisma.user.create({
     data: { email: input.email, phone: input.phone, passwordHash: input.passwordHash, role: UserRole[input.role] },

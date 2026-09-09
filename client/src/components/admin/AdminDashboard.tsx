@@ -243,6 +243,8 @@ export function AdminDashboard() {
           <p>{user?.email}</p>
         </div>
         <div className="zb-admin-actions">
+          <Link href="/admin/partners"><Handshake aria-hidden="true" />Partner review &amp; approvals</Link>
+          <Link href="/admin/careers"><UsersRound aria-hidden="true" />Career profiles &amp; HR review</Link>
           <Link href="/admin/candidate-management"><UsersRound aria-hidden="true" />Candidate sharing &amp; reviews</Link>
           <Link href="/admin/deployments"><BriefcaseBusiness aria-hidden="true" />Deployment &amp; team roster</Link>
           <Link href="/admin/requirement-jobs"><BriefcaseBusiness aria-hidden="true" />Hiring briefs &amp; job openings</Link>
@@ -334,7 +336,8 @@ export function AdminDashboard() {
           )}
         </AdminPanel>
 
-        <AdminPanel title="Independent Business Partner applications">
+        <AdminPanel title="Business Partner applications">
+          <Link href="/admin/partners">Review applications and issue business access →</Link>
           {data.partnerApplications.items.length === 0 ? (
             <EmptyRow />
           ) : (

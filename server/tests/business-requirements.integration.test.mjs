@@ -35,7 +35,7 @@ test("business requirement management: submissions, edits, withdrawal and isolat
   try {
     server = app.listen(0, "127.0.0.1"); await once(server, "listening");
     base = `http://127.0.0.1:${server.address().port}/api/v1`;
-    for (const [suffix, role] of [["a", "BUSINESS"], ["b", "BUSINESS"], ["worker", "WORKER"], ["admin", "ADMIN"], ["college", "PLACEMENT_CELL"]]) users.push(await prisma.user.create({ data: { email: `${prefix}-${suffix}@example.test`, role, passwordHash: "unused" } }));
+    for (const [suffix, role] of [["a", "BUSINESS"], ["b", "BUSINESS"], ["worker", "WORKER"], ["admin", "ADMIN"], ["college", "PLACEMENT_CELL"]]) users.push(await prisma.user.create({ data: { email: `${prefix}-${suffix}@example.test`, role, businessAccessApproved: role === "BUSINESS", passwordHash: "unused" } }));
     const [a, b, worker, admin, college] = users;
     const cookie = cookieFor(a);
     const brief = { companyName: "Company A", contactPerson: "Owner A", businessEmail: a.email, mobileNumber: "+91 9876543210", industry: "Retail",

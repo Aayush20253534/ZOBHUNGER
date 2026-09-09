@@ -2,7 +2,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { prisma } from "../../config/db.js";
 import { env } from "../../config/env.js";
 import { HttpError } from "../../utils/http-error.js";
-import { hashPassword } from "../../utils/password.js";
+import { hashPassword, verifyPassword } from "../../utils/password.js";
 import { sendBusinessRecoveryEmail } from "../../services/email.service.js";
 
 export function hashRecoveryToken(token: string) {
@@ -19,7 +19,7 @@ export function recoveryLink(token: string) {
 
 export async function requestBusinessRecovery(email: string, requestId?: string) {
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user || !user.isActive || user.role !== "BUSINESS") return;
+  if (!user || !user.isActive || user.role !== "BUSINESS" || !user.businessAccessApproved) return;
   const token = randomBytes(32).toString("hex");
   const tokenHash = hashRecoveryToken(token);
   const createdAt = new Date();
@@ -53,10 +53,11 @@ export async function resetBusinessPassword(token: string, password: string) {
     await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${candidate.userId} FOR UPDATE`;
     const record = await tx.passwordResetToken.findUnique({ where: { tokenHash }, include: { user: true } });
     const now = new Date();
-    if (!record || record.expiresAt <= now || !record.user.isActive || record.user.role !== "BUSINESS") throw invalid();
+    if (!record || record.expiresAt <= now || !record.user.isActive || record.user.role !== "BUSINESS" || !record.user.businessAccessApproved) throw invalid();
+    if (record.user.mustChangePassword && await verifyPassword(record.user.passwordHash, password)) throw new HttpError(400, "Choose a different password from your temporary password", { code: "PASSWORD_REUSED" });
     const consumed = await tx.passwordResetToken.deleteMany({ where: { id: record.id, tokenHash, expiresAt: { gt: now } } });
     if (consumed.count !== 1) throw invalid();
-    await tx.user.update({ where: { id: record.userId }, data: { passwordHash, sessionVersion: { increment: 1 } } });
+    await tx.user.update({ where: { id: record.userId }, data: { passwordHash, mustChangePassword: false, temporaryPasswordExpiresAt: null, sessionVersion: { increment: 1 } } });
     await tx.auditLog.create({ data: { actorUserId: record.userId, action: "business.password_reset", entityType: "User", entityId: record.userId } });
     return { reset: true };
   });

@@ -29,6 +29,11 @@ export const errorHandler: ErrorRequestHandler = (error: unknown, req, res, next
     return;
   }
 
+  if (error && typeof error === "object" && "type" in error && error.type === "entity.too.large") {
+    res.status(413).json(apiErrorResponse("The submitted content is too large. Use the file size limit shown on the form.", { code: "PAYLOAD_TOO_LARGE" }));
+    return;
+  }
+
   logger.error("request.failed", error, {
     requestId: res.locals.requestId,
     method: req.method,

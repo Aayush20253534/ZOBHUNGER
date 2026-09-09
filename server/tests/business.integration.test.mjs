@@ -21,6 +21,7 @@ mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, 
 const { app } = await import("../dist/app.js");
 const { prisma } = await import("../dist/config/db.js");
 const { signAccessToken } = await import("../dist/utils/jwt.js");
+const { hashPassword } = await import("../dist/utils/password.js");
 const { markLogin } = await import("../dist/modules/auth/auth.repository.js");
 const prefix = `p21-${randomUUID()}`;
 const emailA = `${prefix}-a@example.test`, emailB = `${prefix}-b@example.test`;
@@ -45,17 +46,19 @@ test("business foundation: access, ownership and recovery", async (t) => {
     server = app.listen(0, "127.0.0.1"); await once(server, "listening");
     base = `http://127.0.0.1:${server.address().port}/api/v1`;
     let a, b, legacyCookie;
-    await t.test("business registration works and private routes reject guests and other roles", async () => {
+    await t.test("business self-registration is blocked and approved accounts retain private access", async () => {
       assert.equal((await request("/business/workspace")).status, 401);
       assert.equal((await request("/auth/register", { method: "POST", body: { email: emailA, password, role: "ADMIN" } })).status, 400);
-      a = await request("/auth/register", { method: "POST", body: { email: emailA, password, role: "BUSINESS" } });
-      b = await request("/auth/register", { method: "POST", body: { email: emailB, password, role: "BUSINESS" } });
-      assert.equal(a.status, 201); assert.equal(b.status, 201);
+      assert.equal((await request("/auth/register", { method: "POST", body: { email: emailA, password, role: "BUSINESS" } })).status, 403);
+      for (const email of [emailA, emailB]) await prisma.user.create({ data: { email, passwordHash: await hashPassword(password), role: "BUSINESS", businessAccessApproved: true } });
+      a = await request("/auth/business-login", { method: "POST", body: { email: emailA, password } });
+      b = await request("/auth/business-login", { method: "POST", body: { email: emailB, password } });
+      assert.equal(a.status, 200); assert.equal(b.status, 200);
       users.push(a.data.data.user.id, b.data.data.user.id);
       assert.equal("passwordHash" in a.data.data.user, false);
       legacyCookie = `zobhunger_access=${signAccessToken({ sub: users[0], role: "BUSINESS" })}`;
       assert.equal((await request("/business/workspace", { cookie: legacyCookie })).status, 200);
-      assert.equal((await request("/auth/register", { method: "POST", body: { email: emailA, password, role: "BUSINESS" } })).status, 409);
+      assert.equal((await request("/auth/register", { method: "POST", body: { email: emailA, password, role: "BUSINESS" } })).status, 403);
       for (const role of ["WORKER", "ADMIN", "PLACEMENT_CELL"]) {
         const user = await prisma.user.create({ data: { email: `${prefix}-${role}@example.test`, passwordHash: "unused", role } }); users.push(user.id);
         const cookie = `zobhunger_access=${signAccessToken({ sub: user.id, role, version: 0 })}`;

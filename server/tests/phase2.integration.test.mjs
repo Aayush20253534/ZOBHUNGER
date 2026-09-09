@@ -22,7 +22,7 @@ async function ok(path, user, method, body) { const result = await request(path,
 test("Phase 2 complete business-to-operations workflow", async t => {
   try {
     server = app.listen(0, "127.0.0.1"); await once(server, "listening"); base = `http://127.0.0.1:${server.address().port}/api/v1`;
-    for (const role of ["BUSINESS", "BUSINESS", "ADMIN", "WORKER"]) users.push(await prisma.user.create({ data: { email: `${prefix}-${users.length}@example.test`, role, passwordHash: "unused" } }));
+    for (const role of ["BUSINESS", "BUSINESS", "ADMIN", "WORKER"]) users.push(await prisma.user.create({ data: { email: `${prefix}-${users.length}@example.test`, role, businessAccessApproved: role === "BUSINESS", passwordHash: "unused" } }));
     const [a, b, admin, worker] = users;
     const pa = await prisma.businessProfile.create({ data: { userId: a.id, companyName: "Alpha Retail", contactPerson: "Alpha Owner" } });
     const pb = await prisma.businessProfile.create({ data: { userId: b.id, companyName: "Other Private Company", contactPerson: "Other Owner" } });

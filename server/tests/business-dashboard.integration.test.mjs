@@ -35,7 +35,7 @@ test("dashboard: real data, private ownership, filters, detail and session guard
     server = app.listen(0, "127.0.0.1"); await once(server, "listening");
     base = `http://127.0.0.1:${server.address().port}/api/v1`;
     for (const [suffix, role] of [["a", "BUSINESS"], ["b", "BUSINESS"], ["empty", "BUSINESS"], ["worker", "WORKER"], ["admin", "ADMIN"], ["college", "PLACEMENT_CELL"]]) {
-      users.push(await prisma.user.create({ data: { email: `${prefix}-${suffix}@example.test`, passwordHash: "test-only", role } }));
+      users.push(await prisma.user.create({ data: { email: `${prefix}-${suffix}@example.test`, passwordHash: "test-only", role, businessAccessApproved: role === "BUSINESS" } }));
     }
     const [a, b, empty, worker, admin, college] = users;
     const profileA = await prisma.businessProfile.create({ data: { userId: a.id, companyName: "Company A", contactPerson: "Owner A" } });

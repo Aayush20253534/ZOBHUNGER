@@ -41,8 +41,10 @@ test("public requirement submissions and the real recovery service handle Mailje
     industry: "retail", serviceRequired: "workforce", workforceCount: 5, locations: ["Delhi", "Mumbai"], projectDuration: "1 day", details: "Field staffing for two sites." };
   try {
     server = app.listen(0, "127.0.0.1"); await once(server, "listening"); base = `http://127.0.0.1:${server.address().port}/api/v1`;
-    const account = await request("/auth/register", { body: { email, password: "StartingTest9!", role: "BUSINESS" } });
-    assert.equal(account.status, 201); const userId = account.data.data.user.id; userIds.push(userId);
+    const { hashPassword } = await import("../dist/utils/password.js");
+    await prisma.user.create({ data: { email, passwordHash: await hashPassword("StartingTest9!"), role: "BUSINESS", businessAccessApproved: true } });
+    const account = await request("/auth/business-login", { body: { email, password: "StartingTest9!" } });
+    assert.equal(account.status, 200); const userId = account.data.data.user.id; userIds.push(userId);
 
     await t.test("400 explains the rejected field and a corrected brief persists to the signed-in dashboard", async () => {
       const invalid = await request("/requirements", { cookie: account.cookie, body: { ...brief, projectDuration: "1" } });

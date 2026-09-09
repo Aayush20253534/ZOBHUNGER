@@ -1,3 +1,3 @@
-import { BusinessAccess } from "@/components/business/BusinessAccess";
-export const metadata = { title: "Create a business account" };
-export default function Page() { return <BusinessAccess mode="register" />; }
+import { redirect } from "next/navigation";
+export const metadata = { title: "Apply for business access", robots: { index: false, follow: false } };
+export default function Page() { redirect("/become-a-partner#partner-application"); }

@@ -147,8 +147,8 @@ export default function CareersPage() {
             description="Bring your skills to the people, teams and markets behind everyday business. Find your path across operations, sales, recruitment and technology."
             actions={
               <>
-                <ActionLink href="#career-areas">
-                  Explore career areas <ArrowDownRight aria-hidden="true" />
+                <ActionLink href="/careers/apply">
+                  Submit your profile <ArrowDownRight aria-hidden="true" />
                 </ActionLink>
                 <ActionLink href="/jobs" variant="secondary">
                   View work opportunities
@@ -295,8 +295,8 @@ export default function CareersPage() {
               <div className="zb-careers-option-status">
                 <span>Open roles are shared as positions become available.</span>
               </div>
-              <ActionLink href="/contact" variant="light">
-                Contact ZOBHUNGER <ArrowUpRight aria-hidden="true" />
+              <ActionLink href="/careers/apply" variant="light">
+                Submit your CV / profile <ArrowUpRight aria-hidden="true" />
               </ActionLink>
             </article>
 
@@ -352,8 +352,8 @@ export default function CareersPage() {
           </p>
         </div>
         <div className="zb-careers-final-actions">
-          <ActionLink href="/jobs" variant="light">
-            View opportunities
+          <ActionLink href="/careers/apply" variant="light">
+            Submit your profile
           </ActionLink>
           <ActionLink href="/about" variant="secondary">
             About ZOBHUNGER

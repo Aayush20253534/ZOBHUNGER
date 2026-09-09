@@ -68,6 +68,17 @@ enum PartnerApplicationStatus {
   REVIEWED
   CONTACTED
   CLOSED
+  APPROVED
+  REJECTED
+}
+
+enum CareerApplicationStatus {
+  SUBMITTED
+  REVIEWED
+  SHORTLISTED
+  CONTACTED
+  HIRED
+  REJECTED
 }
 
 enum PlacementCellApplicationStatus {
@@ -83,6 +94,10 @@ model User {
   phone           String?          @unique
   passwordHash    String
   sessionVersion  Int              @default(0)
+  partnerCode     String?          @unique
+  businessAccessApproved Boolean  @default(false)
+  mustChangePassword Boolean       @default(false)
+  temporaryPasswordExpiresAt DateTime?
   role            UserRole
   isActive        Boolean          @default(true)
   emailVerifiedAt DateTime?
@@ -91,6 +106,7 @@ model User {
   updatedAt       DateTime         @updatedAt
 
   businessProfile       BusinessProfile?
+  partnerApplication    PartnerApplication?
   workerProfile         WorkerProfile?
   submittedRequirements WorkforceRequirement[] @relation("RequirementSubmitter")
   applications          JobApplication[]        @relation("WorkerApplications")
@@ -297,13 +313,58 @@ model PartnerApplication {
   resumeData            Bytes?
   resumeUploadToken     String?                  @unique
   status                PartnerApplicationStatus @default(SUBMITTED)
+  reviewNotes           String?
+  reviewedByUserId      String?
+  reviewedAt            DateTime?
+  provisionedUserId     String?                  @unique
+  credentialsIssuedAt   DateTime?
+  credentialsEmailStatus String?
   createdAt             DateTime                 @default(now())
   updatedAt             DateTime                 @updatedAt
+
+  provisionedUser User? @relation(fields: [provisionedUserId], references: [id], onDelete: SetNull)
 
   @@index([status, createdAt])
   @@index([email])
   @@index([currentCity])
   @@index([specialization])
+}
+
+model CareerApplication {
+  id               String                  @id @default(cuid())
+  submissionKey    String                  @unique
+  submissionHash   String
+  fullName         String
+  email            String
+  phone            String
+  city             String
+  state            String
+  preferredRole    String
+  experienceYears  Int
+  education        Json
+  workExperience   Json
+  skills           String[]
+  preferredLocations String[]
+  availability     String
+  portfolioUrl     String?
+  coverNote        String?
+  consentAt        DateTime                @default(now())
+  resumeFileName   String?
+  resumeMimeType   String?
+  resumeData       Bytes?
+  resumeUploadTokenHash String?             @unique
+  resumeUploadExpiresAt DateTime?
+  resumeSha256     String?
+  status           CareerApplicationStatus @default(SUBMITTED)
+  reviewNotes      String?
+  reviewedByUserId String?
+  reviewedAt       DateTime?
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([city])
 }
 
 model PlacementCellApplication {

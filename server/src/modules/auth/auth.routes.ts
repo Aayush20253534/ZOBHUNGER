@@ -1,17 +1,21 @@
+import { requireRole } from "../../middlewares/role.middleware.js";
+import { portalWrite } from "../../middlewares/portal-write.middleware.js";
 import { Router } from "express";
-import { requireAuth } from "../../middlewares/auth.middleware.js";
+import { requirePasswordChangeSession } from "../../middlewares/auth.middleware.js";
 import { validate } from "../../middlewares/validate.middleware.js";
 import { authRateLimiter } from "../../middlewares/rate-limit.middleware.js";
-import { businessLoginController, loginController, logoutController, meController, placementCellLoginController, registerController } from "./auth.controller.js";
-import { loginSchema, registerSchema } from "./auth.schema.js";
+import { changeBusinessPasswordController, businessLoginController, loginController, logoutController, meController, placementCellLoginController, registerController } from "./auth.controller.js";
+import { businessLoginSchema, changeBusinessPasswordSchema, loginSchema, registerSchema } from "./auth.schema.js";
 import { passwordRecoveryRouter } from "./password-recovery.routes.js";
 
 export const authRouter = Router();
 authRouter.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
-authRouter.post("/business-login", authRateLimiter, validate({ body: loginSchema }), businessLoginController);
+authRouter.post("/business-login", authRateLimiter, validate({ body: businessLoginSchema }), businessLoginController);
 authRouter.use("/business", passwordRecoveryRouter);
 authRouter.post("/register", authRateLimiter, validate({ body: registerSchema }), registerController);
 authRouter.post("/login", authRateLimiter, validate({ body: loginSchema }), loginController);
 authRouter.post("/placement-cell-login", authRateLimiter, validate({ body: loginSchema }), placementCellLoginController);
 authRouter.post("/logout", logoutController);
-authRouter.get("/me", requireAuth, meController);
+authRouter.get("/me", requirePasswordChangeSession, meController);
+
+authRouter.post("/business/change-password", authRateLimiter, requirePasswordChangeSession, requireRole("BUSINESS"), portalWrite, validate({ body: changeBusinessPasswordSchema }), changeBusinessPasswordController);

@@ -104,8 +104,9 @@ export function PartnerApplicationForm() {
           <span className="zb-eyebrow">Application received</span>
           <h3>Thank you for your interest in becoming an Independent Business Partner.</h3>
           <p>
-            Our team will review your profile and contact you if there is a relevant
-            opportunity to explore.
+            Our company team will review your application. Once approved, we will issue
+            your Business Portal Partner ID and temporary password. You will need
+            to change that password when you first sign in.
           </p>
           {status.warning && <p className="zb-partner-form-warning">{status.warning}</p>}
           <small>Reference: {status.id}</small>

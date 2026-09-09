@@ -20,7 +20,7 @@ async function request(path, { user, method = "GET", body, csrf = true } = {}) {
 test("assignment and attendance workflows preserve business ownership, dates and history", async t => {
   try {
     server = app.listen(0, "127.0.0.1"); await once(server, "listening"); base = `http://127.0.0.1:${server.address().port}/api/v1`;
-    for (const role of ["BUSINESS", "BUSINESS", "ADMIN", "WORKER"]) users.push(await prisma.user.create({ data: { email: `${prefix}-${users.length}@example.test`, role, passwordHash: "unused" } }));
+    for (const role of ["BUSINESS", "BUSINESS", "ADMIN", "WORKER"]) users.push(await prisma.user.create({ data: { email: `${prefix}-${users.length}@example.test`, role, businessAccessApproved: role === "BUSINESS", passwordHash: "unused" } }));
     const [a, b, admin, worker] = users;
     const profileA = await prisma.businessProfile.create({ data: { userId: a.id, companyName: "A Retail", contactPerson: "A Owner" } });
     const profileB = await prisma.businessProfile.create({ data: { userId: b.id, companyName: "B Retail", contactPerson: "B Owner" } });

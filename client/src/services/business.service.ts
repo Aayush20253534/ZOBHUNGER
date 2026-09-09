@@ -21,11 +21,11 @@ async function businessRequest<T>(path: string, options?: RequestInit): Promise<
   }
 }
 
-export function businessLogin(email: string, password: string) {
-  return businessRequest<ApiSuccessEnvelope<{ user: AuthUser }>>("/auth/business-login", json({ email, password }));
+export function businessLogin(identifier: string, password: string) {
+  return businessRequest<ApiSuccessEnvelope<{ user: AuthUser }>>("/auth/business-login", json({ identifier, password }));
 }
-export function registerBusiness(email: string, password: string) {
-  return businessRequest<ApiSuccessEnvelope<{ user: AuthUser }>>("/auth/register", json({ email, password, role: "BUSINESS" }));
+export function changeBusinessPassword(currentPassword: string, password: string) {
+  return businessRequest<ApiSuccessEnvelope<{ user: AuthUser }>>("/auth/business/change-password", json({ currentPassword, password }));
 }
 export function getBusinessWorkspace() {
   return businessRequest<ApiSuccessEnvelope<BusinessWorkspace>>("/business/workspace");

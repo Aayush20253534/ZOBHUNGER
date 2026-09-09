@@ -6,16 +6,15 @@ import { BusinessAuthForm, type BusinessAccessMode } from "./BusinessAuthForm";
 import { BusinessWordmark } from "./BusinessUI";
 
 export function BusinessAccess({ mode }: { mode: BusinessAccessMode }) {
-  const registering = mode === "register";
   return <div className="zb-biz-access">
     <header className="zb-biz-access-header"><BusinessWordmark /><Link href="/for-business" className="zb-biz-back"><ArrowLeft aria-hidden="true" />Back to website</Link></header>
     <div className="zb-biz-access-grid">
       <aside className="zb-biz-access-story" aria-label="Your business workspace">
         <p className="zb-biz-eyebrow">People. Plans. Possibilities.</p>
         <h2>Your next team<br />starts here.</h2>
-        <p>Give your company a home at ZOBHUNGER. Set up your business details and take the first step towards your next workforce requirement.</p>
+        <p>Approved partners get a dedicated company workspace. Sign in with your Partner ID, choose your own password and bring the next brief to life.</p>
         <figure className="zb-biz-access-image">
-          <ExecutionImage visual={executionVisuals[registering ? "workforce-hiring" : "operations-coordination"]} sizes="(max-width: 800px) 100vw, 540px" priority />
+          <ExecutionImage visual={executionVisuals["operations-coordination"]} sizes="(max-width: 800px) 100vw, 540px" priority />
           <figcaption>People behind the process <span>AI-generated illustration</span></figcaption>
         </figure>
         <div className="zb-biz-story-features">

@@ -47,6 +47,9 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
         requests.current.unavailable = true;
         setStatus("unavailable");
         setMessage(error.message);
+      } else if (error instanceof ApiError && error.code === "PASSWORD_CHANGE_REQUIRED") {
+        setStatus("unauthenticated");
+        router.replace("/business/change-password");
       } else if (error instanceof ApiError && error.status === 401) {
         setStatus("unauthenticated");
         router.replace(`/business/login?next=${encodeURIComponent(businessDestination(pathname))}`);

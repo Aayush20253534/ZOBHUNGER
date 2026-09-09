@@ -28,7 +28,7 @@ export function LoginForm() {
 
     try {
       const response = await login(email.trim(), password);
-      router.push(destinationForRole(response.data.user.role));
+      router.push(response.data.user.mustChangePassword ? "/business/change-password" : destinationForRole(response.data.user.role));
       router.refresh();
     } catch (caught) {
       setError(

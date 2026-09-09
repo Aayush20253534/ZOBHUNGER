@@ -444,7 +444,9 @@ export async function updatePartnerApplicationStatusWithAudit(
   context: AuditContext,
 ) {
   return prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT "id" FROM "PartnerApplication" WHERE "id" = ${id} FOR UPDATE`;
     const current = await tx.partnerApplication.findUnique({ where: { id } });
+    if (current?.status === "APPROVED" || current?.provisionedUserId) throw new HttpError(409, "Approved business accounts cannot be moved back through lead review", { code: "PARTNER_ALREADY_APPROVED" });
     if (!current) return null;
     if (current.status === status) return { entity: current, changed: false };
 

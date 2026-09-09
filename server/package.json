@@ -29,7 +29,8 @@
     "test:candidates": "npm run build && node --experimental-test-module-mocks --test tests/business-candidates.integration.test.mjs",
     "test:attendance": "npm run build && node --experimental-test-module-mocks --test tests/business-attendance.integration.test.mjs",
     "test:phase2": "npm run build && node --experimental-test-module-mocks --test tests/phase2.integration.test.mjs",
-    "test:deployments": "npm run build && node --experimental-test-module-mocks --test tests/business-deployments.integration.test.mjs"
+    "test:deployments": "npm run build && node --experimental-test-module-mocks --test tests/business-deployments.integration.test.mjs",
+    "test:partner-hr": "npm run build && node --experimental-test-module-mocks --test tests/partner-hr.integration.test.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

@@ -28,7 +28,7 @@ test("candidate sharing and business decisions preserve ownership, history and c
   try {
     server = app.listen(0, "127.0.0.1"); await once(server, "listening"); base = `http://127.0.0.1:${server.address().port}/api/v1`;
     for (const [suffix, role] of [["a", "BUSINESS"], ["b", "BUSINESS"], ["worker", "WORKER"], ["admin", "ADMIN"], ["college", "PLACEMENT_CELL"]]) {
-      users.push(await prisma.user.create({ data: { email: `${prefix}-${suffix}@example.test`, role, passwordHash: "unused" } }));
+      users.push(await prisma.user.create({ data: { email: `${prefix}-${suffix}@example.test`, role, businessAccessApproved: role === "BUSINESS", passwordHash: "unused" } }));
     }
     const [a, b, worker, admin, college] = users;
     const profileA = await prisma.businessProfile.create({ data: { userId: a.id, companyName: "A Retail", contactPerson: "Owner A" } });
