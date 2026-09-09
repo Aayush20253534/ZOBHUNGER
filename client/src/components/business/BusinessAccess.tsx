@@ -6,7 +6,7 @@ import { BusinessAuthForm, type BusinessAccessMode } from "./BusinessAuthForm";
 import { BusinessWordmark } from "./BusinessUI";
 
 export function BusinessAccess({ mode }: { mode: BusinessAccessMode }) {
-  return <div className="zb-biz-access">
+  return <div className={`zb-biz-access zb-biz-access--${mode}`}>
     <header className="zb-biz-access-header"><BusinessWordmark /><Link href="/for-business" className="zb-biz-back"><ArrowLeft aria-hidden="true" />Back to website</Link></header>
     <div className="zb-biz-access-grid">
       <aside className="zb-biz-access-story" aria-label="Your business workspace">

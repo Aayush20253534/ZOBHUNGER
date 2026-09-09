@@ -263,3 +263,127 @@
 @media (max-width:650px) { .zw-auth-top { padding-bottom:24px; } .zw-auth-top > a:last-child { font-size:10px; max-width:100px; text-align:right; } .zw-wordmark { font-size:24px; } .zw-auth-grid { display:flex; flex-direction:column; } .zw-auth-card { order:-1; width:100%; } .zw-auth-story { width:100%; } .zw-auth-photo > img { height:200px; object-position:center 35%; } .zw-auth-story-copy > h2 { font-size:24px; } .zw-access-steps { grid-template-columns:repeat(3,minmax(0,1fr)); } .zw-access-steps > div { display:block; } .zw-access-steps > div > span { margin-bottom:12px; } .zw-topbar { padding:10px 16px; min-height:66px; gap:10px; } .zw-verified { display:none; } .zw-topbar > a { font-size:10px; } .zw-content { padding:20px 16px; } .zw-footer { padding:18px 16px; flex-wrap:wrap; font-size:10px; } .zw-jobs-hero { padding:24px; grid-template-columns:minmax(0,1fr); gap:22px; } .zw-jobs-hero h1 { max-width:20ch; font-size:30px; } .zw-hero-profile { grid-template-columns:auto 1fr; align-items:center; gap:8px 14px; padding:15px; } .zw-hero-profile > span { font-size:31px; grid-row:span 2; } .zw-hero-profile small { grid-column:1/-1; } .zw-filters { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; padding:0 16px 16px; } .zw-filters > .zw-field:first-child { grid-column:1/-1; } .zw-filters > .zw-field:nth-of-type(4) { grid-column:1/-1; } .zw-filter-clear { min-height:44px; display:flex; align-items:center; justify-content:center; } .zw-jobs-grid { grid-template-columns:1fr; gap:16px; } .zw-job-card { padding:23px; } .zw-job-card h2 { font-size:22px; } .zw-job-meta, .zw-job-description { font-size:13px; } .zw-job-card .zw-job-meta { display:flex; } .zw-results-heading { align-items:flex-start; } .zw-results-heading h2 { font-size:19px; } .zw-results-heading p { font-size:11px; flex-shrink:0; padding-top:3px; } .zw-help-strip { flex-wrap:wrap; padding:17px; gap:10px; } .zw-help-strip p { flex-basis:calc(100% - 40px); } .zw-help-strip a { margin-left:30px; } .zw-page-intro { gap:18px; } .zw-page-intro h1 { font-size:29px; } .zw-page-intro .zw-heading > p:last-child { font-size:13px; } .zw-fields { gap:17px; grid-template-columns:1fr; } .zw-profile-section { padding:21px 18px; gap:20px; } .zw-section-title { gap:12px; } .zw-section-title .zw-icon { width:40px; height:40px; border-radius:12px; } .zw-section-title h2 { font-size:20px; } .zw-profile-rail .zw-checklist { grid-template-columns:repeat(2,minmax(0,1fr)); } .zw-checklist a { min-height:44px; font-size:10px; } .zw-progress-card { padding:19px; } .zw-record { padding:15px 12px; } .zw-save-profile { padding:20px; } .zw-save-bar { flex-wrap:wrap; gap:13px; } .zw-save-bar .zw-button { width:100%; } .zw-resume-file { flex-wrap:wrap; } .zw-resume-file > div { flex-basis:calc(100% - 60px); } .zw-profile-section .zw-actions { flex-direction:column; align-items:stretch; } .zw-profile-section .zw-actions .zw-text-button { justify-content:center; } .zw-job-detail-layout { display:flex; flex-direction:column; gap:20px; } .zw-job-detail-layout > aside { order:-1; width:100%; } .zw-job-detail-layout > aside .zw-progress-card { display:none; } .zw-job-detail-layout .zw-card { padding:22px; } .zw-job-detail-layout dl { grid-template-columns:repeat(2,minmax(0,1fr)); } .zw-job-detail-hero { padding:24px; } .zw-connection { flex-wrap:wrap; } .zw-connection p { flex-basis:calc(100% - 32px); } .zw-connection .zw-button { margin-left:30px; } .zw-pagination { gap:6px; } .zw-pagination .zw-button { padding:9px 11px; font-size:11px; } .zw-pagination > span { font-size:10px; } }
 @media (max-width:360px) { .zw-auth { padding-inline:14px; } .zw-auth-card { padding:20px; } .zw-filters { grid-template-columns:1fr; } .zw-filters > * { grid-column:1!important; } .zw-access-steps { gap:10px; } .zw-access-steps small { display:none; } .zw-checklist a > svg { display:none; } .zw-card { padding:20px 16px; } }
 @media (prefers-reduced-motion:reduce) { .zw *, .zw *::before, .zw *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
+
+/* Compact worker sign-in while leaving registration and recovery forms comfortably spaced. */
+@media (min-width: 801px) {
+  .zw-auth--login {
+    max-width: 1160px;
+    padding: 16px 32px 22px;
+  }
+  .zw-auth--login .zw-auth-top {
+    padding-bottom: 14px;
+  }
+  .zw-auth--login .zw-auth-top > a:last-child {
+    min-height: 34px;
+  }
+  .zw-auth--login .zw-auth-grid {
+    gap: 24px;
+    align-items: center;
+  }
+  .zw-auth--login .zw-auth-story {
+    border-radius: 20px;
+  }
+  .zw-auth--login .zw-auth-photo > img {
+    height: clamp(170px, 19vw, 220px);
+  }
+  .zw-auth--login .zw-photo-label {
+    gap: 10px;
+    padding: 32px 18px 14px;
+    font-size: 10px;
+  }
+  .zw-auth--login .zw-photo-label svg {
+    width: 26px;
+    height: 26px;
+  }
+  .zw-auth--login .zw-photo-label strong {
+    font-size: 13px;
+  }
+  .zw-auth--login .zw-auth-story-copy {
+    padding: 17px 19px 18px;
+  }
+  .zw .zw-auth--login .zw-auth-story-copy > h2 {
+    margin: 5px 0 13px;
+    font-size: 22px;
+  }
+  .zw-auth--login .zw-access-steps {
+    gap: 10px;
+  }
+  .zw-auth--login .zw-access-steps > div {
+    padding-top: 9px;
+  }
+  .zw-auth--login .zw-access-steps > div > span {
+    margin-bottom: 5px;
+  }
+  .zw-auth--login .zw-access-steps > div > span svg {
+    width: 16px;
+    height: 16px;
+  }
+  .zw-auth--login .zw-access-steps small {
+    top: 9px;
+    font-size: 9px;
+  }
+  .zw .zw-auth--login .zw-access-steps h3 {
+    font-size: 12px;
+  }
+  .zw-auth--login .zw-access-steps p {
+    margin-top: 3px;
+    font-size: 9px;
+    line-height: 1.35;
+  }
+  .zw-auth--login .zw-auth-card {
+    gap: 8px;
+    padding: 21px 23px;
+    border-radius: 18px;
+  }
+  .zw-auth--login .zw-auth-card > .zw-icon {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 1px;
+    border-radius: 11px;
+  }
+  .zw-auth--login .zw-auth-card > .zw-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+  .zw-auth--login .zw-auth-card h1 {
+    font-size: clamp(1.65rem, 2.3vw, 2.05rem);
+  }
+  .zw-auth--login .zw-auth-card > .zw-muted {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+  .zw-auth--login .zw-auth-form {
+    gap: 10px;
+    margin-top: 5px;
+  }
+  .zw-auth--login .zw-field {
+    gap: 4px;
+  }
+  .zw-auth--login .zw-field > :where(span,label):first-child {
+    font-size: 11px;
+  }
+  .zw-auth--login .zw-field :where(input,select,textarea) {
+    min-height: 42px;
+    padding: 9px 11px;
+    font-size: 14px;
+  }
+  .zw-auth--login .zw-password button {
+    width: 40px;
+    height: 40px;
+  }
+  .zw-auth--login .zw-forgot {
+    min-height: 22px;
+    font-size: 10px;
+  }
+  .zw-auth--login .zw-button {
+    min-height: 41px;
+    padding: 9px 14px;
+    font-size: 11px;
+  }
+  .zw-auth--login .zw-auth-links {
+    gap: 4px;
+    padding-top: 10px;
+    margin-top: 3px;
+    font-size: 10px;
+  }
+}

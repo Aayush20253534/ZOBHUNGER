@@ -271,3 +271,132 @@ body.zb-site .zb-business-root .zb-biz h1 { font-size: clamp(1.85rem, 3vw, 2.65r
 @media (prefers-reduced-motion: reduce) {
   .zb-biz *, .zb-biz *::before, .zb-biz *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* Compact business sign-in: keep the complete login experience visible on a laptop viewport. */
+@media (min-width: 801px) {
+  .zb-biz-access--login {
+    display: flex;
+    min-height: 100svh;
+    flex-direction: column;
+    max-width: 72rem;
+    padding: 0.8rem 2rem 0.45rem;
+  }
+  .zb-biz-access--login .zb-biz-access-header {
+    padding-bottom: 0.65rem;
+  }
+  .zb-biz-access--login .zb-biz-back {
+    min-height: 2rem;
+  }
+  .zb-biz-access--login .zb-biz-access-grid {
+    flex: 1;
+    grid-template-columns: minmax(0, 1.02fr) minmax(22rem, 0.98fr);
+    gap: 2rem;
+    align-items: center;
+  }
+  .zb-biz-access--login .zb-biz-access-story {
+    padding: 1.2rem;
+    border-radius: 1.15rem;
+  }
+  .zb-biz-access--login .zb-biz-access-story h2 {
+    margin-top: 0.45rem;
+    font-size: clamp(2rem, 3vw, 2.55rem);
+    line-height: 1.02;
+  }
+  .zb-biz-access--login .zb-biz-access-story > p:not(.zb-biz-eyebrow) {
+    max-width: 30rem;
+    margin-top: 0.55rem;
+    font-size: 0.76rem;
+    line-height: 1.48;
+  }
+  .zb-biz-access--login .zb-biz-access-image {
+    margin-top: 0.7rem !important;
+    border-radius: 0.8rem;
+  }
+  .zb-biz .zb-biz-access--login .zb-biz-access-image .zb-execution-image {
+    aspect-ratio: 2.5;
+  }
+  .zb-biz-access--login .zb-biz-access-image figcaption {
+    padding: 0.42rem 0.65rem;
+    font-size: 0.58rem;
+  }
+  .zb-biz-access--login .zb-biz-story-features {
+    gap: 0.45rem 0.75rem;
+    margin-top: 0.65rem;
+  }
+  .zb-biz-access--login .zb-biz-story-features span {
+    font-size: 0.6rem;
+  }
+  .zb-biz-access--login .zb-biz-access-form {
+    max-width: 23.5rem;
+    padding-block: 0;
+  }
+  .zb-biz-access--login .zb-biz-icon--large {
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 0.8rem;
+  }
+  .zb-biz-access--login .zb-biz-icon--large svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .zb-biz-access--login .zb-biz-access-form > .zb-biz-eyebrow {
+    margin-top: 0.7rem;
+  }
+  .zb-biz-access--login .zb-biz-access-form > h1 {
+    margin-top: 0.3rem;
+    font-size: clamp(1.8rem, 2.7vw, 2.2rem);
+  }
+  .zb-biz-access--login .zb-biz-access-form > .zb-biz-muted {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .zb-biz-access--login .zb-biz-form {
+    gap: 0.65rem;
+    margin-top: 0.8rem;
+  }
+  .zb-biz-access--login .zb-biz-field {
+    gap: 0.28rem;
+  }
+  .zb-biz-access--login .zb-biz-field > span:first-child {
+    font-size: 0.72rem;
+  }
+  .zb-biz .zb-biz-access--login .zb-biz-field input {
+    min-height: 2.55rem;
+    padding: 0.55rem 0.72rem;
+    font-size: 0.9rem;
+  }
+  .zb-biz-access--login .zb-biz-password button {
+    width: 2.35rem;
+    height: 2.35rem;
+  }
+  .zb-biz-access--login .zb-biz-form > .zb-biz-text-link {
+    min-height: 1.7rem;
+    margin-top: -0.2rem;
+    font-size: 0.72rem;
+  }
+  .zb-biz-access--login .zb-biz-button {
+    min-height: 2.55rem;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.78rem;
+  }
+  .zb-biz-access--login .zb-biz-auth-switch {
+    margin-top: 0.65rem !important;
+    font-size: 0.72rem;
+  }
+  .zb-biz-access--login .zb-biz-access-form > .zb-biz-security {
+    margin-top: 0.55rem;
+    font-size: 0.68rem;
+  }
+  .zb-biz-access--login .zb-biz-other-account {
+    padding-top: 0.45rem;
+    font-size: 0.65rem;
+  }
+  .zb-biz-access--login .zb-biz-access-footer {
+    margin-top: 0.45rem;
+    padding-top: 0.35rem;
+  }
+  .zb-biz-access--login .zb-biz-access-footer a {
+    min-height: 1.9rem;
+  }
+}

@@ -16,10 +16,48 @@ import {
   WalletCards,
   MapPin,
   FileText,
+  ChevronRight,
 } from "lucide-react";
 import { apiFetch, ApiError, type ApiSuccessEnvelope } from "@/lib/api";
 import { getCurrentUser, logout } from "@/services/auth.service";
 import type { AuthUser } from "@/types/auth.types";
+
+
+const adminActionGroups = [
+  {
+    eyebrow: "People & access",
+    title: "Partners and talent",
+    copy: "Review organisations, partner access and candidate intake.",
+    actions: [
+      { href: "/admin/vendors", label: "Vendor empanelment & records", copy: "Supplier applications and vendor directory", icon: Handshake },
+      { href: "/admin/partners", label: "Partner review & approvals", copy: "Business access approvals and credentials", icon: Building2 },
+      { href: "/admin/careers", label: "Career profiles & HR review", copy: "General candidate profiles and CV review", icon: UsersRound },
+      { href: "/admin/worker-applications", label: "Worker applications & profiles", copy: "Worker hiring pipeline and profile records", icon: UsersRound },
+    ],
+  },
+  {
+    eyebrow: "Workforce operations",
+    title: "Hiring and deployment",
+    copy: "Move people from candidate review into active assignments.",
+    actions: [
+      { href: "/admin/candidate-management", label: "Candidate sharing & reviews", copy: "Business-facing candidate decisions", icon: UsersRound },
+      { href: "/admin/deployments", label: "Deployment & team roster", copy: "Confirmed assignments and active teams", icon: BriefcaseBusiness },
+      { href: "/admin/requirement-jobs", label: "Hiring briefs & job openings", copy: "Requirements linked to published roles", icon: ClipboardList },
+      { href: "/admin/worker-attendance", label: "Worker attendance requests", copy: "Worker submissions awaiting operations review", icon: CalendarCheck2 },
+    ],
+  },
+  {
+    eyebrow: "Control & finance",
+    title: "Attendance and payments",
+    copy: "Review official work records, earnings and reporting outputs.",
+    actions: [
+      { href: "/admin/attendance", label: "Attendance & corrections", copy: "Official records and correction handling", icon: CalendarCheck2 },
+      { href: "/admin/attendance-approvals", label: "Attendance approval history", copy: "Business approvals and decision history", icon: CalendarCheck2 },
+      { href: "/admin/earnings", label: "Worker earnings & payments", copy: "Statements, adjustments and payment records", icon: WalletCards },
+      { href: "/admin/reports", label: "Reports & exports", copy: "Operational summaries and controlled exports", icon: FileText },
+    ],
+  },
+] as const;
 
 interface Paginated<T> {
   items: T[];
@@ -239,33 +277,50 @@ export function AdminDashboard() {
 
   return (
     <div className="zb-admin-dashboard">
-      <div className="zb-admin-toolbar">
-        <div>
-          <p className="zb-eyebrow">Authenticated administrator</p>
-          <h1>Operations dashboard</h1>
-          <p>{user?.email}</p>
+      <section className="zb-admin-toolbar" aria-labelledby="admin-dashboard-title">
+        <div className="zb-admin-toolbar-head">
+          <div className="zb-admin-toolbar-copy">
+            <p className="zb-eyebrow">Authenticated administrator</p>
+            <h1 id="admin-dashboard-title">Operations dashboard</h1>
+            <p>{user?.email}</p>
+          </div>
+          <div className="zb-admin-session-actions" aria-label="Dashboard session actions">
+            <button type="button" onClick={() => void load()} disabled={loading}>
+              <RefreshCw aria-hidden="true" /> {loading ? "Refreshing…" : "Refresh"}
+            </button>
+            <button type="button" onClick={() => void handleLogout()}>
+              <LogOut aria-hidden="true" /> Log out
+            </button>
+          </div>
         </div>
-        <div className="zb-admin-actions">
-          <Link href="/admin/vendors"><Handshake aria-hidden="true" />Vendor empanelment &amp; records</Link>
-          <Link href="/admin/partners"><Handshake aria-hidden="true" />Partner review &amp; approvals</Link>
-          <Link href="/admin/careers"><UsersRound aria-hidden="true" />Career profiles &amp; HR review</Link>
-          <Link href="/admin/worker-applications"><UsersRound aria-hidden="true" />Worker applications &amp; profiles</Link>
-          <Link href="/admin/worker-attendance"><CalendarCheck2 aria-hidden="true" />Worker attendance requests</Link>
-          <Link href="/admin/earnings"><WalletCards aria-hidden="true" />Worker earnings &amp; payments</Link>
-          <Link href="/admin/candidate-management"><UsersRound aria-hidden="true" />Candidate sharing &amp; reviews</Link>
-          <Link href="/admin/deployments"><BriefcaseBusiness aria-hidden="true" />Deployment &amp; team roster</Link>
-          <Link href="/admin/requirement-jobs"><BriefcaseBusiness aria-hidden="true" />Hiring briefs &amp; job openings</Link>
-          <Link href="/admin/attendance-approvals"><CalendarCheck2 aria-hidden="true" />Attendance approval history</Link>
-          <Link href="/admin/reports"><BriefcaseBusiness aria-hidden="true" />Reports &amp; exports</Link>
-          <Link href="/admin/attendance"><CalendarCheck2 aria-hidden="true" />Attendance &amp; corrections</Link>
-          <button type="button" onClick={() => void load()} disabled={loading}>
-            <RefreshCw aria-hidden="true" /> Refresh
-          </button>
-          <button type="button" onClick={() => void handleLogout()}>
-            <LogOut aria-hidden="true" /> Log out
-          </button>
-        </div>
-      </div>
+
+        <nav className="zb-admin-command-grid" aria-label="Administration workspaces">
+          {adminActionGroups.map((group) => (
+            <section className="zb-admin-command-group" key={group.title}>
+              <header>
+                <p className="zb-eyebrow">{group.eyebrow}</p>
+                <h2>{group.title}</h2>
+                <p>{group.copy}</p>
+              </header>
+              <div className="zb-admin-command-list">
+                {group.actions.map((action) => {
+                  const Icon = action.icon;
+                  return (
+                    <Link className="zb-admin-command" href={action.href} key={action.href}>
+                      <span className="zb-admin-command-icon" aria-hidden="true"><Icon /></span>
+                      <span className="zb-admin-command-copy">
+                        <strong>{action.label}</strong>
+                        <small>{action.copy}</small>
+                      </span>
+                      <ChevronRight className="zb-admin-command-arrow" aria-hidden="true" />
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+        </nav>
+      </section>
 
       {error && <p className="zb-login-error">{error}</p>}
 
