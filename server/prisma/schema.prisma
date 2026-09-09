@@ -88,6 +88,28 @@ enum PlacementCellApplicationStatus {
   REJECTED
 }
 
+enum EarningsStatementStatus {
+  DRAFT
+  APPROVED
+}
+
+enum EarningsLineType {
+  AGREED_EARNINGS
+  ALLOWANCE
+  REIMBURSEMENT
+  DEDUCTION
+}
+
+enum EarningsAdjustmentType {
+  CREDIT
+  DEBIT
+}
+
+enum PaymentRecordStatus {
+  RECORDED
+  VOIDED
+}
+
 model User {
   id              String           @id @default(cuid())
   email           String           @unique
@@ -615,6 +637,7 @@ model WorkforceAssignment {
   attendance     AttendanceRecord[]
   corrections    AttendanceCorrection[]
   workerRequests WorkerAttendanceRequest[]
+  earningsStatements EarningsStatement[]
 
   @@index([requirementId, startDate, endDate])
   @@index([cancelledAt, startDate, endDate])
@@ -841,6 +864,88 @@ enum WorkerAttendanceRequestStatus {
 }
 
 // Self-reported attendance stays separate until an administrator approves it.
+
+
+// Operations-maintained worker finance records. Money is stored as integer paise.
+// Approved statements are immutable; later changes are append-only adjustments.
+model EarningsStatement {
+  id                       String                  @id @default(cuid())
+  assignmentId             String
+  requestKey               String                  @unique
+  periodStart              DateTime                @db.Date
+  periodEnd                DateTime                @db.Date
+  status                   EarningsStatementStatus @default(DRAFT)
+  revision                 Int                     @default(0)
+  createdByUserId          String
+  approvedByUserId         String?
+  approvedAt               DateTime?
+  approvalNote             String?
+  approvalAttendanceSnapshot Json?
+  createdAt                DateTime                @default(now())
+  updatedAt                DateTime                @updatedAt
+
+  assignment  WorkforceAssignment @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
+  lines       EarningsLine[]
+  adjustments EarningsAdjustment[]
+  payments    PaymentRecord[]
+
+  @@unique([assignmentId, periodStart, periodEnd])
+  @@index([assignmentId, status, periodStart, periodEnd])
+  @@index([status, createdAt, id])
+}
+
+model EarningsLine {
+  id          String           @id @default(cuid())
+  statementId String
+  type        EarningsLineType
+  label       String
+  amountPaise Int
+  reason      String?
+  sortOrder   Int              @default(0)
+  createdAt   DateTime         @default(now())
+
+  statement EarningsStatement @relation(fields: [statementId], references: [id], onDelete: Cascade)
+
+  @@index([statementId, sortOrder, id])
+}
+
+model EarningsAdjustment {
+  id              String                 @id @default(cuid())
+  statementId     String
+  type            EarningsAdjustmentType
+  amountPaise     Int
+  reason          String
+  requestKey      String                 @unique
+  createdByUserId String
+  createdAt       DateTime               @default(now())
+
+  statement EarningsStatement @relation(fields: [statementId], references: [id], onDelete: Restrict)
+
+  @@index([statementId, createdAt, id])
+}
+
+model PaymentRecord {
+  id              String              @id @default(cuid())
+  statementId     String
+  amountPaise     Int
+  paidAt          DateTime
+  method          String
+  reference       String
+  note            String?
+  requestKey      String              @unique
+  status          PaymentRecordStatus @default(RECORDED)
+  revision        Int                 @default(0)
+  recordedByUserId String
+  voidedByUserId  String?
+  voidedAt        DateTime?
+  voidReason      String?
+  createdAt       DateTime            @default(now())
+
+  statement EarningsStatement @relation(fields: [statementId], references: [id], onDelete: Restrict)
+
+  @@index([statementId, status, paidAt, id])
+}
+
 model WorkerAttendanceRequest {
   id String @id @default(cuid())
   workerUserId String

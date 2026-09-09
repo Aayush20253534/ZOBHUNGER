@@ -7,10 +7,11 @@ import { WorkerAlert, WorkerLoading, workerError } from "./WorkerUI";
 
 export const workflowGet = async <T,>(path: string, signal?: AbortSignal) => (await apiFetch<ApiSuccessEnvelope<T>>(path, { signal })).data;
 export const workflowPost = async <T,>(path: string, body: unknown) => (await apiFetch<ApiSuccessEnvelope<T>>(path, { method: "POST", headers: { "X-Requested-With": "XMLHttpRequest" }, body: JSON.stringify(body) })).data;
+export const workflowPut = async <T,>(path: string, body: unknown) => (await apiFetch<ApiSuccessEnvelope<T>>(path, { method: "PUT", headers: { "X-Requested-With": "XMLHttpRequest" }, body: JSON.stringify(body) })).data;
 export function useWorkflowRead<T>(path: string) {
   const [version, setVersion] = useState(0); const key = `${path}:${version}`;
   const [result, setResult] = useState<{ key: string; data?: T; error?: string } | null>(null);
-  useEffect(() => { const controller = new AbortController(); void workflowGet<T>(path, controller.signal).then(data => { if (!controller.signal.aborted) setResult({ key, data }); }).catch(error => { if (!controller.signal.aborted) setResult({ key, error: workerError(error) }); }); return () => controller.abort(); }, [path, key]);
+  useEffect(() => { if (!path) { queueMicrotask(() => setResult({ key })); return; } const controller = new AbortController(); void workflowGet<T>(path, controller.signal).then(data => { if (!controller.signal.aborted) setResult({ key, data }); }).catch(error => { if (!controller.signal.aborted) setResult({ key, error: workerError(error) }); }); return () => controller.abort(); }, [path, key]);
   return { data: result?.key === key ? result.data : undefined, error: result?.key === key ? result.error : undefined, loading: result?.key !== key, reload: () => setVersion(value => value + 1) };
 }
 export function ReadState({ loading, error, reload, children }: { loading: boolean; error?: string; reload: () => void; children: ReactNode }) {
@@ -18,7 +19,7 @@ export function ReadState({ loading, error, reload, children }: { loading: boole
   if (error) return <><WorkerAlert message={error} /><button className="zw-button" onClick={reload}><RefreshCw aria-hidden="true" />Try again</button></>;
   return children;
 }
-export const stageLabel = (value: string) => ({ PENDING: "Awaiting review", APPROVED: "Approved", REJECTED: "Not approved", SUBMITTED: "Submitted", REVIEWED: "In review", SHORTLISTED: "Shortlisted", INTERVIEW_REQUESTED: "Interview", SELECTED: "Selected", ASSIGNED: "Assigned", WITHDRAWN: "Withdrawn", NOT_RECORDED: "Not recorded", SCHEDULED_OFF: "Scheduled off", NOT_ASSIGNED: "Outside assignment", CHANGES_REQUESTED: "Changes requested" } as Record<string, string>)[value] || value.toLowerCase().replaceAll("_", " ");
+export const stageLabel = (value: string) => ({ PENDING: "Awaiting review", APPROVED: "Approved", REJECTED: "Not approved", SUBMITTED: "Submitted", REVIEWED: "In review", SHORTLISTED: "Shortlisted", INTERVIEW_REQUESTED: "Interview", SELECTED: "Selected", ASSIGNED: "Assigned", WITHDRAWN: "Withdrawn", NOT_RECORDED: "Not recorded", SCHEDULED_OFF: "Scheduled off", NOT_ASSIGNED: "Outside assignment", CHANGES_REQUESTED: "Changes requested", DRAFT: "Draft", UNPAID: "Unpaid", PARTIALLY_PAID: "Partially paid", PAID: "Paid", RECORDED: "Recorded", VOIDED: "Voided" } as Record<string, string>)[value] || value.toLowerCase().replaceAll("_", " ");
 export function Status({ value }: { value: string }) { return <span className={`zwf-status zwf-status--${value.toLowerCase()}`}>{["APPROVED", "ASSIGNED", "PRESENT", "SELECTED"].includes(value) ? <Check aria-hidden="true" /> : <Clock3 aria-hidden="true" />}{stageLabel(value)}</span>; }
 export const dateLabel = (value: string) => new Date(value.length === 10 ? `${value}T00:00:00+05:30` : value).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
 export const timeLabel = (value: string | null) => value ? new Date(value).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" }) : "—";

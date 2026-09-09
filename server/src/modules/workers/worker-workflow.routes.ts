@@ -3,8 +3,11 @@ import { validate } from "../../middlewares/validate.middleware.js";
 import { portalWrite } from "../../middlewares/portal-write.middleware.js";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import * as schema from "./worker-workflow.schema.js";
+import * as earningsSchema from "./worker-earnings.schema.js";
 import { applicationResume, reviewWorkerApplication, submitWorkerApplication, withdrawWorkerApplication, workerApplicationDetail, workerApplications } from "./worker-applications.service.js";
 import { adminAttendanceRequest, reviewWorkerAttendance, submitWorkerAttendance, workerAssignmentDay, workerAssignmentMonth, workerAssignments, workerAttendanceRequests } from "./worker-attendance.service.js";
+import { addEarningsAdjustment, adminEarnings, adminEarningsDetail, approveEarningsStatement, createEarningsStatement, earningsAssignmentContext, earningsAssignmentOptions, recordEarningsPayment, updateEarningsDraft, voidEarningsPayment, workerEarnings, workerEarningsDetail, workerStatementCsv } from "./worker-earnings.service.js";
+import { workerDashboard } from "./worker-dashboard.service.js";
 
 export function sendPrivateResume(res: Response, file: { fileName: string; mimeType: string; data: Uint8Array }) {
   const name = encodeURIComponent(file.fileName).replace(/['()*]/g, char => `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
@@ -29,6 +32,14 @@ workerWorkflowRouter.post("/assignments/:id/attendance", portalWrite, validate({
   res.status(result.created ? 201 : 200).json(apiSuccessResponse("Attendance sent for operations review", result));
 });
 workerWorkflowRouter.get("/attendance", validate({ query: schema.workerAttendanceQuery }), async (_req, res) => res.json(apiSuccessResponse("Attendance requests", await workerAttendanceRequests(res.locals.authUser.id, res.locals.validated.query))));
+workerWorkflowRouter.get("/dashboard", async (_req, res) => res.json(apiSuccessResponse("Worker dashboard", await workerDashboard(res.locals.authUser.id))));
+workerWorkflowRouter.get("/earnings", validate({ query: earningsSchema.earningsListQuery }), async (_req, res) => res.json(apiSuccessResponse("Approved earnings", await workerEarnings(res.locals.authUser.id, res.locals.validated.query))));
+workerWorkflowRouter.get("/earnings/:id", validate({ params: earningsSchema.earningsParams }), async (_req, res) => res.json(apiSuccessResponse("Earnings statement", await workerEarningsDetail(res.locals.authUser.id, res.locals.validated.params.id))));
+workerWorkflowRouter.get("/earnings/:id/csv", validate({ params: earningsSchema.earningsParams }), async (_req, res) => {
+  const csv = await workerStatementCsv(res.locals.authUser.id, res.locals.validated.params.id);
+  res.set({ "Cache-Control": "private, no-store", "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="earnings-${res.locals.validated.params.id}.csv"`, "X-Content-Type-Options": "nosniff" });
+  res.send(csv);
+});
 
 // Mounted after ADMIN authentication. Writes require the portal request header.
 export const adminWorkerWorkflowRouter = Router();
@@ -39,3 +50,13 @@ adminWorkerWorkflowRouter.post("/worker-applications/:id/review", portalWrite, v
 adminWorkerWorkflowRouter.get("/worker-attendance", validate({ query: schema.workerAttendanceQuery }), async (_req, res) => res.json(apiSuccessResponse("Worker attendance queue", await workerAttendanceRequests(res.locals.authUser.id, res.locals.validated.query, true))));
 adminWorkerWorkflowRouter.get("/worker-attendance/:id", validate({ params: schema.workflowParams }), async (_req, res) => res.json(apiSuccessResponse("Attendance review", await adminAttendanceRequest(res.locals.validated.params.id))));
 adminWorkerWorkflowRouter.post("/worker-attendance/:id/review", portalWrite, validate({ params: schema.workflowParams, body: schema.reviewWorkerAttendanceSchema }), async (_req, res) => res.json(apiSuccessResponse("Attendance decision saved", await reviewWorkerAttendance(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.body))));
+adminWorkerWorkflowRouter.get("/earnings", validate({ query: earningsSchema.adminEarningsListQuery }), async (_req, res) => res.json(apiSuccessResponse("Earnings management", await adminEarnings(res.locals.validated.query))));
+adminWorkerWorkflowRouter.get("/earnings/assignments", validate({ query: earningsSchema.earningsAssignmentQuery }), async (_req, res) => res.json(apiSuccessResponse("Eligible worker assignments", await earningsAssignmentOptions(res.locals.validated.query))));
+adminWorkerWorkflowRouter.get("/earnings/assignments/:id/context", validate({ params: earningsSchema.earningsParams, query: earningsSchema.earningsContextQuery }), async (_req, res) => res.json(apiSuccessResponse("Assignment earnings context", await earningsAssignmentContext(res.locals.validated.params.id, res.locals.validated.query.periodStart, res.locals.validated.query.periodEnd))));
+adminWorkerWorkflowRouter.post("/earnings", portalWrite, validate({ body: earningsSchema.createEarningsSchema }), async (_req, res) => { const result = await createEarningsStatement(res.locals.authUser.id, res.locals.validated.body); res.status(result.created ? 201 : 200).json(apiSuccessResponse("Earnings draft saved", result)); });
+adminWorkerWorkflowRouter.get("/earnings/:id", validate({ params: earningsSchema.earningsParams }), async (_req, res) => res.json(apiSuccessResponse("Earnings statement review", await adminEarningsDetail(res.locals.validated.params.id))));
+adminWorkerWorkflowRouter.put("/earnings/:id/draft", portalWrite, validate({ params: earningsSchema.earningsParams, body: earningsSchema.updateEarningsDraftSchema }), async (_req, res) => res.json(apiSuccessResponse("Earnings draft updated", await updateEarningsDraft(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.body))));
+adminWorkerWorkflowRouter.post("/earnings/:id/approve", portalWrite, validate({ params: earningsSchema.earningsParams, body: earningsSchema.approveEarningsSchema }), async (_req, res) => res.json(apiSuccessResponse("Earnings statement approved", await approveEarningsStatement(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.body))));
+adminWorkerWorkflowRouter.post("/earnings/:id/adjustments", portalWrite, validate({ params: earningsSchema.earningsParams, body: earningsSchema.addEarningsAdjustmentSchema }), async (_req, res) => res.status(201).json(apiSuccessResponse("Earnings adjustment recorded", await addEarningsAdjustment(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.body))));
+adminWorkerWorkflowRouter.post("/earnings/:id/payments", portalWrite, validate({ params: earningsSchema.earningsParams, body: earningsSchema.recordPaymentSchema }), async (_req, res) => res.status(201).json(apiSuccessResponse("Payment record added", await recordEarningsPayment(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.body))));
+adminWorkerWorkflowRouter.post("/earnings/:id/payments/:paymentId/void", portalWrite, validate({ params: earningsSchema.earningsPaymentParams, body: earningsSchema.voidPaymentSchema }), async (_req, res) => res.json(apiSuccessResponse("Payment record voided", await voidEarningsPayment(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.params.paymentId, res.locals.validated.body))));

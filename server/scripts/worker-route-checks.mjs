@@ -10,7 +10,7 @@ export async function checkWorkerRoutes(apiBase) {
     assert.equal(result.headers.get("cache-control"), "no-store");
     if (method === "GET") assert.equal((await result.json()).status, "ok");
   }
-  for (const path of ["/workers/workspace", "/workers/profile", "/workers/profile/resume", "/workers/jobs", "/workers/jobs/facets", "/workers/jobs/example", "/workers/saved-jobs", "/workers/applications", "/workers/applications/example", "/workers/assignments", "/workers/assignments/example", "/workers/assignments/example/calendar", "/workers/attendance", "/admin/worker-applications", "/admin/worker-attendance"]) {
+  for (const path of ["/workers/workspace", "/workers/dashboard", "/workers/profile", "/workers/profile/resume", "/workers/jobs", "/workers/jobs/facets", "/workers/jobs/example", "/workers/saved-jobs", "/workers/applications", "/workers/applications/example", "/workers/assignments", "/workers/assignments/example", "/workers/assignments/example/calendar", "/workers/attendance", "/workers/earnings", "/workers/earnings/example", "/admin/worker-applications", "/admin/worker-attendance", "/admin/earnings", "/admin/earnings/assignments", "/admin/earnings/example"]) {
     assert.equal((await fetch(`${base}${path}`)).status, 401, `${path} must be mounted and protected`);
   }
   for (const path of ["register", "login", "resend-verification", "forgot-password", "verify-email", "reset-password"]) {

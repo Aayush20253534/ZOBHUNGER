@@ -1,2 +1,3 @@
-import { redirect } from "next/navigation";
-export default function Page() { redirect("/worker/jobs"); }
+import { WorkerDashboard } from "@/components/worker/WorkerDashboard";
+export const metadata = { title: "Dashboard" };
+export default function Page() { return <WorkerDashboard />; }

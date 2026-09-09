@@ -16,7 +16,7 @@ export const getHealth: RequestHandler = (_req, res) => {
       status: "ok",
       service: "zobhunger-api",
       revision: /^[a-f0-9]{40,64}$/i.test(revision) ? revision.toLowerCase() : null,
-      features: { businessPortal: true, businessDashboard: true, businessRequirements: true, businessCandidates: true, businessDeployments: true, businessAttendance: true, businessPhase2Complete: true, workerAccess: true, workerProfiles: true, workerJobDiscovery: true, workerApplications: true, workerAssignments: true, workerAttendance: true },
+      features: { businessPortal: true, businessDashboard: true, businessRequirements: true, businessCandidates: true, businessDeployments: true, businessAttendance: true, businessPhase2Complete: true, workerAccess: true, workerProfiles: true, workerJobDiscovery: true, workerApplications: true, workerAssignments: true, workerAttendance: true, workerEarnings: true, workerDashboard: true, workerPhase3Complete: true },
       uptimeSeconds: Math.floor(process.uptime()),
       timestamp: new Date().toISOString(),
     }),

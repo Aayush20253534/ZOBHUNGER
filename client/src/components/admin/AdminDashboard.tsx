@@ -13,6 +13,7 @@ import {
   LogOut,
   RefreshCw,
   UsersRound,
+  WalletCards,
 } from "lucide-react";
 import { apiFetch, ApiError, type ApiSuccessEnvelope } from "@/lib/api";
 import { getCurrentUser, logout } from "@/services/auth.service";
@@ -248,6 +249,7 @@ export function AdminDashboard() {
           <Link href="/admin/careers"><UsersRound aria-hidden="true" />Career profiles &amp; HR review</Link>
           <Link href="/admin/worker-applications"><UsersRound aria-hidden="true" />Worker applications &amp; profiles</Link>
           <Link href="/admin/worker-attendance"><CalendarCheck2 aria-hidden="true" />Worker attendance requests</Link>
+          <Link href="/admin/earnings"><WalletCards aria-hidden="true" />Worker earnings &amp; payments</Link>
           <Link href="/admin/candidate-management"><UsersRound aria-hidden="true" />Candidate sharing &amp; reviews</Link>
           <Link href="/admin/deployments"><BriefcaseBusiness aria-hidden="true" />Deployment &amp; team roster</Link>
           <Link href="/admin/requirement-jobs"><BriefcaseBusiness aria-hidden="true" />Hiring briefs &amp; job openings</Link>

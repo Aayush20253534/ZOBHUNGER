@@ -83,7 +83,7 @@ Replace `<id>` and `<slug>` with values reached through the lists; they are not 
 - Attendance is a completed-shift **self-report**, not GPS or biometric proof. Operations review and business approval remain separate. Pending worker requests do not modify official attendance or reset its approval.
 - A request uses its own retry key and the record, business approval and assignment versions observed by the worker. One pending request is allowed per assignment/date. History prevents assignment schedule edits or cancellation that would invalidate records; end dates cannot exclude past requests.
 - Attendance requests and decisions are kept for review. Rejected requests can be followed by a fresh submission; approved records can be corrected through a new request. An open business correction blocks worker approval until operations resolves the conflict.
-- Earnings, payment history and the completed worker dashboard remain P3.6/P3.7. Automated operational notifications, GPS attendance, incentives and AI matching remain Phase 4. Hiring updates are visible in the portal; this patch does not send interview or attendance emails.
+- P3.6/P3.7 now add approved earnings/payment history and the completed worker dashboard; see `P3_6_7_EARNINGS_DASHBOARD.md`. Automated operational notifications, GPS attendance, incentives and AI matching remain Phase 4. Hiring updates are visible in the portal; this workflow does not send interview or attendance emails.
 
 ## API endpoints
 

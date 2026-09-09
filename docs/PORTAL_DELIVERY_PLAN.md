@@ -24,8 +24,8 @@ The P2.8 follow-up adds a repeatable release command, PostgreSQL CI, read-only
 deployment checks and workspace session regression coverage. Its evidence and
 remaining external checks are recorded in `P2_8_RELEASE_REVIEW.md`.
 P3.1–P3.3 are implemented in the worker-portal patch described in
-`P3_1_3_WORKER_PORTAL.md`. P3.4–P3.5 are implemented in `P3_4_5_WORKFLOWS.md`. P3.6 is the next
-implementation scope; Phase 2 production signoff is tracked separately.
+`P3_1_3_WORKER_PORTAL.md`. P3.4–P3.5 are implemented in `P3_4_5_WORKFLOWS.md`. P3.6–P3.7 are
+implemented in `P3_6_7_EARNINGS_DASHBOARD.md`; Phase 2 production signoff is tracked separately.
 
 ## Phase 3 — Worker portal
 
@@ -36,8 +36,8 @@ implementation scope; Phase 2 production signoff is tracked separately.
 | P3.3 | Implemented: live job discovery, filters, saved jobs and job details |
 | P3.4 | Implemented: applications, duplicate prevention, history, withdrawal and status tracking |
 | P3.5 | Implemented: confirmed assignments, schedules, attendance submission and correction requests |
-| P3.6 | Approved earnings and recorded payment history, maintained by operations |
-| P3.7 | Completed worker dashboard and release review |
+| P3.6 | Implemented: approved earnings statements, auditable adjustments and recorded partial/completed payment history |
+| P3.7 | Implemented: integrated worker dashboard, final navigation and worker release checks |
 
 Phase 3 must securely connect authenticated workers with their actual application
 and assignment records. P2.5 records selected candidate assignments; it does not
