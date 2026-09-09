@@ -4,8 +4,8 @@ import { Router } from "express";
 import { requirePasswordChangeSession } from "../../middlewares/auth.middleware.js";
 import { validate } from "../../middlewares/validate.middleware.js";
 import { authRateLimiter } from "../../middlewares/rate-limit.middleware.js";
-import { changeBusinessPasswordController, businessLoginController, loginController, logoutController, meController, placementCellLoginController, registerController } from "./auth.controller.js";
-import { businessLoginSchema, changeBusinessPasswordSchema, loginSchema, registerSchema } from "./auth.schema.js";
+import { adminMfaConfirmController, adminMfaSetupController, changeBusinessPasswordController, businessLoginController, loginController, logoutController, meController, placementCellLoginController, registerController } from "./auth.controller.js";
+import { adminMfaConfirmSchema, businessLoginSchema, changeBusinessPasswordSchema, loginSchema, registerSchema } from "./auth.schema.js";
 import { passwordRecoveryRouter } from "./password-recovery.routes.js";
 import { workerAccessRouter } from "../workers/worker-access.routes.js";
 
@@ -17,7 +17,9 @@ authRouter.use("/business", passwordRecoveryRouter);
 authRouter.post("/register", authRateLimiter, validate({ body: registerSchema }), registerController);
 authRouter.post("/login", authRateLimiter, validate({ body: loginSchema }), loginController);
 authRouter.post("/placement-cell-login", authRateLimiter, validate({ body: loginSchema }), placementCellLoginController);
-authRouter.post("/logout", logoutController);
+authRouter.post("/logout", portalWrite, logoutController);
 authRouter.get("/me", requirePasswordChangeSession, meController);
+authRouter.post("/admin-mfa/setup", requirePasswordChangeSession, requireRole("ADMIN"), portalWrite, adminMfaSetupController);
+authRouter.post("/admin-mfa/confirm", requirePasswordChangeSession, requireRole("ADMIN"), portalWrite, validate({ body: adminMfaConfirmSchema }), adminMfaConfirmController);
 
 authRouter.post("/business/change-password", authRateLimiter, requirePasswordChangeSession, requireRole("BUSINESS"), portalWrite, validate({ body: changeBusinessPasswordSchema }), changeBusinessPasswordController);

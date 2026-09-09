@@ -1,5 +1,6 @@
 import { prisma } from "../../config/db.js";
 import type { Prisma } from "../../generated/prisma/client.js";
+import { deletePrivateFile, downloadPrivateFile, uploadPrivateFile } from "../../services/private-file-storage.js";
 import { HttpError } from "../../utils/http-error.js";
 import { validateCareerResume } from "../careers/careers.service.js";
 import type { WorkerProfileInput } from "./workers.schema.js";
@@ -52,34 +53,70 @@ export async function saveWorkerProfile(userId: string, input: WorkerProfileInpu
   return getWorkerProfile(userId);
 }
 
+type StoredResume = { storagePublicId: string | null; storageResourceType: string | null; storageDeliveryType: string | null; storageFormat: string | null; fileName: string; mimeType: string; data: Uint8Array | null };
+async function maybeDeleteOldAsset(publicId: string | null, resourceType: string | null, deliveryType: string | null, format: string | null) {
+  if (!publicId || resourceType !== "raw" || deliveryType !== "authenticated" || !format) return;
+  const references = await prisma.jobApplicationResume.count({ where: { storagePublicId: publicId } });
+  if (references) return;
+  await deletePrivateFile({ publicId, resourceType: "raw", deliveryType: "authenticated" }).catch(() => undefined);
+}
+
 export async function putWorkerResume(userId: string, revision: number, body: unknown, contentType?: string, fileName?: string) {
   const file = validateCareerResume(body, contentType, fileName);
-  await prisma.$transaction(async tx => {
-    await lockWorker(tx, userId);
-    const profile = await tx.workerProfile.findUnique({ where: { userId }, select: { id: true, resumeRevision: true } });
-    if (!profile) throw new HttpError(409, "Save your personal details before uploading a resume", { code: "PROFILE_REQUIRED" });
-    if (profile.resumeRevision !== revision) throw new HttpError(409, "Your resume changed in another tab. Refresh its details before replacing it.", { code: "WORKER_RESUME_CHANGED" });
-    const data = { fileName: file.fileName, mimeType: file.mimeType, size: file.data.length, sha256: file.hash, data: new Uint8Array(file.data), revision: profile.resumeRevision + 1 };
-    await tx.workerResume.upsert({ where: { profileId: profile.id }, create: { ...data, profileId: profile.id }, update: data });
-    await tx.workerProfile.update({ where: { id: profile.id }, data: { resumeRevision: { increment: 1 } } });
-    await tx.auditLog.create({ data: { actorUserId: userId, action: "worker.resume_uploaded", entityType: "WorkerProfile", entityId: profile.id } });
-  });
+  const preflight = await prisma.workerProfile.findUnique({ where: { userId }, select: { id: true, resumeRevision: true, resume: { select: { storagePublicId: true, storageResourceType: true, storageDeliveryType: true, storageFormat: true } } } });
+  if (!preflight) throw new HttpError(409, "Save your personal details before uploading a resume", { code: "PROFILE_REQUIRED" });
+  if (preflight.resumeRevision !== revision) throw new HttpError(409, "Your resume changed in another tab. Refresh its details before replacing it.", { code: "WORKER_RESUME_CHANGED" });
+  const asset = await uploadPrivateFile({ scope: "worker-resumes", ownerId: preflight.id, fileName: file.fileName, mimeType: file.mimeType, buffer: file.data, sha256: file.hash });
+  let previous = preflight.resume;
+  try {
+    await prisma.$transaction(async tx => {
+      await lockWorker(tx, userId);
+      const profile = await tx.workerProfile.findUnique({ where: { userId }, select: { id: true, resumeRevision: true, resume: { select: { storagePublicId: true, storageResourceType: true, storageDeliveryType: true, storageFormat: true } } } });
+      if (!profile) throw new HttpError(409, "Save your personal details before uploading a resume", { code: "PROFILE_REQUIRED" });
+      if (profile.resumeRevision !== revision) throw new HttpError(409, "Your resume changed in another tab. Refresh its details before replacing it.", { code: "WORKER_RESUME_CHANGED" });
+      previous = profile.resume;
+      const data = {
+        fileName: file.fileName, mimeType: file.mimeType, size: file.data.length, sha256: file.hash, data: null, revision: profile.resumeRevision + 1,
+        storagePublicId: asset.publicId, storageResourceType: asset.resourceType, storageDeliveryType: asset.deliveryType,
+        storageFormat: asset.format, storageVersion: asset.version, storageAssetId: asset.assetId,
+      };
+      await tx.workerResume.upsert({ where: { profileId: profile.id }, create: { ...data, profileId: profile.id }, update: data });
+      await tx.workerProfile.update({ where: { id: profile.id }, data: { resumeRevision: { increment: 1 } } });
+      await tx.auditLog.create({ data: { actorUserId: userId, action: "worker.resume_uploaded", entityType: "WorkerProfile", entityId: profile.id } });
+    });
+  } catch (error) {
+    if (asset.publicId !== previous?.storagePublicId) await maybeDeleteOldAsset(asset.publicId, asset.resourceType, asset.deliveryType, asset.format);
+    throw error;
+  }
+  if (previous?.storagePublicId && previous.storagePublicId !== asset.publicId) await maybeDeleteOldAsset(previous.storagePublicId, previous.storageResourceType, previous.storageDeliveryType, previous.storageFormat);
   return getWorkerProfile(userId);
 }
 export async function deleteWorkerResume(userId: string, revision: number) {
-  await prisma.$transaction(async tx => {
+  const previous = await prisma.$transaction(async tx => {
     await lockWorker(tx, userId);
-    const profile = await tx.workerProfile.findUnique({ where: { userId }, select: { id: true, resumeRevision: true, resume: { select: { id: true } } } });
-    if (!profile?.resume) return;
+    const profile = await tx.workerProfile.findUnique({ where: { userId }, select: { id: true, resumeRevision: true, resume: { select: { id: true, storagePublicId: true, storageResourceType: true, storageDeliveryType: true, storageFormat: true } } } });
+    if (!profile?.resume) return null;
     if (profile.resumeRevision !== revision) throw new HttpError(409, "Your resume changed. Refresh its details before removing it.", { code: "WORKER_RESUME_CHANGED" });
+    const deletedAsset = {
+      storagePublicId: profile.resume.storagePublicId,
+      storageResourceType: profile.resume.storageResourceType,
+      storageDeliveryType: profile.resume.storageDeliveryType,
+      storageFormat: profile.resume.storageFormat,
+    };
     await tx.workerResume.delete({ where: { id: profile.resume.id } });
     await tx.workerProfile.update({ where: { id: profile.id }, data: { resumeRevision: { increment: 1 } } });
     await tx.auditLog.create({ data: { actorUserId: userId, action: "worker.resume_removed", entityType: "WorkerProfile", entityId: profile.id } });
+    return deletedAsset;
   });
+  if (previous) await maybeDeleteOldAsset(previous.storagePublicId, previous.storageResourceType, previous.storageDeliveryType, previous.storageFormat);
   return getWorkerProfile(userId);
 }
 export async function getWorkerResume(userId: string) {
-  const file = await prisma.workerResume.findFirst({ where: { profile: { userId } }, select: { fileName: true, mimeType: true, data: true } });
+  const file = await prisma.workerResume.findFirst({ where: { profile: { userId } }, select: { fileName: true, mimeType: true, data: true, storagePublicId: true, storageResourceType: true, storageDeliveryType: true, storageFormat: true } });
   if (!file) throw new HttpError(404, "No resume is attached to your profile", { code: "RESUME_NOT_FOUND" });
-  return file;
+  let bytes: Buffer;
+  if (file.storagePublicId && file.storageResourceType === "raw" && file.storageDeliveryType === "authenticated" && file.storageFormat) bytes = await downloadPrivateFile({ publicId: file.storagePublicId, resourceType: "raw", deliveryType: "authenticated", format: file.storageFormat }, file.fileName);
+  else if (file.data) bytes = Buffer.from(file.data);
+  else throw new HttpError(404, "No resume is attached to your profile", { code: "RESUME_NOT_FOUND" });
+  return { fileName: file.fileName, mimeType: file.mimeType, bytes };
 }

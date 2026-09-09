@@ -7,9 +7,9 @@ import { submitPartnerApplication, uploadPartnerResume } from "./partners.servic
 export const createPartnerApplicationController: RequestHandler = async (_req, res) => {
   const input = res.locals.validated.body as CreatePartnerApplicationInput;
   const application = await submitPartnerApplication(input);
-  void notifyNewPartnerApplication({ ...application, ...input }, res.locals.requestId);
+  if (application.created) void notifyNewPartnerApplication({ ...application, ...input }, res.locals.requestId);
 
-  res.status(201).json(
+  res.status(application.created ? 201 : 200).json(
     apiSuccessResponse("Your partner application has been submitted.", application),
   );
 };

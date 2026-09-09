@@ -3,6 +3,7 @@ import { prisma } from "../../config/db.js";
 import { guardAssignedCandidate } from "../attendance/attendance.guards.js";
 import { Prisma, type BusinessCandidateStatus } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
+import { downloadPrivateFile } from "../../services/private-file-storage.js";
 import { ownedRequirements } from "../business/business-requirement-access.js";
 import { candidateStatuses, safeResumeUrl, type CandidateQuery, type LookupQuery, type ReviewCandidateInput, type ShareCandidateInput } from "./candidates.schema.js";
 
@@ -201,7 +202,12 @@ export async function revokeCandidate(userId: string, id: string, input: { revis
 }
 
 export async function candidateResume(access: CandidateAccess, id: string) {
-  const candidate = await prisma.businessCandidate.findFirst({ where: { id, ...accessWhere(access) }, select: { application: { select: { submittedResume: { select: { fileName: true, mimeType: true, data: true } } } } } });
-  if (!candidate?.application.submittedResume) throw unavailable();
-  return candidate.application.submittedResume;
+  const candidate = await prisma.businessCandidate.findFirst({ where: { id, ...accessWhere(access) }, select: { application: { select: { submittedResume: { select: { fileName: true, mimeType: true, data: true, storagePublicId: true, storageResourceType: true, storageDeliveryType: true, storageFormat: true } } } } } });
+  const file = candidate?.application.submittedResume;
+  if (!file) throw unavailable();
+  if (file.storagePublicId && file.storageResourceType === "raw" && file.storageDeliveryType === "authenticated" && file.storageFormat) {
+    return { fileName: file.fileName, mimeType: file.mimeType, bytes: await downloadPrivateFile({ publicId: file.storagePublicId, resourceType: "raw", deliveryType: "authenticated", format: file.storageFormat }, file.fileName) };
+  }
+  if (file.data) return { fileName: file.fileName, mimeType: file.mimeType, bytes: Buffer.from(file.data) };
+  throw unavailable();
 }

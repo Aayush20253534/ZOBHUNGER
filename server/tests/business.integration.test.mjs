@@ -112,7 +112,7 @@ test("business foundation: access, ownership and recovery", async (t) => {
       const login = await request("/auth/business-login", { method: "POST", body: { email: emailA, password: replacement } }); assert.equal(login.status, 200);
       assert.equal((await request("/business/workspace", { cookie: login.cookie })).status, 200);
       await assert.rejects(markLogin(users[0], 0), error => error.statusCode === 401, "A concurrent reset cannot create a new session for the old password");
-      const logout = await request("/auth/logout", { method: "POST", cookie: login.cookie }); assert.equal(logout.status, 200); assert.match(logout.headers.get("set-cookie"), /Expires=Thu, 01 Jan 1970/);
+      const logout = await request("/auth/logout", { method: "POST", cookie: login.cookie, headers: { "X-Requested-With": "XMLHttpRequest" } }); assert.equal(logout.status, 200); assert.match(logout.headers.get("set-cookie"), /Expires=Thu, 01 Jan 1970/);
     });
     await t.test("expired links fail; delivery configuration failure is explicit", async () => {
       const token = "b".repeat(64);

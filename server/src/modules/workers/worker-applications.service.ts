@@ -68,13 +68,19 @@ export async function submitWorkerApplication(userId: string, jobId: string, inp
       if (!profile?.fullName || !profile.phone || !profile.city || !profile.state) throw new HttpError(400, "Save your name, phone, city and state in your profile before applying.", { code: "PROFILE_INCOMPLETE" });
       if (profile.revision !== input.profileRevision || (input.includeResume && profile.resumeRevision !== input.resumeRevision)) throw new HttpError(409, "Your profile or CV changed. Reload the application preview before submitting.", { code: "APPLICATION_PROFILE_CHANGED" });
       if (input.includeResume && !profile.resume) throw new HttpError(400, "Upload a PDF CV first, or choose to apply without a CV.", { code: "RESUME_REQUIRED" });
+      if (input.includeResume && profile.resume && !profile.resume.storagePublicId) throw new HttpError(503, "Your existing CV is awaiting secure-storage migration. Retry after the deployment migration completes.", { code: "FILE_STORAGE_MIGRATION_REQUIRED" });
       const snapshot = { fullName: profile.fullName, headline: profile.headline, about: profile.about, city: profile.city, state: profile.state, postalCode: profile.postalCode, skills: profile.skills, languages: profile.languages, experienceYears: profile.experienceYears, education: profile.education, workExperience: profile.workExperience, preferredLocations: profile.preferredLocations, preferredCategories: profile.preferredCategories, preferredEngagements: profile.preferredEngagements, availability: profile.availability } as Prisma.InputJsonObject;
       const application = await tx.jobApplication.create({ data: { jobId, workerUserId: userId, name: profile.fullName, email: user.email, phone: profile.phone, city: profile.city,
         experience: profile.experienceYears === null ? profile.headline : profile.experienceYears === 0 ? "Fresher" : `${profile.experienceYears} years of experience`,
         availableFrom: input.availableFrom ? new Date(`${input.availableFrom}T00:00:00Z`) : null, message: input.message, consentAt: new Date(), profileSnapshot: snapshot,
         jobSnapshot: { ...job, searchText: `${job.title} ${job.location} ${job.category}`.toLowerCase() },
         workerEvents: { create: { kind: "SUBMITTED", stage: "SUBMITTED", title: "Application submitted", message: "Your profile was sent to the ZOBHUNGER hiring team." } },
-        ...(input.includeResume && profile.resume ? { submittedResume: { create: { fileName: profile.resume.fileName, mimeType: profile.resume.mimeType, size: profile.resume.size, sha256: profile.resume.sha256, data: profile.resume.data } } } : {}),
+        ...(input.includeResume && profile.resume ? { submittedResume: { create: {
+          fileName: profile.resume.fileName, mimeType: profile.resume.mimeType, size: profile.resume.size, sha256: profile.resume.sha256, data: null,
+          storagePublicId: profile.resume.storagePublicId, storageResourceType: profile.resume.storageResourceType,
+          storageDeliveryType: profile.resume.storageDeliveryType, storageFormat: profile.resume.storageFormat,
+          storageVersion: profile.resume.storageVersion, storageAssetId: profile.resume.storageAssetId,
+        } } } : {}),
       }, select: { id: true } });
       await tx.auditLog.create({ data: { actorUserId: userId, action: "WORKER_APPLICATION_SUBMITTED", entityType: "JobApplication", entityId: application.id } });
       return { id: application.id, created: true };
@@ -141,8 +147,14 @@ export async function reviewWorkerApplication(userId: string, id: string, input:
   return workerApplicationDetail(userId, id, 1, true);
 }
 export async function applicationResume(userId: string, id: string, admin = false) {
-  const application = await prisma.jobApplication.findFirst({ where: { id, ...(admin ? { workerUserId: { not: null } } : { workerUserId: userId }) }, select: { id: true, submittedResume: { select: { fileName: true, mimeType: true, data: true } } } });
+  const application = await prisma.jobApplication.findFirst({ where: { id, ...(admin ? { workerUserId: { not: null } } : { workerUserId: userId }) }, select: { id: true, submittedResume: { select: { fileName: true, mimeType: true, data: true, storagePublicId: true, storageResourceType: true, storageDeliveryType: true, storageFormat: true } } } });
   if (!application) throw missing();
   if (!application.submittedResume) throw new HttpError(404, "No CV was included with this application.", { code: "RESUME_NOT_FOUND" });
-  return application.submittedResume;
+  const file = application.submittedResume;
+  if (file.storagePublicId && file.storageResourceType === "raw" && file.storageDeliveryType === "authenticated" && file.storageFormat) {
+    const { downloadPrivateFile } = await import("../../services/private-file-storage.js");
+    return { fileName: file.fileName, mimeType: file.mimeType, bytes: await downloadPrivateFile({ publicId: file.storagePublicId, resourceType: "raw", deliveryType: "authenticated", format: file.storageFormat }, file.fileName) };
+  }
+  if (file.data) return { fileName: file.fileName, mimeType: file.mimeType, bytes: Buffer.from(file.data) };
+  throw new HttpError(404, "No CV was included with this application.", { code: "RESUME_NOT_FOUND" });
 }

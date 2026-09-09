@@ -41,6 +41,12 @@ export async function apiFetch<T>(
   if (typeof options.body === "string" && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
+  const method = (options.method ?? "GET").toUpperCase();
+  if (!["GET", "HEAD", "OPTIONS"].includes(method) && !headers.has("X-Requested-With")) {
+    // Authenticated mutations are intentionally recognizable as same-site app
+    // requests. The server also validates Origin/Sec-Fetch-Site when present.
+    headers.set("X-Requested-With", "XMLHttpRequest");
+  }
 
   // Browser requests use the Next rewrite, so httpOnly cookies belong to the site.
   // Server-rendered public content can continue calling Express directly.

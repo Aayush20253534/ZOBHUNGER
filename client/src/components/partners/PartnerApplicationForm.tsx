@@ -32,6 +32,7 @@ const emptyValues: PartnerApplicationInput = {
 
 export function PartnerApplicationForm() {
   const [resume, setResume] = useState<File | null>(null);
+  const [requestKey, setRequestKey] = useState<string | null>(null);
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [status, setStatus] = useState<
     | { type: "idle" }
@@ -58,14 +59,10 @@ export function PartnerApplicationForm() {
       setResumeError(null);
       return;
     }
-    const allowed = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ];
+    const allowed = ["application/pdf"];
     if (!allowed.includes(file.type)) {
       setResume(null);
-      setResumeError("Use a PDF, DOC or DOCX file.");
+      setResumeError("Use a PDF file.");
       return;
     }
     if (file.size > 2 * 1024 * 1024) {
@@ -81,10 +78,13 @@ export function PartnerApplicationForm() {
     if (resumeError) return;
     setStatus({ type: "submitting" });
     try {
-      const receipt = await submitPartnerApplication(values, resume);
+      const submissionKey = requestKey ?? crypto.randomUUID();
+      if (!requestKey) setRequestKey(submissionKey);
+      const receipt = await submitPartnerApplication(values, resume, submissionKey);
       setStatus({ type: "success", id: receipt.id, warning: receipt.warning });
       reset(emptyValues);
       setResume(null);
+      setRequestKey(null);
     } catch (error) {
       setStatus({
         type: "error",
@@ -159,12 +159,12 @@ export function PartnerApplicationForm() {
               <Upload aria-hidden="true" />
               <div>
                 <strong>{resume ? resume.name : "Attach your professional profile"}</strong>
-                <p>PDF, DOC or DOCX. Maximum 2 MB.</p>
+                <p>PDF only. Maximum 2 MB.</p>
               </div>
               <input
                 id="partner-resume"
                 type="file"
-                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                accept=".pdf,application/pdf"
                 onChange={(event) => chooseResume(event.target.files?.[0])}
               />
             </div>

@@ -120,6 +120,9 @@ model User {
   businessAccessApproved Boolean  @default(false)
   mustChangePassword Boolean       @default(false)
   temporaryPasswordExpiresAt DateTime?
+  adminMfaSecretEncrypted String?
+  adminMfaEnabledAt DateTime?
+  adminMfaRecoveryCodes String[] @default([])
   role            UserRole
   isActive        Boolean          @default(true)
   emailVerifiedAt DateTime?
@@ -225,11 +228,18 @@ model WorkerResume {
   mimeType String
   size Int
   sha256 String
-  data Bytes
+  data Bytes?
+  storagePublicId String?
+  storageResourceType String?
+  storageDeliveryType String?
+  storageFormat String?
+  storageVersion String?
+  storageAssetId String?
   revision Int @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   profile WorkerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  @@index([storagePublicId])
 }
 
 model WorkerSavedJob {
@@ -405,10 +415,22 @@ model PartnerApplication {
   expertiseDescription  String
   professionalNetwork   String?
   preferredPartnershipArea String
+  submissionKey        String?                  @unique
+  submissionHash       String?
   resumeFileName        String?
   resumeMimeType        String?
+  resumeSize            Int?
+  resumeSha256          String?
   resumeData            Bytes?
   resumeUploadToken     String?                  @unique
+  resumeUploadTokenHash String?                  @unique
+  resumeUploadExpiresAt DateTime?
+  resumeStoragePublicId String?
+  resumeStorageResourceType String?
+  resumeStorageDeliveryType String?
+  resumeStorageFormat String?
+  resumeStorageVersion String?
+  resumeStorageAssetId String?
   status                PartnerApplicationStatus @default(SUBMITTED)
   reviewNotes           String?
   reviewedByUserId      String?
@@ -425,6 +447,7 @@ model PartnerApplication {
   @@index([email])
   @@index([currentCity])
   @@index([specialization])
+  @@index([resumeStoragePublicId])
 }
 
 model CareerApplication {
@@ -452,6 +475,13 @@ model CareerApplication {
   resumeUploadTokenHash String?             @unique
   resumeUploadExpiresAt DateTime?
   resumeSha256     String?
+  resumeSize       Int?
+  resumeStoragePublicId String?
+  resumeStorageResourceType String?
+  resumeStorageDeliveryType String?
+  resumeStorageFormat String?
+  resumeStorageVersion String?
+  resumeStorageAssetId String?
   status           CareerApplicationStatus @default(SUBMITTED)
   reviewNotes      String?
   reviewedByUserId String?
@@ -462,6 +492,7 @@ model CareerApplication {
   @@index([status, createdAt])
   @@index([email])
   @@index([city])
+  @@index([resumeStoragePublicId])
 }
 
 model PlacementCellApplication {
@@ -821,11 +852,18 @@ model VendorDocument {
   mimeType       String
   size           Int
   sha256         String
-  data           Bytes
+  data           Bytes?
+  storagePublicId String?
+  storageResourceType String?
+  storageDeliveryType String?
+  storageFormat String?
+  storageVersion String?
+  storageAssetId String?
   createdAt      DateTime @default(now())
   application    VendorApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@unique([applicationId, kind])
+  @@index([storagePublicId])
 }
 
 
@@ -852,9 +890,16 @@ model JobApplicationResume {
   mimeType String
   size Int
   sha256 String
-  data Bytes
+  data Bytes?
+  storagePublicId String?
+  storageResourceType String?
+  storageDeliveryType String?
+  storageFormat String?
+  storageVersion String?
+  storageAssetId String?
   createdAt DateTime @default(now())
   application JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  @@index([storagePublicId])
 }
 
 enum WorkerAttendanceRequestStatus {

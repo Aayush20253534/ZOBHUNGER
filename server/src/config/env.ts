@@ -52,6 +52,15 @@ const envSchema = z.object({
   MAIL_FROM_EMAIL: optionalSetting(z.string().trim().email()),
   MAIL_FROM_NAME: z.string().trim().min(1).max(120).default("ZOBHUNGER"),
   SALES_TEAM_EMAIL: optionalSetting(z.string().trim().email()),
+  CLOUDINARY_CLOUD_NAME: optionalSetting(z.string().trim().regex(/^[a-zA-Z0-9_-]{1,120}$/)),
+  CLOUDINARY_API_KEY: optionalSetting(z.string().trim().min(1).max(160)),
+  CLOUDINARY_API_SECRET: optionalSetting(z.string().trim().min(8).max(256)),
+  CLOUDINARY_PRIVATE_FOLDER: z.string().trim().regex(/^[a-zA-Z0-9_/-]{1,180}$/).default("zobhunger-private"),
+  CLOUDINARY_TIMEOUT_MS: z.coerce.number().int().min(1000).max(30000).default(15000),
+  CLOUDINARY_DOWNLOAD_TTL_SECONDS: z.coerce.number().int().min(30).max(300).default(90),
+  JWT_ISSUER: z.string().trim().min(3).max(120).default("zobhunger-api"),
+  JWT_AUDIENCE: z.string().trim().min(3).max(120).default("zobhunger-web"),
+  MFA_ENCRYPTION_KEY: optionalSetting(z.string().trim().min(32).max(512)),
 });
 
 const firstSetting = (...names: string[]) => names.map(name => process.env[name]?.trim()).find(Boolean);

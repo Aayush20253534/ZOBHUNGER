@@ -190,6 +190,10 @@ export function findPartnerResumeForAdmin(id: string) {
       resumeFileName: true,
       resumeMimeType: true,
       resumeData: true,
+      resumeStoragePublicId: true,
+      resumeStorageResourceType: true,
+      resumeStorageDeliveryType: true,
+      resumeStorageFormat: true,
     },
   });
 }

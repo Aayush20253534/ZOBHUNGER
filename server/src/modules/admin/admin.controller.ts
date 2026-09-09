@@ -86,12 +86,14 @@ export const listPlacementCellApplicationsController: RequestHandler = async (_r
 export const downloadPartnerResumeController: RequestHandler = async (_req, res) => {
   const { id } = res.locals.validated.params as EntityIdParams;
   const resume = await getPartnerResumeForAdmin(id);
-  res.setHeader("Content-Type", resume.resumeMimeType);
-  res.setHeader(
-    "Content-Disposition",
-    `attachment; filename*=UTF-8''${encodeURIComponent(resume.resumeFileName)}`,
-  );
-  res.status(200).send(Buffer.from(resume.resumeData));
+  res.set({
+    "Cache-Control": "private, no-store",
+    "Content-Type": resume.resumeMimeType,
+    "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(resume.resumeFileName)}`,
+    "Content-Security-Policy": "sandbox",
+    "X-Content-Type-Options": "nosniff",
+  });
+  res.status(200).send(resume.bytes);
 };
 
 export const updateRequirementStatusController: RequestHandler = async (req, res) => {

@@ -1,6 +1,7 @@
 import { createHash, createHmac, randomUUID } from "node:crypto";
 import { prisma } from "../../config/db.js";
 import { env } from "../../config/env.js";
+import { downloadPrivateFile, uploadPrivateFile } from "../../services/private-file-storage.js";
 import type { Prisma } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
 import type { CareerQuery, CareerReview, CareerSubmission } from "./careers.schema.js";
@@ -15,27 +16,33 @@ const safeSelect = {
   coverNote: true, consentAt: true, resumeFileName: true, status: true,
   reviewNotes: true, reviewedAt: true, createdAt: true, updatedAt: true,
 } satisfies Prisma.CareerApplicationSelect;
+const receiptSelect = { id: true, submissionHash: true, resumeFileName: true, resumeUploadExpiresAt: true, createdAt: true } satisfies Prisma.CareerApplicationSelect;
+type Receipt = Prisma.CareerApplicationGetPayload<{ select: typeof receiptSelect }>;
+const uniqueConflict = (error: unknown) => Boolean(error && typeof error === "object" && "code" in error && error.code === "P2002");
 
 export async function submitCareerProfile(input: CareerSubmission) {
   const { requestKey, consent: _consent, ...profile } = input;
   const submissionHash = sha256(JSON.stringify(profile));
   const id = randomUUID();
   const token = resumeToken(id, requestKey);
-  // A stable request key makes a retry return the original receipt, without another HR record.
-  const application = await prisma.careerApplication.upsert({
-    where: { submissionKey: requestKey }, update: {},
-    create: { ...profile, id, portfolioUrl: profile.portfolioUrl || null, coverNote: profile.coverNote || null,
-      education: profile.education, workExperience: profile.workExperience,
-      submissionKey: requestKey, submissionHash, resumeUploadTokenHash: sha256(token),
-      resumeUploadExpiresAt: new Date(Date.now() + 30 * 60_000) },
-    select: { id: true, submissionHash: true, resumeFileName: true, resumeUploadExpiresAt: true, createdAt: true },
-  });
+  const create = { ...profile, id, portfolioUrl: profile.portfolioUrl || null, coverNote: profile.coverNote || null,
+    education: profile.education, workExperience: profile.workExperience,
+    submissionKey: requestKey, submissionHash, resumeUploadTokenHash: sha256(token),
+    resumeUploadExpiresAt: new Date(Date.now() + 30 * 60_000) };
+  let application: Receipt | null;
+  try {
+    application = await prisma.careerApplication.create({ data: create, select: receiptSelect });
+  } catch (error) {
+    if (!uniqueConflict(error)) throw error;
+    application = await prisma.careerApplication.findUnique({ where: { submissionKey: requestKey }, select: receiptSelect });
+    if (!application) throw error;
+  }
   if (application.submissionHash !== submissionHash) throw new HttpError(409, "This submission was already received with different details. Contact our team with your reference to amend it.", { code: "CAREER_SUBMISSION_CHANGED" });
   return {
     id: application.id, createdAt: application.createdAt,
     resumeUploaded: Boolean(application.resumeFileName),
     resumeUploadToken: application.resumeFileName ? null : resumeToken(application.id, requestKey),
-    resumeUploadExpiresAt: application.resumeUploadExpiresAt,
+    resumeUploadExpiresAt: application.resumeFileName ? null : application.resumeUploadExpiresAt,
   };
 }
 
@@ -54,16 +61,23 @@ export function validateCareerResume(body: unknown, contentType?: string, fileNa
 export async function uploadCareerResume(id: string, uploadToken: string | undefined, body: unknown, contentType?: string, fileName?: string) {
   if (!uploadToken || !/^[a-f0-9]{64}$/.test(uploadToken)) throw new HttpError(403, "A valid resume upload receipt is required", { code: "RESUME_UPLOAD_UNAUTHORIZED" });
   const tokenHash = sha256(uploadToken);
-  const application = await prisma.careerApplication.findFirst({ where: { id, resumeUploadTokenHash: tokenHash, resumeUploadExpiresAt: { gt: new Date() } }, select: { id: true, resumeSha256: true } });
+  const application = await prisma.careerApplication.findFirst({ where: { id, resumeUploadTokenHash: tokenHash, resumeUploadExpiresAt: { gt: new Date() } }, select: { id: true, resumeSha256: true, resumeFileName: true } });
   if (!application) throw new HttpError(403, "The upload receipt is invalid or has expired. Your profile is saved; contact our team with your reference to add a resume.", { code: "RESUME_UPLOAD_EXPIRED" });
   const file = validateCareerResume(body, contentType, fileName);
-  if (application.resumeSha256 && application.resumeSha256 !== file.hash) throw new HttpError(409, "A resume is already attached. Contact our team to replace it.", { code: "RESUME_ALREADY_ATTACHED" });
-  if (!application.resumeSha256) {
-    const changed = await prisma.careerApplication.updateMany({ where: { id, resumeUploadTokenHash: tokenHash, resumeUploadExpiresAt: { gt: new Date() }, resumeSha256: null }, data: { resumeFileName: file.fileName, resumeMimeType: file.mimeType, resumeData: new Uint8Array(file.data), resumeSha256: file.hash } });
-    if (changed.count !== 1) {
-      const saved = await prisma.careerApplication.findUnique({ where: { id }, select: { resumeSha256: true } });
-      if (saved?.resumeSha256 !== file.hash) throw new HttpError(409, "The resume changed during upload. Please check your submission.", { code: "RESUME_UPLOAD_CONFLICT" });
-    }
+  if (application.resumeSha256) {
+    if (application.resumeSha256 !== file.hash) throw new HttpError(409, "A resume is already attached. Contact our team to replace it.", { code: "RESUME_ALREADY_ATTACHED" });
+    return { id, resumeUploaded: true };
+  }
+  const asset = await uploadPrivateFile({ scope: "career-resumes", ownerId: id, fileName: file.fileName, mimeType: file.mimeType, buffer: file.data, sha256: file.hash });
+  const changed = await prisma.careerApplication.updateMany({ where: { id, resumeUploadTokenHash: tokenHash, resumeUploadExpiresAt: { gt: new Date() }, resumeSha256: null }, data: {
+    resumeFileName: file.fileName, resumeMimeType: file.mimeType, resumeSize: file.data.length, resumeData: null, resumeSha256: file.hash,
+    resumeStoragePublicId: asset.publicId, resumeStorageResourceType: asset.resourceType, resumeStorageDeliveryType: asset.deliveryType,
+    resumeStorageFormat: asset.format, resumeStorageVersion: asset.version, resumeStorageAssetId: asset.assetId,
+    resumeUploadTokenHash: null, resumeUploadExpiresAt: null,
+  } });
+  if (changed.count !== 1) {
+    const saved = await prisma.careerApplication.findUnique({ where: { id }, select: { resumeSha256: true } });
+    if (saved?.resumeSha256 !== file.hash) throw new HttpError(409, "The resume changed during upload. Please check your submission.", { code: "RESUME_UPLOAD_CONFLICT" });
   }
   return { id, resumeUploaded: true };
 }
@@ -100,8 +114,14 @@ export async function reviewCareerApplication(id: string, actorUserId: string, i
 }
 
 export async function getCareerResume(id: string, actorUserId: string) {
-  const file = await prisma.careerApplication.findUnique({ where: { id }, select: { resumeData: true, resumeFileName: true } });
-  if (!file?.resumeData || !file.resumeFileName) throw new HttpError(404, "No resume is attached to this profile", { code: "RESUME_NOT_FOUND" });
+  const file = await prisma.careerApplication.findUnique({ where: { id }, select: { resumeData: true, resumeFileName: true, resumeMimeType: true, resumeStoragePublicId: true, resumeStorageResourceType: true, resumeStorageDeliveryType: true, resumeStorageFormat: true } });
+  if (!file?.resumeFileName) throw new HttpError(404, "No resume is attached to this profile", { code: "RESUME_NOT_FOUND" });
+  let bytes: Buffer;
+  if (file.resumeStoragePublicId && file.resumeStorageResourceType === "raw" && file.resumeStorageDeliveryType === "authenticated" && file.resumeStorageFormat) {
+    bytes = await downloadPrivateFile({ publicId: file.resumeStoragePublicId, resourceType: "raw", deliveryType: "authenticated", format: file.resumeStorageFormat }, file.resumeFileName);
+  } else if (file.resumeData) {
+    bytes = Buffer.from(file.resumeData);
+  } else throw new HttpError(404, "No resume is attached to this profile", { code: "RESUME_NOT_FOUND" });
   await prisma.auditLog.create({ data: { actorUserId, action: "career.resume_downloaded", entityType: "CareerApplication", entityId: id } });
-  return file;
+  return { resumeFileName: file.resumeFileName, resumeMimeType: file.resumeMimeType || "application/pdf", bytes };
 }

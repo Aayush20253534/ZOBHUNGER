@@ -13,7 +13,8 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 export const loginSchema = z.object({
   email: z.string().trim().email().transform((v) => v.toLowerCase()),
   password: z.string().min(1).max(128),
-});
+  mfaCode: z.string().trim().min(6).max(32).optional(),
+}).strict();
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export const businessLoginSchema = z.object({
@@ -28,3 +29,6 @@ export const changeBusinessPasswordSchema = z.object({
   currentPassword: z.string().min(1).max(128),
   password: passwordSchema,
 }).strict();
+
+
+export const adminMfaConfirmSchema = z.object({ code: z.string().trim().min(6).max(32) }).strict();

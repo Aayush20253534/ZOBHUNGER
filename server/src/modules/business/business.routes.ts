@@ -1,3 +1,4 @@
+import { portalWrite } from "../../middlewares/portal-write.middleware.js";
 import { businessCandidatesRouter } from "../candidates/candidates.routes.js";
 import { businessPhase2Router } from "../phase2/phase2.routes.js";
 import { jobCache } from "../../services/job-cache.service.js";
@@ -28,10 +29,6 @@ businessRouter.use((_req, res, next) => { res.set("Cache-Control", "no-store"); 
 // Guard real routes individually so missing routes still return 404. Build and
 // deployment probes must not mistake a router-wide 401 for a mounted endpoint.
 const businessAccess = [requireAuth, requireRole("BUSINESS")];
-const portalWrite: RequestHandler = (req, _res, next) => {
-  if (req.get("X-Requested-With") !== "XMLHttpRequest") return next(new HttpError(403, "Please submit this form from the business portal", { code: "PORTAL_REQUEST_REQUIRED" }));
-  next();
-};
 businessRouter.get("/workspace", ...businessAccess, async (_req, res) => {
   const user = res.locals.authUser;
   const profile = await getBusinessProfile(user.id);

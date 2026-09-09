@@ -20,6 +20,8 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaCode, setMfaCode] = useState("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,15 +29,18 @@ export function LoginForm() {
     setSubmitting(true);
 
     try {
-      const response = await login(email.trim(), password);
-      router.push(response.data.user.mustChangePassword ? "/business/change-password" : destinationForRole(response.data.user.role));
+      const response = await login(email.trim(), password, mfaRequired ? mfaCode : undefined);
+      const user = response.data.user;
+      router.push(user.role === "ADMIN" && !user.adminMfaEnabled ? "/admin/security" : user.mustChangePassword ? "/business/change-password" : destinationForRole(user.role));
       router.refresh();
     } catch (caught) {
-      setError(
-        caught instanceof ApiError
-          ? caught.message
-          : "Unable to sign in. Check that the backend is running and try again.",
-      );
+      if (caught instanceof ApiError && caught.code === "MFA_REQUIRED") {
+        setMfaRequired(true);
+        setMfaCode("");
+        setError("Password verified. Enter your administrator authenticator or recovery code.");
+      } else {
+        setError(caught instanceof ApiError ? caught.message : "Unable to sign in. Check that the backend is running and try again.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -91,6 +96,26 @@ export function LoginForm() {
           </button>
         </span>
       </label>
+
+      {mfaRequired && (
+        <label>
+          <span>Administrator verification code</span>
+          <span className="zb-auth-input-wrap">
+            <ShieldCheck aria-hidden="true" />
+            <input
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              value={mfaCode}
+              onChange={(event) => setMfaCode(event.target.value)}
+              placeholder="6-digit code or recovery code"
+              minLength={6}
+              maxLength={32}
+              required
+              autoFocus
+            />
+          </span>
+        </label>
+      )}
 
       {error && (
         <p className="zb-login-error" role="alert">

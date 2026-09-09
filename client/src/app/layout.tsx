@@ -85,7 +85,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="zb-site min-h-screen bg-background text-foreground antialiased">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c") }}
         />
         <SiteFrame>{children}</SiteFrame>
       </body>

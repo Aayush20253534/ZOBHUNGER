@@ -1521,3 +1521,27 @@ body.zb-site:has(.zb-auth-page) > main {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
+
+/* Administrator MFA enrollment */
+.zb-admin-security-card { max-width: 860px; margin: 1.5rem auto 4rem; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid #eadde2; border-radius: 24px; background: #fff; box-shadow: 0 18px 45px rgba(55, 20, 31, .07); }
+.zb-admin-security-heading { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.4rem; }
+.zb-admin-security-heading > span { width: 48px; height: 48px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 14px; background: #fff0f2; color: #d5182e; }
+.zb-admin-security-heading svg, .zb-admin-security-state > svg { width: 24px; height: 24px; }
+.zb-admin-security-heading h1 { margin: .2rem 0 .35rem; font-size: clamp(1.6rem, 3vw, 2.2rem); }
+.zb-admin-security-heading p, .zb-admin-security-state p, .zb-admin-mfa-setup p, .zb-admin-recovery p { color: #6d5c63; }
+.zb-admin-security-state { display: flex; gap: 1rem; align-items: flex-start; padding: 1.1rem; border-radius: 18px; background: #faf7f8; }
+.zb-admin-security-state > svg { color: #d5182e; flex: 0 0 auto; }
+.zb-admin-security-state strong { display: block; margin-bottom: .3rem; font-size: 1.05rem; }
+.zb-admin-security-state button, .zb-admin-mfa-setup > button, .zb-admin-recovery > button { border: 0; border-radius: 12px; padding: .75rem 1rem; background: #d2182e; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.zb-admin-security-state a, .zb-admin-recovery > a { display: inline-block; margin-top: .7rem; color: #b71328; font-weight: 700; }
+.zb-admin-mfa-setup { display: grid; gap: 1rem; }
+.zb-admin-mfa-setup h2, .zb-admin-recovery h2 { margin: .2rem 0; }
+.zb-admin-secret { display: flex; gap: .75rem; align-items: center; min-width: 0; padding: .8rem 1rem; border: 1px solid #eadde2; border-radius: 12px; background: #fbf9fa; }
+.zb-admin-secret code { min-width: 0; overflow-wrap: anywhere; font-size: .88rem; }
+.zb-admin-secret button { margin-left: auto; border: 0; background: transparent; color: #c4162b; cursor: pointer; }
+.zb-admin-mfa-setup label { display: grid; gap: .45rem; font-weight: 700; }
+.zb-admin-mfa-setup input { min-height: 46px; padding: .7rem .85rem; border: 1px solid #d9cbd0; border-radius: 12px; font: inherit; }
+.zb-admin-recovery { display: grid; gap: 1rem; padding: 1.1rem; border-radius: 18px; background: #fff7f0; border: 1px solid #f0d7bd; }
+.zb-admin-recovery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; }
+.zb-admin-recovery-grid code { padding: .65rem .75rem; border-radius: 9px; background: #fff; text-align: center; letter-spacing: .05em; }
+@media (max-width: 600px) { .zb-admin-security-heading, .zb-admin-security-state { flex-direction: column; } .zb-admin-recovery-grid { grid-template-columns: 1fr; } }

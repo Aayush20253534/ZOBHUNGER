@@ -1,11 +1,12 @@
 import { HttpError } from "../../utils/http-error.js";
-import { hashPassword, verifyPassword } from "../../utils/password.js";
+import { hashPassword, verifyPassword, verifyPasswordOrDummy } from "../../utils/password.js";
 import type { BusinessLoginInput, LoginInput, RegisterInput } from "./auth.schema.js";
 import { createUser, findUserByEmail, findUserById, findUserByPhone, findUserByPartnerCode, markLogin } from "./auth.repository.js";
 import { prisma } from "../../config/db.js";
+import { verifyAdminMfaForLogin } from "./admin-mfa.service.js";
 
-export function safeUser(user: { id: string; email: string; phone: string | null; role: unknown; isActive: boolean; emailVerifiedAt: Date | null; lastLoginAt: Date | null; createdAt: Date; sessionVersion: number; partnerCode?: string | null; businessAccessApproved?: boolean; mustChangePassword?: boolean; temporaryPasswordExpiresAt?: Date | null }) {
-  return { id: user.id, email: user.email, phone: user.phone, role: user.role, isActive: user.isActive, emailVerifiedAt: user.emailVerifiedAt, lastLoginAt: user.lastLoginAt, createdAt: user.createdAt, sessionVersion: user.sessionVersion, partnerCode: user.partnerCode ?? null, businessAccessApproved: user.businessAccessApproved ?? false, mustChangePassword: user.mustChangePassword ?? false, temporaryPasswordExpiresAt: user.temporaryPasswordExpiresAt ?? null };
+export function safeUser(user: { id: string; email: string; phone: string | null; role: unknown; isActive: boolean; emailVerifiedAt: Date | null; lastLoginAt: Date | null; createdAt: Date; sessionVersion: number; partnerCode?: string | null; businessAccessApproved?: boolean; mustChangePassword?: boolean; temporaryPasswordExpiresAt?: Date | null; adminMfaEnabledAt?: Date | null }) {
+  return { id: user.id, email: user.email, phone: user.phone, role: user.role, isActive: user.isActive, emailVerifiedAt: user.emailVerifiedAt, lastLoginAt: user.lastLoginAt, createdAt: user.createdAt, sessionVersion: user.sessionVersion, partnerCode: user.partnerCode ?? null, businessAccessApproved: user.businessAccessApproved ?? false, mustChangePassword: user.mustChangePassword ?? false, temporaryPasswordExpiresAt: user.temporaryPasswordExpiresAt ?? null, adminMfaEnabled: Boolean(user.adminMfaEnabledAt) };
 }
 
 export function assertBusinessAccountAccess(user: { role: unknown; businessAccessApproved?: boolean; mustChangePassword?: boolean; temporaryPasswordExpiresAt?: Date | null }) {
@@ -33,9 +34,11 @@ export async function registerUser(input: RegisterInput) {
 
 export async function loginUser(input: LoginInput) {
   const user = await findUserByEmail(input.email);
-  if (!user || !(await verifyPassword(user.passwordHash, input.password))) throw new HttpError(401, "Invalid email or password", { code: "INVALID_CREDENTIALS" });
+  const validPassword = await verifyPasswordOrDummy(user?.passwordHash, input.password);
+  if (!user || !validPassword) throw new HttpError(401, "Invalid email or password", { code: "INVALID_CREDENTIALS" });
   if (!user.isActive) throw new HttpError(403, "This account is inactive", { code: "ACCOUNT_INACTIVE" });
   assertBusinessAccountAccess(user);
+  if (user.role === "ADMIN") await verifyAdminMfaForLogin(user.id, input.mfaCode);
   const updated = await markLogin(user.id, user.sessionVersion);
   return safeUser(updated);
 }
@@ -50,7 +53,8 @@ export async function getAuthenticatedUser(id: string, sessionVersion?: number) 
 
 export async function loginPlacementCellUser(input: LoginInput) {
   const user = await findUserByEmail(input.email);
-  if (!user || !(await verifyPassword(user.passwordHash, input.password))) throw new HttpError(401, "Invalid email or password", { code: "INVALID_CREDENTIALS" });
+  const validPassword = await verifyPasswordOrDummy(user?.passwordHash, input.password);
+  if (!user || !validPassword) throw new HttpError(401, "Invalid email or password", { code: "INVALID_CREDENTIALS" });
   if (user.role !== "PLACEMENT_CELL") throw new HttpError(403, "This login is reserved for approved institution partners", { code: "PLACEMENT_CELL_LOGIN_REQUIRED" });
   if (!user.isActive) throw new HttpError(403, "Activate your approved institution partner account before signing in", { code: "PLACEMENT_CELL_ACCOUNT_INACTIVE" });
   const updated = await markLogin(user.id, user.sessionVersion);
@@ -61,7 +65,8 @@ export async function loginBusinessUser(input: BusinessLoginInput) {
   const user = input.identifier.includes("@")
     ? await findUserByEmail(input.identifier.toLowerCase())
     : await findUserByPartnerCode(input.identifier.toUpperCase());
-  if (!user || !(await verifyPassword(user.passwordHash, input.password))) throw new HttpError(401, "Invalid Partner ID, email or password", { code: "INVALID_CREDENTIALS" });
+  const validPassword = await verifyPasswordOrDummy(user?.passwordHash, input.password);
+  if (!user || !validPassword) throw new HttpError(401, "Invalid Partner ID, email or password", { code: "INVALID_CREDENTIALS" });
   if (user.role !== "BUSINESS") throw new HttpError(403, "Use a business account to access this workspace", { code: "BUSINESS_ACCOUNT_REQUIRED" });
   if (!user.isActive) throw new HttpError(403, "This account is inactive", { code: "ACCOUNT_INACTIVE" });
   assertBusinessAccountAccess(user);

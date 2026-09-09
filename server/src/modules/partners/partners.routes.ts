@@ -23,13 +23,6 @@ partnersRouter.put(
   "/:id/resume",
   publicSubmissionRateLimiter,
   validate({ params: partnerResumeParamsSchema }),
-  express.raw({
-    type: [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ],
-    limit: "2mb",
-  }),
+  express.raw({ type: "application/pdf", limit: "2mb" }),
   uploadPartnerResumeController,
 );

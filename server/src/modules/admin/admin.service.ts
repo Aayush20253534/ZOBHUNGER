@@ -10,6 +10,7 @@ import { env } from "../../config/env.js";
 import { sendOperationalEmail } from "../../services/email.service.js";
 import { hashPassword } from "../../utils/password.js";
 import { HttpError } from "../../utils/http-error.js";
+import { downloadPrivateFile } from "../../services/private-file-storage.js";
 import { jobCache } from "../../services/job-cache.service.js";
 import type {
   ListAdminJobsQuery,
@@ -109,7 +110,8 @@ export async function changePlacementCellApplicationStatus(
   if (result.kind === "email-conflict") throw new HttpError(409, "A user account already exists for this institution email", { code: "PLACEMENT_CELL_EMAIL_ALREADY_REGISTERED" });
 
   if (result.kind === "updated" && status === PlacementCellApplicationStatus.APPROVED && rawActivationToken) {
-    const activationUrl = `${env.CLIENT_ORIGIN.replace(/\/$/, "")}/placement-cell-login?activation=${encodeURIComponent(rawActivationToken)}`;
+    const frontendOrigin = (env.PUBLIC_APP_URL ?? env.CLIENT_ORIGIN.split(",")[0].trim()).replace(/\/$/, "");
+    const activationUrl = `${frontendOrigin}/placement-cell-login#activation=${encodeURIComponent(rawActivationToken)}`;
     await sendOperationalEmail({
       to: result.entity.officialEmail,
       subject: "ZOBHUNGER Placement Cell & Institution Partnership approved",
@@ -127,18 +129,16 @@ export async function getPartnerResumeForAdmin(id: string) {
       code: "PARTNER_APPLICATION_NOT_FOUND",
     });
   }
-  if (!result.resumeData || !result.resumeFileName || !result.resumeMimeType) {
-    throw new HttpError(404, "No resume is attached to this application", {
-      code: "PARTNER_RESUME_NOT_FOUND",
-    });
+  if (!result.resumeFileName || !result.resumeMimeType) {
+    throw new HttpError(404, "No resume is attached to this application", { code: "PARTNER_RESUME_NOT_FOUND" });
   }
+  let bytes: Buffer;
+  if (result.resumeStoragePublicId && result.resumeStorageResourceType === "raw" && result.resumeStorageDeliveryType === "authenticated" && result.resumeStorageFormat) {
+    bytes = await downloadPrivateFile({ publicId: result.resumeStoragePublicId, resourceType: "raw", deliveryType: "authenticated", format: result.resumeStorageFormat }, result.resumeFileName);
+  } else if (result.resumeData) bytes = Buffer.from(result.resumeData);
+  else throw new HttpError(404, "No resume is attached to this application", { code: "PARTNER_RESUME_NOT_FOUND" });
 
-  return {
-    id: result.id,
-    resumeFileName: result.resumeFileName,
-    resumeMimeType: result.resumeMimeType,
-    resumeData: result.resumeData,
-  };
+  return { id: result.id, resumeFileName: result.resumeFileName, resumeMimeType: result.resumeMimeType, bytes };
 }
 
 export async function changeRequirementStatus(

@@ -17,6 +17,7 @@ import {
   MapPin,
   FileText,
   ChevronRight,
+  ShieldCheck,
 } from "lucide-react";
 import { apiFetch, ApiError, type ApiSuccessEnvelope } from "@/lib/api";
 import { getCurrentUser, logout } from "@/services/auth.service";
@@ -33,6 +34,7 @@ const adminActionGroups = [
       { href: "/admin/partners", label: "Partner review & approvals", copy: "Business access approvals and credentials", icon: Building2 },
       { href: "/admin/careers", label: "Career profiles & HR review", copy: "General candidate profiles and CV review", icon: UsersRound },
       { href: "/admin/worker-applications", label: "Worker applications & profiles", copy: "Worker hiring pipeline and profile records", icon: UsersRound },
+      { href: "/admin/security", label: "Admin security", copy: "MFA and administrator account protection", icon: ShieldCheck },
     ],
   },
   {
@@ -166,6 +168,10 @@ export function AdminDashboard() {
       const current = await getCurrentUser();
       if (current.data.user.role !== "ADMIN") {
         router.replace("/login");
+        return;
+      }
+      if (!current.data.user.adminMfaEnabled) {
+        router.replace("/admin/security");
         return;
       }
       setUser(current.data.user);

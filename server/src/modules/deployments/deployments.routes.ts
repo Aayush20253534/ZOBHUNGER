@@ -1,3 +1,4 @@
+import { portalWrite } from "../../middlewares/portal-write.middleware.js";
 import { Router, type RequestHandler } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
@@ -10,10 +11,6 @@ import { cancelAssignment, createAssignment, endAssignment, updateAssignment } f
 import { deploymentDetailSchema, deploymentParams, progressQuerySchema, rosterQuerySchema } from "./deployments.schema.js";
 import { deploymentDetail, deploymentRoster, requirementDeploymentProgress } from "./deployments.read.js";
 
-const portalWrite: RequestHandler = (req, _res, next) => {
-  if (req.get("X-Requested-With") !== "XMLHttpRequest") return next(new HttpError(403, "Submit this change from the portal.", { code: "PORTAL_REQUEST_REQUIRED" }));
-  next();
-};
 function deploymentsRouter(admin: boolean) {
   const router = Router();
   router.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });

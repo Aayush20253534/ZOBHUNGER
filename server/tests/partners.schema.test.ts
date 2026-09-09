@@ -7,6 +7,7 @@ import {
 } from "../src/modules/admin/admin.schema.js";
 
 const validPartnerApplication = {
+  requestKey: "11111111-1111-4111-8111-111111111111",
   fullName: "Ananya Sharma",
   mobileNumber: "+919876543210",
   email: "ANANYA@EXAMPLE.COM",

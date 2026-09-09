@@ -83,7 +83,7 @@ export default async function ArticlePage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema).replace(/</g, "\\u003c") }}
       />
       <Breadcrumbs
         items={[

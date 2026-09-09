@@ -6,7 +6,9 @@ interface PartnerApplicationCreated {
   fullName: string;
   email: string;
   createdAt: string;
-  resumeUploadToken: string;
+  resumeUploadToken: string | null;
+  resumeUploadExpiresAt: string | null;
+  created: boolean;
 }
 
 export interface PartnerSubmissionReceipt {
@@ -17,15 +19,12 @@ export interface PartnerSubmissionReceipt {
   warning?: string;
 }
 
-const allowedResumeTypes = new Set([
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-]);
+const allowedResumeTypes = new Set(["application/pdf"]);
 
 export async function submitPartnerApplication(
   input: PartnerApplicationInput,
   resume?: File | null,
+  requestKey = crypto.randomUUID(),
 ): Promise<PartnerSubmissionReceipt> {
   const response = await apiFetch<ApiSuccessEnvelope<PartnerApplicationCreated>>(
     "/partner-applications",
@@ -33,6 +32,7 @@ export async function submitPartnerApplication(
       method: "POST",
       body: JSON.stringify({
         ...input,
+        requestKey,
         linkedInUrl: input.linkedInUrl || undefined,
         professionalNetwork: input.professionalNetwork || undefined,
       }),
@@ -44,13 +44,15 @@ export async function submitPartnerApplication(
 
   if (resume) {
     if (!allowedResumeTypes.has(resume.type)) {
-      throw new Error("Resume must be a PDF, DOC or DOCX file.");
+      throw new Error("Resume must be a PDF file.");
     }
     if (resume.size > 2 * 1024 * 1024) {
       throw new Error("Resume must be 2 MB or smaller.");
     }
 
-    try {
+    if (!response.data.resumeUploadToken) {
+      warning = "Your application already has a resume attached.";
+    } else try {
       await apiFetch<ApiSuccessEnvelope<{ id: string; resumeFileName: string }>>(
         `/partner-applications/${encodeURIComponent(response.data.id)}/resume`,
         {

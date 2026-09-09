@@ -1,3 +1,4 @@
+import { portalWrite } from "../../middlewares/portal-write.middleware.js";
 import { Router, type RequestHandler } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
@@ -8,10 +9,6 @@ import * as schema from "./attendance.schema.js";
 import { assignmentMonth, attendanceDay, attendanceOverview, listAssignments, listCorrections, selectedCandidateOptions } from "./attendance.read.js";
 import { cancelAssignment, createAssignment, endAssignment, recordAttendance, requestCorrection, resolveCorrection, updateAssignment } from "./attendance.write.js";
 
-const portalWrite: RequestHandler = (req, _res, next) => {
-  if (req.get("X-Requested-With") !== "XMLHttpRequest") return next(new HttpError(403, "Submit this change from the portal.", { code: "PORTAL_REQUEST_REQUIRED" }));
-  next();
-};
 function attendanceRouter(admin: boolean) {
   const router = Router();
   router.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });

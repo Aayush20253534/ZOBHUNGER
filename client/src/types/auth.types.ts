@@ -5,6 +5,7 @@ export interface AuthUser {
   partnerCode?: string | null;
   businessAccessApproved?: boolean;
   mustChangePassword?: boolean;
+  adminMfaEnabled?: boolean;
   email: string;
   phone: string | null;
   role: UserRole;

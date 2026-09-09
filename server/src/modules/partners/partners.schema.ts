@@ -6,6 +6,7 @@ const optionalUrl = z
   .transform((value) => value || undefined);
 
 export const createPartnerApplicationSchema = z.object({
+  requestKey: z.uuid(),
   fullName: z.string().trim().min(2).max(120),
   mobileNumber: z.string().trim().min(7).max(24),
   email: z.string().trim().email().max(254).transform((value) => value.toLowerCase()),

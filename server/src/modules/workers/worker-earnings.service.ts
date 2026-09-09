@@ -119,7 +119,8 @@ export async function approveEarningsStatement(userId: string, id: string, input
     if (current.status !== "DRAFT" || current.revision !== input.revision) throw changed();
     const money = totals(current); if (money.netPayablePaise <= 0) throw new HttpError(409, "The draft has no payable amount to approve.", { code: "INVALID_NET_PAYABLE" });
     const attendance = await attendanceSnapshot(tx, current);
-    if (!attendance.approvedDays) throw new HttpError(409, "At least one attendance record in this period must have business approval before earnings can be approved.", { code: "APPROVED_ATTENDANCE_REQUIRED" });
+    if (!attendance.recordedDays || !attendance.approvedDays) throw new HttpError(409, "Business-approved attendance is required before earnings can be approved.", { code: "APPROVED_ATTENDANCE_REQUIRED" });
+    if (attendance.pendingDays || attendance.changesRequestedDays || attendance.approvedDays !== attendance.recordedDays) throw new HttpError(409, "Resolve every recorded attendance entry in this earnings period before approval.", { code: "ATTENDANCE_REVIEW_INCOMPLETE" });
     const updated = await tx.earningsStatement.update({ where: { id }, data: { status: "APPROVED", revision: { increment: 1 }, approvedByUserId: userId, approvedAt: new Date(), approvalNote: input.approvalNote, approvalAttendanceSnapshot: attendance }, select: statementSelect });
     await tx.auditLog.create({ data: { actorUserId: userId, action: "EARNINGS_APPROVED", entityType: "EarningsStatement", entityId: id, metadata: { revision: updated.revision, netPayablePaise: totals(updated).netPayablePaise, attendance } } });
     return statementDto(updated, true);
@@ -151,6 +152,7 @@ export async function addEarningsAdjustment(userId: string, id: string, input: {
 }
 
 export async function recordEarningsPayment(userId: string, id: string, input: RecordPaymentInput) {
+  if (input.paidAt.getTime() > Date.now() + 5 * 60_000) throw new HttpError(400, "A recorded payment cannot be dated in the future.", { code: "PAYMENT_DATE_IN_FUTURE" });
   return prisma.$transaction(async tx => {
     const duplicate = await tx.paymentRecord.findUnique({ where: { requestKey: input.requestKey }, select: { id: true, statementId: true, amountPaise: true, paidAt: true, method: true, reference: true, note: true } });
     if (duplicate) {
@@ -167,6 +169,8 @@ export async function recordEarningsPayment(userId: string, id: string, input: R
     }
     const current = await tx.earningsStatement.findUnique({ where: { id }, select: statementSelect }); if (!current) throw missing();
     if (current.status !== "APPROVED" || current.revision !== input.revision) throw changed();
+    const sameReference = await tx.paymentRecord.findFirst({ where: { statementId: id, status: "RECORDED", reference: { equals: input.reference, mode: "insensitive" } }, select: { id: true } });
+    if (sameReference) throw new HttpError(409, "A recorded payment with this reference already exists on the statement.", { code: "DUPLICATE_PAYMENT_REFERENCE" });
     const money = totals(current); if (input.amountPaise > money.outstandingPaise) throw new HttpError(409, "This payment would exceed the current outstanding balance.", { code: "PAYMENT_OVERPAYMENT" });
     await tx.paymentRecord.create({ data: { statementId: id, amountPaise: input.amountPaise, paidAt: input.paidAt, method: input.method, reference: input.reference, note: input.note || null, requestKey: input.requestKey, recordedByUserId: userId } });
     const updated = await tx.earningsStatement.update({ where: { id }, data: { revision: { increment: 1 } }, select: statementSelect });
@@ -283,7 +287,7 @@ export async function earningsAssignmentContext(id: string, periodStart: string,
 
 export async function workerStatementCsv(userId: string, id: string) {
   const row = await workerEarningsDetail(userId, id) as ReturnType<typeof statementDto>;
-  const escape = (value: unknown) => `"${String(value ?? "").replaceAll('"', '""')}"`;
+  const escape = (value: unknown) => { let text = String(value ?? ""); if (/^[\s\u0000-\u001f]*[=+@-]/.test(text)) text = `'${text}`; return `"${text.replaceAll('"', '""')}"`; };
   const money = (value: number) => (value / 100).toFixed(2);
   const lines: string[][] = [["Statement", row.id], ["Assignment", row.assignment.role], ["Company", row.assignment.company], ["Location", row.assignment.location], ["Period", `${row.periodStart} to ${row.periodEnd}`], ["Status", row.status], [], ["Breakdown type", "Label", "Amount INR", "Reason"]];
   for (const line of row.lines || []) lines.push([line.type, line.label, money(line.amountPaise), line.reason || ""]);

@@ -4,7 +4,7 @@ import { prisma } from "../../config/db.js";
 import { env } from "../../config/env.js";
 import { logger } from "../../utils/logger.js";
 import { HttpError } from "../../utils/http-error.js";
-import { hashPassword, verifyPassword } from "../../utils/password.js";
+import { hashPassword, verifyPasswordOrDummy } from "../../utils/password.js";
 import { safeUser } from "../auth/auth.service.js";
 import { markLogin } from "../auth/auth.repository.js";
 import { sendWorkerAccessEmail } from "../../services/worker-email.service.js";
@@ -59,7 +59,8 @@ export async function registerWorker(input: z.infer<typeof workerRegisterSchema>
 
 export async function loginWorker(email: string, password: string) {
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user || user.role !== "WORKER" || !(await verifyPassword(user.passwordHash, password))) throw new HttpError(401, "Invalid worker email or password", { code: "INVALID_CREDENTIALS" });
+  const validPassword = await verifyPasswordOrDummy(user?.passwordHash, password);
+  if (!user || user.role !== "WORKER" || !validPassword) throw new HttpError(401, "Invalid worker email or password", { code: "INVALID_CREDENTIALS" });
   if (!user.isActive) throw new HttpError(403, "This worker account is inactive. Contact our team for help.", { code: "ACCOUNT_INACTIVE" });
   return safeUser(await markLogin(user.id, user.sessionVersion));
 }

@@ -30,6 +30,6 @@ adminCareersRouter.post("/:id/review", portalWrite, validate({ params: entityIdP
 });
 adminCareersRouter.get("/:id/resume", validate({ params: entityIdParamsSchema }), async (_req, res) => {
   const file = await getCareerResume(res.locals.validated.params.id, res.locals.authUser.id);
-  res.set({ "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(file.resumeFileName!)}`, "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox" });
-  res.send(Buffer.from(file.resumeData!));
+  res.set({ "Content-Type": file.resumeMimeType, "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(file.resumeFileName)}`, "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox", "Cache-Control": "private, no-store" });
+  res.send(file.bytes);
 });

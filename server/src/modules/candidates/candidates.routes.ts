@@ -1,3 +1,4 @@
+import { portalWrite } from "../../middlewares/portal-write.middleware.js";
 import { sendPrivateResume } from "../workers/worker-workflow.routes.js";
 import { Router, type RequestHandler } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
@@ -10,10 +11,6 @@ import { candidateParams, candidateQuery, historyQuery, lookupQuery, reviewCandi
 import { candidateResume, candidateDetail, candidateLookups, listCandidates, reviewCandidate, revokeCandidate, shareCandidate } from "./candidates.service.js";
 
 const privateResponse: RequestHandler = (_req, res, next) => { res.set("Cache-Control", "no-store"); next(); };
-const portalWrite: RequestHandler = (req, _res, next) => {
-  if (req.get("X-Requested-With") !== "XMLHttpRequest") return next(new HttpError(403, "Submit this review from the portal.", { code: "PORTAL_REQUEST_REQUIRED" }));
-  next();
-};
 export const businessCandidatesRouter = Router();
 businessCandidatesRouter.use(privateResponse);
 const business = [requireAuth, requireRole("BUSINESS")];

@@ -27,6 +27,6 @@ adminVendorsRouter.post("/:id/review", portalWrite, validate({ params: vendorIdS
 adminVendorsRouter.patch("/:id/record", portalWrite, validate({ params: vendorIdSchema, body: vendorRecordSchema }), async (_req, res) => res.json(apiSuccessResponse("Vendor record updated", await updateVendorRecord(res.locals.validated.params.id, res.locals.authUser.id, res.locals.validated.body))));
 adminVendorsRouter.get("/:id/documents/:documentId", validate({ params: vendorDownloadParamsSchema }), async (_req, res) => {
   const document = await downloadVendorDocument(res.locals.validated.params.id, res.locals.validated.params.documentId, res.locals.authUser.id);
-  res.set({ "Content-Type": document.mimeType, "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(document.fileName)}`, "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox" });
-  res.send(Buffer.from(document.data));
+  res.set({ "Cache-Control": "private, no-store", "Content-Type": document.mimeType, "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(document.fileName)}`, "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox" });
+  res.send(document.bytes);
 });

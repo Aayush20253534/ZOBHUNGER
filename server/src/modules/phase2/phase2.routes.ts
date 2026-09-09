@@ -1,3 +1,4 @@
+import { portalWrite } from "../../middlewares/portal-write.middleware.js";
 import { Router, type RequestHandler } from "express";
 import { z } from "zod";
 import { prisma } from "../../config/db.js";
@@ -13,7 +14,6 @@ import { getDraft, listDrafts, removeDraft, saveDraft, submitDraft } from "./dra
 import { businessOwned, changeLinkedJob, createLinkedJob, qualifyRequirement, requirementJobs } from "./linked-jobs.service.js";
 import { approvalDetail, approvalQueue, decideApproval } from "./approvals.service.js";
 import { getReport, operationsSummary, reportCsv } from "./reports.service.js";
-const portalWrite: RequestHandler = (req, _res, next) => req.get("X-Requested-With") === "XMLHttpRequest" ? next() : next(new HttpError(403, "Submit this change from the portal.", { code: "PORTAL_REQUEST_REQUIRED" }));
 function router(admin: boolean) {
   const result = Router(); const access = [requireAuth, requireRole(admin ? "ADMIN" : "BUSINESS")];
   result.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });

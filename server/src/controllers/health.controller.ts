@@ -1,5 +1,8 @@
 import type { RequestHandler } from "express";
 import { apiSuccessResponse } from "../utils/api-response.js";
+import { prisma } from "../config/db.js";
+import { env } from "../config/env.js";
+import { privateFileStorageConfigured } from "../services/private-file-storage.js";
 
 // Lightweight liveness probe for uptime monitors. It needs no cookies, does not
 // touch the database or mail provider, and reports no configuration secrets.
@@ -21,4 +24,30 @@ export const getHealth: RequestHandler = (_req, res) => {
       timestamp: new Date().toISOString(),
     }),
   );
+};
+
+
+// Readiness is intentionally separate from liveness. Deployments and load
+// balancers can use it to avoid routing traffic before essential dependencies
+// are available, while / and /route continue to prove only that Node is alive.
+export const getReadiness: RequestHandler = async (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  let database = false;
+  try {
+    await Promise.race([
+      prisma.$queryRaw`SELECT 1`,
+      new Promise((_, reject) => setTimeout(() => reject(new Error("database readiness timeout")), 2_000)),
+    ]);
+    database = true;
+  } catch {
+    database = false;
+  }
+  const fileStorage = env.NODE_ENV !== "production" || privateFileStorageConfigured();
+  const ready = database && fileStorage;
+  res.status(ready ? 200 : 503).json({
+    status: ready ? "ready" : "not_ready",
+    service: "zobhunger-api",
+    checks: { database, privateFileStorage: fileStorage },
+    timestamp: new Date().toISOString(),
+  });
 };

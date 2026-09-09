@@ -33,7 +33,7 @@ workersRouter.get("/profile/resume", async (_req, res) => {
   const file = await getWorkerResume(res.locals.authUser.id);
   const name = encodeURIComponent(file.fileName).replace(/['()*]/g, value => `%${value.charCodeAt(0).toString(16).toUpperCase()}`);
   res.set({ "Content-Type": file.mimeType, "Content-Disposition": `attachment; filename="resume.pdf"; filename*=UTF-8''${name}`, "Content-Security-Policy": "sandbox", "X-Content-Type-Options": "nosniff" });
-  res.send(Buffer.from(file.data));
+  res.send(file.bytes);
 });
 workersRouter.get("/jobs", validate({ query: workerJobsQuerySchema }), async (_req, res) => res.json(apiSuccessResponse("Worker opportunities", await workerJobs(res.locals.authUser.id, res.locals.validated.query))));
 workersRouter.get("/jobs/facets", async (_req, res) => res.json(apiSuccessResponse("Job filters", await workerJobFacets())));

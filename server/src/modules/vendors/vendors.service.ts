@@ -3,6 +3,7 @@ import { prisma } from "../../config/db.js";
 import { env } from "../../config/env.js";
 import type { Prisma, VendorDocumentKind, VendorApplicationStatus } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
+import { downloadPrivateFile, uploadPrivateFile } from "../../services/private-file-storage.js";
 import type { VendorQuery, VendorRecord, VendorReview, VendorSubmission } from "./vendors.schema.js";
 
 const hash = (value: string | Buffer) => createHash("sha256").update(value).digest("hex");
@@ -74,23 +75,30 @@ function validatePdf(body: unknown, type?: string, name?: string) {
   let decoded = "vendor-document.pdf";
   try { decoded = decodeURIComponent(name || decoded); } catch { /* Keep the safe fallback. */ }
   const stem = decoded.replace(/\.pdf$/i, "").replace(/[\\/\r\n\u0000-\u001f\u007f"<>]/g, "_").slice(0, 150).trim() || "vendor-document";
-  return { fileName: `${stem}.pdf`, mimeType: "application/pdf", size: bytes.length, data: new Uint8Array(bytes), sha256: hash(bytes) };
+  return { fileName: `${stem}.pdf`, mimeType: "application/pdf", size: bytes.length, buffer: bytes, sha256: hash(bytes) };
 }
 export async function uploadVendorDocument(id: string, kind: VendorDocumentKind, uploadToken: string | undefined, body: unknown, type?: string, name?: string) {
   const tokenHash = validateToken(uploadToken);
   const file = validatePdf(body, type, name);
+  const preflight = await prisma.vendorApplication.findFirst({ where: { id, uploadTokenHash: tokenHash, uploadExpiresAt: { gt: new Date() } }, select: { status: true } });
+  if (!preflight) fail(403, "Your upload receipt is invalid or expired. Contact our team with your reference for assistance.", "VENDOR_RECEIPT_EXPIRED");
+  const existingBefore = await prisma.vendorDocument.findUnique({ where: { applicationId_kind: { applicationId: id, kind } }, select: { ...documentSelect, sha256: true } });
+  if (existingBefore?.sha256 === file.sha256) { const { sha256: _sha256, ...document } = existingBefore; return { document }; }
+  if (preflight!.status !== "DRAFT") fail(409, "This application is already submitted. Documents are locked for review.", "VENDOR_DOCUMENTS_LOCKED");
+  if (existingBefore) fail(409, "A different document is already attached in this category. Contact our team to amend the application.", "VENDOR_DOCUMENT_EXISTS");
+  const asset = await uploadPrivateFile({ scope: "vendor-documents", ownerId: `${id}-${kind}`, fileName: file.fileName, mimeType: file.mimeType, buffer: file.buffer, sha256: file.sha256 });
   return prisma.$transaction(async tx => {
     await lock(tx, id);
     const application = await receiptOwner(tx, id, tokenHash);
     const existing = await tx.vendorDocument.findUnique({ where: { applicationId_kind: { applicationId: id, kind } }, select: { ...documentSelect, sha256: true } });
-    // Exact retries after final submission remain harmless; nothing can be replaced.
-    if (existing?.sha256 === file.sha256) {
-      const { sha256: _sha256, ...document } = existing;
-      return { document };
-    }
+    if (existing?.sha256 === file.sha256) { const { sha256: _sha256, ...document } = existing; return { document }; }
     if (application.status !== "DRAFT") fail(409, "This application is already submitted. Documents are locked for review.", "VENDOR_DOCUMENTS_LOCKED");
     if (existing) fail(409, "A different document is already attached in this category. Contact our team to amend the application.", "VENDOR_DOCUMENT_EXISTS");
-    const document = await tx.vendorDocument.create({ data: { id: randomUUID(), applicationId: id, kind, ...file }, select: documentSelect });
+    const document = await tx.vendorDocument.create({ data: {
+      id: randomUUID(), applicationId: id, kind, fileName: file.fileName, mimeType: file.mimeType, size: file.size, sha256: file.sha256, data: null,
+      storagePublicId: asset.publicId, storageResourceType: asset.resourceType, storageDeliveryType: asset.deliveryType,
+      storageFormat: asset.format, storageVersion: asset.version, storageAssetId: asset.assetId,
+    }, select: documentSelect });
     await tx.vendorApplication.update({ where: { id }, data: { revision: { increment: 1 } } });
     return { document };
   });
@@ -162,7 +170,12 @@ export async function updateVendorRecord(id: string, actorUserId: string, input:
 }
 export async function downloadVendorDocument(id: string, documentId: string, actorUserId: string) {
   const document = await prisma.vendorDocument.findFirst({ where: { id: documentId, applicationId: id } });
-  if (!document) fail(404, "Vendor document not found", "VENDOR_DOCUMENT_NOT_FOUND");
-  await prisma.auditLog.create({ data: { actorUserId, action: "vendor.document_downloaded", entityType: "VendorApplication", entityId: id, metadata: { kind: document!.kind, documentId } } });
-  return document!;
+  const foundDocument = document ?? fail(404, "Vendor document not found", "VENDOR_DOCUMENT_NOT_FOUND");
+  const bytes = foundDocument.storagePublicId && foundDocument.storageResourceType === "raw" && foundDocument.storageDeliveryType === "authenticated" && foundDocument.storageFormat
+    ? await downloadPrivateFile({ publicId: foundDocument.storagePublicId, resourceType: "raw", deliveryType: "authenticated", format: foundDocument.storageFormat }, foundDocument.fileName)
+    : foundDocument.data
+      ? Buffer.from(foundDocument.data)
+      : fail(404, "Vendor document not found", "VENDOR_DOCUMENT_NOT_FOUND");
+  await prisma.auditLog.create({ data: { actorUserId, action: "vendor.document_downloaded", entityType: "VendorApplication", entityId: id, metadata: { kind: foundDocument.kind, documentId } } });
+  return { fileName: foundDocument.fileName, mimeType: foundDocument.mimeType, bytes };
 }

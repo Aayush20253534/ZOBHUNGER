@@ -5,10 +5,10 @@ interface AuthResponse {
   user: AuthUser;
 }
 
-export async function login(email: string, password: string) {
+export async function login(email: string, password: string, mfaCode?: string) {
   return apiFetch<ApiSuccessEnvelope<AuthResponse>>("/auth/login", {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, ...(mfaCode ? { mfaCode } : {}) }),
   });
 }
 
@@ -27,4 +27,13 @@ export async function placementCellLogin(email: string, password: string) {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
+}
+
+
+export function beginAdminMfa() {
+  return apiFetch<ApiSuccessEnvelope<{ secret: string; otpauthUri: string }>>("/auth/admin-mfa/setup", { method: "POST" });
+}
+
+export function confirmAdminMfa(code: string) {
+  return apiFetch<ApiSuccessEnvelope<{ user: AuthUser; recoveryCodes: string[] }>>("/auth/admin-mfa/confirm", { method: "POST", body: JSON.stringify({ code }) });
 }

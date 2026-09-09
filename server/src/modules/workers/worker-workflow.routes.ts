@@ -9,10 +9,10 @@ import { adminAttendanceRequest, reviewWorkerAttendance, submitWorkerAttendance,
 import { addEarningsAdjustment, adminEarnings, adminEarningsDetail, approveEarningsStatement, createEarningsStatement, earningsAssignmentContext, earningsAssignmentOptions, recordEarningsPayment, updateEarningsDraft, voidEarningsPayment, workerEarnings, workerEarningsDetail, workerStatementCsv } from "./worker-earnings.service.js";
 import { workerDashboard } from "./worker-dashboard.service.js";
 
-export function sendPrivateResume(res: Response, file: { fileName: string; mimeType: string; data: Uint8Array }) {
+export function sendPrivateResume(res: Response, file: { fileName: string; mimeType: string; bytes: Buffer }) {
   const name = encodeURIComponent(file.fileName).replace(/['()*]/g, char => `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
-  res.set({ "Cache-Control": "no-store", "Content-Type": file.mimeType, "Content-Disposition": `attachment; filename="resume.pdf"; filename*=UTF-8''${name}`, "Content-Security-Policy": "sandbox", "X-Content-Type-Options": "nosniff" });
-  res.send(Buffer.from(file.data));
+  res.set({ "Cache-Control": "private, no-store", "Content-Type": file.mimeType, "Content-Disposition": `attachment; filename="resume.pdf"; filename*=UTF-8''${name}`, "Content-Security-Policy": "sandbox", "X-Content-Type-Options": "nosniff" });
+  res.send(file.bytes);
 }
 // Mounted after the verified WORKER guard in workers.routes.
 export const workerWorkflowRouter = Router();

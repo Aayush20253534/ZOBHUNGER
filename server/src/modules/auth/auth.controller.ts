@@ -3,14 +3,15 @@ import { env } from "../../config/env.js";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import { signAccessToken } from "../../utils/jwt.js";
 import type { BusinessLoginInput, LoginInput, RegisterInput } from "./auth.schema.js";
-import { changeBusinessPassword, loginBusinessUser, loginPlacementCellUser, loginUser, registerUser } from "./auth.service.js";
+import { changeBusinessPassword, loginBusinessUser, loginPlacementCellUser, loginUser, registerUser, safeUser } from "./auth.service.js";
+import { beginAdminMfa, confirmAdminMfa } from "./admin-mfa.service.js";
 
 function authCookieOptions() {
   const production = env.NODE_ENV === "production";
   return {
     httpOnly: true,
     secure: production,
-    sameSite: production ? ("none" as const) : ("lax" as const),
+    sameSite: "lax" as const,
     path: "/",
   };
 }
@@ -61,4 +62,17 @@ export const changeBusinessPasswordController: RequestHandler = async (_req, res
   const user = await changeBusinessPassword(res.locals.authUser.id, currentPassword, password);
   setAuthCookie(res, user);
   res.json(apiSuccessResponse("Password changed. Your business workspace is ready.", { user }));
+};
+
+
+export const adminMfaSetupController: RequestHandler = async (_req, res) => {
+  const setup = await beginAdminMfa(res.locals.authUser.id);
+  res.status(200).json(apiSuccessResponse("Administrator MFA setup created", setup));
+};
+
+export const adminMfaConfirmController: RequestHandler = async (_req, res) => {
+  const result = await confirmAdminMfa(res.locals.authUser.id, res.locals.validated.body.code);
+  const user = safeUser(result.user);
+  setAuthCookie(res, user);
+  res.status(200).json(apiSuccessResponse("Administrator MFA enabled", { user, recoveryCodes: result.recoveryCodes }));
 };

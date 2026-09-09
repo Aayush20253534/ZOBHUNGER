@@ -9,6 +9,8 @@ import { adminDeploymentsRouter } from "../deployments/deployments.routes.js";
 import { Router } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
+import { requireAdminMfa } from "../../middlewares/admin-mfa.middleware.js";
+import { portalWrite } from "../../middlewares/portal-write.middleware.js";
 import { validate } from "../../middlewares/validate.middleware.js";
 import {
   listApplicationsController,
@@ -41,7 +43,7 @@ import {
 
 export const adminRouter = Router();
 
-adminRouter.use(requireAuth, requireRole("ADMIN"));
+adminRouter.use(requireAuth, requireRole("ADMIN"), requireAdminMfa);
 adminRouter.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
 adminRouter.use("/vendors", adminVendorsRouter);
 adminRouter.use("/partners", adminPartnerAccessRouter);
@@ -96,18 +98,21 @@ adminRouter.get(
 
 adminRouter.patch(
   "/requirements/:id/status",
+  portalWrite,
   validate({ params: entityIdParamsSchema, body: updateRequirementStatusSchema }),
   updateRequirementStatusController,
 );
 
 adminRouter.patch(
   "/jobs/:id/status",
+  portalWrite,
   validate({ params: entityIdParamsSchema, body: updateJobStatusSchema }),
   updateJobStatusController,
 );
 
 adminRouter.patch(
   "/applications/:id/status",
+  portalWrite,
   validate({ params: entityIdParamsSchema, body: updateApplicationStatusSchema }),
   updateApplicationStatusController,
 );
@@ -115,12 +120,14 @@ adminRouter.patch(
 
 adminRouter.patch(
   "/partner-applications/:id/status",
+  portalWrite,
   validate({ params: entityIdParamsSchema, body: updatePartnerApplicationStatusSchema }),
   updatePartnerApplicationStatusController,
 );
 
 adminRouter.patch(
   "/placement-cell-applications/:id/status",
+  portalWrite,
   validate({ params: entityIdParamsSchema, body: updatePlacementCellApplicationStatusSchema }),
   updatePlacementCellApplicationStatusController,
 );
