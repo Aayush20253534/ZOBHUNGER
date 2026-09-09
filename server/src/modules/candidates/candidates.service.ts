@@ -1,3 +1,4 @@
+import { applicationEvent, assertApplicationActive, lockApplication } from "../workers/worker-workflow.guards.js";
 import { prisma } from "../../config/db.js";
 import { guardAssignedCandidate } from "../attendance/attendance.guards.js";
 import { Prisma, type BusinessCandidateStatus } from "../../generated/prisma/client.js";
@@ -16,7 +17,7 @@ const candidateSelect = {
 } satisfies Prisma.BusinessCandidateSelect;
 const eventSelect = {
   id: true, kind: true, actorRole: true, fromStatus: true, toStatus: true, note: true,
-  interviewAt: true, interviewMode: true, interviewDetails: true, createdAt: true,
+  interviewAt: true, interviewMode: true, interviewDetails: true, workerMessage: true, createdAt: true,
 } satisfies Prisma.CandidateEventSelect;
 const unavailable = () => new HttpError(404, "This candidate is not available in your workspace.", { code: "CANDIDATE_NOT_FOUND" });
 const changed = () => new HttpError(409, "This candidate changed. Refresh the profile before saving your review.", { code: "CANDIDATE_CHANGED" });
@@ -58,14 +59,15 @@ export async function listCandidates(access: CandidateAccess, query: CandidateQu
 
 export async function candidateDetail(access: CandidateAccess, id: string, historyPage = 1) {
   return prisma.$transaction(async tx => {
-    const candidate = await tx.businessCandidate.findFirst({ where: { id, ...accessWhere(access) }, select: { ...candidateSelect, resumeUrl: true } });
+    const candidate = await tx.businessCandidate.findFirst({ where: { id, ...accessWhere(access) }, select: { ...candidateSelect, resumeUrl: true, application: { select: { submittedResume: { select: { id: true } } } } } });
     if (!candidate) throw unavailable();
     const total = await tx.candidateEvent.count({ where: { candidateId: id } });
     const totalPages = Math.ceil(total / historyPageSize);
     const page = Math.min(historyPage, Math.max(1, totalPages));
     const events = await tx.candidateEvent.findMany({ where: { candidateId: id }, select: eventSelect,
       orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: (page - 1) * historyPageSize, take: historyPageSize });
-    return { candidate: { ...candidate, resumeUrl: safeResumeUrl(candidate.resumeUrl) }, history: { items: events, total, page, totalPages } };
+    const { application, ...safeCandidate } = candidate;
+    return { candidate: { ...safeCandidate, hasPrivateResume: Boolean(application.submittedResume), resumeUrl: safeResumeUrl(candidate.resumeUrl) }, history: { items: events, total, page, totalPages } };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
 }
 
@@ -86,16 +88,16 @@ export async function candidateLookups(kind: "requirements" | "applications", qu
       const items = await tx.workforceRequirement.findMany({ where, select: requirementSelect, orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: (page - 1) * 10, take: 10 });
       return { items, total, page, totalPages: Math.ceil(total / 10) };
     }
-    const where: Prisma.JobApplicationWhereInput = { job: { is: { isDemo: false, ...(query.requirementId ? { OR: [{ requirementId: null }, { requirementId: query.requirementId }] } : {}) } }, status: { not: "REJECTED" },
+    const where: Prisma.JobApplicationWhereInput = { withdrawnAt: null, job: { is: { isDemo: false, ...(query.requirementId ? { OR: [{ requirementId: null }, { requirementId: query.requirementId }] } : {}) } }, status: { not: "REJECTED" },
       ...(query.query ? { OR: [{ name: search }, { city: search }, { job: { is: { title: search } } }] } : {}) };
     const total = await tx.jobApplication.count({ where });
     const page = Math.min(query.page, Math.max(1, Math.ceil(total / 10)));
     const applications = await tx.jobApplication.findMany({ where, select: {
       id: true, name: true, city: true, experience: true, resumeUrl: true, availableFrom: true, job: { select: { title: true, requirementId: true } },
-      workerUser: { select: { workerProfile: { select: { skills: true } } } }, placementCandidate: { select: { skills: true } },
+      profileSnapshot: true, submittedResume: { select: { id: true } }, placementCandidate: { select: { skills: true } },
     }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: (page - 1) * 10, take: 10 });
-    const items = applications.map(({ workerUser, placementCandidate, resumeUrl, ...application }) => ({
-      ...application, resumeUrl: safeResumeUrl(resumeUrl), skills: (workerUser?.workerProfile?.skills ?? placementCandidate?.skills ?? []).slice(0, 12),
+    const items = applications.map(({ profileSnapshot, submittedResume, placementCandidate, resumeUrl, ...application }) => ({
+      ...application, resumeUrl: safeResumeUrl(resumeUrl), hasPrivateResume: Boolean(submittedResume), skills: (profileSnapshot && typeof profileSnapshot === "object" && !Array.isArray(profileSnapshot) && Array.isArray(profileSnapshot.skills) ? profileSnapshot.skills.filter((item): item is string => typeof item === "string") : placementCandidate?.skills ?? []).slice(0, 12),
     }));
     return { items, total, page, totalPages: Math.ceil(total / 10) };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
@@ -111,6 +113,8 @@ async function audit(tx: Prisma.TransactionClient, userId: string, candidateId: 
 
 export async function shareCandidate(userId: string, input: ShareCandidateInput) {
   return prisma.$transaction(async tx => {
+    await lockApplication(tx, input.applicationId);
+    await assertApplicationActive(tx, input.applicationId);
     await lockRequirement(tx, input.requirementId);
     const requirement = await tx.workforceRequirement.findFirst({ where: { id: input.requirementId, AND: [eligibleRequirements] }, select: { id: true } });
     if (!requirement) throw new HttpError(409, "Choose an open requirement linked to an active business account.", { code: "REQUIREMENT_NOT_SHAREABLE" });
@@ -129,6 +133,7 @@ export async function shareCandidate(userId: string, input: ShareCandidateInput)
       jobTitle: application.job.title, skills: input.skills, summary: input.summary,
       events: { create: { kind: "SHARED", actorRole: "ADMIN", toStatus: "SHARED", note: "Profile shared by the ZOBHUNGER team." } },
     } });
+    await applicationEvent(tx, application.id, { kind: "SHARED", stage: "REVIEWED", title: "Profile shared for a hiring review", message: "Your application is being reviewed for a suitable requirement." });
     await audit(tx, userId, candidate.id, "BUSINESS_CANDIDATE_SHARED");
     return { id: candidate.id, created: true };
   });
@@ -143,8 +148,10 @@ const transitions: Record<BusinessCandidateStatus, BusinessCandidateStatus[]> = 
 
 export async function reviewCandidate(access: CandidateAccess, id: string, input: ReviewCandidateInput) {
   await prisma.$transaction(async tx => {
-    const reference = await tx.businessCandidate.findFirst({ where: { id, ...accessWhere(access) }, select: { requirementId: true } });
+    const reference = await tx.businessCandidate.findFirst({ where: { id, ...accessWhere(access) }, select: { requirementId: true, applicationId: true } });
     if (!reference) throw unavailable();
+    await lockApplication(tx, reference.applicationId);
+    await assertApplicationActive(tx, reference.applicationId);
     await lockRequirement(tx, reference.requirementId);
     const current = await tx.businessCandidate.findFirst({ where: { id, ...accessWhere(access) }, select: { revision: true, status: true, requirement: { select: { status: true } } } });
     if (!current) throw unavailable();
@@ -164,9 +171,14 @@ export async function reviewCandidate(access: CandidateAccess, id: string, input
     if (result.count !== 1) throw changed();
     await tx.candidateEvent.create({ data: {
       candidateId: id, kind: input.action === "INTERVIEW" ? "INTERVIEW_REQUESTED" : input.action === "FEEDBACK" ? "FEEDBACK" : "STATUS_CHANGED",
-      actorRole: "BUSINESS", fromStatus: current.status, toStatus: status, note: input.note,
+      actorRole: "BUSINESS", fromStatus: current.status, toStatus: status, note: input.note, workerMessage: input.workerMessage || null,
       ...(input.action === "INTERVIEW" ? { interviewAt: input.interviewAt, interviewMode: input.interviewMode, interviewDetails: input.interviewDetails } : {}),
     } });
+    if (input.action !== "FEEDBACK" || input.workerMessage) await applicationEvent(tx, reference.applicationId, {
+      kind: input.action, stage: status === "SHARED" ? "REVIEWED" : status,
+      title: input.action === "FEEDBACK" ? "Message from the hiring team" : ({ SHARED: "Hiring review reopened", SHORTLISTED: "Shortlisted for a requirement", INTERVIEW_REQUESTED: "Interview requested", SELECTED: "Selected for a requirement", REJECTED: "Not selected for this requirement" })[status],
+      message: input.workerMessage || null, ...(input.action === "INTERVIEW" ? { interviewAt: input.interviewAt, interviewMode: input.interviewMode } : {}),
+    });
     await audit(tx, access.userId, id, `BUSINESS_CANDIDATE_${input.action}`);
   });
   return candidateDetail(access, id);
@@ -174,14 +186,22 @@ export async function reviewCandidate(access: CandidateAccess, id: string, input
 
 export async function revokeCandidate(userId: string, id: string, input: { revision: number; note: string }) {
   await prisma.$transaction(async tx => {
-    const row = await tx.businessCandidate.findUnique({ where: { id }, select: { requirementId: true } });
+    const row = await tx.businessCandidate.findUnique({ where: { id }, select: { requirementId: true, applicationId: true } });
     if (!row) throw unavailable();
+    await lockApplication(tx, row.applicationId);
     await lockRequirement(tx, row.requirementId);
     await guardAssignedCandidate(tx, id);
     const result = await tx.businessCandidate.updateMany({ where: { id, revision: input.revision, revokedAt: null }, data: { revokedAt: new Date(), revision: { increment: 1 } } });
     if (result.count !== 1) throw changed();
     await tx.candidateEvent.create({ data: { candidateId: id, kind: "ACCESS_REVOKED", actorRole: "ADMIN", note: input.note } });
+    await applicationEvent(tx, row.applicationId, { kind: "REVIEW_ENDED", stage: "REVIEWED", title: "A hiring review was closed", message: "Contact the hiring team if you need more information." });
     await audit(tx, userId, id, "BUSINESS_CANDIDATE_ACCESS_REVOKED");
   });
   return candidateDetail({ userId, admin: true }, id);
+}
+
+export async function candidateResume(access: CandidateAccess, id: string) {
+  const candidate = await prisma.businessCandidate.findFirst({ where: { id, ...accessWhere(access) }, select: { application: { select: { submittedResume: { select: { fileName: true, mimeType: true, data: true } } } } } });
+  if (!candidate?.application.submittedResume) throw unavailable();
+  return candidate.application.submittedResume;
 }

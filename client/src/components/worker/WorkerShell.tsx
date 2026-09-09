@@ -2,12 +2,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { ArrowUpRight, Bookmark, CircleHelp, LogOut, Menu, RefreshCw, Search, ShieldCheck, UserRound, WifiOff } from "lucide-react";
+import { BriefcaseBusiness, CalendarCheck2, FileCheck2, ArrowUpRight, Bookmark, CircleHelp, LogOut, Menu, RefreshCw, Search, ShieldCheck, UserRound, WifiOff } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useWorker } from "./WorkerProvider";
 import { WorkerAlert, WorkerWordmark } from "./WorkerUI";
 
-const links = [{ href: "/worker/jobs", label: "Find work", icon: Search }, { href: "/worker/saved-jobs", label: "Saved jobs", icon: Bookmark }, { href: "/worker/profile", label: "My profile & CV", icon: UserRound }];
+const links = [{ href: "/worker/applications", label: "My applications", icon: FileCheck2 }, { href: "/worker/assignments", label: "My assignments", icon: BriefcaseBusiness }, { href: "/worker/attendance", label: "My attendance", icon: CalendarCheck2 }, { href: "/worker/jobs", label: "Find work", icon: Search }, { href: "/worker/saved-jobs", label: "Saved jobs", icon: Bookmark }, { href: "/worker/profile", label: "My profile & CV", icon: UserRound }];
 export function WorkerShell({ children }: { children: ReactNode }) {
   const { user, profile, completion, signOut, notice, refresh } = useWorker(); const pathname = usePathname();
   const [open, setOpen] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState("");

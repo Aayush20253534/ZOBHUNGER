@@ -1,3 +1,4 @@
+import { adminWorkerWorkflowRouter } from "../workers/worker-workflow.routes.js";
 import { adminVendorsRouter } from "../vendors/vendors.routes.js";
 import { adminPartnerAccessRouter } from "../partner-access/partner-access.routes.js";
 import { adminCareersRouter } from "../careers/careers.routes.js";
@@ -46,6 +47,7 @@ adminRouter.use("/vendors", adminVendorsRouter);
 adminRouter.use("/partners", adminPartnerAccessRouter);
 adminRouter.use("/careers", adminCareersRouter);
 adminRouter.use(adminPhase2Router);
+adminRouter.use(adminWorkerWorkflowRouter);
 adminRouter.use("/attendance", adminAttendanceRouter);
 adminRouter.use("/deployments", adminDeploymentsRouter);
 adminRouter.use("/candidate-management", adminCandidatesRouter);

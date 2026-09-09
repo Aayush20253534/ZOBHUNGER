@@ -117,6 +117,8 @@ model User {
   savedJobs             WorkerSavedJob[]
   requirementDrafts     RequirementDraft[]
   attendanceApprovals   AttendanceApprovalEvent[]
+  workerAttendanceRequests WorkerAttendanceRequest[] @relation("WorkerAttendanceOwner")
+  workerAttendanceReviews WorkerAttendanceRequest[] @relation("WorkerAttendanceReviewer")
 
   @@index([role, isActive])
   @@index([createdAt])
@@ -338,6 +340,12 @@ model JobApplication {
   resumeUrl     String?
   message       String?
   status        ApplicationStatus @default(SUBMITTED)
+  revision      Int @default(0)
+  withdrawnAt   DateTime?
+  withdrawalReason String?
+  consentAt     DateTime?
+  profileSnapshot Json?
+  jobSnapshot   Json?
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
@@ -347,7 +355,10 @@ model JobApplication {
   placementCellApplication  PlacementCellApplication? @relation("PlacementCellApplications", fields: [placementCellApplicationId], references: [id], onDelete: SetNull)
 
   businessCandidates BusinessCandidate[]
+  workerEvents WorkerApplicationEvent[]
+  submittedResume JobApplicationResume?
 
+  @@unique([jobId, workerUserId])
   @@unique([jobId, email])
   @@index([jobId, status, createdAt])
   @@index([workerUserId])
@@ -570,6 +581,7 @@ model CandidateEvent {
   interviewAt   DateTime?
   interviewMode String?
   interviewDetails String?
+  workerMessage String?
   createdAt     DateTime                @default(now())
 
   candidate BusinessCandidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
@@ -602,6 +614,7 @@ model WorkforceAssignment {
   requirement    WorkforceRequirement @relation(fields: [requirementId], references: [id], onDelete: Restrict)
   attendance     AttendanceRecord[]
   corrections    AttendanceCorrection[]
+  workerRequests WorkerAttendanceRequest[]
 
   @@index([requirementId, startDate, endDate])
   @@index([cancelledAt, startDate, endDate])
@@ -627,6 +640,7 @@ model AttendanceRecord {
   assignment WorkforceAssignment @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
   events     AttendanceEvent[]
   approvals  AttendanceApprovalEvent[]
+  workerRequests WorkerAttendanceRequest[]
 
   @@unique([assignmentId, date])
   @@index([date, status])
@@ -789,4 +803,76 @@ model VendorDocument {
   application    VendorApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@unique([applicationId, kind])
+}
+
+
+// A worker submits a fixed application snapshot; later profile/CV edits do not
+// silently alter what the hiring team reviewed.
+model WorkerApplicationEvent {
+  id String @id @default(cuid())
+  applicationId String
+  kind String
+  stage String
+  title String
+  message String?
+  interviewAt DateTime?
+  interviewMode String?
+  createdAt DateTime @default(now())
+  application JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  @@index([applicationId, createdAt, id])
+}
+
+model JobApplicationResume {
+  id String @id @default(cuid())
+  applicationId String @unique
+  fileName String
+  mimeType String
+  size Int
+  sha256 String
+  data Bytes
+  createdAt DateTime @default(now())
+  application JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+}
+
+enum WorkerAttendanceRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// Self-reported attendance stays separate until an administrator approves it.
+model WorkerAttendanceRequest {
+  id String @id @default(cuid())
+  workerUserId String
+  assignmentId String
+  requestKey String
+  openKey String? @unique
+  date DateTime @db.Date
+  kind String
+  status WorkerAttendanceRequestStatus @default(PENDING)
+  attendanceStatus AttendanceStatus
+  checkInAt DateTime?
+  checkOutAt DateTime?
+  breakMinutes Int @default(0)
+  workedMinutes Int?
+  lateMinutes Int @default(0)
+  reason String
+  recordRevision Int?
+  recordApprovalRevision Int?
+  assignmentRevision Int
+  revision Int @default(0)
+  recordId String?
+  approvedRecordRevision Int?
+  reviewedByUserId String?
+  reviewedAt DateTime?
+  reviewNote String?
+  createdAt DateTime @default(now())
+  worker User @relation("WorkerAttendanceOwner", fields: [workerUserId], references: [id], onDelete: Restrict)
+  reviewer User? @relation("WorkerAttendanceReviewer", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+  assignment WorkforceAssignment @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
+  record AttendanceRecord? @relation(fields: [recordId], references: [id], onDelete: SetNull)
+  @@unique([workerUserId, requestKey])
+  @@index([workerUserId, status, createdAt, id])
+  @@index([status, createdAt, id])
+  @@index([assignmentId, date, status])
 }

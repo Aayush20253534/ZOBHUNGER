@@ -107,7 +107,7 @@ export async function assignmentMonth(access: AttendanceAccess, id: string, mont
     const days = dates.map(date => { const record = records.find(row => dateKey(row.date) === date); return { date,
       status: dayStatus(assignment, date, record?.status), record: record ? recordDto(record) : null, correctionId: corrections.find(row => dateKey(row.date) === date)?.id ?? null }; });
     return { assignment: assignmentDto(assignment), month, today: istToday(), days,
-      settingsLocked: Boolean(await tx.attendanceRecord.count({ where: { assignmentId: id } }) || await tx.attendanceCorrection.count({ where: { assignmentId: id } })),
+      settingsLocked: Boolean(await tx.attendanceRecord.count({ where: { assignmentId: id } }) || await tx.attendanceCorrection.count({ where: { assignmentId: id } }) || await tx.workerAttendanceRequest.count({ where: { assignmentId: id } })),
       recordedDays: records.length, presentDays: records.filter(row => row.status === "PRESENT").length,
       workedMinutes: records.reduce((sum, row) => sum + (row.workedMinutes ?? 0), 0), lateDays: records.filter(row => row.lateMinutes > 0).length };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
@@ -139,7 +139,7 @@ export async function listAssignments(query: LookupQuery) {
 }
 export async function selectedCandidateOptions(query: LookupQuery) {
   const search = { contains: query.query, mode: "insensitive" as const };
-  const where: Prisma.BusinessCandidateWhereInput = { status: "SELECTED", revokedAt: null, assignment: { is: null },
+  const where: Prisma.BusinessCandidateWhereInput = { status: "SELECTED", revokedAt: null, application: { is: { withdrawnAt: null } }, assignment: { is: null },
     requirement: { is: { status: { not: "CLOSED" }, OR: [
       { businessProfile: { is: { user: { is: { role: "BUSINESS", isActive: true } } } } },
       { businessProfileId: null, submittedBy: { is: { role: "BUSINESS", isActive: true } } },

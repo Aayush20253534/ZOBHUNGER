@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "@/styles/worker.css";
+import "@/styles/worker-workflows.css";
 
 export const metadata: Metadata = {
   title: { default: "Worker Space", template: "%s | ZOBHUNGER" },

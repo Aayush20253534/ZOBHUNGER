@@ -10,7 +10,7 @@ const npm = process.env.npm_execpath;
 const suite = [
   "business", "business-dashboard", "business-requirements", "business-candidates",
   "business-deployments", "business-attendance", "phase2", "submission-recovery",
-  "partner-hr", "vendor-empanelment", ...(includeWorkers ? ["workers"] : []),
+  "partner-hr", "vendor-empanelment", ...(includeWorkers ? ["workers", "worker-workflows"] : []),
 ];
 const steps = [
   { name: "Release-check regression tests", cwd: root, args: ["--test", "scripts/tests/release-routes.test.mjs"] },
@@ -27,7 +27,7 @@ const steps = [
 const revision = spawnSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" });
 const changes = spawnSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" });
 const report = {
-  scope: `Automated Phase 2${includeWorkers ? " and worker P3.1–P3.3" : ""} code and dedicated-database checks; not production signoff`,
+  scope: `Automated Phase 2${includeWorkers ? " and worker P3.1–P3.5" : ""} code and dedicated-database checks; not production signoff`,
   status: "running", startedAt: new Date().toISOString(), node: process.version,
   databaseKind: process.env.TEST_DATABASE_KIND || "postgresql (operator-provided test database)",
   revision: revision.status === 0 ? revision.stdout.trim() : null,

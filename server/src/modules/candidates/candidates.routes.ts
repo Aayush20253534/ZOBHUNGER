@@ -1,3 +1,4 @@
+import { sendPrivateResume } from "../workers/worker-workflow.routes.js";
 import { Router, type RequestHandler } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
@@ -6,7 +7,7 @@ import { apiSuccessResponse } from "../../utils/api-response.js";
 import { HttpError } from "../../utils/http-error.js";
 import { candidateParams, candidateQuery, historyQuery, lookupQuery, reviewCandidateSchema, revokeCandidateSchema, shareCandidateSchema,
   type CandidateQuery, type LookupQuery, type ReviewCandidateInput, type ShareCandidateInput } from "./candidates.schema.js";
-import { candidateDetail, candidateLookups, listCandidates, reviewCandidate, revokeCandidate, shareCandidate } from "./candidates.service.js";
+import { candidateResume, candidateDetail, candidateLookups, listCandidates, reviewCandidate, revokeCandidate, shareCandidate } from "./candidates.service.js";
 
 const privateResponse: RequestHandler = (_req, res, next) => { res.set("Cache-Control", "no-store"); next(); };
 const portalWrite: RequestHandler = (req, _res, next) => {
@@ -45,3 +46,6 @@ adminCandidatesRouter.get("/:id", validate({ params: candidateParams, query: his
 adminCandidatesRouter.post("/:id/revoke", portalWrite, validate({ params: candidateParams, body: revokeCandidateSchema }), async (_req, res) => {
   res.json(apiSuccessResponse("Business access revoked", await revokeCandidate(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.body)));
 });
+
+businessCandidatesRouter.get("/:id/resume", ...business, validate({ params: candidateParams }), async (_req, res) => sendPrivateResume(res, await candidateResume({ userId: res.locals.authUser.id, admin: false }, res.locals.validated.params.id)));
+adminCandidatesRouter.get("/:id/resume", validate({ params: candidateParams }), async (_req, res) => sendPrivateResume(res, await candidateResume({ userId: res.locals.authUser.id, admin: true }, res.locals.validated.params.id)));

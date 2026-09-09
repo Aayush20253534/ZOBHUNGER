@@ -19,6 +19,7 @@ export interface WorkerCompletion { percent: number; checklist: { id: string; la
 export interface WorkerProfileResult { profile: WorkerProfile | null; completion: WorkerCompletion }
 export interface WorkerWorkspace extends WorkerProfileResult { user: AuthUser }
 export interface WorkerJob {
+  applicationId?: string | null;
   id: string; slug: string | null; title: string; location: string; city: string; state: string | null;
   category: string; engagementType: string; description: string; responsibilities: string[]; requirements: string[];
   compensation: string | null; publishedAt: string | null; saved: boolean; available?: boolean; savedAt?: string;

@@ -8,10 +8,10 @@ const pageSize = 9;
 const select = { id: true, slug: true, title: true, location: true, city: true, state: true, category: true, engagementType: true, description: true, responsibilities: true, requirements: true, compensation: true, publishedAt: true } satisfies Prisma.JobSelect;
 // Worker discovery always uses live records; demo, scheduled and unpublished
 // vacancies cannot be presented as opportunities or saved into an account.
-const liveWhere = (): Prisma.JobWhereInput => ({ AND: [availableJobWhere, { isDemo: false, publishedAt: { lte: new Date() } }] });
+export const liveWorkerJobWhere = (): Prisma.JobWhereInput => ({ AND: [availableJobWhere, { isDemo: false, publishedAt: { lte: new Date() } }] });
 const literal = (value: string) => value.replace(/[\\%_]/g, character => `\\${character}`);
 export async function workerJobs(userId: string, filters: WorkerJobsQuery) {
-  const terms: Prisma.JobWhereInput[] = [liveWhere()];
+  const terms: Prisma.JobWhereInput[] = [liveWorkerJobWhere()];
   if (filters.city) terms.push({ OR: [{ city: { equals: literal(filters.city), mode: "insensitive" } }, { location: { equals: literal(filters.city), mode: "insensitive" } }] });
   if (filters.category) terms.push({ category: { equals: literal(filters.category), mode: "insensitive" } });
   if (filters.engagementType) terms.push({ engagementType: { equals: literal(filters.engagementType), mode: "insensitive" } });
@@ -24,7 +24,7 @@ export async function workerJobs(userId: string, filters: WorkerJobsQuery) {
   return { items: items.map(({ savedBy, ...job }) => ({ ...job, saved: savedBy.length > 0 })), total, page: filters.page, pageSize, totalPages: Math.max(1, Math.ceil(total / pageSize)) };
 }
 export async function workerJobFacets() {
-  const where = liveWhere();
+  const where = liveWorkerJobWhere();
   const [cities, categories, engagements] = await Promise.all([
     prisma.job.findMany({ where, distinct: ["city"], select: { city: true }, orderBy: { city: "asc" }, take: 100 }),
     prisma.job.findMany({ where, distinct: ["category"], select: { category: true }, orderBy: { category: "asc" }, take: 100 }),
@@ -33,16 +33,17 @@ export async function workerJobFacets() {
   return { cities: cities.map(item => item.city), categories: categories.map(item => item.category), engagementTypes: engagements.map(item => item.engagementType) };
 }
 export async function workerJobDetail(userId: string, slug: string) {
-  const job = await prisma.job.findFirst({ where: { slug, AND: [liveWhere()] }, select: { ...select, savedBy: { where: { userId }, select: { id: true } } } });
+  const job = await prisma.job.findFirst({ where: { slug, AND: [liveWorkerJobWhere()] }, select: { ...select, savedBy: { where: { userId }, select: { id: true } } } });
   if (!job) throw new HttpError(404, "This opening is no longer available. Explore other roles or review your saved jobs.", { code: "JOB_NOT_FOUND" });
   const { savedBy, ...data } = job;
-  return { ...data, saved: savedBy.length > 0 };
+  const application = await prisma.jobApplication.findUnique({ where: { jobId_workerUserId: { jobId: job.id, workerUserId: userId } }, select: { id: true } });
+  return { ...data, saved: savedBy.length > 0, applicationId: application?.id ?? null };
 }
 export async function saveWorkerJob(userId: string, jobId: string) {
   return prisma.$transaction(async tx => {
     await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
     await lockAvailableJob(tx, jobId);
-    const job = await tx.job.findFirst({ where: { id: jobId, AND: [liveWhere()] }, select });
+    const job = await tx.job.findFirst({ where: { id: jobId, AND: [liveWorkerJobWhere()] }, select });
     if (!job) throw new HttpError(404, "This opening is no longer available", { code: "JOB_NOT_FOUND" });
     const existing = await tx.workerSavedJob.findUnique({ where: { userId_jobId: { userId, jobId } } });
     if (!existing && await tx.workerSavedJob.count({ where: { userId } }) >= 200) throw new HttpError(409, "You can keep up to 200 saved jobs. Remove an older opening before saving another.", { code: "SAVED_JOBS_LIMIT" });
@@ -59,7 +60,7 @@ export async function workerSavedJobs(userId: string, page: number) {
     prisma.workerSavedJob.findMany({ where: { userId }, select: { id: true, jobId: true, title: true, location: true, category: true, engagementType: true, createdAt: true }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: pageSize, skip: (page - 1) * pageSize }),
     prisma.workerSavedJob.count({ where: { userId } }),
   ]);
-  const available = await prisma.job.findMany({ where: { id: { in: records.map(record => record.jobId) }, AND: [liveWhere()] }, select });
+  const available = await prisma.job.findMany({ where: { id: { in: records.map(record => record.jobId) }, AND: [liveWorkerJobWhere()] }, select });
   const byId = new Map(available.map(job => [job.id, job]));
   const items = records.map(record => {
     const job = byId.get(record.jobId);

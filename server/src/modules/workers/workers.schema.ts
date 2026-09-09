@@ -10,8 +10,9 @@ const list = (max = 20) => z.array(z.string().trim().min(1).max(80)).max(max).tr
 // No external, protocol-relative, encoded or arbitrary post-login destinations.
 export function workerDestination(value: unknown) {
   if (typeof value !== "string") return "/worker/profile";
-  if (["/worker", "/worker/jobs", "/worker/profile", "/worker/saved-jobs"].includes(value)) return value;
-  if (/^\/worker\/jobs\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,179}$/.test(value)) return value;
+  if (["/worker", "/worker/jobs", "/worker/profile", "/worker/saved-jobs", "/worker/applications", "/worker/assignments", "/worker/attendance"].includes(value)) return value;
+  if (/^\/worker\/jobs\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,179}(?:\/apply)?$/.test(value)) return value;
+  if (/^\/worker\/(applications|assignments)\/[a-zA-Z0-9_-]{1,64}$/.test(value)) return value;
   if (/^\/jobs\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,179}$/.test(value)) return `/worker${value}`;
   return "/worker/profile";
 }

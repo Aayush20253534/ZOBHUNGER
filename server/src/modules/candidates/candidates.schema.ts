@@ -32,11 +32,12 @@ export const shareCandidateSchema = z.object({
   skills: z.array(z.string().trim().min(1).max(60)).max(12).transform(values => values.filter((value, index) => values.findIndex(other => other.toLowerCase() === value.toLowerCase()) === index)),
 }).strict();
 const revision = z.number().int().min(0).max(2147483646);
+const workerMessage = z.string().trim().max(1500).optional();
 const note = z.string().trim().min(3).max(2000);
 export const reviewCandidateSchema = z.discriminatedUnion("action", [
-  z.object({ action: z.literal("STATUS"), revision, status: z.enum(["SHARED", "SHORTLISTED", "SELECTED", "REJECTED"]), note }).strict(),
-  z.object({ action: z.literal("FEEDBACK"), revision, note }).strict(),
-  z.object({ action: z.literal("INTERVIEW"), revision, note,
+  z.object({ action: z.literal("STATUS"), revision, status: z.enum(["SHARED", "SHORTLISTED", "SELECTED", "REJECTED"]), note, workerMessage }).strict(),
+  z.object({ action: z.literal("FEEDBACK"), revision, note, workerMessage }).strict(),
+  z.object({ action: z.literal("INTERVIEW"), revision, note, workerMessage,
     interviewAt: z.iso.datetime({ offset: true }).transform(value => new Date(value)),
     interviewMode: z.enum(["PHONE", "VIDEO", "IN_PERSON"]),
     interviewDetails: z.string().trim().min(3).max(1000),

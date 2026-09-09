@@ -1,3 +1,4 @@
+import { applicationEvent, lockApplication } from "../workers/worker-workflow.guards.js";
 import {
   ApplicationStatus,
   JobStatus,
@@ -407,13 +408,16 @@ export async function updateApplicationStatusWithAudit(
   context: AuditContext,
 ) {
   return prisma.$transaction(async (tx) => {
+    await lockApplication(tx, id);
     const current = await tx.jobApplication.findUnique({ where: { id } });
     if (!current) return null;
+    if (current.withdrawnAt) throw new HttpError(409, "This application was withdrawn.", { code: "APPLICATION_WITHDRAWN" });
+    if (current.workerUserId && status === "REJECTED" && await tx.businessCandidate.count({ where: { applicationId: id, OR: [{ revokedAt: null }, { assignment: { is: { cancelledAt: null } } }] } })) throw new HttpError(409, "Complete or revoke business reviews first.", { code: "APPLICATION_IN_PIPELINE" });
     if (current.status === status) return { entity: current, changed: false };
 
     const updated = await tx.jobApplication.update({
       where: { id },
-      data: { status },
+      data: { status, revision: { increment: 1 } },
       include: {
         job: {
           select: { id: true, slug: true, title: true },
@@ -421,6 +425,7 @@ export async function updateApplicationStatusWithAudit(
       },
     });
 
+    await applicationEvent(tx, id, { kind: "ADMIN_REVIEW", stage: status, title: `Hiring team update: ${status.toLowerCase()}` });
     await tx.auditLog.create({
       data: {
         actorUserId: context.actorUserId,

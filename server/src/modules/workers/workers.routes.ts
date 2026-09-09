@@ -1,3 +1,4 @@
+import { workerWorkflowRouter } from "./worker-workflow.routes.js";
 import express, { Router } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
@@ -40,3 +41,5 @@ workersRouter.get("/jobs/:slug", validate({ params: workerJobSlugSchema }), asyn
 workersRouter.get("/saved-jobs", validate({ query: savedJobsQuerySchema }), async (_req, res) => res.json(apiSuccessResponse("Saved jobs", await workerSavedJobs(res.locals.authUser.id, res.locals.validated.query.page))));
 workersRouter.put("/saved-jobs/:jobId", portalWrite, validate({ params: workerJobIdSchema }), async (_req, res) => res.json(apiSuccessResponse("Job saved", await saveWorkerJob(res.locals.authUser.id, res.locals.validated.params.jobId))));
 workersRouter.delete("/saved-jobs/:jobId", portalWrite, validate({ params: workerJobIdSchema }), async (_req, res) => res.json(apiSuccessResponse("Job removed", await removeWorkerJob(res.locals.authUser.id, res.locals.validated.params.jobId))));
+
+workersRouter.use(workerWorkflowRouter);
