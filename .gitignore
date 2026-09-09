@@ -9,4 +9,5 @@ out/
 *.log
 *.tsbuildinfo
 server/src/generated/prisma/
+.release-artifacts/
 notes.txt

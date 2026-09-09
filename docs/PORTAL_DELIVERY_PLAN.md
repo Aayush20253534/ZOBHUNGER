@@ -15,12 +15,15 @@ their attendance functionality belongs to P2.6. That work is preserved.
 | **P2.5** | **Deployment and team roster** | **Complete; dedicated roster, locations, deployment progress and weekly schedules** |
 | P2.6 | Attendance, business approvals, corrections and approval history | Complete; attendance, business decisions, corrections and immutable decision snapshots |
 | P2.7 | Reports and completed dashboard | Complete; four filtered reports, CSV, print, charts and dashboard connections |
-| P2.8 | Integration and release review | Integrated workflow and automated checks complete; real-device visual signoff remains (see PHASE2_COMPLETION.md) |
+| P2.8 | Integration and release review | Code checks, session recovery fixes and release tooling complete; hosted PostgreSQL, deployment, email and real-device signoff remain (see P2_8_RELEASE_REVIEW.md) |
 
 The completion patch implements P2.3, P2.6 and P2.7 together and includes the P2.8
 integration work and client walkthrough. See `PHASE2_COMPLETION.md` for deployment,
 page endpoints, verification evidence and the remaining real-device visual signoff.
-Next implementation scope is P3.1.
+The P2.8 follow-up adds a repeatable release command, PostgreSQL CI, read-only
+deployment checks and workspace session regression coverage. Its evidence and
+remaining external checks are recorded in `P2_8_RELEASE_REVIEW.md`.
+Next implementation scope is P3.1; Phase 2 production signoff is tracked separately.
 
 ## Phase 3 — Worker portal
 

@@ -13,6 +13,8 @@ import { BusinessWordmark } from "./BusinessUI";
 interface BusinessContextValue extends BusinessWorkspace {
   updateProfile: (profile: BusinessProfile) => void;
   signOut: () => Promise<void>;
+  connectionNotice: string;
+  refreshWorkspace: () => void;
 }
 const BusinessContext = createContext<BusinessContextValue | null>(null);
 
@@ -28,7 +30,8 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   const [workspace, setWorkspace] = useState<BusinessWorkspace | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error" | "forbidden" | "unauthenticated" | "unavailable">("loading");
   const [message, setMessage] = useState("");
-  const requests = useRef({ version: 0, unavailable: false });
+  const [connectionNotice, setConnectionNotice] = useState("");
+  const requests = useRef({ version: 0, unavailable: false, hasWorkspace: false });
 
   const refresh = useCallback(async () => {
     // Focus/visibility events cannot repair missing backend routes. Retry those
@@ -39,9 +42,23 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
       const response = await getBusinessWorkspace();
       if (current !== requests.current.version) return;
       if (response.data.user.role !== "BUSINESS") throw new ApiError("Use your business account to open this workspace.", 403);
-      setWorkspace(response.data); setStatus("ready"); setMessage("");
+      requests.current.hasWorkspace = true;
+      setWorkspace(response.data); setStatus("ready"); setMessage(""); setConnectionNotice("");
     } catch (error) {
       if (current !== requests.current.version) return;
+      // A focus/timer refresh must not unmount an open form during a temporary
+      // outage. Authentication failures still clear all private workspace data.
+      const transient = !(error instanceof ApiError) || error.status >= 500 || error.status === 429;
+      const accessFailure = error instanceof ApiError && (
+        error.status === 401 || error.status === 403 ||
+        error.code === "BUSINESS_API_UNAVAILABLE" || error.code === "PASSWORD_CHANGE_REQUIRED"
+      );
+      if (requests.current.hasWorkspace && transient && !accessFailure) {
+        setConnectionNotice("Connection interrupted. Showing your last loaded workspace; your open form is still here. Retry to refresh.");
+        return;
+      }
+      requests.current.hasWorkspace = false;
+      setConnectionNotice("");
       setWorkspace(null);
       if (error instanceof ApiError && error.code === "BUSINESS_API_UNAVAILABLE") {
         requests.current.unavailable = true;
@@ -82,13 +99,15 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   async function signOut() {
     await logout();
     requests.current.version++;
+    requests.current.hasWorkspace = false;
+    setConnectionNotice("");
     setWorkspace(null); setStatus("unauthenticated");
     router.replace("/business/login"); router.refresh();
   }
 
   function retry() {
     requests.current.unavailable = false;
-    setStatus("loading");
+    if (!requests.current.hasWorkspace) setStatus("loading");
     void refresh();
   }
 
@@ -101,5 +120,6 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     </div></div>;
   }
 
-  return <BusinessContext.Provider value={{ ...workspace, updateProfile: profile => setWorkspace(current => current ? { ...current, profile } : current), signOut }}>{children}</BusinessContext.Provider>;
+  // A different account signing in from another tab must start with fresh forms.
+  return <BusinessContext.Provider key={workspace.user.id} value={{ ...workspace, updateProfile: profile => setWorkspace(current => current ? { ...current, profile } : current), signOut, connectionNotice, refreshWorkspace: retry }}>{children}</BusinessContext.Provider>;
 }

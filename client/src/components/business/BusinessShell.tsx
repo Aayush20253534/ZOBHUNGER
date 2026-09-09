@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { ArrowUpRight, BarChart3, Building2, CalendarCheck2, CircleHelp, ClipboardList, Handshake, LayoutDashboard, LogOut, MapPin, Menu, ShieldCheck, UsersRound, UserRound } from "lucide-react";
+import { ArrowUpRight, BarChart3, Building2, CalendarCheck2, CircleHelp, ClipboardList, Handshake, LayoutDashboard, LogOut, MapPin, Menu, RefreshCw, ShieldCheck, UsersRound, UserRound, WifiOff } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useBusiness } from "./BusinessProvider";
 import { BusinessWordmark } from "./BusinessUI";
@@ -29,7 +29,7 @@ function workspaceTitle(pathname: string) {
 }
 
 export function BusinessShell({ children }: { children: ReactNode }) {
-  const { user, profile, signOut } = useBusiness();
+  const { user, profile, signOut, connectionNotice, refreshWorkspace } = useBusiness();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
@@ -50,7 +50,11 @@ export function BusinessShell({ children }: { children: ReactNode }) {
         <span className="zb-biz-topbar-title">{workspaceTitle(pathname)}</span>
         <span className="zb-biz-session"><ShieldCheck aria-hidden="true" />Business account</span><Link className="zb-biz-topbar-site" href="/for-business">Website<ArrowUpRight aria-hidden="true" /></Link>
       </header>
-      <div id="business-content" tabIndex={-1} className="zb-biz-content">{error && <p className="zb-biz-error" role="alert">{error}</p>}{children}</div>
+      <div id="business-content" tabIndex={-1} className="zb-biz-content">
+        {error && <p className="zb-biz-error" role="alert">{error}</p>}
+        {connectionNotice && <div className="zb-biz-connection" role="status"><WifiOff aria-hidden="true" /><p>{connectionNotice}</p><button type="button" className="zb-biz-button zb-biz-button--secondary" onClick={refreshWorkspace}><RefreshCw aria-hidden="true" />Retry</button></div>}
+        {children}
+      </div>
       <footer className="zb-biz-workspace-footer"><span>ZOBHUNGER · Hire. Deploy. Deliver.</span><Link href="/contact">Help & contact</Link></footer>
     </div>
   </div>;
