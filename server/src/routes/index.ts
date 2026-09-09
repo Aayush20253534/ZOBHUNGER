@@ -1,3 +1,4 @@
+import { vendorsRouter } from "../modules/vendors/vendors.routes.js";
 import { Router } from "express";
 import { adminRouter } from "../modules/admin/admin.routes.js";
 import { authRouter } from "../modules/auth/auth.routes.js";
@@ -26,3 +27,5 @@ apiRouter.use("/partner-applications", partnersRouter);
 apiRouter.use("/placement-cell-applications", placementCellsRouter);
 
 apiRouter.use("/career-applications", careersRouter);
+
+apiRouter.use("/vendor-applications", vendorsRouter);

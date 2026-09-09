@@ -1,3 +1,4 @@
+import { VendorInvitation } from "@/components/vendors/VendorInvitation";
 import { CTASection } from "@/components/common/CTASection";
 import { BrandExperiencePreview } from "@/components/home/BrandExperiencePreview";
 import { HomeScale } from "@/components/home/HomeScale";
@@ -29,6 +30,7 @@ export default function Page() {
       <HomeExecutionModel />
       <HomeCaseStudyProof />
       <HomePresencePreview />
+      <VendorInvitation />
       <div className="zb-home-final-cta">
         <CTASection
           title="Need a workforce that can execute?"

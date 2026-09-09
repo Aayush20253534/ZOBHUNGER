@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { VendorInvitation } from "@/components/vendors/VendorInvitation";
 import {
   ArrowUpRight,
   BriefcaseBusiness,
@@ -117,6 +118,8 @@ export function ForBusiness() {
           })}
         </div>
       </section>
+
+      <VendorInvitation />
 
       <section
         className="zb-company-section zb-company-brief"

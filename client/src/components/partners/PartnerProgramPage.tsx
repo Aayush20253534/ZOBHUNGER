@@ -1,3 +1,4 @@
+import { VendorInvitation } from "@/components/vendors/VendorInvitation";
 import { ApplicationJourney } from "@/components/common/ApplicationJourney";
 import {
   ArrowDown,
@@ -209,6 +210,8 @@ export function PartnerProgramPage() {
           ))}
         </ol>
       </section>
+
+      <VendorInvitation />
 
       <section id="partner-application" className="zb-partner-section zb-partner-application" aria-labelledby="partner-application-title">
         <div>

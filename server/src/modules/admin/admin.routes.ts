@@ -1,3 +1,4 @@
+import { adminVendorsRouter } from "../vendors/vendors.routes.js";
 import { adminPartnerAccessRouter } from "../partner-access/partner-access.routes.js";
 import { adminCareersRouter } from "../careers/careers.routes.js";
 import { adminCandidatesRouter } from "../candidates/candidates.routes.js";
@@ -41,6 +42,7 @@ export const adminRouter = Router();
 
 adminRouter.use(requireAuth, requireRole("ADMIN"));
 adminRouter.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
+adminRouter.use("/vendors", adminVendorsRouter);
 adminRouter.use("/partners", adminPartnerAccessRouter);
 adminRouter.use("/careers", adminCareersRouter);
 adminRouter.use(adminPhase2Router);

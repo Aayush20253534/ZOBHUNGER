@@ -18,6 +18,7 @@ const staticRoutes = [
   { path: "/blogs", priority: 0.8, changeFrequency: "weekly" },
   { path: "/brand-experience", priority: 0.8, changeFrequency: "monthly" },
   { path: "/case-studies", priority: 0.85, changeFrequency: "monthly" },
+  { path: "/vendor-empanelment", priority: 0.75, changeFrequency: "monthly" },
   { path: "/become-a-partner", priority: 0.7, changeFrequency: "monthly" },
   {
     path: "/placement-cell-partnership",

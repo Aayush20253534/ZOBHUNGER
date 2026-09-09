@@ -243,6 +243,7 @@ export function AdminDashboard() {
           <p>{user?.email}</p>
         </div>
         <div className="zb-admin-actions">
+          <Link href="/admin/vendors"><Handshake aria-hidden="true" />Vendor empanelment &amp; records</Link>
           <Link href="/admin/partners"><Handshake aria-hidden="true" />Partner review &amp; approvals</Link>
           <Link href="/admin/careers"><UsersRound aria-hidden="true" />Career profiles &amp; HR review</Link>
           <Link href="/admin/candidate-management"><UsersRound aria-hidden="true" />Candidate sharing &amp; reviews</Link>

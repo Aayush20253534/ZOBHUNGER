@@ -640,3 +640,89 @@ model AttendanceCorrection {
   @@index([assignmentId, date, createdAt])
   @@index([status, createdAt])
 }
+
+
+enum VendorApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum VendorDocumentKind {
+  COMPANY_PROFILE
+  REGISTRATION
+  TAX
+  MSME
+  OTHER
+}
+
+model VendorApplication {
+  id                    String @id
+  submissionKey         String @unique
+  submissionHash        String
+  uploadTokenHash       String @unique
+  uploadExpiresAt       DateTime
+  companyName           String
+  organizationType      String
+  establishedYear       Int?
+  registrationNumber    String?
+  gstNumber             String?
+  msmeNumber            String?
+  addressLine           String
+  city                  String
+  state                 String
+  postalCode            String
+  country               String
+  contactName           String
+  contactRole           String
+  email                 String
+  phone                 String
+  alternatePhone        String?
+  website               String?
+  serviceCategories     String[]
+  specializedServices   String?
+  serviceDescription    String
+  yearsExperience       Int
+  teamSize              Int
+  coverage              String[]
+  industries            String[]
+  projectExperience     String
+  notableClients        String?
+  capacityNotes         String?
+  consentAt             DateTime @default(now())
+  status                VendorApplicationStatus @default(DRAFT)
+  vendorCode            String? @unique
+  submittedAt           DateTime?
+  approvedAt            DateTime?
+  reviewedAt            DateTime?
+  reviewedByUserId      String?
+  reviewNotes           String?
+  accountManager        String?
+  internalNotes         String?
+  revision              Int @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  documents             VendorDocument[]
+
+  @@index([status, submittedAt])
+  @@index([email])
+  @@index([city])
+}
+
+model VendorDocument {
+  id             String @id
+  applicationId  String
+  kind           VendorDocumentKind
+  fileName       String
+  mimeType       String
+  size           Int
+  sha256         String
+  data           Bytes
+  createdAt      DateTime @default(now())
+  application    VendorApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@unique([applicationId, kind])
+}

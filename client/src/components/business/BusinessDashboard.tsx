@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { VendorInvitation } from "@/components/vendors/VendorInvitation";
 import { OperationsOverview } from "./phase2/OperationsOverview";
 import { useCallback, useState, type CSSProperties } from "react";
 import { ArrowRight, ArrowUpRight, Building2, CalendarDays, ChevronLeft, ChevronRight, ClipboardList, FileCheck2, MapPin, Plus, RefreshCw, Send, UsersRound } from "lucide-react";
@@ -57,6 +58,7 @@ export function BusinessDashboard() {
       </section>
       <p className="zb-dash-footnote" role="status">{loading ? "Updating your company’s dashboard…" : `Updated ${businessDate(data.generatedAt, true)} IST. `}{!loading && "Open totals and the list cover all time; the period selector changes submission activity."}</p>
     </div>}
+    <VendorInvitation href="/business/vendors" />
   </div>;
 }
 

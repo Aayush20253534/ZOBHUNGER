@@ -8,6 +8,7 @@ import "@/styles/footer-business.css";
 type FooterLink = { href: string; label: string; icon?: LucideIcon };
 const businessLinks = [
   { label: "For business", href: "/for-business", icon: Building2 },
+  { label: "Vendor empanelment", href: "/vendor-empanelment", icon: Handshake },
   { label: "Become a Partner", href: "/become-a-partner#partner-application", icon: Handshake },
   { label: "Business login", href: "/business/login", icon: LogIn },
   { label: "Hire workforce", href: "/hire-workforce", icon: ClipboardList },
@@ -33,6 +34,7 @@ const opportunityLinks = [
 ] as const;
 
 const partnershipLinks = [
+  { label: "Vendor Empanelment / Onboarding", href: "/vendor-empanelment" },
   { label: "Independent Business Partner", href: "/become-a-partner" },
   {
     label: "Placement Cell & Institution Partnership",
