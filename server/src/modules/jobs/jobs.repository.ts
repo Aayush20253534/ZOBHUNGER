@@ -1,4 +1,5 @@
 import { JobStatus, Prisma } from "../../generated/prisma/client.js";
+import { availableJobWhere, lockAvailableJob } from "./job-availability.js";
 import { prisma } from "../../config/db.js";
 import type { CreateJobApplicationInput, ListJobsQuery } from "./jobs.schema.js";
 
@@ -65,7 +66,7 @@ function buildPublicJobWhere(filters: ListJobsQuery): Prisma.JobWhereInput {
 }
 
 export async function findPublicJobs(filters: ListJobsQuery) {
-  const where = buildPublicJobWhere(filters);
+  const where = { AND: [buildPublicJobWhere(filters), availableJobWhere] };
   const skip = (filters.page - 1) * filters.pageSize;
 
   const [items, total] = await prisma.$transaction([
@@ -87,6 +88,7 @@ export function findPublicJobBySlug(slug: string) {
     where: {
       slug,
       status: JobStatus.OPEN,
+      AND: [availableJobWhere],
     },
     select: publicJobSelect,
   });
@@ -96,6 +98,7 @@ export function findOpenJobByReference(reference: string) {
   return prisma.job.findFirst({
     where: {
       status: JobStatus.OPEN,
+      AND: [availableJobWhere],
       OR: [{ id: reference }, { slug: reference }],
     },
     select: {
@@ -119,7 +122,9 @@ export function findApplicationByJobAndEmail(jobId: string, email: string) {
 }
 
 export function createJobApplication(jobId: string, input: CreateJobApplicationInput) {
-  return prisma.jobApplication.create({
+  return prisma.$transaction(async tx => {
+    await lockAvailableJob(tx, jobId);
+    return tx.jobApplication.create({
     data: {
       jobId,
       name: input.fullName,
@@ -139,5 +144,6 @@ export function createJobApplication(jobId: string, input: CreateJobApplicationI
       status: true,
       createdAt: true,
     },
+    });
   });
 }

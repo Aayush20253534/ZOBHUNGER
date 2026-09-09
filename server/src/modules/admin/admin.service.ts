@@ -157,7 +157,7 @@ export async function changeRequirementStatus(
       code: "REQUIREMENT_NOT_FOUND",
     });
   }
-
+  await jobCache.invalidate();
   return result;
 }
 

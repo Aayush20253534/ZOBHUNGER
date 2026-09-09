@@ -1,5 +1,8 @@
 # P2.2 — Business dashboard
 
+> Historical delivery notes. The remaining Phase 2 work is now implemented; see
+> [Phase 2 completion](PHASE2_COMPLETION.md) for current behavior and setup.
+
 This patch adds a company dashboard and read-only requirement briefs to the P2.1 business workspace. It is based on BZN(3).zip with `zobhunger-business-login-404-fix.patch` already applied. Apply this patch after that fix.
 
 ## Pages to check

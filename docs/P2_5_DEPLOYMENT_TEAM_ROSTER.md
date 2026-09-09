@@ -1,5 +1,8 @@
 # P2.5 — Deployment and team roster
 
+> Historical delivery notes. The remaining Phase 2 work is now implemented; see
+> [Phase 2 completion](PHASE2_COMPLETION.md) for current behavior and setup.
+
 This completes the deployment part from the original portal plan. The previous
 `zobhunger-p2-5-attendance-management.patch` was numbered incorrectly: it added
 the assignment foundation and much of **P2.6 — Attendance management**. Keep it

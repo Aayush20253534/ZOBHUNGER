@@ -62,7 +62,7 @@ export function resetBusinessPassword(token: string, password: string) {
 
 // Only internal, implemented destinations are accepted after authentication.
 export function businessDestination(candidate: string | null) {
-  return candidate && (["/business", "/business/dashboard", "/business/candidates", "/business/deployments", "/business/attendance", "/business/requirements", "/business/onboarding", "/business/company", "/business/account"].includes(candidate)
-    || /^\/business\/requirements\/[a-zA-Z0-9_-]{1,64}(?:\/(?:edit|candidates|attendance|deployments))?$/.test(candidate) || /^\/business\/(?:candidates|attendance|deployments)\/[a-zA-Z0-9_-]{1,64}$/.test(candidate))
+  return candidate && (["/business", "/business/dashboard", "/business/candidates", "/business/deployments", "/business/attendance", "/business/requirements", "/business/requirements/drafts", "/business/attendance-approvals", "/business/reports", "/business/onboarding", "/business/company", "/business/account"].includes(candidate)
+    || /^\/business\/requirements\/[a-zA-Z0-9_-]{1,64}(?:\/(?:edit|candidates|attendance|deployments|jobs))?$/.test(candidate) || /^\/business\/(?:candidates|attendance|deployments|attendance-approvals|requirements\/drafts)\/[a-zA-Z0-9_-]{1,64}$/.test(candidate))
     ? candidate : "/business";
 }

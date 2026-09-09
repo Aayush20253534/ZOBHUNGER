@@ -28,6 +28,7 @@
     "cache:clear": "node --import tsx scripts/clear-job-cache.ts",
     "test:candidates": "npm run build && node --experimental-test-module-mocks --test tests/business-candidates.integration.test.mjs",
     "test:attendance": "npm run build && node --experimental-test-module-mocks --test tests/business-attendance.integration.test.mjs",
+    "test:phase2": "npm run build && node --experimental-test-module-mocks --test tests/phase2.integration.test.mjs",
     "test:deployments": "npm run build && node --experimental-test-module-mocks --test tests/business-deployments.integration.test.mjs"
   },
   "dependencies": {

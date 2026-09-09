@@ -9,6 +9,7 @@ import {
 } from "../../generated/prisma/client.js";
 import { prisma } from "../../config/db.js";
 import { guardRequirementAssignments } from "../attendance/attendance.guards.js";
+import { eligibleRequirement, pauseRequirementJobs } from "../phase2/linked-jobs.service.js";
 import { HttpError } from "../../utils/http-error.js";
 import type {
   ListAdminJobsQuery,
@@ -333,6 +334,7 @@ export async function updateRequirementStatusWithAudit(
     if (current.status === status) return { entity: current, changed: false };
 
     if (status === "CLOSED") await guardRequirementAssignments(tx, id);
+    if (status !== "QUALIFIED") await pauseRequirementJobs(tx, id);
 
     const changed = await tx.workforceRequirement.updateMany({
       where: { id, revision: current.revision },
@@ -363,14 +365,19 @@ export async function updateJobStatusWithAudit(
   context: AuditContext,
 ) {
   return prisma.$transaction(async (tx) => {
+    const reference = await tx.job.findUnique({ where: { id }, select: { requirementId: true } });
+    if (reference?.requirementId) await tx.$queryRaw(Prisma.sql`SELECT id FROM "WorkforceRequirement" WHERE id = ${reference.requirementId} FOR UPDATE`);
+    await tx.$queryRaw(Prisma.sql`SELECT id FROM "Job" WHERE id = ${id} FOR UPDATE`);
     const current = await tx.job.findUnique({ where: { id } });
     if (!current) return null;
+    if (current.requirementId && status === "OPEN") await eligibleRequirement(tx, current.requirementId);
     if (current.status === status) return { entity: current, changed: false };
 
     const updated = await tx.job.update({
       where: { id },
       data: {
         status,
+        revision: { increment: 1 },
         publishedAt:
           status === JobStatus.OPEN && !current.publishedAt
             ? new Date()

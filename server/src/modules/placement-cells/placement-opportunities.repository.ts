@@ -1,4 +1,5 @@
 import { ApplicationStatus, JobStatus, Prisma } from "../../generated/prisma/client.js";
+import { availableJobWhere, lockAvailableJob } from "../jobs/job-availability.js";
 import { prisma } from "../../config/db.js";
 import type { PlacementApplicationQuery, PlacementOpportunityQuery } from "./placement-opportunities.schema.js";
 
@@ -46,7 +47,7 @@ export function listPlacementOpportunities(query: PlacementOpportunityQuery) {
     }
   }
   return prisma.job.findMany({
-    where,
+    where: { AND: [where, availableJobWhere] },
     select: opportunitySelect,
     orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
     take: 100,
@@ -55,7 +56,7 @@ export function listPlacementOpportunities(query: PlacementOpportunityQuery) {
 
 export function findOpenPlacementOpportunity(jobId: string) {
   return prisma.job.findFirst({
-    where: { status: JobStatus.OPEN, OR: [{ id: jobId }, { slug: jobId }] },
+    where: { status: JobStatus.OPEN, AND: [availableJobWhere], OR: [{ id: jobId }, { slug: jobId }] },
     select: { id: true, slug: true, title: true, status: true },
   });
 }
@@ -71,7 +72,9 @@ export function createPlacementOpportunityApplication(input: {
   experience?: string | null;
   message?: string;
 }) {
-  return prisma.jobApplication.create({
+  return prisma.$transaction(async tx => {
+    await lockAvailableJob(tx, input.jobId);
+    return tx.jobApplication.create({
     data: {
       jobId: input.jobId,
       placementCellApplicationId: input.placementCellApplicationId,
@@ -87,6 +90,7 @@ export function createPlacementOpportunityApplication(input: {
       job: { select: { id: true, slug: true, title: true, engagementType: true, location: true, status: true } },
       placementCandidate: { select: { id: true, fullName: true, email: true, course: true, qualification: true } },
     },
+    });
   });
 }
 

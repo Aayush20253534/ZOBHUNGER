@@ -1,4 +1,6 @@
 import { businessCandidatesRouter } from "../candidates/candidates.routes.js";
+import { businessPhase2Router } from "../phase2/phase2.routes.js";
+import { jobCache } from "../../services/job-cache.service.js";
 import { businessAttendanceRouter } from "../attendance/attendance.routes.js";
 import { businessDeploymentsRouter } from "../deployments/deployments.routes.js";
 import { Router, type RequestHandler } from "express";
@@ -18,6 +20,7 @@ import { createBusinessRequirementSchema, updateBusinessRequirementSchema, withd
 import { createBusinessRequirement, updateBusinessRequirement, withdrawBusinessRequirement, listBusinessRequirements } from "./business-requirements.service.js";
 
 export const businessRouter = Router();
+businessRouter.use(businessPhase2Router);
 businessRouter.use("/attendance", businessAttendanceRouter);
 businessRouter.use("/deployments", businessDeploymentsRouter);
 businessRouter.use("/candidates", businessCandidatesRouter);
@@ -66,9 +69,13 @@ businessRouter.get("/requirements/:id", ...businessAccess, validate({ params: re
 });
 businessRouter.put("/requirements/:id", ...businessAccess, portalWrite, validate({ params: requirementIdSchema, body: updateBusinessRequirementSchema }), async (_req, res) => {
   const { id } = res.locals.validated.params as { id: string };
-  res.json(apiSuccessResponse("Requirement saved", await updateBusinessRequirement(res.locals.authUser.id, id, res.locals.validated.body as UpdateBusinessRequirement)));
+  const data = await updateBusinessRequirement(res.locals.authUser.id, id, res.locals.validated.body as UpdateBusinessRequirement);
+  await jobCache.invalidate();
+  res.json(apiSuccessResponse("Requirement saved", data));
 });
 businessRouter.post("/requirements/:id/withdraw", ...businessAccess, portalWrite, validate({ params: requirementIdSchema, body: withdrawBusinessRequirementSchema }), async (_req, res) => {
   const { id } = res.locals.validated.params as { id: string };
-  res.json(apiSuccessResponse("Requirement withdrawn", await withdrawBusinessRequirement(res.locals.authUser.id, id, res.locals.validated.body as WithdrawBusinessRequirement)));
+  const data = await withdrawBusinessRequirement(res.locals.authUser.id, id, res.locals.validated.body as WithdrawBusinessRequirement);
+  await jobCache.invalidate();
+  res.json(apiSuccessResponse("Requirement withdrawn", data));
 });

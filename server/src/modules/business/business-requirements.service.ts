@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { pauseRequirementJobs } from "../phase2/linked-jobs.service.js";
 import { guardRequirementAssignments } from "../attendance/attendance.guards.js";
 import { Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../../config/db.js";
@@ -46,10 +47,13 @@ export async function listBusinessRequirements(userId: string, query: ListBusine
 }
 
 export async function createBusinessRequirement(userId: string, input: CreateBusinessRequirement) {
+  return prisma.$transaction(tx => createBusinessRequirementTx(tx, userId, input), { isolationLevel: "ReadCommitted" });
+}
+
+export async function createBusinessRequirementTx(tx: Prisma.TransactionClient, userId: string, input: CreateBusinessRequirement) {
   const { requestKey, ...brief } = input;
   const submissionKey = `${userId}:${requestKey}`;
   const submissionHash = createHash("sha256").update(JSON.stringify(brief)).digest("hex");
-  return prisma.$transaction(async tx => {
     const profile = await tx.businessProfile.findUnique({ where: { userId }, select: { id: true } });
     // PostgreSQL's unique key arbitrates simultaneous retries. ON CONFLICT DO
     // NOTHING keeps the transaction usable for reading the winning submission.
@@ -65,18 +69,19 @@ export async function createBusinessRequirement(userId: string, input: CreateBus
         entityType: "WorkforceRequirement", entityId: requirement.id, metadata: { source: "BUSINESS" } } });
     }
     return { requirement, created: inserted.count === 1 };
-  }, { isolationLevel: "ReadCommitted" });
 }
 
 export async function updateBusinessRequirement(userId: string, id: string, input: UpdateBusinessRequirement) {
   const { revision, ...brief } = input;
   return prisma.$transaction(async tx => {
+    await tx.$queryRaw(Prisma.sql`SELECT id FROM "WorkforceRequirement" WHERE id = ${id} FOR UPDATE`);
     const current = await tx.workforceRequirement.findFirst({ where: { ...ownedRequirements(userId), id } });
     if (!current) throw missing();
     if (current.status === "CLOSED") throw closed();
     if (current.revision !== revision) throw conflict();
     const fields = editableRequirementFields.filter(field => JSON.stringify(current[field]) !== JSON.stringify(brief[field]));
     if (!fields.length) return { id, revision: current.revision, status: current.status, changed: false };
+    await pauseRequirementJobs(tx, id);
     const updated = await tx.workforceRequirement.updateMany({
       where: { ...ownedRequirements(userId), id, revision, status: current.status },
       data: { ...brief, status: "NEW", revision: { increment: 1 } },
@@ -102,6 +107,7 @@ export async function withdrawBusinessRequirement(userId: string, id: string, in
     if (current.status === "CLOSED") throw closed();
     if (current.revision !== input.revision) throw conflict();
     await guardRequirementAssignments(tx, id);
+    await pauseRequirementJobs(tx, id);
     const changed = await tx.workforceRequirement.updateMany({
       where: { ...ownedRequirements(userId), id, revision: input.revision, status: current.status },
       data: { status: "CLOSED", revision: { increment: 1 } },

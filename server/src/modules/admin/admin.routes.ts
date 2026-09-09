@@ -1,4 +1,5 @@
 import { adminCandidatesRouter } from "../candidates/candidates.routes.js";
+import { adminPhase2Router } from "../phase2/phase2.routes.js";
 import { adminAttendanceRouter } from "../attendance/attendance.routes.js";
 import { adminDeploymentsRouter } from "../deployments/deployments.routes.js";
 import { Router } from "express";
@@ -37,6 +38,7 @@ import {
 export const adminRouter = Router();
 
 adminRouter.use(requireAuth, requireRole("ADMIN"));
+adminRouter.use(adminPhase2Router);
 adminRouter.use("/attendance", adminAttendanceRouter);
 adminRouter.use("/deployments", adminDeploymentsRouter);
 adminRouter.use("/candidate-management", adminCandidatesRouter);

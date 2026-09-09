@@ -1,5 +1,7 @@
 # ZOBHUNGER
 
+Business portal completion: [setup, page endpoints and client walkthrough](docs/PHASE2_COMPLETION.md).
+
 Phase 1 of ZOBHUNGER is a public workforce, sales hiring and business-execution website backed by a real Express/PostgreSQL API.
 
 ## Repository

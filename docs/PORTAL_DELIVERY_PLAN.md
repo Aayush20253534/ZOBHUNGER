@@ -9,17 +9,18 @@ their attendance functionality belongs to P2.6. That work is preserved.
 | Part | Intended scope | Follow-up position |
 | --- | --- | --- |
 | P2.1 | Business access, onboarding, company profile and ownership | Existing foundation |
-| P2.2 | Business dashboard | Existing requirement dashboard; later module totals belong in P2.7 |
-| P2.3 | Requirement management, drafts and requirement-to-job linking | Core requirement flows exist; saved drafts and explicit requirement-to-job linking still need completion |
+| P2.2 | Business dashboard | Complete; requirement and operations summaries are connected |
+| P2.3 | Requirement management, drafts and requirement-to-job linking | Complete; private saved drafts and reviewed, linked job publishing |
 | P2.4 | Candidate tracking, profiles, decisions and history | Existing candidate workflow |
-| **P2.5** | **Deployment and team roster** | **This follow-up: dedicated roster, locations, deployment progress and weekly schedules, using the existing assignment foundation** |
-| P2.6 | Attendance, business approvals, corrections and approval history | Daily register, calendar, record history and correction workflow exist; business timesheet approvals and approval history remain pending |
-| P2.7 | Reports and completed dashboard | Requirement/candidate/deployment/attendance summaries, filters, CSV, print and dashboard connections |
-| P2.8 | Integration and release review | End-to-end workflow, company boundaries, mobile layouts, error states, performance and client walkthrough |
+| **P2.5** | **Deployment and team roster** | **Complete; dedicated roster, locations, deployment progress and weekly schedules** |
+| P2.6 | Attendance, business approvals, corrections and approval history | Complete; attendance, business decisions, corrections and immutable decision snapshots |
+| P2.7 | Reports and completed dashboard | Complete; four filtered reports, CSV, print, charts and dashboard connections |
+| P2.8 | Integration and release review | Integrated workflow and automated checks complete; real-device visual signoff remains (see PHASE2_COMPLETION.md) |
 
-Recommended next work: complete P2.6 approval management, then close the remaining
-P2.3 draft/job-link gaps before completing P2.7 reporting. Perform the full P2.8
-release review after these flows are connected.
+The completion patch implements P2.3, P2.6 and P2.7 together and includes the P2.8
+integration work and client walkthrough. See `PHASE2_COMPLETION.md` for deployment,
+page endpoints, verification evidence and the remaining real-device visual signoff.
+Next implementation scope is P3.1.
 
 ## Phase 3 — Worker portal
 

@@ -1,4 +1,15 @@
 const checks = [
+  { method: "GET", path: "/business/requirement-drafts", status: 401, code: "UNAUTHENTICATED" },
+  { method: "GET", path: "/business/requirements/deployment-check/jobs", status: 401, code: "UNAUTHENTICATED" },
+  { method: "GET", path: "/business/attendance-approvals", status: 401, code: "UNAUTHENTICATED" },
+  { method: "GET", path: "/business/reports", status: 401, code: "UNAUTHENTICATED" },
+  { method: "GET", path: "/business/reports/export", status: 401, code: "UNAUTHENTICATED" },
+  { method: "GET", path: "/business/reports/print", status: 401, code: "UNAUTHENTICATED" },
+  { method: "GET", path: "/business/operations-summary", status: 401, code: "UNAUTHENTICATED" },
+  { method: "GET", path: "/admin/requirement-jobs", status: 401, code: "UNAUTHENTICATED" },
+  { method: "GET", path: "/admin/attendance-approvals", status: 401, code: "UNAUTHENTICATED" },
+  { method: "GET", path: "/admin/reports", status: 401, code: "UNAUTHENTICATED" },
+
   { method: "GET", path: "/business/deployments", status: 401, code: "UNAUTHENTICATED" },
   { method: "GET", path: "/business/deployments/progress", status: 401, code: "UNAUTHENTICATED" },
   { method: "GET", path: "/business/deployments/assignments/deployment-check", status: 401, code: "UNAUTHENTICATED" },
@@ -51,8 +62,8 @@ export async function checkBusinessRoutes(baseUrl) {
     if (check.code && (body.success !== false || body.error?.code !== check.code)) {
       throw new Error(`${check.path} did not reach the expected authentication or validation handler.`);
     }
-    if (check.path === "/health" && (body.success !== true || body.data?.features?.businessPortal !== true || body.data?.features?.businessDashboard !== true || body.data?.features?.businessRequirements !== true || body.data?.features?.businessCandidates !== true || body.data?.features?.businessDeployments !== true || body.data?.features?.businessAttendance !== true)) {
-      throw new Error("This API does not report deployment and attendance support. Deploy the latest backend commit and check NEXT_PUBLIC_API_URL.");
+    if (check.path === "/health" && (body.success !== true || body.data?.features?.businessPortal !== true || body.data?.features?.businessDashboard !== true || body.data?.features?.businessRequirements !== true || body.data?.features?.businessCandidates !== true || body.data?.features?.businessDeployments !== true || body.data?.features?.businessAttendance !== true || body.data?.features?.businessPhase2Complete !== true)) {
+      throw new Error("This API does not report complete Phase 2 support. Deploy the latest backend commit and check NEXT_PUBLIC_API_URL.");
     }
     results.push({ method: check.method, path: check.path, status: response.status });
   }

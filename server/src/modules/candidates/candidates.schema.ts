@@ -11,6 +11,7 @@ export const candidateQuery = z.object({
 }).strict();
 export const historyQuery = z.object({ historyPage: z.coerce.number().int().min(1).max(100000).default(1) }).strict();
 export const lookupQuery = z.object({
+  requirementId: id.optional(),
   page: z.coerce.number().int().min(1).max(100000).default(1),
   query: z.string().trim().max(100).default(""),
 }).strict();

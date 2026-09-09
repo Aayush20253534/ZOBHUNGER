@@ -17,8 +17,8 @@ export function reviewCandidate(id: string, review: CandidateReview) {
 export function revokeCandidate(id: string, revision: number, note: string) {
   return apiFetch<ApiSuccessEnvelope<CandidateDetail>>(`${base(true)}/${encodeURIComponent(id)}/revoke`, write({ revision, note }));
 }
-export function getCandidateOptions<T>(kind: "requirements" | "applications", query: string, page: number, signal?: AbortSignal) {
-  return apiFetch<ApiSuccessEnvelope<CandidateOptions<T>>>(`${base(true)}/${kind}?${new URLSearchParams({ query, page: String(page) })}`, { signal });
+export function getCandidateOptions<T>(kind: "requirements" | "applications", query: string, page: number, signal?: AbortSignal, requirementId?: string) {
+  return apiFetch<ApiSuccessEnvelope<CandidateOptions<T>>>(`${base(true)}/${kind}?${new URLSearchParams({ query, page: String(page), ...(requirementId ? { requirementId } : {}) })}`, { signal });
 }
 export function shareCandidate(input: { requirementId: string; applicationId: string; summary: string; skills: string[] }) {
   return apiFetch<ApiSuccessEnvelope<{ id: string; created: boolean }>>(base(true), write(input));

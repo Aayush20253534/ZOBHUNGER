@@ -97,6 +97,8 @@ model User {
   createdJobs           Job[]                   @relation("JobCreator")
   auditLogs             AuditLog[]              @relation("AuditActor")
   passwordResetToken    PasswordResetToken?
+  requirementDrafts     RequirementDraft[]
+  attendanceApprovals   AttendanceApprovalEvent[]
 
   @@index([role, isActive])
   @@index([createdAt])
@@ -198,6 +200,8 @@ model WorkforceRequirement {
 
   candidates BusinessCandidate[]
   assignments WorkforceAssignment[]
+  jobs Job[]
+  sourceDraft RequirementDraft?
 
   @@index([status, createdAt])
   @@index([businessEmail])
@@ -224,6 +228,11 @@ model Job {
   createdByUserId  String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  requirementId    String?
+  creationKey      String? @unique
+  revision         Int @default(0)
+
+  requirement WorkforceRequirement? @relation(fields: [requirementId], references: [id], onDelete: Restrict)
 
   createdBy    User?            @relation("JobCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
   applications JobApplication[]
@@ -231,6 +240,7 @@ model Job {
   @@index([status, publishedAt])
   @@index([city, category, engagementType])
   @@index([createdByUserId])
+  @@index([requirementId, status])
 }
 
 model JobApplication {
@@ -486,12 +496,52 @@ model AttendanceRecord {
   revision       Int              @default(0)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
+  approvalStatus AttendanceApprovalStatus @default(PENDING)
+  approvalRevision Int @default(0)
 
   assignment WorkforceAssignment @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
   events     AttendanceEvent[]
+  approvals  AttendanceApprovalEvent[]
 
   @@unique([assignmentId, date])
   @@index([date, status])
+  @@index([approvalStatus, date])
+}
+
+enum AttendanceApprovalStatus {
+  PENDING
+  APPROVED
+  CHANGES_REQUESTED
+}
+
+model RequirementDraft {
+  id String @id
+  userId String
+  data Json
+  revision Int @default(0)
+  submittedAt DateTime?
+  submittedRequirementId String? @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submittedRequirement WorkforceRequirement? @relation(fields: [submittedRequirementId], references: [id], onDelete: SetNull)
+  @@index([userId, submittedAt, updatedAt])
+}
+
+model AttendanceApprovalEvent {
+  id String @id @default(cuid())
+  recordId String
+  recordRevision Int
+  approvalRevision Int
+  action String
+  actorRole UserRole
+  actorUserId String?
+  note String
+  snapshot Json
+  createdAt DateTime @default(now())
+  record AttendanceRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  actor User? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+  @@index([recordId, createdAt, id])
 }
 
 model AttendanceEvent {

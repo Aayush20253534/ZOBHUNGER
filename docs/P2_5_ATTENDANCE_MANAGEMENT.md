@@ -1,5 +1,8 @@
 # P2.6 — Attendance management (historical P2.5 filename)
 
+> Historical delivery notes. The remaining Phase 2 work is now implemented; see
+> [Phase 2 completion](PHASE2_COMPLETION.md) for current behavior and setup.
+
 Numbering correction: this document and its original patch were labelled P2.5
 incorrectly. In the agreed plan, P2.5 is Deployment and team roster; attendance is
 P2.6. Keep the earlier patch applied. The dedicated roster follow-up is documented

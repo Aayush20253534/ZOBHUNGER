@@ -3,15 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { ArrowUpRight, Building2, CalendarCheck2, CircleHelp, ClipboardList, LayoutDashboard, LogOut, MapPin, Menu, ShieldCheck, UsersRound, UserRound } from "lucide-react";
+import { ArrowUpRight, BarChart3, Building2, CalendarCheck2, CircleHelp, ClipboardList, LayoutDashboard, LogOut, MapPin, Menu, ShieldCheck, UsersRound, UserRound } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useBusiness } from "./BusinessProvider";
 import { BusinessWordmark } from "./BusinessUI";
 
-const links = [{ href: "/business/dashboard", label: "Dashboard", icon: LayoutDashboard }, { href: "/business/requirements", label: "Requirements", icon: ClipboardList }, { href: "/business/candidates", label: "Candidates", icon: UsersRound }, { href: "/business/deployments", label: "Team roster", icon: MapPin }, { href: "/business/attendance", label: "Attendance", icon: CalendarCheck2 }, { href: "/business/company", label: "Company profile", icon: Building2 }, { href: "/business/account", label: "Account & security", icon: UserRound }];
+const links = [{ href: "/business/dashboard", label: "Dashboard", icon: LayoutDashboard }, { href: "/business/requirements", label: "Requirements", icon: ClipboardList }, { href: "/business/candidates", label: "Candidates", icon: UsersRound }, { href: "/business/deployments", label: "Team roster", icon: MapPin }, { href: "/business/attendance", label: "Attendance", icon: CalendarCheck2 }, { href: "/business/attendance-approvals", label: "Attendance approvals", icon: ShieldCheck }, { href: "/business/reports", label: "Reports", icon: BarChart3 }, { href: "/business/company", label: "Company profile", icon: Building2 }, { href: "/business/account", label: "Account & security", icon: UserRound }];
 
 function workspaceTitle(pathname: string) {
   if (pathname === "/business/onboarding") return "Company setup";
+  if (pathname.startsWith("/business/requirements/drafts")) return "Saved requirement drafts";
+  if (pathname.startsWith("/business/attendance-approvals/")) return "Attendance decision";
+  if (pathname.endsWith("/jobs")) return "Linked job openings";
   if (pathname === "/business/requirements/new") return "New requirement";
   if (pathname.startsWith("/business/deployments/")) return "Team assignment";
   if (pathname.startsWith("/business/attendance/")) return "Attendance record";

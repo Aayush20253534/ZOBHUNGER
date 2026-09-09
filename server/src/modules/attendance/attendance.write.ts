@@ -1,4 +1,5 @@
 import { prisma } from "../../config/db.js";
+import { resetApproval } from "../phase2/approval-events.js";
 import { Prisma } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
 import { assignmentDto, assignmentWhere, findAssignment, missingAssignment, type AttendanceAccess } from "./attendance.read.js";
@@ -9,7 +10,7 @@ const conflict = () => new HttpError(409, "This record changed. Refresh and revi
 async function lockRequirement(tx: Prisma.TransactionClient, id: string) {
   await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "WorkforceRequirement" WHERE "id" = ${id} FOR UPDATE`);
 }
-async function lockedAssignment(tx: Prisma.TransactionClient, access: AttendanceAccess, id: string) {
+export async function lockedAssignment(tx: Prisma.TransactionClient, access: AttendanceAccess, id: string) {
   const row = await tx.workforceAssignment.findFirst({ where: { id, ...assignmentWhere(access) }, select: { requirementId: true } });
   if (!row) throw missingAssignment();
   // Match candidate/requirement lock order to serialize closure and reviews.
@@ -95,6 +96,7 @@ async function saveRecord(tx: Prisma.TransactionClient, assignment: Awaited<Retu
   const key = { assignmentId: assignment.id, date: dateValue(date) };
   const existing = await tx.attendanceRecord.findUnique({ where: { assignmentId_date: key } });
   if ((existing?.revision ?? null) !== input.revision) throw conflict();
+  if (existing) await resetApproval(tx, existing, userId, "ADMIN", "Attendance was updated. The revised record needs business approval.");
   const record = existing ? await tx.attendanceRecord.update({ where: { id: existing.id }, data: { ...values, revision: { increment: 1 } } })
     : await tx.attendanceRecord.create({ data: { ...key, ...values } });
   await tx.attendanceEvent.create({ data: { recordId: record.id, ...values, source } });
@@ -116,6 +118,7 @@ export async function requestCorrection(access: AttendanceAccess, id: string, in
     const record = await tx.attendanceRecord.findUnique({ where: { assignmentId_date: { assignmentId: id, date: dateValue(input.date) } } });
     if ((record?.revision ?? null) !== input.recordRevision) throw conflict();
     const correction = await tx.attendanceCorrection.create({ data: { assignmentId: id, date: dateValue(input.date), openKey, recordRevision: input.recordRevision, reason: input.reason } });
+    if (record) await resetApproval(tx, record, access.userId, "BUSINESS", "A correction was requested. Approval is pending review of the correction.");
     await audit(tx, access.userId, "AttendanceCorrection", correction.id, "CORRECTION_REQUESTED", { assignmentId: id, date: input.date });
     return { id: correction.id, created: true };
   });
@@ -128,6 +131,10 @@ export async function resolveCorrection(userId: string, id: string, input: Resol
     const correction = await tx.attendanceCorrection.findUniqueOrThrow({ where: { id } });
     if (correction.status !== "OPEN") throw new HttpError(409, "This correction has already been reviewed. Refresh to see the decision.", { code: "CORRECTION_CLOSED" });
     if (input.action === "RESOLVE") await saveRecord(tx, assignment, dateKey(correction.date), input.attendance, userId, "CORRECTION_RESOLVED");
+    else {
+      const record = await tx.attendanceRecord.findUnique({ where: { assignmentId_date: { assignmentId: assignment.id, date: correction.date } } });
+      if (record) await resetApproval(tx, record, userId, "ADMIN", `Correction declined: ${input.resolution}. Review the recorded attendance again.`);
+    }
     await tx.attendanceCorrection.update({ where: { id }, data: { status: input.action === "RESOLVE" ? "RESOLVED" : "REJECTED", resolution: input.resolution, openKey: null } });
     await audit(tx, userId, "AttendanceCorrection", id, `CORRECTION_${input.action}`, { assignmentId: assignment.id, date: dateKey(correction.date) });
     return { id, status: input.action === "RESOLVE" ? "RESOLVED" : "REJECTED" };

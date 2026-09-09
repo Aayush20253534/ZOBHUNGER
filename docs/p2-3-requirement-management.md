@@ -1,5 +1,8 @@
 # P2.3 — Business requirement management
 
+> Historical delivery notes. The remaining Phase 2 work is now implemented; see
+> [Phase 2 completion](PHASE2_COMPLETION.md) for current behavior and setup.
+
 Apply this patch after P2.2 (`zobhunger-p2-2-business-dashboard.patch`). The baseline is BZN(3).zip with the business login repair and P2.2 already applied.
 
 ## Pages to check

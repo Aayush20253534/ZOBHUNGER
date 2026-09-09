@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { OperationsOverview } from "./phase2/OperationsOverview";
 import { useCallback, useState, type CSSProperties } from "react";
 import { ArrowRight, ArrowUpRight, Building2, CalendarDays, ChevronLeft, ChevronRight, ClipboardList, FileCheck2, MapPin, Plus, RefreshCw, Send, UsersRound } from "lucide-react";
 import { ExecutionImage } from "@/components/common/ExecutionImage";
@@ -36,6 +37,7 @@ export function BusinessDashboard() {
       <label className="zb-dash-select"><CalendarDays aria-hidden="true" /><span className="zb-dash-sr-only">Activity period</span><select value={range} disabled={loading} onChange={event => { setRange(Number(event.target.value) as DashboardRange); setPage(1); }}><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option><option value={90}>Last 90 days</option></select></label>
       <button type="button" className="zb-dash-refresh" disabled={loading} onClick={refresh}><RefreshCw aria-hidden="true" className={loading ? "zb-biz-spin" : undefined} /><span>{loading ? "Updating…" : "Refresh"}</span></button>
     </div></div>
+    <OperationsOverview accountId={user.id} refreshToken={revision} />
     {error && <DashboardError error={error} retry={refresh} next="/business/dashboard" />}
     {loading && !data && <DashboardLoading />}
     {data && <div className="zb-dash-data" aria-busy={loading}>

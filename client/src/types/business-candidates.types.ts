@@ -30,6 +30,6 @@ export type CandidateReview = { revision: number; note: string } & (
 );
 export interface ApplicationOption {
   id: string; name: string; city: string | null; experience: string | null; resumeUrl: string | null;
-  availableFrom: string | null; job: { title: string }; skills: string[];
+  availableFrom: string | null; job: { title: string; requirementId: string | null }; skills: string[];
 }
 export interface CandidateOptions<T> { items: T[]; total: number; page: number; totalPages: number }

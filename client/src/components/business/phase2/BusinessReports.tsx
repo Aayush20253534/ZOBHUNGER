@@ -1,0 +1,63 @@
+"use client";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowUpRight, BarChart3, CalendarCheck2, CheckCheck, Download, FileText, MapPin, Printer, UsersRound } from "lucide-react";
+import { downloadReport, getReport, phaseBase } from "@/services/phase2.service";
+import type { ReportData, ReportFilters, ReportType } from "@/types/phase2.types";
+import { useBusiness } from "../BusinessProvider";
+import { businessDate, useBusinessResource } from "../BusinessDashboardUI";
+import { duration, todayIST } from "../attendance/AttendanceUI";
+import { moveDate } from "../deployments/DeploymentUI";
+import { AdminGate, Empty, ErrorState, Heading, Loading, Pages, Refresh, words } from "./Phase2UI";
+import { PeriodFilters } from "./PeriodFilters";
+const reportNames: Record<ReportType, string> = { requirements: "Requirement fulfilment", candidates: "Candidate progress", deployments: "Deployments", attendance: "Attendance & approvals" };
+export function BusinessReports() { const { user } = useBusiness(); return <Reports key={user.id} accountId={user.id} />; }
+export function AdminReports() { return <AdminGate>{accountId => <Reports key={accountId} accountId={accountId} admin />}</AdminGate>; }
+function Reports({ accountId, admin = false }: { accountId: string; admin?: boolean }) {
+  const [filters, setFilters] = useState<ReportFilters>({ from: moveDate(todayIST(), -29), to: todayIST(), location: "" }), [draft, setDraft] = useState(filters);
+  const [type, setType] = useState<ReportType>("requirements"), [page, setPage] = useState(1), [version, setVersion] = useState(0), [busy, setBusy] = useState(false), [notice, setNotice] = useState("");
+  const [printData, setPrintData] = useState<ReportData | null>(null); const exporter = useRef<AbortController | null>(null);
+  const request = useCallback((signal: AbortSignal) => getReport(admin, { ...filters, type, page }, signal), [admin, filters, type, page]);
+  const { data, error, loading } = useBusinessResource(JSON.stringify({ accountId, admin, filters, type, page, version }), request);
+  useEffect(() => () => exporter.current?.abort(), []);
+  useEffect(() => {
+    if (!printData) return;
+    const finish = () => setPrintData(null); window.addEventListener("afterprint", finish);
+    const frame = requestAnimationFrame(() => window.print());
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("afterprint", finish); };
+  }, [printData]);
+  async function exportData(print: boolean) { if (busy) return; setBusy(true); setNotice(""); const controller = new AbortController(); exporter.current = controller;
+    try { const input = { ...filters, type, page: 1 }; if (print) { const response = await getReport(admin, input, controller.signal, true); if (!controller.signal.aborted) setPrintData(response.data); } else await downloadReport(admin, input, controller.signal); }
+    catch (error) { if (!controller.signal.aborted) setNotice(error instanceof Error ? error.message : "Report could not be exported."); } finally { if (!controller.signal.aborted) setBusy(false); }
+  }
+  return <div className="zb-att zb-p2"><div className="zb-p2-report-screen"><Heading eyebrow="REPORTS & EXECUTION INSIGHTS" title="See the work, from request to review." action={<><button type="button" className="zb-biz-button zb-biz-button--secondary" disabled={busy || loading || !data} onClick={() => void exportData(true)}><Printer aria-hidden="true" />Print report</button><button type="button" className="zb-biz-button" disabled={busy || loading || !data} onClick={() => void exportData(false)}><Download aria-hidden="true" />{busy ? "Preparing…" : "Export CSV"}</button><Refresh loading={loading} onClick={() => setVersion(v => v + 1)} /></>}>Explore requirement fulfilment, candidate stages, deployment and recorded attendance using your actual workspace records.</Heading>
+    <PeriodFilters values={draft} onChange={setDraft} onApply={() => { setFilters(draft); setPage(1); setNotice(""); }} />
+    <div className="zb-p2-tabs" role="group" aria-label="Report type">{Object.entries(reportNames).map(([value, label]) => <button key={value} type="button" aria-pressed={type === value} onClick={() => { setType(value as ReportType); setPage(1); }}>{label}</button>)}</div>
+    {notice && <p className="zb-att-notice" role="alert">{notice}</p>}{loading ? <Loading /> : error ? <ErrorState admin={admin} error={error} retry={() => setVersion(v => v + 1)} /> : data && <><ReportHeader data={data} /><ReportCharts data={data} />{data.type === "requirements" && <Fulfilment data={data} />}<div className="zb-att-section-heading"><div><h2>{reportNames[data.type]}</h2><p>{data.total} records · {data.rows.length} on this page</p></div><FileText aria-hidden="true" /></div>{data.total ? <ReportTable data={data} admin={admin} /> : <Empty title="No records in this report">Try a different period or location. New activity will appear when real records are saved.</Empty>}<Pages page={data.page} totalPages={data.totalPages} onChange={setPage} /><p className="zb-p2-note">CSV includes all matching rows, up to 10,000. Print includes all matching rows, up to 1,000. Narrow the filters when a report exceeds these limits.</p></>}
+    </div>{printData && <div className="zb-p2-print"><div className="zb-p2-print-brand">ZOBHUNGER <span>Business execution report</span></div><h1>{reportNames[printData.type]}</h1><ReportHeader data={printData} /><ReportCharts data={printData} /><p>{printData.total} matching records</p><ReportTable data={printData} admin={admin} print /><p className="zb-p2-note">Private business report · ZOBHUNGER · Hire. Deploy. Deliver.</p></div>}</div>;
+}
+function ReportHeader({ data }: { data: ReportData }) { return <div className="zb-p2-report-caption"><strong>{businessDate(data.from)} – {businessDate(data.to)} · {data.location || "All locations"}</strong><span>Generated {businessDate(data.generatedAt, true)} IST</span><p>Requirements and candidates use their submission/share dates; deployments overlap the period; attendance uses work dates. Statuses reflect the latest saved records. Location matches requested sites for requirements/candidates and assigned work sites for deployments/attendance.</p><p>Requested headcount covers each matching requirement in full. Active assignment counts use the period end date. Missing attendance is shown separately from absence.</p></div>; }
+function Bars({ title, rows, caption }: { title: string; rows: { label: string; value: number }[]; caption: string }) {
+  const max = Math.max(1, ...rows.map(row => row.value));
+  return <section className="zb-p2-chart"><h2>{title}</h2><p>{caption}</p>{rows.length ? <ul>{rows.map(row => <li key={row.label}><div><span>{row.label}</span><strong>{row.value}</strong></div><div className="zb-p2-bar" aria-hidden="true"><span style={{ width: `${row.value * 100 / max}%` }} /></div></li>)}</ul> : <p className="zb-p2-note">No recorded activity for these filters.</p>}</section>;
+}
+function ReportCharts({ data }: { data: ReportData }) {
+  const c = data.charts; const sums = c.attendance.reduce((acc, row) => ({ recorded: acc.recorded + row.count, approved: acc.approved + row.approved, minutes: acc.minutes + row.approvedMinutes }), { recorded: 0, approved: 0, minutes: 0 });
+  const missing = c.trend.reduce((sum, day) => sum + day.missing, 0), expected = c.trend.reduce((sum, day) => sum + day.expected, 0);
+  const bucketSize = c.trend.length > 93 ? 28 : c.trend.length > 31 ? 7 : 1;
+  const buckets = Array.from({ length: Math.ceil(c.trend.length / bucketSize) }, (_, i) => { const group = c.trend.slice(i * bucketSize, (i + 1) * bucketSize); return { label: `${businessDate(group[0].date)}${group.length > 1 ? ` – ${businessDate(group.at(-1)!.date)}` : ""}`, recorded: group.reduce((sum, x) => sum + x.recorded, 0), missing: group.reduce((sum, x) => sum + x.missing, 0) }; });
+  const max = Math.max(1, ...buckets.map(row => row.recorded + row.missing));
+  return <><div className="zb-p2-metrics">{[{ label: "Requirements submitted", value: c.requirements.reduce((sum, r) => sum + r.count, 0), icon: FileText }, { label: "Profiles shared", value: c.candidates.reduce((sum, r) => sum + r.count, 0), icon: UsersRound }, { label: "Active at period end", value: c.deployments.find(row => row.state === "ACTIVE")?.count ?? 0, icon: MapPin }, { label: "Attendance records", value: sums.recorded, icon: CalendarCheck2 }, { label: "Business-approved records", value: sums.approved, icon: CheckCheck }, { label: "Approved recorded time", value: duration(sums.minutes), icon: BarChart3 }].map(({ label, value, icon: Icon }) => <article key={label}><Icon aria-hidden="true" /><strong>{value}</strong><span>{label}</span></article>)}</div><div className="zb-p2-charts"><Bars title="Requirement stages" caption="Current status of briefs submitted in this period" rows={c.requirements.map(row => ({ label: words(row.status), value: row.count }))} /><Bars title="Candidate pipeline" caption="Current stage of profiles shared in this period" rows={c.candidates.map(row => ({ label: words(row.status), value: row.count }))} /><Bars title="Deployment overview" caption="Assignments overlapping the period, using saved dates" rows={c.deployments.map(row => ({ label: words(row.state), value: row.count }))} /><Bars title="Recorded attendance" caption="Only explicitly recorded attendance is counted" rows={c.attendance.map(row => ({ label: words(row.status), value: row.count }))} /></div><section className="zb-p2-chart zb-p2-trend"><div className="zb-att-section-heading"><div><h2>Attendance recording trend</h2><p>{expected} planned working days · {missing} still unrecorded</p></div><div className="zb-p2-legend"><span><i />Recorded</span><span><i data-missing="true" />Missing scheduled record</span></div></div><div className="zb-p2-trend-bars">{buckets.map((row, index) => <div key={row.label} role="img" aria-label={`${row.label}: ${row.recorded} recorded entries, ${row.missing} scheduled entries missing`}><span className="zb-p2-trend-track"><i style={{ height: `${row.missing * 100 / max}%` }} data-missing="true" /><i style={{ height: `${row.recorded * 100 / max}%` }} /></span><small>{index + 1}</small></div>)}</div><details><summary>Read chart dates and counts</summary><ul>{buckets.map(row => <li key={row.label}>{row.label}: {row.recorded} recorded · {row.missing} missing</li>)}</ul></details><p className="zb-p2-note">{bucketSize === 1 ? "Each column represents one date." : `Columns group up to ${bucketSize} consecutive dates.`} Recorded totals include entries on scheduled days off. Missing counts include only scheduled working days without an entry.</p></section></>;
+}
+function ReportTable({ data, admin, print = false }: { data: ReportData; admin: boolean; print?: boolean }) {
+  function href(row: Record<string, string | number | null>) { const base = phaseBase(admin); if (data.type === "requirements") return admin ? `/admin/requirement-jobs/${row.id}` : `/business/requirements/${row.id}`; if (data.type === "candidates") return admin ? "/admin/candidate-management" : `/business/candidates/${row.id}`; if (data.type === "deployments") return `${base}/deployments/${admin ? "assignments/" : ""}${row.id}`; return `${base}/attendance-approvals/${row.id}`; }
+  return <div className="zb-p2-table"><table><caption className="zb-dash-sr-only">{reportNames[data.type]}</caption><thead><tr>{data.columns.map(column => <th key={column.key} scope="col">{column.label}</th>)}{!print && <th scope="col">Open</th>}</tr></thead><tbody>{data.rows.map(row => <tr key={String(row.id)}>{data.columns.map(column => <td key={column.key} data-label={column.label}>{row[column.key] ?? "—"}</td>)}{!print && <td data-label="Open"><Link className="zb-biz-text-link" href={href(row)}>View<ArrowUpRight aria-hidden="true" /></Link></td>}</tr>)}</tbody></table></div>;
+}
+
+function Fulfilment({ data }: { data: ReportData }) {
+  if (!data.rows.length) return null;
+  return <section className="zb-p2-chart"><h2>Staffing against each brief</h2><p>Requirements on this page · active assignments at period end</p><ul>{data.rows.map(row => {
+    const requested = Number(row.requested), active = Number(row.active), percentage = requested > 0 ? Math.round(active * 100 / requested) : 0;
+    return <li key={String(row.id)}><div><span>{String(row.company)} · {String(row.id).slice(-8)}</span><strong>{active} / {requested} · {percentage}%</strong></div><div className="zb-p2-bar" role="img" aria-label={`${active} active assignments against ${requested} people requested, ${percentage} percent`}><span style={{ width: `${Math.min(100, percentage)}%` }} /></div></li>;
+  })}</ul></section>;
+}
