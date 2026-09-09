@@ -37,8 +37,8 @@ export const solutions = [
     title: "ZOBHUNGER Activate",
     label: "Brand Activation",
     description:
-      "Execute sampling, on-ground campaigns and consumer engagement.",
-    services: ["Product sampling", "BTL campaigns", "Roadshows"],
+      "Execute branding, advertising, sticker deployment, flyer distribution and consumer campaigns.",
+    services: ["Product sampling", "Sticker deployment", "Branding campaigns"],
   },
   {
     slug: "business-operations",
@@ -55,5 +55,12 @@ export const solutions = [
     description:
       "Find people for short assignments, seasonal demand and project work.",
     services: ["Daily assignments", "Seasonal teams", "Project staffing"],
+  },
+  {
+    slug: "verification-services",
+    title: "ZOBHUNGER Verification",
+    label: "Verification",
+    description: "Reliable checks for candidates, employees, documents, businesses and on-ground information.",
+    services: ["Background checks", "KYC & business", "Field verification"],
   },
 ] as const satisfies readonly SolutionSummary[];

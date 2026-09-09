@@ -1,3 +1,4 @@
+import { brandingServices, verificationDetails } from "@/data/service-expansion";
 import type {
   SolutionDetailContent,
   SolutionSlug,
@@ -5,6 +6,7 @@ import type {
 
 /** Service names follow the client's brief. Supporting copy describes the proposed service scope. */
 export const solutionDetails = {
+  "verification-services": verificationDetails,
   "workforce-solutions": {
     heading: "Workforce solutions built for scale.",
     description:
@@ -535,7 +537,7 @@ export const solutionDetails = {
   "brand-activation": {
     heading: "Take your brand to the market.",
     description:
-      "Bring your product into the places your audience visits. Coordinate people and on-ground activity for sampling, demonstrations, events and consumer engagement.",
+      "Bring your brand into the places your audience visits. Coordinate branding and advertising, sticker deployment, flyer distribution, sampling and promotional campaigns with one execution team.",
     bestFor:
       "Brands planning a product introduction, local campaign or direct consumer engagement programme.",
     facts: [
@@ -547,16 +549,7 @@ export const solutionDetails = {
     servicesDescription:
       "Build the activation around your audience, venue and the experience you want people to have.",
     services: [
-      {
-        title: "BTL campaigns",
-        description:
-          "Coordinate below-the-line promotional activity aimed at a specific audience or location.",
-      },
-      {
-        title: "Brand activation",
-        description:
-          "Bring your brand message to life through planned on-ground interactions.",
-      },
+      ...brandingServices,
       {
         title: "Product sampling",
         description:
@@ -677,6 +670,18 @@ export const solutionDetails = {
     servicesDescription:
       "Choose the functions you need and define how the team will fit into your workflow.",
     services: [
+      {
+        title: "Content moderation",
+        description: "Review content against your approved guidelines, flag exceptions and coordinate the agreed escalation workflow.",
+      },
+      {
+        title: "Onboarding & KYC support",
+        description: "Help collect onboarding information, coordinate required documents and follow up on incomplete submissions.",
+      },
+      {
+        title: "Hyperlocal business operations",
+        description: "Coordinate local outreach, field follow-ups and operational tasks around your locations and business needs.",
+      },
       {
         title: "Lead generation",
         description:

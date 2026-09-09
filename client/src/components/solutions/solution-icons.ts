@@ -10,6 +10,7 @@ import {
 import type { SolutionSlug } from "@/types/solution-detail.types";
 
 export const solutionIcons = {
+  "verification-services": ShieldCheck,
   "workforce-solutions": UsersRound,
   "sales-force": TrendingUp,
   "promoter-solutions": Megaphone,
@@ -20,6 +21,7 @@ export const solutionIcons = {
 } satisfies Record<SolutionSlug, LucideIcon>;
 
 export const solutionStageIcons = {
+  "verification-services": [ClipboardList, Search, ClipboardCheck, Send],
   "workforce-solutions": [ClipboardList, UserRoundSearch, UserCheck, Send],
   "sales-force": [MapPin, UsersRound, Zap, ChartNoAxesCombined],
   "promoter-solutions": [Megaphone, Presentation, MapPin, MessageCircle],
@@ -30,6 +32,23 @@ export const solutionStageIcons = {
 } satisfies Record<SolutionSlug, readonly [LucideIcon, LucideIcon, LucideIcon, LucideIcon]>;
 
 const activityIcons: Record<string, LucideIcon> = {
+  "Candidate & Employee Verification": UserCheck,
+  "Identity & Document Verification": BadgeCheck,
+  "Address Verification": MapPin,
+  "Employment & Experience Verification": BriefcaseBusiness,
+  "Background Verification": ShieldCheck,
+  "KYC & Business Verification": Store,
+  "Field & On-Ground Verification": Route,
+  "Custom Verification": ListChecks,
+  "Branding & Advertising": Megaphone,
+  "Sticker Deployment": Flag,
+  "Flyer/Pamphlet Distribution": Send,
+  "Promotional Campaigns": Target,
+  "On-ground Branding & Marketing Activities": MapPin,
+  "Customized Brand Activation Services": Sparkles,
+  "Content moderation": Eye,
+  "Onboarding & KYC support": BadgeCheck,
+  "Hyperlocal business operations": Route,
   "Permanent recruitment": BadgeCheck,
   "Contract staffing": ClipboardPenLine,
   "Temporary staffing": CalendarClock,

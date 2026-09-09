@@ -19,6 +19,7 @@ export const navigation: readonly NavigationItem[] = [
       "/brand-activation",
       "/business-operations",
       "/gig-workforce",
+      "/verification-services",
     ],
   },
   { label: "Presence", href: "/presence" },

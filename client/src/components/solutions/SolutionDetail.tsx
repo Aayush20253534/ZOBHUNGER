@@ -75,7 +75,7 @@ export function SolutionDetail({ slug }: { slug: string }) {
         <a href="#solution-services">Services</a>
         <a href={`#${detail.focus.id}`}>{detail.focus.label}</a>
         <a href="#solution-process">Execution flow</a>
-        <a href="#solution-case-study">Case study</a>
+        {caseStudy && <a href="#solution-case-study">Case study</a>}
         <a href="#solution-industries">Industries</a>
       </nav>
       <section
@@ -183,9 +183,9 @@ export function SolutionDetail({ slug }: { slug: string }) {
           action={{ href: requirementHref, label: detail.cta.label }}
         />
       </section>
-      <div className="zb-solution-section">
+      {caseStudy && <div className="zb-solution-section">
         <BriefCaseStudy study={caseStudy} id="solution-case-study" />
-      </div>
+      </div>}
       <section
         id="solution-industries"
         className="zb-solution-section zb-solution-industries"

@@ -40,8 +40,8 @@ const executionLanes = [
     icon: Workflow,
     label: "Support operations",
     description:
-      "Coordinated capacity for outreach, customer support, data and back-office workflows.",
-    services: ["Business Operations"],
+      "Coordinated capacity for verification, customer support, data and back-office workflows.",
+    services: ["Business Operations", "Verification"],
     flow: ["Scope", "Onboard", "Coordinate"],
   },
 ] as const;
@@ -56,7 +56,7 @@ export function SolutionsOverview() {
         <PageShell
           eyebrow="Hire. Deploy. Manage. Execute. Scale."
           title="Our services"
-          description="Everything your business needs to hire, deploy and manage teams. Find recruitment, sales, campaign and operations support in one connected service catalogue."
+          description="Everything your business needs to hire, deploy and manage teams. Find recruitment, verification, sales, campaign and operations support in one connected service catalogue."
           actions={
             <>
               <ActionLink href="/hire-workforce">
@@ -155,7 +155,7 @@ export function SolutionsOverview() {
         <SectionHeading
           id="solution-catalogue-heading"
           eyebrow="The service catalogue"
-          title="Seven services. One connected execution system."
+          title="Eight services. One connected execution system."
           description="Explore each service for the roles, execution support and engagement options it covers."
         />
         <div className="zb-solutions-catalog">

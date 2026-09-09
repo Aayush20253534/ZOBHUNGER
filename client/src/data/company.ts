@@ -38,6 +38,22 @@ export const businessNeeds = [
     solutionSlug: "retail-execution",
     linkLabel: "Explore retail execution",
   },
+  {
+    id: "verification",
+    title: "Need reliable verification?",
+    description: "Review people, documents, business details and field information with a clear verification checklist and documented findings.",
+    services: ["Candidate checks", "KYC & business", "Field verification"],
+    solutionSlug: "verification-services",
+    linkLabel: "Explore verification services",
+  },
+  {
+    id: "branding",
+    title: "Need your brand on the ground?",
+    description: "Bring branding and advertising into local markets with sticker deployment, flyer distribution and promotional campaigns.",
+    services: ["Sticker deployment", "Flyer distribution", "Brand activation"],
+    solutionSlug: "brand-activation",
+    linkLabel: "Explore branding & activation",
+  },
 ] as const satisfies readonly {
   id: string;
   title: string;

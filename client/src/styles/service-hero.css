@@ -185,3 +185,7 @@
   .zb-service-hero-flow li:nth-child(2)::after { display: none; }
   .zb-service-hero-flow strong { font-size: 0.8rem; }
 }
+
+/* Keep the document review and campaign handover in the compact image crop. */
+[data-solution="verification-services"] .zb-service-hero-scene img,
+[data-solution="brand-activation"] .zb-service-hero-scene img { object-position: center 55%; }

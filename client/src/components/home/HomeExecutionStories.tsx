@@ -6,9 +6,12 @@ import {
   ClipboardList,
   FileCheck2,
   PackageOpen,
+  ShieldCheck,
+  Megaphone,
   QrCode,
   Store,
 } from "lucide-react";
+import { HomeServiceOfferings } from "./HomeServiceOfferings";
 import { ActionLink } from "@/components/common/ActionLink";
 import { ExecutionImage } from "@/components/common/ExecutionImage";
 import { SectionHeading } from "@/components/common/SectionHeading";
@@ -17,6 +20,8 @@ import { homeExecutionStories } from "@/data/home-execution-stories";
 import "@/styles/home-execution-stories.css";
 
 const storyIcons: Partial<Record<ExecutionVisualId, typeof ClipboardList>> = {
+  verification: ShieldCheck,
+  "brand-deployment": Megaphone,
   survey: ClipboardList,
   audit: ClipboardCheck,
   "seller-onboarding": Store,
@@ -35,8 +40,8 @@ export function HomeExecutionStories() {
       <SectionHeading
         id="home-execution-stories-heading"
         eyebrow="On the ground"
-        title="See our teams in action."
-        description="Explore how our executives survey, audit, onboard sellers, deploy QR codes and engage customers in the market."
+        title="See Our Team in Action"
+        description="See how our team verifies information, builds brand visibility, surveys markets and supports customers—from the first conversation to a clear execution update."
         action={
           <ActionLink href="/hire-workforce" variant="text">
             Discuss your project <ArrowUpRight aria-hidden="true" />
@@ -96,7 +101,7 @@ export function HomeExecutionStories() {
                   <div className="zb-home-story-kicker">
                     <span>{visual.title}</span>
                     <span aria-hidden="true">
-                      {String(index + 1).padStart(2, "0")} / 06
+                      {String(index + 1).padStart(2, "0")} / {String(homeExecutionStories.length).padStart(2, "0")}
                     </span>
                   </div>
                   <h3 id={`home-story-title-${story.id}`}>{story.heading}</h3>
@@ -137,6 +142,7 @@ export function HomeExecutionStories() {
           })}
         </div>
       </div>
+      <HomeServiceOfferings />
     </section>
   );
 }

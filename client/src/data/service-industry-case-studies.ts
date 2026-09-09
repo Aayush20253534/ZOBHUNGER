@@ -10,7 +10,7 @@ export interface BriefCaseStudy {
   results: readonly string[];
 }
 
-const solutionCaseStudies: Readonly<Record<SolutionSlug, BriefCaseStudy>> = {
+const solutionCaseStudies: Readonly<Partial<Record<SolutionSlug, BriefCaseStudy>>> = {
   "workforce-solutions": {
     title: "High-Volume Operational Hiring",
     industry: "Staffing & Outsourcing",

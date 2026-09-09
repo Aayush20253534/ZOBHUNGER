@@ -9,6 +9,13 @@ export interface SolutionVisualProfile {
 }
 
 export const solutionVisuals: Record<SolutionSlug, SolutionVisualProfile> = {
+  "verification-services": {
+    eyebrow: "Verification execution",
+    title: "From information to a clear, documented review.",
+    description: "Connect the agreed checks, source information and field visits with a structured report for your team's decision.",
+    stages: ["Scope", "Check", "Review", "Report"],
+    workModes: ["People", "Documents", "Field checks"],
+  },
   "workforce-solutions": {
     eyebrow: "Workforce execution",
     title: "From requirement to ready-to-deploy people.",

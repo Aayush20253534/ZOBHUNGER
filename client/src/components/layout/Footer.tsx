@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, ChevronDown, ClipboardList, LogIn, Handshake, type LucideIcon } from "lucide-react";
+import { Building2, ChevronDown, ClipboardList, LogIn, Handshake, ShieldCheck, Megaphone, type LucideIcon } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { site } from "@/data/site";
 import { solutions } from "@/data/solutions";
@@ -11,6 +11,8 @@ const businessLinks = [
   { label: "Become a Partner", href: "/become-a-partner#partner-application", icon: Handshake },
   { label: "Business login", href: "/business/login", icon: LogIn },
   { label: "Hire workforce", href: "/hire-workforce", icon: ClipboardList },
+  { label: "Verification services", href: "/verification-services", icon: ShieldCheck },
+  { label: "Branding & activation", href: "/brand-activation#solution-services", icon: Megaphone },
 ] as const satisfies readonly FooterLink[];
 
 const companyLinks = [

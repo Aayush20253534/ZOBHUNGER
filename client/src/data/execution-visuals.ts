@@ -22,6 +22,18 @@ function createVisual(id: string, scene: ExecutionScene) {
 // Illustrative service scenes, not photographs or evidence of client campaigns.
 // Reuse the descriptions and steps when building service and editorial stories.
 export const executionVisuals = {
+  verification: createVisual("verification", {
+    title: "Verification services",
+    alt: "AI-generated illustration of a ZOBHUNGER verification executive reviewing business documents and a tablet checklist with a business owner.",
+    caption: "An executive reviews the agreed information with the applicant, records the checks and flags details that need clarification.",
+    steps: ["Agree the checks", "Verify the information", "Share clear findings"],
+  }),
+  "brand-deployment": createVisual("brand-deployment", {
+    title: "Branding & activation",
+    alt: "AI-generated illustration of ZOBHUNGER executives placing a promotional sticker at a shop and handing a leaflet to a shopper in an Indian market.",
+    caption: "A coordinated field team places approved branding and introduces the campaign to shoppers through direct leaflet distribution.",
+    steps: ["Plan the campaign", "Deploy and engage", "Review the activity"],
+  }),
   survey: createVisual("survey", {
     title: "Consumer surveys",
     alt: "Illustration of a ZOBHUNGER researcher recording a shopper's survey responses on a tablet outside a grocery shop.",

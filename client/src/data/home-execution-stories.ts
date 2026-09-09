@@ -13,6 +13,30 @@ interface HomeExecutionStory {
 
 export const homeExecutionStories: readonly HomeExecutionStory[] = [
   {
+    id: "verification",
+    label: "Verification",
+    heading: "Turn information into a confident next step.",
+    stepDetails: [
+      "Confirm the required checks, supporting information and permissions with your team.",
+      "Review documents, coordinate source checks and complete any agreed field visits.",
+      "Record findings, evidence and missing details for your team's decision.",
+    ],
+    visibility: "A structured record of completed checks, supporting findings and outstanding clarifications.",
+    serviceSlug: "verification-services",
+  },
+  {
+    id: "brand-deployment",
+    label: "Branding & activation",
+    heading: "Make your brand part of the market.",
+    stepDetails: [
+      "Agree the message, approved artwork, outlet permissions, routes and team brief.",
+      "Place stickers, distribute flyers and carry out the agreed promotional activities.",
+      "Bring together placement records, distribution updates and permitted campaign photographs.",
+    ],
+    visibility: "Outlet placement records, distribution activity and campaign follow-up notes.",
+    serviceSlug: "brand-activation",
+  },
+  {
     id: "survey",
     label: "Surveys",
     heading: "Capture useful answers from the market.",

@@ -2,7 +2,7 @@ import { SolutionsOverview } from "@/components/solutions/SolutionsOverview";
 import { getPageMetadata } from "@/lib/page-metadata";
 
 const description =
-  "Explore ZOBHUNGER's workforce, sales, promoter, retail, activation, business operations and gig workforce solutions. Find the right support for your business.";
+  "Explore ZOBHUNGER's workforce, sales, promoter, retail, activation, verification, business operations and gig workforce solutions. Find the right support for your business.";
 
 export const metadata = getPageMetadata(
   "Our Services",

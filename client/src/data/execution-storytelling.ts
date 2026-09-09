@@ -23,6 +23,28 @@ export type ExecutionStoryContent = {
 // Illustrative assignments explain the work without implying campaign results
 // or a live reporting portal. Scope and reporting are agreed with each client.
 const fieldStories = {
+  verification: {
+    title: "Every check connects to a clear finding.",
+    description: "A verification assignment brings the agreed information, source checks and field observations into one review.",
+    visualId: "verification",
+    actions: [
+      { title: "Confirm the scope", description: "Agree the checklist, required permissions, information and locations before starting." },
+      { title: "Carry out the checks", description: "Review the documents, coordinate source enquiries and complete the agreed field visits." },
+      { title: "Review and report", description: "Record supporting findings, highlight mismatches and share outstanding items for review." },
+    ],
+    outcome: "Completed checks, recorded findings and open clarifications in the agreed reporting format.",
+  },
+  branding: {
+    title: "From approved artwork to a visible market presence.",
+    description: "Executives coordinate sticker placement and leaflet distribution around the outlet plan and campaign brief.",
+    visualId: "brand-deployment",
+    actions: [
+      { title: "Prepare the activity", description: "Confirm artwork, approved locations, permissions, materials and team responsibilities." },
+      { title: "Deploy the campaign", description: "Place stickers at agreed points and introduce the campaign through flyer distribution and customer engagement." },
+      { title: "Review the handover", description: "Collect placement records, activity updates and permitted photos, then flag any locations needing follow-up." },
+    ],
+    outcome: "Location-wise placement status, distribution updates and a clear record of campaign activity.",
+  },
   workforce: {
     title: "Build the team that carries the brief into the market.",
     description:
@@ -142,6 +164,7 @@ const fieldStories = {
 } as const satisfies Record<string, ExecutionStoryContent>;
 
 export const solutionFieldStories = {
+  "verification-services": [{ id: "verification", label: "Document & field checks", story: fieldStories.verification }],
   "workforce-solutions": [{ id: "workforce", label: "Field team deployment", story: fieldStories.workforce }],
   "sales-force": [
     { id: "sellers", label: "Seller onboarding", story: fieldStories.sellers },
@@ -153,7 +176,7 @@ export const solutionFieldStories = {
     { id: "audits", label: "Store audits", story: fieldStories.audits },
     { id: "surveys", label: "Consumer surveys", story: fieldStories.surveys },
   ],
-  "brand-activation": [{ id: "sampling", label: "Market sampling", story: fieldStories.sampling }],
+  "brand-activation": [{ id: "branding", label: "Branding & distribution", story: fieldStories.branding }, { id: "sampling", label: "Market sampling", story: fieldStories.sampling }],
   "business-operations": [{ id: "operations", label: "Coordination & handover", story: fieldStories.operations }],
   "gig-workforce": [{ id: "gig", label: "A short field assignment", story: fieldStories.gig }],
 } as const satisfies Record<SolutionSlug, readonly {

@@ -9,6 +9,7 @@ import {
   Handshake,
   Megaphone,
   Store,
+  ShieldCheck,
   Users,
 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
@@ -30,6 +31,8 @@ const icons = {
   sales: BriefcaseBusiness,
   promoters: Megaphone,
   execution: Store,
+  verification: ShieldCheck,
+  branding: Megaphone,
 };
 
 const gettingStarted = [
