@@ -42,6 +42,6 @@ const apiRateLimiter = rateLimit({
 });
 
 app.use("/api/v1", apiRateLimiter, apiRouter);
-app.get("/route", getMonitoringStatus);
+app.get(["/", "/route"], getMonitoringStatus);
 app.use(notFoundHandler);
 app.use(errorHandler);

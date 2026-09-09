@@ -23,7 +23,7 @@ let server, origin, serial = 0;
 const cookieFor = user => `zobhunger_access=${signAccessToken({ sub: user.id, role: user.role, version: user.sessionVersion ?? 0 })}`;
 const rawToken = link => new URLSearchParams(new URL(link).hash.slice(1)).get("token");
 async function request(path, { user, cookie, method = "GET", body, raw, headers = {}, csrf = true } = {}) {
-  const response = await fetch(`${origin}${path.startsWith("/route") ? "" : "/api/v1"}${path}`, { method, headers: {
+  const response = await fetch(`${origin}${path === "/" || path.startsWith("/route") ? "" : "/api/v1"}${path}`, { method, headers: {
     ...(cookie || user ? { Cookie: cookie || cookieFor(user) } : {}), ...(csrf && method !== "GET" && method !== "HEAD" ? { "X-Requested-With": "XMLHttpRequest" } : {}),
     ...(body !== undefined ? { "Content-Type": "application/json" } : {}), ...headers,
   }, body: raw ?? (body !== undefined ? JSON.stringify(body) : undefined) });
@@ -48,7 +48,9 @@ test("worker access, profiles, private resumes and real job discovery", async t 
     let worker, cookie, verification, completeProfile;
     const registration = { fullName: "Asha Field Executive", email: `${prefix}-new@example.test`, phone: "+91 9899900100", password, consent: true, next: "/jobs/field-executive" };
 
-    await t.test("GET and HEAD /route are public no-store liveness probes without database dependencies", async () => {
+    await t.test("GET and HEAD / and /route are public no-store liveness probes without database dependencies", async () => {
+      const root = await request("/"); assert.equal(root.status, 200); assert.equal(root.body.status, "ok"); assert.equal(root.headers.get("cache-control"), "no-store");
+      const rootHead = await request("/", { method: "HEAD" }); assert.equal(rootHead.status, 200); assert.equal(rootHead.body, "");
       const live = await request("/route"); assert.equal(live.status, 200); assert.equal(live.body.status, "ok"); assert.equal(live.headers.get("cache-control"), "no-store");
       assert.deepEqual(Object.keys(live.body).sort(), ["service", "status", "timestamp", "uptimeSeconds"]);
       const head = await request("/route", { method: "HEAD" }); assert.equal(head.status, 200); assert.equal(head.body, "");

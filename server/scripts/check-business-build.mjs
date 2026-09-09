@@ -30,7 +30,7 @@ try {
   await once(server, "listening");
   await checkBusinessRoutes(`http://127.0.0.1:${server.address().port}/api/v1`);
   await checkWorkerRoutes(`http://127.0.0.1:${server.address().port}/api/v1`);
-  console.log("Worker routes and public /route monitor check passed.");
+  console.log("Worker routes and public / + /route monitor checks passed.");
   console.log("Business route check passed: all Phase 2 modules, drafts, linked openings, attendance approvals and reports are mounted.");
 } catch (error) {
   console.error("Business route check failed:", error instanceof Error ? error.message : "Unable to load the compiled API.");

@@ -278,10 +278,19 @@
   }
   .zw-auth--login .zw-auth-grid {
     gap: 24px;
-    align-items: center;
+    align-items: stretch;
   }
   .zw-auth--login .zw-auth-story {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
     border-radius: 20px;
+  }
+  .zw-auth--login .zw-auth-story-copy {
+    flex: 1;
+  }
+  .zw-auth--login .zw-auth-card {
+    min-height: 100%;
   }
   .zw-auth--login .zw-auth-photo > img {
     height: clamp(170px, 19vw, 220px);

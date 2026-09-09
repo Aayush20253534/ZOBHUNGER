@@ -4,11 +4,13 @@ import assert from "node:assert/strict";
 export async function checkWorkerRoutes(apiBase) {
   const base = apiBase.replace(/\/$/, "");
   const origin = new URL(base).origin;
-  for (const method of ["GET", "HEAD"]) {
-    const result = await fetch(`${origin}/route`, { method });
-    assert.equal(result.status, 200, `${method} /route must be mounted`);
-    assert.equal(result.headers.get("cache-control"), "no-store");
-    if (method === "GET") assert.equal((await result.json()).status, "ok");
+  for (const path of ["/", "/route"]) {
+    for (const method of ["GET", "HEAD"]) {
+      const result = await fetch(`${origin}${path}`, { method });
+      assert.equal(result.status, 200, `${method} ${path} must be mounted`);
+      assert.equal(result.headers.get("cache-control"), "no-store");
+      if (method === "GET") assert.equal((await result.json()).status, "ok");
+    }
   }
   for (const path of ["/workers/workspace", "/workers/dashboard", "/workers/profile", "/workers/profile/resume", "/workers/jobs", "/workers/jobs/facets", "/workers/jobs/example", "/workers/saved-jobs", "/workers/applications", "/workers/applications/example", "/workers/assignments", "/workers/assignments/example", "/workers/assignments/example/calendar", "/workers/attendance", "/workers/earnings", "/workers/earnings/example", "/admin/worker-applications", "/admin/worker-attendance", "/admin/earnings", "/admin/earnings/assignments", "/admin/earnings/example"]) {
     assert.equal((await fetch(`${base}${path}`)).status, 401, `${path} must be mounted and protected`);
