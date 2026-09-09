@@ -2,6 +2,7 @@ import { VendorInvitation } from "@/components/vendors/VendorInvitation";
 import { CTASection } from "@/components/common/CTASection";
 import { BrandExperiencePreview } from "@/components/home/BrandExperiencePreview";
 import { HomeScale } from "@/components/home/HomeScale";
+import { HomeServiceSpotlight } from "@/components/home/HomeServiceSpotlight";
 import { Hero } from "@/components/home/Hero";
 import { HomeCaseStudyProof } from "@/components/home/HomeCaseStudyProof";
 import { HomeExecutionModel } from "@/components/home/HomeExecutionModel";
@@ -25,6 +26,7 @@ export default function Page() {
       <Hero />
       <BrandExperiencePreview />
       <HomeScale />
+      <HomeServiceSpotlight />
       <HomeExecutionStories />
       <HomeBusinessOverview />
       <HomeExecutionModel />
