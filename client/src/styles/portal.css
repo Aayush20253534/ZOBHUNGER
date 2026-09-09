@@ -322,12 +322,60 @@
   overflow: hidden;
 }
 .zb-admin-panel h2 {
+  margin: 0;
   padding: 1.05rem 1.15rem;
   border-bottom: 1px solid var(--zb-border);
   font-size: 1.15rem;
 }
 .zb-admin-list {
   display: grid;
+  min-width: 0;
+}
+.zb-admin-panel-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.15rem;
+  border-bottom: 1px solid var(--zb-border);
+  background: linear-gradient(110deg, #fff8fa, #fff);
+}
+.zb-admin-panel-action > div {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.zb-admin-panel-action strong {
+  color: var(--zb-ink);
+  font-size: 0.9rem;
+}
+.zb-admin-panel-action span {
+  color: var(--zb-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+.zb-admin-panel-action > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  flex: 0 0 auto;
+  min-height: 2.6rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #e7b9c2;
+  border-radius: 0.65rem;
+  background: #fff;
+  color: var(--zb-action);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.zb-admin-panel-action > a:hover {
+  background: #fff1f4;
+}
+.zb-admin-panel-action > a svg {
+  width: 1rem;
+  height: 1rem;
 }
 .zb-admin-row {
   display: flex;
@@ -357,6 +405,36 @@
 .zb-admin-row > .zb-chip {
   flex-shrink: 0;
 }
+.zb-admin-partner-row {
+  align-items: flex-start;
+}
+.zb-admin-partner-row > div {
+  width: 100%;
+}
+.zb-admin-partner-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.7rem;
+  min-width: 0;
+}
+.zb-admin-partner-meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+  max-width: min(100%, 18rem);
+  color: var(--zb-muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.zb-admin-partner-meta svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  flex: 0 0 auto;
+  color: var(--zb-action);
+}
 .zb-admin-empty,
 .zb-admin-state {
   margin: 0;
@@ -368,6 +446,26 @@
   border-radius: 0.75rem;
   background: var(--zb-surface);
 }
+@media (max-width: 640px) {
+  .zb-admin-panel-action {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .zb-admin-panel-action > a {
+    width: 100%;
+  }
+  .zb-admin-row {
+    align-items: flex-start;
+  }
+  .zb-admin-partner-row > .zb-chip {
+    margin-top: 0.1rem;
+  }
+  .zb-admin-partner-meta > span {
+    max-width: 100%;
+    flex-basis: 100%;
+  }
+}
+
 @media (min-width: 900px) {
   .zb-login-layout {
     grid-template-columns: minmax(0, 0.9fr) minmax(24rem, 1.1fr);

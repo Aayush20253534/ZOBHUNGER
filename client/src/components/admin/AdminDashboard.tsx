@@ -14,6 +14,8 @@ import {
   RefreshCw,
   UsersRound,
   WalletCards,
+  MapPin,
+  FileText,
 } from "lucide-react";
 import { apiFetch, ApiError, type ApiSuccessEnvelope } from "@/lib/api";
 import { getCurrentUser, logout } from "@/services/auth.service";
@@ -342,18 +344,17 @@ export function AdminDashboard() {
         </AdminPanel>
 
         <AdminPanel title="Business Partner applications">
-          <Link href="/admin/partners">Review applications and issue business access →</Link>
+          <div className="zb-admin-panel-action">
+            <div>
+              <strong>Partner access approvals</strong>
+              <span>Review submitted applications and issue business access from the dedicated approval workspace.</span>
+            </div>
+            <Link href="/admin/partners"><Handshake aria-hidden="true" />Review partners</Link>
+          </div>
           {data.partnerApplications.items.length === 0 ? (
             <EmptyRow />
           ) : (
-            data.partnerApplications.items.map((item) => (
-              <AdminRow
-                key={item.id}
-                title={item.fullName}
-                meta={`${item.currentProfession} · ${item.specialization} · ${item.currentCity}${item.resumeFileName ? " · Resume attached" : ""}`}
-                tag={item.status}
-              />
-            ))
+            data.partnerApplications.items.map((item) => <PartnerAdminRow key={item.id} item={item} />)
           )}
         </AdminPanel>
 
@@ -392,6 +393,23 @@ function AdminRow({ title, meta, tag }: { title: string; meta: string; tag: stri
         <span>{meta}</span>
       </div>
       <span className="zb-chip">{tag}</span>
+    </div>
+  );
+}
+
+function PartnerAdminRow({ item }: { item: PartnerApplication }) {
+  return (
+    <div className="zb-admin-row zb-admin-partner-row">
+      <div>
+        <strong>{item.fullName}</strong>
+        <div className="zb-admin-partner-meta">
+          <span title={item.currentProfession}><BriefcaseBusiness aria-hidden="true" />{item.currentProfession || "Profession not provided"}</span>
+          <span title={item.specialization}><ClipboardList aria-hidden="true" />{item.specialization || "Specialization not provided"}</span>
+          <span><MapPin aria-hidden="true" />{item.currentCity || "City not provided"}</span>
+          {item.resumeFileName && <span><FileText aria-hidden="true" />Resume attached</span>}
+        </div>
+      </div>
+      <span className="zb-chip">{item.status}</span>
     </div>
   );
 }

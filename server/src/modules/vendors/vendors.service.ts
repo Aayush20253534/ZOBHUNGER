@@ -21,14 +21,33 @@ const detailSelect = { ...summarySelect,
   consentAt: true, reviewedAt: true, reviewNotes: true, internalNotes: true,
 } satisfies Prisma.VendorApplicationSelect;
 const receiptSelect = { id: true, submissionHash: true, submittedAt: true, uploadExpiresAt: true, documents: { select: documentSelect } } satisfies Prisma.VendorApplicationSelect;
+type VendorReceiptRow = Prisma.VendorApplicationGetPayload<{ select: typeof receiptSelect }>;
 const fail = (status: number, message: string, code: string): never => { throw new HttpError(status, message, { code }); };
+
+function isUniqueConflict(error: unknown) {
+  return Boolean(error && typeof error === "object" && "code" in error && error.code === "P2002");
+}
 
 export async function startVendorApplication(input: VendorSubmission) {
   const { requestKey, consent: _consent, ...profile } = input;
   const id = randomUUID();
   const submissionHash = hash(JSON.stringify(profile));
-  const application = await prisma.vendorApplication.upsert({ where: { submissionKey: requestKey }, update: {},
-    create: { ...profile, id, submissionKey: requestKey, submissionHash, uploadTokenHash: hash(tokenFor(id, requestKey)), uploadExpiresAt: new Date(Date.now() + 60 * 60000) }, select: receiptSelect });
+  const create = { ...profile, id, submissionKey: requestKey, submissionHash, uploadTokenHash: hash(tokenFor(id, requestKey)), uploadExpiresAt: new Date(Date.now() + 60 * 60000) };
+
+  // Prisma's client-side upsert can race on PostgreSQL when two identical public
+  // retries arrive before either request observes the other's row. Let the
+  // unique submission key arbitrate the race, then read the winning draft.
+  let application: VendorReceiptRow | null;
+  try {
+    application = await prisma.vendorApplication.create({ data: create, select: receiptSelect });
+  } catch (error) {
+    if (!isUniqueConflict(error)) throw error;
+    application = await prisma.vendorApplication.findUnique({ where: { submissionKey: requestKey }, select: receiptSelect });
+    // A P2002 on another unique field must not be mistaken for an idempotent
+    // retry. A submission-key conflict has a committed winner by this point.
+    if (!application) throw error;
+  }
+
   if (application.submissionHash !== submissionHash) fail(409, "These details were already saved with different information. Contact our team with your reference to amend them.", "VENDOR_SUBMISSION_CHANGED");
   return { id: application.id, submitted: Boolean(application.submittedAt), submittedAt: application.submittedAt, documents: application.documents,
     uploadToken: application.submittedAt ? null : tokenFor(application.id, requestKey), uploadExpiresAt: application.uploadExpiresAt };
