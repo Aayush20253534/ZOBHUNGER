@@ -12,7 +12,7 @@ const client = redisConfigured
       commandsQueueMaxLength: 1_000,
       socket: {
         connectTimeout: 1_000,
-        reconnectStrategy: (retries) =>
+        reconnectStrategy: (retries: number) =>
           Math.min(250 * (retries + 1), 5_000) + Math.floor(Math.random() * 100),
       },
     })
