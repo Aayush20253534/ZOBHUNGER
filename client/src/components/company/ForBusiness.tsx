@@ -3,14 +3,17 @@ import {
   ArrowUpRight,
   BriefcaseBusiness,
   Building2,
-  MapPin,
+  ClipboardList,
+  LayoutDashboard,
+  LogIn,
+  UserRoundPlus,
   Megaphone,
   Store,
   Users,
 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
-import { CTASection } from "@/components/common/CTASection";
+import { BusinessWorkspacePreview } from "./BusinessWorkspacePreview";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Card } from "@/components/ui/card";
@@ -20,6 +23,7 @@ import {
   businessQuestions,
 } from "@/data/company";
 import "@/styles/company.css";
+import "@/styles/business-entry.css";
 
 const icons = {
   workforce: Users,
@@ -28,70 +32,44 @@ const icons = {
   execution: Store,
 };
 
+const gettingStarted = [
+  { title: "Create your account", description: "Register with your business email and password, then add your company details.", icon: UserRoundPlus },
+  { title: "Share your requirement", description: "Add the roles, people and locations you need. Save a draft when you need more time.", icon: ClipboardList },
+  { title: "Follow the work", description: "Review candidates, see deployments, approve attendance and download reports.", icon: LayoutDashboard },
+] as const;
+
+const accountQuestions = [
+  { question: "How do I create a business account?", answer: "Choose Register your business on this page, sign up with your email and password, and complete your company profile. You can then submit requirements or save them as drafts." },
+  { question: "Where do I log in next time?", answer: "Use Business login at the top of this page or in the For business section of the website footer. Sign in with the email and password you registered with." },
+] as const;
+
 export function ForBusiness() {
   return (
-    <div className="zb-company">
+    <div className="zb-company zb-for-business">
       <Breadcrumbs
         items={[{ label: "Home", href: "/" }, { label: "For Business" }]}
       />
-      <div className="zb-company-hero">
+      <div className="zb-business-access-hero">
         <PageShell
-          eyebrow="For business"
-          title="Build and manage your team with ZOBHUNGER."
-          description="Bring your workforce, sales and market execution needs into one conversation. Tell us the work ahead, and shape a team around it."
+          eyebrow="For business · Your company workspace"
+          title="Build your team. Manage the work."
+          description="Hire, deploy and stay connected to your team with ZOBHUNGER. Create a business account to manage requirements, review candidates and follow field execution in one workspace."
           actions={
             <>
-              <ActionLink href="/hire-workforce">
-                Tell us what you need{" "}
-                <ArrowUpRight aria-hidden="true" className="size-4" />
-              </ActionLink>
-              <ActionLink href="/solutions" variant="secondary">
-                Explore solutions
-              </ActionLink>
-              <ActionLink href="/business/login" variant="text">
-                Business workspace <ArrowUpRight aria-hidden="true" className="size-4" />
-              </ActionLink>
+              <ActionLink href="/business/register"><UserRoundPlus aria-hidden="true" className="size-4" />Register your business</ActionLink>
+              <ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Business login</ActionLink>
             </>
           }
-        />
-        <aside className="zb-premium-hero-card zb-business-hero-card" aria-labelledby="business-summary-title">
-          <div className="zb-premium-card-header">
-            <span className="zb-premium-card-icon" aria-hidden="true">
-              <BriefcaseBusiness />
-            </span>
-            <div>
-              <span className="zb-eyebrow">Business brief</span>
-              <h2 id="business-summary-title">Define the brief. Deploy with clarity.</h2>
-            </div>
-          </div>
-          <p className="zb-premium-card-copy">
-            Set the team, coverage and engagement model before execution starts.
-          </p>
-          <div className="zb-premium-stat-grid">
-            <article>
-              <Users aria-hidden="true" />
-              <span>Workforce</span>
-              <strong>Roles &amp; team size</strong>
-            </article>
-            <article>
-              <MapPin aria-hidden="true" />
-              <span>Coverage</span>
-              <strong>Site, city or multi-city</strong>
-            </article>
-            <article>
-              <Building2 aria-hidden="true" />
-              <span>Model</span>
-              <strong>Ongoing or project based</strong>
-            </article>
-          </div>
-          <div className="zb-premium-card-footer">
-            <span>One brief. Multiple execution needs.</span>
-            <ActionLink href="/hire-workforce" variant="text">
-              Start brief <ArrowUpRight aria-hidden="true" className="size-4" />
-            </ActionLink>
-          </div>
-        </aside>
+        >
+          <p className="zb-business-access-help">Prefer to discuss your needs first?{" "}<ActionLink href="/hire-workforce" variant="text">Share a requirement<ArrowUpRight aria-hidden="true" className="size-4" /></ActionLink></p>
+        </PageShell>
+        <BusinessWorkspacePreview />
       </div>
+
+      <section className="zb-business-get-started" id="business-get-started" aria-labelledby="business-get-started-title">
+        <div className="zb-business-get-started-heading"><div><span className="zb-eyebrow">A clear way to get started</span><h2 id="business-get-started-title">From your first brief to the field.</h2></div><Building2 aria-hidden="true" /></div>
+        <ol>{gettingStarted.map(({ title, description, icon: Icon }, index) => <li key={title}><div className="zb-business-start-label"><span aria-hidden="true">0{index + 1}</span><Icon aria-hidden="true" /><h3>{title}</h3></div><p>{description}</p></li>)}</ol>
+      </section>
 
       <section
         className="zb-company-section"
@@ -193,20 +171,17 @@ export function ForBusiness() {
             </ActionLink>
           }
         />
-        {businessQuestions.map((item) => (
+        {[...accountQuestions, ...businessQuestions].map((item) => (
           <details key={item.question}>
             <summary>{item.question}</summary>
             <p>{item.answer}</p>
           </details>
         ))}
       </section>
-      <div className="zb-company-section">
-        <CTASection
-          title="Tell us what you need."
-          description="Share your roles, locations and timeline. Start with the main service and add the rest of the detail in your brief."
-          label="Share your requirement"
-        />
-      </div>
+      <section className="zb-company-section zb-business-entry-cta" aria-labelledby="business-account-cta-title">
+        <div><h2 id="business-account-cta-title">Your next team starts here.</h2><p>Create your business account and bring your requirements, people and work updates together.</p></div>
+        <div><ActionLink href="/business/register" variant="light"><UserRoundPlus aria-hidden="true" className="size-4" />Register your business</ActionLink><ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Business login</ActionLink></div>
+      </section>
     </div>
   );
 }

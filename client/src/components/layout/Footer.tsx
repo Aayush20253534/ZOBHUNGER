@@ -1,8 +1,17 @@
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { Building2, ChevronDown, ClipboardList, LogIn, UserRoundPlus, type LucideIcon } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { site } from "@/data/site";
 import { solutions } from "@/data/solutions";
+import "@/styles/footer-business.css";
+
+type FooterLink = { href: string; label: string; icon?: LucideIcon };
+const businessLinks = [
+  { label: "For business", href: "/for-business", icon: Building2 },
+  { label: "Register your business", href: "/business/register", icon: UserRoundPlus },
+  { label: "Business login", href: "/business/login", icon: LogIn },
+  { label: "Hire workforce", href: "/hire-workforce", icon: ClipboardList },
+] as const satisfies readonly FooterLink[];
 
 const companyLinks = [
   { label: "About", href: "/about" },
@@ -17,7 +26,6 @@ const opportunityLinks = [
   { label: "For workers", href: "/for-workers" },
   { label: "Jobs & opportunities", href: "/jobs" },
   { label: "How it works", href: "/how-it-works" },
-  { label: "Hire workforce", href: "/hire-workforce" },
   { label: "Portal access", href: "/login" },
 ] as const;
 
@@ -37,6 +45,7 @@ const resourceLinks = [
 ] as const;
 
 const footerGroups = [
+  { title: "For business", label: "Business links in footer", links: businessLinks },
   { title: "Company", label: "Company links in footer", links: companyLinks },
   {
     title: "Services",
@@ -54,12 +63,12 @@ const footerGroups = [
   { title: "Resources", label: "Resource links in footer", links: resourceLinks },
 ] as const;
 
-function FooterLinks({ links }: { links: readonly { href: string; label: string }[] }) {
+function FooterLinks({ links }: { links: readonly FooterLink[] }) {
   return (
     <ul>
       {links.map((link) => (
         <li key={link.href}>
-          <Link href={link.href}>{link.label}</Link>
+          <Link href={link.href}>{link.icon && <link.icon className="zb-footer-link-icon" aria-hidden="true" />}{link.label}</Link>
         </li>
       ))}
     </ul>
@@ -69,13 +78,13 @@ function FooterLinks({ links }: { links: readonly { href: string; label: string 
 function FooterLinkGroup({ group }: { group: (typeof footerGroups)[number] }) {
   return (
     <>
-      <nav className="zb-footer-desktop-group" aria-label={group.label}>
+      <nav className={`zb-footer-desktop-group${group.title === "For business" ? " zb-footer-business-group" : ""}`} aria-label={group.label}>
         <h2>{group.title}</h2>
         <FooterLinks links={group.links} />
       </nav>
       {/* Native disclosures work on phones without extra client JavaScript.
           CSS exposes only one version of each group at a time. */}
-      <details className="zb-footer-mobile-group">
+      <details className={`zb-footer-mobile-group${group.title === "For business" ? " zb-footer-business-group" : ""}`} open={group.title === "For business"}>
         <summary>
           <h2>{group.title}<ChevronDown aria-hidden="true" /></h2>
         </summary>

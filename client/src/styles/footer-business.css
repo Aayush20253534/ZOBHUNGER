@@ -1,0 +1,20 @@
+/* Six navigation groups need room after adding public business access. */
+.zb-footer .zb-footer-link-icon { width: 1rem; height: 1rem; flex-shrink: 0; margin-right: 0.55rem; }
+.zb-footer .zb-footer-business-group li a { color: #fff; }
+@media (min-width: 768px) {
+  .zb-site .zb-footer .zb-footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: clamp(1rem, 2.5vw, 2.5rem); row-gap: 2rem; }
+  .zb-site .zb-footer .zb-footer-intro { grid-column: 1 / -1; display: flex; align-items: center; gap: 1.5rem; max-width: none; padding-bottom: 1.5rem; border-bottom: 1px solid #ffffff26; }
+  .zb-site .zb-footer .zb-footer-intro .zb-wordmark { flex-shrink: 0; }
+  .zb-site .zb-footer .zb-footer-intro p { max-width: 52ch; margin: 0; font-size: 0.875rem; line-height: 1.65; }
+  .zb-site .zb-footer .zb-footer-intro .zb-action-link { margin-left: auto; flex-shrink: 0; }
+  .zb-site .zb-footer .zb-footer-desktop-group { min-width: 0; }
+  .zb-site .zb-footer .zb-footer-desktop-group li a { min-height: 2.75rem; line-height: 1.5; overflow-wrap: anywhere; }
+}
+@media (min-width: 1200px) {
+  .zb-site .zb-footer .zb-footer-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: 1.25rem; }
+}
+@media (min-width: 768px) and (max-width: 1099px) {
+  .zb-site .zb-footer .zb-footer-intro { flex-wrap: wrap; }
+  .zb-site .zb-footer .zb-footer-intro p { flex: 1 1 24rem; max-width: none; }
+  .zb-site .zb-footer .zb-footer-intro .zb-action-link { margin-left: 0; }
+}

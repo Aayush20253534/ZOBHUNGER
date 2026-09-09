@@ -2,8 +2,8 @@ import { ForBusiness } from "@/components/company/ForBusiness";
 import { getPageMetadata } from "@/lib/page-metadata";
 
 export const metadata = getPageMetadata(
-  "Build and Manage Your Team",
-  "Recruitment, sales teams, promoters and market execution. Shape a workforce solution around your business requirement.",
+  "Business Registration, Login & Workforce Management",
+  "Register your business or log in to ZOBHUNGER to manage requirements, review candidates, follow deployments, approve attendance and access reports.",
   "/for-business",
 );
 
