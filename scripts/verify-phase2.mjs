@@ -3,13 +3,14 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
+const includeWorkers = process.argv.includes("--workers");
 const output = new URL("../.release-artifacts/phase2-code-checks.json", import.meta.url);
 const node = process.execPath;
 const npm = process.env.npm_execpath;
 const suite = [
   "business", "business-dashboard", "business-requirements", "business-candidates",
   "business-deployments", "business-attendance", "phase2", "submission-recovery",
-  "partner-hr", "vendor-empanelment",
+  "partner-hr", "vendor-empanelment", ...(includeWorkers ? ["workers"] : []),
 ];
 const steps = [
   { name: "Release-check regression tests", cwd: root, args: ["--test", "scripts/tests/release-routes.test.mjs"] },
@@ -19,14 +20,14 @@ const steps = [
   { name: "Database schema matches migrations", cwd: `${root}server`, args: ["node_modules/prisma/build/index.js", "migrate", "diff", "--from-config-datasource", "--to-schema", "prisma/schema.prisma", "--exit-code"] },
   { name: "Requirement and Mailjet contract tests (mocked delivery)", cwd: `${root}server`, args: ["--import", "tsx", "--experimental-test-module-mocks", "--test", "tests/mailjet.test.mjs", "tests/public-requirement-contract.test.mjs"] },
   ...suite.map(name => ({ name: `${name} database integration`, cwd: `${root}server`, args: ["--experimental-test-module-mocks", "--test", `tests/${name}.integration.test.mjs`] })),
-  { name: "Client session regression tests", folder: "client", script: "test:business" },
+  { name: "Client portal regression tests", folder: "client", script: "test:business" },
   { name: "Client lint", folder: "client", script: "lint" },
   { name: "Client production build and TypeScript", folder: "client", script: "build" },
 ];
 const revision = spawnSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" });
 const changes = spawnSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" });
 const report = {
-  scope: "Automated Phase 2 code and dedicated-database checks; not production signoff",
+  scope: `Automated Phase 2${includeWorkers ? " and worker P3.1–P3.3" : ""} code and dedicated-database checks; not production signoff`,
   status: "running", startedAt: new Date().toISOString(), node: process.version,
   databaseKind: process.env.TEST_DATABASE_KIND || "postgresql (operator-provided test database)",
   revision: revision.status === 0 ? revision.stdout.trim() : null,

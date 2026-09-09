@@ -1,4 +1,5 @@
 import { vendorsRouter } from "../modules/vendors/vendors.routes.js";
+import { workersRouter } from "../modules/workers/workers.routes.js";
 import { Router } from "express";
 import { adminRouter } from "../modules/admin/admin.routes.js";
 import { authRouter } from "../modules/auth/auth.routes.js";
@@ -18,6 +19,7 @@ export const apiRouter = Router();
 apiRouter.use("/health", healthRouter);
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/business", businessRouter);
+apiRouter.use("/workers", workersRouter);
 apiRouter.use("/articles", articlesRouter);
 apiRouter.use("/admin", adminRouter);
 apiRouter.use("/jobs", jobsRouter);

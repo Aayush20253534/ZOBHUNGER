@@ -23,7 +23,7 @@ const accountTypes = [
   {
     title: "Worker account",
     icon: UserRound,
-    copy: "Sign in to explore workforce opportunities. Your dedicated worker workspace is being developed.",
+    copy: "Verify your email, build your profile, upload your CV and save published job opportunities.",
   },
   {
     title: "Admin account",

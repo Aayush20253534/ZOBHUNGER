@@ -21,5 +21,6 @@ export const corsOptions: CorsOptions = {
     "X-Requested-With",
     "X-Upload-Token",
     "X-File-Name",
+    "X-Resume-Revision",
   ],
 };

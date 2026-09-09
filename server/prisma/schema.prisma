@@ -113,6 +113,8 @@ model User {
   createdJobs           Job[]                   @relation("JobCreator")
   auditLogs             AuditLog[]              @relation("AuditActor")
   passwordResetToken    PasswordResetToken?
+  workerAccessTokens    WorkerAccessToken[]
+  savedJobs             WorkerSavedJob[]
   requirementDrafts     RequirementDraft[]
   attendanceApprovals   AttendanceApprovalEvent[]
 
@@ -151,13 +153,74 @@ model WorkerProfile {
   skills          String[] @default([])
   experienceYears Int?
   resumeUrl       String?
+  headline        String?
+  about           String?
+  postalCode      String?
+  languages       String[] @default([])
+  education       Json     @default("[]")
+  workExperience  Json     @default("[]")
+  preferredLocations String[] @default([])
+  preferredCategories String[] @default([])
+  preferredEngagements String[] @default([])
+  availability    String?
+  consentAt       DateTime?
+  revision        Int      @default(0)
+  resumeRevision  Int      @default(0)
   isAvailable     Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  resume WorkerResume?
   @@index([city, isAvailable])
+}
+
+enum WorkerTokenPurpose {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+model WorkerAccessToken {
+  id String @id @default(cuid())
+  userId String
+  purpose WorkerTokenPurpose
+  tokenHash String @unique
+  sessionVersion Int
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, purpose])
+  @@index([expiresAt])
+}
+
+model WorkerResume {
+  id String @id @default(cuid())
+  profileId String @unique
+  fileName String
+  mimeType String
+  size Int
+  sha256 String
+  data Bytes
+  revision Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  profile WorkerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model WorkerSavedJob {
+  id String @id @default(cuid())
+  userId String
+  jobId String
+  title String
+  location String
+  category String
+  engagementType String
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  @@unique([userId, jobId])
+  @@index([userId, createdAt, id])
 }
 
 model PasswordResetToken {
@@ -252,6 +315,7 @@ model Job {
 
   createdBy    User?            @relation("JobCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
   applications JobApplication[]
+  savedBy WorkerSavedJob[]
 
   @@index([status, publishedAt])
   @@index([city, category, engagementType])

@@ -7,9 +7,11 @@ import { authRateLimiter } from "../../middlewares/rate-limit.middleware.js";
 import { changeBusinessPasswordController, businessLoginController, loginController, logoutController, meController, placementCellLoginController, registerController } from "./auth.controller.js";
 import { businessLoginSchema, changeBusinessPasswordSchema, loginSchema, registerSchema } from "./auth.schema.js";
 import { passwordRecoveryRouter } from "./password-recovery.routes.js";
+import { workerAccessRouter } from "../workers/worker-access.routes.js";
 
 export const authRouter = Router();
 authRouter.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
+authRouter.use("/worker", workerAccessRouter);
 authRouter.post("/business-login", authRateLimiter, validate({ body: businessLoginSchema }), businessLoginController);
 authRouter.use("/business", passwordRecoveryRouter);
 authRouter.post("/register", authRateLimiter, validate({ body: registerSchema }), registerController);

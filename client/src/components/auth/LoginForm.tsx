@@ -10,7 +10,7 @@ function destinationForRole(role: "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_C
   if (role === "ADMIN") return "/admin";
   if (role === "BUSINESS") return "/business";
   if (role === "PLACEMENT_CELL") return "/placement-portal";
-  return "/for-workers";
+  return "/worker";
 }
 
 export function LoginForm() {

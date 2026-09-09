@@ -23,15 +23,17 @@ page endpoints, verification evidence and the remaining real-device visual signo
 The P2.8 follow-up adds a repeatable release command, PostgreSQL CI, read-only
 deployment checks and workspace session regression coverage. Its evidence and
 remaining external checks are recorded in `P2_8_RELEASE_REVIEW.md`.
-Next implementation scope is P3.1; Phase 2 production signoff is tracked separately.
+P3.1–P3.3 are implemented in the worker-portal patch described in
+`P3_1_3_WORKER_PORTAL.md`. P3.4 is the next implementation scope; Phase 2 production
+signoff is tracked separately.
 
 ## Phase 3 — Worker portal
 
 | Part | Intended scope |
 | --- | --- |
-| P3.1 | Registration, verification, login, recovery and return-to-job routing |
-| P3.2 | Worker profile, onboarding, skills, preferences, CV and completion checklist |
-| P3.3 | Job discovery, filters, saved jobs and job details |
+| P3.1 | Implemented: registration, verification, login, recovery and return-to-job routing |
+| P3.2 | Implemented: worker profile, onboarding, skills, preferences, private PDF CV and completion checklist |
+| P3.3 | Implemented: live job discovery, filters, saved jobs and job details |
 | P3.4 | Applications, duplicate prevention, history, withdrawal and status tracking |
 | P3.5 | Confirmed assignments, schedules, attendance submission and correction requests |
 | P3.6 | Approved earnings and recorded payment history, maintained by operations |

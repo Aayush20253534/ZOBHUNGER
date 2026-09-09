@@ -5,8 +5,8 @@ import { HttpError } from "../../utils/http-error.js";
 export const availableJobWhere: Prisma.JobWhereInput = { status: "OPEN", OR: [
   { requirementId: null },
   { requirement: { is: { status: "QUALIFIED", OR: [
-    { businessProfile: { is: { user: { is: { role: "BUSINESS", isActive: true } } } } },
-    { businessProfileId: null, submittedBy: { is: { role: "BUSINESS", isActive: true } } },
+    { businessProfile: { is: { user: { is: { role: "BUSINESS", isActive: true, businessAccessApproved: true } } } } },
+    { businessProfileId: null, submittedBy: { is: { role: "BUSINESS", isActive: true, businessAccessApproved: true } } },
   ] } } },
 ] };
 export async function lockAvailableJob(tx: Prisma.TransactionClient, id: string) {

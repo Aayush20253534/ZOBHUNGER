@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, MapPin } from "lucide-react";
+import { Bookmark, BriefcaseBusiness, MapPin } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { PageShell } from "@/components/common/PageShell";
@@ -30,9 +30,9 @@ export function JobDetails({ job }: { job: Job }) {
           title={job.title}
           description={job.description}
           actions={
-            <ActionLink href="#apply">
+            <><ActionLink href="#apply">
               {job.isDemo ? "Test application" : "Apply for this role"}
-            </ActionLink>
+            </ActionLink>{!job.isDemo && <ActionLink href={`/worker/jobs/${encodeURIComponent(job.slug)}`} variant="secondary"><Bookmark aria-hidden="true" />Save in worker space</ActionLink>}</>
           }
         />
         <div className="zb-job-detail-meta">

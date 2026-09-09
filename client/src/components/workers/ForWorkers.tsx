@@ -14,11 +14,10 @@ import {
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
-import { ProcessFlow } from "@/components/common/ProcessFlow";
 import { PageShell } from "@/components/common/PageShell";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Card } from "@/components/ui/card";
-import { workerCategories, workerJourney } from "@/data/workers";
+import { workerCategories } from "@/data/workers";
 import { jobsHref } from "@/lib/job-filters";
 import { getDataMode } from "@/services/adapters";
 import "@/styles/work.css";
@@ -47,12 +46,12 @@ export function ForWorkers() {
           description="Explore sales, promoter, field and operations roles. Start with the work you want to do and the location that suits you."
           actions={
             <>
-              <ActionLink href="/jobs">
-                {isPreview ? "Explore example jobs" : "Explore jobs"}
+              <ActionLink href="/worker/register">
+                Create worker account
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </ActionLink>
-              <ActionLink href="#worker-journey" variant="secondary">
-                How to get started
+              <ActionLink href="/worker/login" variant="secondary">
+                Worker sign in
               </ActionLink>
             </>
           }
@@ -158,25 +157,14 @@ export function ForWorkers() {
       >
         <SectionHeading
           id="worker-journey-title"
-          eyebrow="The planned worker journey"
-          title="From finding a role to starting work."
-          description="This is the journey ZOBHUNGER is building toward. Profile creation, selection updates and earnings tools are planned for the worker portal."
+          eyebrow="Your worker space"
+          title="A simple start. A profile that grows with you."
+          description="Create an account, verify your email and keep your profile and favourite roles in one place."
         />
-        <ProcessFlow
-          steps={workerJourney}
-          label="The six planned worker journey steps"
-          planned
-          action={{
-            href: "/jobs",
-            label: isPreview ? "Explore example jobs" : "Explore jobs",
-          }}
-        />
-        <p className="zb-worker-portal-note">
-          Worker accounts are not open yet.{" "}
-          {isPreview
-            ? "You can explore the job pages and try the application preview without creating an account."
-            : "You can explore the published job pages and read each role's requirements."}
-        </p>
+        <div className="zb-worker-category-grid">
+          {[{ icon: UserRoundCheck, title: "01 · Create & verify", copy: "Register with your email and phone, then confirm your email using the link in your inbox.", href: "/worker/register", label: "Create your account" }, { icon: ClipboardList, title: "02 · Build your profile", copy: "Add education, experience, skills and work preferences. Keep a private PDF copy of your CV.", href: "/worker/profile", label: "Open your profile" }, { icon: Search, title: "03 · Find your fit", copy: "Browse published openings, filter by location and work type, and save the roles you want to revisit.", href: "/worker/jobs", label: "Find opportunities" }].map(({ icon: Icon, title, copy, href, label }) => <Link className="zb-card-link" href={href} key={href}><Card className="zb-card"><Icon className="zb-card-icon" aria-hidden="true" /><h3 className="zb-card-title">{title}</h3><p className="zb-card-copy">{copy}</p><span className="zb-card-cta">{label}<ArrowUpRight className="size-4" aria-hidden="true" /></span></Card></Link>)}
+        </div>
+        <p className="zb-worker-portal-note">Already have an account? <Link href="/worker/login">Sign in to your worker space</Link>. You can also <Link href="/jobs">browse public job listings</Link> before joining.</p>
       </section>
       <div className="zb-work-section">
         <CTASection

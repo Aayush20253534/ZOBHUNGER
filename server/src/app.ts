@@ -10,6 +10,7 @@ import { requestContext } from "./middlewares/request-context.middleware.js";
 import { notFoundHandler } from "./middlewares/not-found.middleware.js";
 import { apiRouter } from "./routes/index.js";
 import { apiErrorResponse } from "./utils/api-response.js";
+import { getMonitoringStatus } from "./controllers/health.controller.js";
 
 export const app = express();
 
@@ -41,5 +42,6 @@ const apiRateLimiter = rateLimit({
 });
 
 app.use("/api/v1", apiRateLimiter, apiRouter);
+app.get("/route", getMonitoringStatus);
 app.use(notFoundHandler);
 app.use(errorHandler);

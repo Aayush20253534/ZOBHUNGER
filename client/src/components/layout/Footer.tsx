@@ -27,6 +27,9 @@ const companyLinks = [
 
 const opportunityLinks = [
   { label: "For workers", href: "/for-workers" },
+  { label: "Create worker account", href: "/worker/register" },
+  { label: "Worker sign in", href: "/worker/login" },
+  { label: "My profile & CV", href: "/worker/profile" },
   { label: "Jobs & opportunities", href: "/jobs" },
   { label: "Submit your CV / profile", href: "/careers/apply" },
   { label: "How it works", href: "/how-it-works" },

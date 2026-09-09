@@ -15,7 +15,7 @@ function authCookieOptions() {
   };
 }
 
-function setAuthCookie(res: Response, user: { id: string; role: unknown; sessionVersion: number }) {
+export function setAuthCookie(res: Response, user: { id: string; role: unknown; sessionVersion: number }) {
   const token = signAccessToken({ sub: user.id, role: user.role as "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL", version: user.sessionVersion });
   res.cookie(env.AUTH_COOKIE_NAME, token, {
     ...authCookieOptions(),
