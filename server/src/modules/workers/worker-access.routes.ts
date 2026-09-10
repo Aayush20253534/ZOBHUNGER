@@ -7,16 +7,14 @@ import { logger } from "../../utils/logger.js";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import { workerEmailConfigured } from "../../services/worker-email.service.js";
 import { setAuthCookie } from "../auth/auth.controller.js";
-import { consumeWorkerToken, loginWorker, registerWorker, requestWorkerEmail } from "./worker-access.service.js";
-import { workerEmailSchema, workerLoginSchema, workerRegisterSchema, workerResetSchema, workerTokenSchema } from "./workers.schema.js";
+import { consumeWorkerToken, loginWorker, requestWorkerEmail } from "./worker-access.service.js";
+import { workerEmailSchema, workerLoginSchema, workerResetSchema, workerTokenSchema } from "./workers.schema.js";
 
 export const workerAccessRouter = Router();
 workerAccessRouter.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
 workerAccessRouter.use(authRateLimiter, portalWrite);
-workerAccessRouter.post("/register", validate({ body: workerRegisterSchema }), async (_req, res) => {
-  const result = await registerWorker(res.locals.validated.body, res.locals.requestId);
-  setAuthCookie(res, result.user);
-  res.status(201).json(apiSuccessResponse("Worker account created", result));
+workerAccessRouter.post("/register", (_req, _res) => {
+  throw new HttpError(403, "Worker self-registration is closed. Submit your profile for review first; approved workers receive next-step communication from our team.", { code: "WORKER_REVIEW_REQUIRED" });
 });
 workerAccessRouter.post("/login", validate({ body: workerLoginSchema }), async (_req, res) => {
   const { email, password } = res.locals.validated.body; const user = await loginWorker(email, password);

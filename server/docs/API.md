@@ -32,7 +32,7 @@ Primary auth routes include:
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| POST | `/auth/register` | Register supported public account roles |
+| POST | `/auth/register` | Compatibility endpoint; BUSINESS/WORKER self-registration is rejected pending review/approval |
 | POST | `/auth/login` | Standard authenticated login |
 | POST | `/auth/business-login` | Business portal login |
 | POST | `/auth/placement-cell-login` | Institution/placement-cell login |
@@ -44,9 +44,9 @@ Primary auth routes include:
 | POST | `/auth/admin-mfa/setup` | Begin admin MFA setup |
 | POST | `/auth/admin-mfa/confirm` | Confirm admin MFA setup/challenge |
 
-Worker-specific account access is mounted under `/auth/worker/*` and covers registration, login, verification-email delivery/consumption and password recovery/reset.
+Worker-specific account access is mounted under `/auth/worker/*` and covers approved-worker login, verification-email delivery/consumption and password recovery/reset. `POST /auth/worker/register` remains only as a compatibility guard and returns `403 WORKER_REVIEW_REQUIRED`; it does not create an account.
 
-Public registration never grants ADMIN access. Admin access is protected separately and MFA is enforced by the admin router.
+New business clients begin with the public workforce requirement flow, and new workers begin with the public career-profile flow. The team reviews/verifies the submitted details before approval and further communication. Public BUSINESS/WORKER self-registration is disabled. Admin access is protected separately and MFA is enforced by the admin router.
 
 ### Native mobile note
 
@@ -89,7 +89,7 @@ Mutating portal operations use the portal write guard and server-side ownership/
 
 ## Worker portal
 
-Protected by authenticated `WORKER` role access. Email verification is required before profile/job workflow access beyond the initial workspace.
+Protected by authenticated `WORKER` role access. Worker accounts are approval-gated rather than publicly self-created. Public applicants submit `/career-applications`; approved workers receive further communication/access as required. Email verification is required before profile/job workflow access beyond the initial workspace.
 
 The `/workers` family includes:
 

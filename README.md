@@ -36,7 +36,8 @@ server/   Express + TypeScript + Prisma/PostgreSQL API
 
 ### Worker portal
 
-- registration, email verification, login and password recovery
+- profile-first worker intake through the public career profile form
+- approval-gated worker access, email verification, login and password recovery
 - worker profile and resume management
 - job discovery and saved jobs
 - job applications and withdrawal

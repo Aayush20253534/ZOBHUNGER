@@ -1,5 +1,4 @@
 import { createHash, randomBytes } from "node:crypto";
-import type { z } from "zod";
 import { prisma } from "../../config/db.js";
 import { env } from "../../config/env.js";
 import { logger } from "../../utils/logger.js";
@@ -8,7 +7,7 @@ import { hashPassword, verifyPasswordOrDummy } from "../../utils/password.js";
 import { safeUser } from "../auth/auth.service.js";
 import { markLogin } from "../auth/auth.repository.js";
 import { sendWorkerAccessEmail } from "../../services/worker-email.service.js";
-import { workerDestination, type workerRegisterSchema } from "./workers.schema.js";
+import { workerDestination } from "./workers.schema.js";
 
 type Purpose = "EMAIL_VERIFICATION" | "PASSWORD_RESET";
 const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
@@ -37,24 +36,6 @@ export async function requestWorkerEmail(email: string, purpose: Purpose, next?:
   const delivered = await sendWorkerAccessEmail(user.email, url.toString(), purpose, requestId);
   if (!delivered) await prisma.workerAccessToken.deleteMany({ where: { userId: user.id, tokenHash } });
   return delivered;
-}
-
-export async function registerWorker(input: z.infer<typeof workerRegisterSchema>, requestId?: string) {
-  const passwordHash = await hashPassword(input.password);
-  let user;
-  try {
-    user = await prisma.user.create({ data: { email: input.email, phone: input.phone, passwordHash, role: "WORKER",
-      workerProfile: { create: { fullName: input.fullName, phone: input.phone, consentAt: new Date() } } } });
-  } catch (error) {
-    if (error && typeof error === "object" && "code" in error && error.code === "P2002") throw new HttpError(409, "An account with this email or phone already exists. Sign in or recover your password.", { code: "ACCOUNT_ALREADY_REGISTERED" });
-    throw error;
-  }
-  // Account creation has committed. A delivery/configuration failure must not
-  // make the user repeat registration and lose the route to email recovery.
-  let emailSent = false;
-  try { emailSent = await requestWorkerEmail(user.email, "EMAIL_VERIFICATION", input.next, requestId); }
-  catch { logger.warn("worker.registration_email_failed", { requestId }); }
-  return { user: safeUser(user), emailSent };
 }
 
 export async function loginWorker(email: string, password: string) {

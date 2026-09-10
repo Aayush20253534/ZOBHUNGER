@@ -4,11 +4,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { WorkerAccess } from "@/components/worker/WorkerAccess";
 import { workerDestination } from "@/lib/worker-navigation";
 
-const state = vi.hoisted(() => ({ query: "", login: vi.fn(), verify: vi.fn(), register: vi.fn(), reset: vi.fn(), email: vi.fn(), workspace: vi.fn(), router: { replace: vi.fn(), refresh: vi.fn() } }));
+const state = vi.hoisted(() => ({ query: "", login: vi.fn(), verify: vi.fn(), reset: vi.fn(), email: vi.fn(), workspace: vi.fn(), router: { replace: vi.fn(), refresh: vi.fn() } }));
 vi.mock("next/navigation", () => ({ useRouter: () => state.router, useSearchParams: () => new URLSearchParams(state.query) }));
 vi.mock("next/link", () => ({ default: (props: ComponentProps<"a">) => createElement("a", props) }));
 vi.mock("next/image", () => ({ default: (props: ComponentProps<"img"> & { priority?: boolean }) => { const imageProps = { ...props }; delete imageProps.priority; return createElement("img", imageProps); } }));
-vi.mock("@/services/worker.service", () => ({ loginWorker: state.login, verifyWorkerEmail: state.verify, registerWorker: state.register, resetWorkerPassword: state.reset, requestWorkerEmail: state.email, getWorkerWorkspace: state.workspace }));
+vi.mock("@/services/worker.service", () => ({ loginWorker: state.login, verifyWorkerEmail: state.verify, resetWorkerPassword: state.reset, requestWorkerEmail: state.email, getWorkerWorkspace: state.workspace }));
 let root: Root, container: HTMLDivElement;
 const flush = async (action?: () => void) => { await act(async () => { action?.(); await new Promise(resolve => setTimeout(resolve, 0)); }); };
 async function input(selector: string, value: string) { await flush(() => { const field = container.querySelector<HTMLInputElement>(selector)!; Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(field, value); field.dispatchEvent(new Event("input", { bubbles: true })); }); }
@@ -37,6 +37,12 @@ describe("worker access screens", () => {
     state.query = "next=%2Fworker%2Fsaved-jobs"; state.login.mockResolvedValueOnce({ data: { user: { emailVerifiedAt: null } } });
     await flush(() => root.render(<WorkerAccess mode="login" />)); await input('input[type="email"]', "worker@example.test"); await input('input[type="password"]', "WorkerReady123!"); await submit();
     expect(state.router.replace).toHaveBeenCalledWith("/worker/verify?next=%2Fworker%2Fsaved-jobs");
+  });
+  it("directs new workers to the reviewed profile flow instead of public signup", async () => {
+    await flush(() => root.render(<WorkerAccess mode="login" />));
+    expect(container.textContent).toContain("Submit your profile for review");
+    expect(container.querySelector('a[href="/careers/apply"]')).not.toBeNull();
+    expect(container.textContent).not.toContain("Create worker account");
   });
   it("does not call reset without a token and catches mismatched new passwords before posting", async () => {
     await flush(() => root.render(<WorkerAccess mode="reset" />)); expect(container.textContent).toContain("Request a new reset link"); expect(container.querySelector("form")).toBeNull();

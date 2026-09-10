@@ -1,5 +1,7 @@
 # Worker portal — P3.1, P3.2 and P3.3
 
+> **Final onboarding policy:** public worker self-registration described in the original P3.1 delivery has been retired. New workers now submit `/careers/apply`; the team reviews and verifies the profile/CV, then communicates access or next steps after approval when there is a suitable project requirement. Existing approved worker login, verification, recovery and portal features remain active.
+
 This patch builds on the P2.8 release-review baseline. It introduces authenticated
 worker accounts and their own profile and saved-job records. It preserves the
 business approval process, careers submissions and existing public applications.
@@ -26,7 +28,7 @@ Use these paths on the **frontend** domain:
 | Page | Path |
 | --- | --- |
 | Public entry, account creation and sign-in links | `/for-workers` and the website footer |
-| Registration | `/worker/register` |
+| Public profile submission | `/careers/apply` |
 | Worker sign-in | `/worker/login` |
 | Verify email or resend a link | `/worker/verify` |
 | Request password recovery | `/worker/forgot-password` |
@@ -54,7 +56,7 @@ Browser calls use the existing first-party `/api/backend` Next rewrite.
 
 | Method | Path | Access / purpose |
 | --- | --- | --- |
-| POST | `/api/v1/auth/worker/register` | Create a worker account and request verification |
+| POST | `/api/v1/auth/worker/register` | Compatibility guard; returns `403 WORKER_REVIEW_REQUIRED` and creates no account |
 | POST | `/api/v1/auth/worker/login` | Worker email/password sign-in |
 | POST | `/api/v1/auth/worker/resend-verification` | Generic response; resend for an eligible worker |
 | POST | `/api/v1/auth/worker/verify-email` | Consume a one-use verification token |

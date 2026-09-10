@@ -264,7 +264,7 @@
 @media (max-width:360px) { .zw-auth { padding-inline:14px; } .zw-auth-card { padding:20px; } .zw-filters { grid-template-columns:1fr; } .zw-filters > * { grid-column:1!important; } .zw-access-steps { gap:10px; } .zw-access-steps small { display:none; } .zw-checklist a > svg { display:none; } .zw-card { padding:20px 16px; } }
 @media (prefers-reduced-motion:reduce) { .zw *, .zw *::before, .zw *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
 
-/* Compact worker sign-in while leaving registration and recovery forms comfortably spaced. */
+/* Compact approved-worker sign-in while leaving recovery forms comfortably spaced. */
 @media (min-width: 801px) {
   .zw-auth--login {
     max-width: 1160px;

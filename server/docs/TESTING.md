@@ -84,7 +84,8 @@ Verify at minimum:
 8. `/careers/apply` remains visually contained at desktop/tablet/mobile widths and can submit a profile/resume.
 9. partner, placement-cell and vendor application forms submit correctly.
 10. articles/blog pages load published content.
-11. no public page has broken images, horizontal overflow, dead CTAs or console errors.
+11. the mobile footer shows the single public office address followed by dedicated Business, Careers, Queries and Legal email rows without horizontal overflow.
+12. no public page has broken images, horizontal overflow, dead CTAs or console errors.
 
 ## Business portal manual QA
 
@@ -103,13 +104,16 @@ Verify:
 
 Verify:
 
-1. registration, email verification, login and recovery work.
-2. unverified accounts cannot bypass the verification gate.
-3. profile and resume operations work.
-4. jobs, filters and saved jobs work.
-5. application submit/detail/withdraw flows work.
-6. assignments and attendance work.
-7. earnings statements and export work.
+1. `/for-workers` sends new workers to `/careers/apply`; no public worker signup action is exposed.
+2. `/worker/register` does not expose a registration form, and both worker registration API paths reject self-registration with `WORKER_REVIEW_REQUIRED` without creating a user.
+3. the public career profile/CV form submits without an account and appears in the admin career-review workflow.
+4. approved worker email verification, login and recovery work.
+5. unverified approved accounts cannot bypass the verification gate.
+6. profile and resume operations work.
+7. jobs, filters and saved jobs work.
+8. application submit/detail/withdraw flows work.
+9. assignments and attendance work.
+10. earnings statements and export work.
 
 ## Placement/institution portal manual QA
 

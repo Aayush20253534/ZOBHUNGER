@@ -2,6 +2,8 @@
 
 This patch is based on the completed Phase 2 code plus `zobhunger-public-business-access.patch`. It replaces business self-registration and adds a public career profile form with an HR review area. The existing worker and institution account flows are retained.
 
+> **Current worker policy:** the career profile form is now also the required first step for new workers. Public worker account creation has since been retired; approved workers receive further communication/access after team review and verification.
+
 ## Where to check
 
 | Page | What changed |

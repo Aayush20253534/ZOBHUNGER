@@ -38,14 +38,14 @@ const icons = {
 
 const gettingStarted = [
   { title: "Share your requirement", description: "Tell us the roles, team size, locations, timeline and work you need completed. You can start without a business account.", icon: ClipboardCheck },
-  { title: "Shape the right team", description: "ZOBHUNGER reviews the brief and coordinates the relevant sourcing, screening and execution plan around it.", icon: Users },
-  { title: "Manage delivery", description: "Approved business users can use the Business Portal to follow requirements, candidates, deployments, attendance approvals and reports.", icon: Building2 },
+  { title: "Review & verification", description: "Our team reviews your business and project details, verifies the required information and evaluates the right service and execution fit.", icon: Users },
+  { title: "Approval & next steps", description: "Once the requirement and business details are approved, our team communicates the next steps and proceeds according to the project requirement. Approved users can then manage ongoing work in the Business Portal.", icon: Building2 },
 ] as const;
 
 const accountQuestions = [
-  { question: "Do I need a business account to share a requirement?", answer: "No. You can submit a workforce or execution requirement directly from the public Hire Workforce form. If your organisation already has approved portal access, use Business login to manage ongoing work." },
+  { question: "Do I need a business account to share a requirement?", answer: "No. Every new business starts by submitting the public Hire Workforce form. Our team reviews and verifies the required details before approval and further communication. Existing approved clients can use the approved business login to manage ongoing work." },
   { question: "What can approved business users manage?", answer: "The Business Portal brings company details, requirements, candidate review, deployments, attendance approvals and reports into one authorised workspace." },
-  { question: "Where do I log in next time?", answer: "Use Business login at the top of this page or in the For business section of the website footer. Sign in with the credentials issued to your approved account." },
+  { question: "Where do I log in next time?", answer: "Use the approved business login at the top of this page or in the For business section of the website footer. Sign in with the credentials issued to your approved account." },
 ] as const;
 
 export function ForBusiness() {
@@ -58,11 +58,11 @@ export function ForBusiness() {
         <PageShell
           eyebrow="For businesses & clients"
           title="Hire workforce. Keep execution connected."
-          description="Start with the roles, locations, team size and work you need completed. ZOBHUNGER connects hiring with deployment and execution, while approved business users can manage ongoing activity from one workspace."
+          description="Submit your workforce or execution requirement first. Our team reviews and verifies the required business and project details, then communicates the next steps after approval based on the project requirement."
           actions={
             <>
               <ActionLink href="/hire-workforce"><ClipboardCheck aria-hidden="true" className="size-4" />Hire Workforce</ActionLink>
-              <ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Business login</ActionLink>
+              <ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Approved business login</ActionLink>
             </>
           }
         >
@@ -197,8 +197,8 @@ export function ForBusiness() {
         ))}
       </section>
       <section className="zb-company-section zb-business-entry-cta" aria-labelledby="business-account-cta-title">
-        <div><h2 id="business-account-cta-title">Ready to build your next team?</h2><p>Share the requirement first. Approved business users can then keep requirements, candidates, deployment updates and approvals together in the Business Portal.</p></div>
-        <div><ActionLink href="/hire-workforce" variant="light"><ClipboardCheck aria-hidden="true" className="size-4" />Hire Workforce</ActionLink><ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Business login</ActionLink></div>
+        <div><h2 id="business-account-cta-title">Ready to build your next team?</h2><p>Submit the requirement first. Our team reviews and verifies the required details, then communicates with approved businesses according to the project requirement. Approved users can manage ongoing delivery in the Business Portal.</p></div>
+        <div><ActionLink href="/hire-workforce" variant="light"><ClipboardCheck aria-hidden="true" className="size-4" />Hire Workforce</ActionLink><ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Approved business login</ActionLink></div>
       </section>
     </div>
   );

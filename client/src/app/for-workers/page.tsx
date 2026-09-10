@@ -3,7 +3,7 @@ import { getPageMetadata } from "@/lib/page-metadata";
 
 export const metadata = getPageMetadata(
   "Find Work With ZOBHUNGER",
-  "Create a worker profile, explore and apply for published opportunities, and manage assignments, attendance and earnings through ZOBHUNGER's worker space.",
+  "Submit your worker profile and CV for ZOBHUNGER review. Approved workers are contacted when their details match a suitable project or role.",
   "/for-workers",
 );
 

@@ -17,7 +17,7 @@ P3.6 and P3.7 complete the Phase 3 worker portal on top of the existing P3.1–P
 
 ### P3.7 integrated worker dashboard
 
-- `/worker` is now the normal worker landing page after login, registration/verification and recovery flows while valid return destinations still win.
+- `/worker` is the normal landing page for approved workers after login/verification and recovery flows while valid return destinations still win.
 - Personalized profile completion and next actions.
 - Exact application and active/upcoming assignment totals, recent hiring updates and confirmed assignments.
 - Next scheduled shift with IST times, location, supervisor and overnight handling from the existing assignment schedule.

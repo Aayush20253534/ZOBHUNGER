@@ -13,6 +13,7 @@ import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { WorkplacePhoto } from "@/components/common/WorkplacePhoto";
+import { AboutStory } from "@/components/company/AboutStory";
 
 import { company } from "@/data/company";
 import { market, operatingLocations } from "@/data/market";
@@ -159,6 +160,8 @@ export function About() {
         </div>
       </section>
 
+      <AboutStory />
+
       <section className="zb-company-section" aria-label="ZOBHUNGER workforce in context">
         <WorkplacePhoto />
       </section>
@@ -192,10 +195,10 @@ export function About() {
         </ol>
       </section>
 
-      {/* MISSION + VISION */}
+      {/* MISSION + OPERATING COMMITMENT */}
       <section
         className="zb-company-section zb-about-purpose-grid"
-        aria-label="Mission and vision"
+        aria-label="Mission and operating commitment"
       >
         <article className="zb-about-purpose-card">
           <Target aria-hidden="true" />
@@ -207,9 +210,8 @@ export function About() {
           <h2>{company.mission}</h2>
 
           <p>
-            Make it easier for businesses to move from a
-            requirement to a team that is ready to perform the
-            work.
+            Help businesses access dependable talent while creating practical
+            pathways for people to work, build skills and grow closer to home.
           </p>
         </article>
 
@@ -217,14 +219,14 @@ export function About() {
           <Compass aria-hidden="true" />
 
           <span className="zb-eyebrow">
-            Our vision
+            Our operating commitment
           </span>
 
-          <h2>{company.vision}</h2>
+          <h2>Keep opportunity, capability and execution connected.</h2>
 
           <p>
-            Connect businesses, people and execution through a
-            clearer, more coordinated operating ecosystem.
+            Bring work closer to people while helping businesses access
+            suitable talent across locations with clear coordination and support.
           </p>
         </article>
       </section>

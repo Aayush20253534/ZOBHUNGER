@@ -6,6 +6,6 @@ export function workerDestination(value: unknown) {
   if (/^\/jobs\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,179}$/.test(value)) return `/worker${value}`;
   return "/worker";
 }
-export function workerAccessHref(path: "login" | "register" | "verify" | "forgot-password", next?: string) {
+export function workerAccessHref(path: "login" | "verify" | "forgot-password", next?: string) {
   return `/worker/${path}?${new URLSearchParams({ next: workerDestination(next) })}`;
 }

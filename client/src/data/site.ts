@@ -21,6 +21,13 @@ function publicBaseUrl(value: string | undefined, fallback: string) {
 
 const publicEmail = "help@zobhungr.com";
 
+const footerContacts = {
+  business: { label: "For Businesses", email: "business@zobhungr.com" },
+  careers: { label: "For Careers", email: "hr@zobhungr.com" },
+  queries: { label: "For Queries", email: "support@zobhungr.com" },
+  legal: { label: "For Legal", email: "legal@zobhungr.com" },
+} as const;
+
 export const site = {
   name: "ZOBHUNGER",
   url: publicBaseUrl(
@@ -48,6 +55,7 @@ export const site = {
   },
   publicContact: {
     email: publicEmail,
+    channels: footerContacts,
     emailHref: `mailto:${publicEmail}`,
     phoneLabel: "+91-548-4051917",
     phoneHref: "tel:+915484051917",

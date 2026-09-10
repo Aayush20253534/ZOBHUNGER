@@ -47,6 +47,7 @@ test("worker access, profiles, private resumes and real job discovery", async t 
     const other = await account(), business = await account("BUSINESS"), admin = await account("ADMIN"), institution = await account("PLACEMENT_CELL"), legacy = await account("WORKER", { emailVerifiedAt: null });
     let worker, cookie, verification, completeProfile;
     const registration = { fullName: "Asha Field Executive", email: `${prefix}-new@example.test`, phone: "+91 9899900100", password, consent: true, next: "/jobs/field-executive" };
+    const normalizedWorkerPhone = "+919899900100";
 
     await t.test("GET and HEAD / and /route are public no-store liveness probes without database dependencies", async () => {
       const root = await request("/"); assert.equal(root.status, 200); assert.equal(root.body.status, "ok"); assert.equal(root.headers.get("cache-control"), "no-store");
@@ -56,17 +57,24 @@ test("worker access, profiles, private resumes and real job discovery", async t 
       const head = await request("/route", { method: "HEAD" }); assert.equal(head.status, 200); assert.equal(head.body, "");
       const health = await request("/health"); assert.equal(health.body.data.features.workerAccess, true); assert.equal(health.body.data.features.workerProfiles, true); assert.equal(health.body.data.features.workerJobDiscovery, true);
     });
-    await t.test("registration validates consent, password and role before creating an account", async () => {
-      for (const override of [{ consent: false }, { password: "weak" }, { role: "ADMIN" }, { phone: "12" }]) assert.equal((await request("/auth/worker/register", { method: "POST", body: { ...registration, ...override } })).status, 400);
-      assert.equal((await request("/auth/worker/register", { method: "POST", body: registration, csrf: false })).status, 403);
+    await t.test("public worker self-registration is closed before any account is created", async () => {
+      const workerRegister = await request("/auth/worker/register", { method: "POST", body: registration });
+      assert.equal(workerRegister.status, 403);
+      assert.equal(workerRegister.body.error.code, "WORKER_REVIEW_REQUIRED");
+      const genericRegister = await request("/auth/register", { method: "POST", body: { email: registration.email, phone: registration.phone, password, role: "WORKER" } });
+      assert.equal(genericRegister.status, 403);
+      assert.equal(genericRegister.body.error.code, "WORKER_REVIEW_REQUIRED");
       assert.equal(await prisma.user.count({ where: { email: registration.email } }), 0);
-      const result = await request("/auth/worker/register", { method: "POST", body: registration });
-      assert.equal(result.status, 201); assert.equal(result.body.data.user.role, "WORKER"); assert.equal(result.body.data.user.emailVerifiedAt, null); assert.equal(result.body.data.emailSent, true);
-      worker = await prisma.user.findUniqueOrThrow({ where: { email: registration.email } }); users.push(worker);
-      cookie = result.headers.get("set-cookie").split(";")[0]; assert.match(result.headers.get("set-cookie"), /HttpOnly/i);
-      assert.ok(!JSON.stringify(result.body).includes("passwordHash")); assert.equal(result.body.data.user.phone, "+919899900100");
-      assert.equal((await request("/auth/worker/register", { method: "POST", body: registration })).status, 409);
+
+      worker = await prisma.user.create({ data: {
+        email: registration.email, phone: normalizedWorkerPhone, passwordHash, role: "WORKER", emailVerifiedAt: null,
+        workerProfile: { create: { fullName: registration.fullName, phone: normalizedWorkerPhone, consentAt: new Date() } },
+      } });
+      users.push(worker); cookie = cookieFor(worker);
+      const emailSent = await requestWorkerEmail(worker.email, "EMAIL_VERIFICATION", registration.next);
+      assert.equal(emailSent, true);
       verification = deliveries.find(item => item.email === worker.email);
+      assert.ok(verification);
       const url = new URL(verification.link); assert.equal(url.origin, "http://localhost:3000"); assert.equal(url.pathname, "/worker/verify"); assert.equal(url.searchParams.get("next"), "/worker/jobs/field-executive"); assert.equal(url.searchParams.has("token"), false);
       const stored = await prisma.workerAccessToken.findUniqueOrThrow({ where: { userId_purpose: { userId: worker.id, purpose: "EMAIL_VERIFICATION" } } });
       assert.notEqual(stored.tokenHash, rawToken(verification.link)); assert.equal(stored.tokenHash, createHash("sha256").update(rawToken(verification.link)).digest("hex"));
@@ -103,22 +111,19 @@ test("worker access, profiles, private resumes and real job discovery", async t 
       const expired = await tokenFor(other, "PASSWORD_RESET", { expiresAt: new Date(Date.now() - 1000) });
       assert.equal((await request("/auth/worker/reset-password", { method: "POST", body: { token: expired, password } })).status, 400);
     });
-    await t.test("recovery responses do not disclose account existence and mail outages do not undo registration", async () => {
+    await t.test("recovery responses do not disclose account existence and registration stays closed", async () => {
       configured = false;
       for (const email of [worker.email, `${prefix}-missing@example.test`]) assert.equal((await request("/auth/worker/forgot-password", { method: "POST", body: { email } })).status, 503);
       configured = true;
       const known = await request("/auth/worker/resend-verification", { method: "POST", body: { email: worker.email } });
       const unknown = await request("/auth/worker/resend-verification", { method: "POST", body: { email: `${prefix}-missing@example.test` } });
       assert.equal(known.status, 202); assert.equal(unknown.status, 202); assert.deepEqual(known.body, unknown.body);
-      for (const shouldThrow of [false, true]) {
-        deliver = false; mailThrows = shouldThrow;
-        const details = { ...registration, email: `${prefix}-failed-${shouldThrow}@example.test`, phone: shouldThrow ? "9899900102" : "9899900101" };
+      for (const suffix of ["closed-a", "closed-b"]) {
+        const details = { ...registration, email: `${prefix}-${suffix}@example.test`, phone: suffix.endsWith("a") ? "9899900101" : "9899900102" };
         const result = await request("/auth/worker/register", { method: "POST", body: details });
-        assert.equal(result.status, 201); assert.equal(result.body.data.emailSent, false);
-        const saved = await prisma.user.findUniqueOrThrow({ where: { email: details.email } }); users.push(saved);
-        if (!shouldThrow) assert.equal(await prisma.workerAccessToken.count({ where: { userId: saved.id } }), 0);
+        assert.equal(result.status, 403); assert.equal(result.body.error.code, "WORKER_REVIEW_REQUIRED");
+        assert.equal(await prisma.user.count({ where: { email: details.email } }), 0);
       }
-      mailThrows = false; deliver = true;
     });
     await t.test("password reset is one-use, clears worker tokens and invalidates all old cookies", async () => {
       assert.equal(await requestWorkerEmail(worker.email, "PASSWORD_RESET", "/worker/saved-jobs"), true);

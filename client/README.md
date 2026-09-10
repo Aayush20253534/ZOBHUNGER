@@ -34,7 +34,7 @@ The client consumes the versioned `/api/v1` backend through the configured API b
 - articles/blogs
 - workforce requirements and contact enquiries
 - business authentication, dashboard, requirements, candidates, deployments, attendance and reports
-- worker account, profile, resume, jobs, saved jobs, applications, assignments, attendance and earnings
+- profile-first worker intake plus approved-worker login, profile, resume, jobs, saved jobs, applications, assignments, attendance and earnings
 - placement/institution activation, candidate management and opportunity applications
 - partner, career and vendor application flows
 - protected admin/operations workflows
@@ -65,7 +65,7 @@ Requests include credentials so the backend's httpOnly authentication cookie wor
 /vendor-empanelment
 ```
 
-Authenticated portal routes live under `/business`, `/worker`, `/placement-portal` and `/admin` route families.
+Authenticated portal routes live under `/business`, `/worker`, `/placement-portal` and `/admin` route families. New workers do not create accounts directly: they submit `/careers/apply`, the team reviews and verifies the submission, and access/next steps are communicated after approval when a suitable project or role exists.
 
 ## Quality checks
 

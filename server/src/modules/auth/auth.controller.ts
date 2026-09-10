@@ -25,9 +25,10 @@ export function setAuthCookie(res: Response, user: { id: string; role: unknown; 
 }
 
 export const registerController: RequestHandler = async (_req, res) => {
-  const user = await registerUser(res.locals.validated.body as RegisterInput);
-  setAuthCookie(res, user);
-  res.status(201).json(apiSuccessResponse("Account created", { user }));
+  // Public BUSINESS/WORKER signup is intentionally closed. registerUser always
+  // raises the approval/review error for the requested role, so this endpoint
+  // remains only as a compatibility guard for stale clients and bookmarks.
+  await registerUser(res.locals.validated.body as RegisterInput);
 };
 
 export const loginController: RequestHandler = async (_req, res) => {

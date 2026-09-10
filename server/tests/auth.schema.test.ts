@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { loginSchema, registerSchema } from "../src/modules/auth/auth.schema.js";
 
-test("register schema normalizes email and accepts public roles", () => {
+test("legacy register payload schema normalizes email before account-approval policy", () => {
   const parsed = registerSchema.parse({
     email: "  Worker@Example.COM ",
     phone: "9876543210",

@@ -33,6 +33,33 @@ const icons = {
   Operations: ClipboardList,
 };
 
+const workerJourney = [
+  {
+    icon: ClipboardList,
+    title: "01 · Submit your profile",
+    copy: "Complete the worker profile form with your contact details, education, experience, skills, preferred work and CV. No account is required to submit.",
+    href: "/careers/apply",
+    label: "Submit your profile",
+  },
+  {
+    icon: Search,
+    title: "02 · Team review & verification",
+    copy: "Our team reviews the information you submitted and verifies the details needed for suitable workforce and project requirements.",
+  },
+  {
+    icon: UserRoundCheck,
+    title: "03 · Approval & fit",
+    copy: "Profiles that meet the required checks are approved for further consideration based on role, location, availability and project fit.",
+  },
+  {
+    icon: BriefcaseBusiness,
+    title: "04 · Communication & next steps",
+    copy: "When a relevant requirement is available, our team contacts approved workers directly and proceeds with onboarding, assignment and access as required.",
+    href: "/worker/login",
+    label: "Approved worker sign in",
+  },
+] as const;
+
 export function ForWorkers() {
   const isPreview = getDataMode() === "mock";
   return (
@@ -44,15 +71,15 @@ export function ForWorkers() {
         <PageShell
           eyebrow="For workers"
           title="Find work with ZOBHUNGER."
-          description="Create your profile, explore sales, promoter, field and operations roles, apply for suitable opportunities and manage active assignments from your worker space."
+          description="Submit your profile and CV first. Our team reviews and verifies the required details, and approved workers are contacted when their profile fits a suitable project or role."
           actions={
             <>
-              <ActionLink href="/worker/register">
-                Create worker account
+              <ActionLink href="/careers/apply">
+                Submit worker profile
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </ActionLink>
               <ActionLink href="/worker/login" variant="secondary">
-                Worker sign in
+                Approved worker sign in
               </ActionLink>
             </>
           }
@@ -169,21 +196,33 @@ export function ForWorkers() {
       >
         <SectionHeading
           id="worker-journey-title"
-          eyebrow="Your worker space"
-          title="A simple start. One worker space for the journey."
-          description="Create your account, build your profile, apply for opportunities and stay connected to active work, attendance and earnings."
+          eyebrow="Profile-first onboarding"
+          title="Submit first. Review and approval come before access."
+          description="Every new worker starts with the profile form. Our team reviews the submitted details, verifies the profile and communicates directly when there is a suitable project requirement."
         />
         <div className="zb-worker-category-grid zb-worker-journey-grid">
-          {[{ icon: UserRoundCheck, title: "01 · Create & verify", copy: "Register with your email and phone, then confirm your email using the link in your inbox.", href: "/worker/register", label: "Create your account" }, { icon: ClipboardList, title: "02 · Build your profile", copy: "Add education, experience, skills and work preferences. Keep a private PDF copy of your CV.", href: "/worker/profile", label: "Open your profile" }, { icon: Search, title: "03 · Find & apply", copy: "Browse published openings, filter by location and work type, save roles and submit applications from your worker space.", href: "/worker/jobs", label: "Find opportunities" }, { icon: BriefcaseBusiness, title: "04 · Manage active work", copy: "Once assigned, follow assignment details, attendance and approved earnings from the same worker account.", href: "/worker/assignments", label: "View assignments" }].map(({ icon: Icon, title, copy, href, label }) => <Link className="zb-card-link" href={href} key={href}><Card className="zb-card"><Icon className="zb-card-icon" aria-hidden="true" /><h3 className="zb-card-title">{title}</h3><p className="zb-card-copy">{copy}</p><span className="zb-card-cta">{label}<ArrowUpRight className="size-4" aria-hidden="true" /></span></Card></Link>)}
+          {workerJourney.map(({ icon: Icon, title, copy, ...action }) => (
+            <Card className="zb-card" key={title}>
+              <Icon className="zb-card-icon" aria-hidden="true" />
+              <h3 className="zb-card-title">{title}</h3>
+              <p className="zb-card-copy">{copy}</p>
+              {"href" in action && action.href && (
+                <Link className="zb-card-cta" href={action.href}>
+                  {action.label}
+                  <ArrowUpRight className="size-4" aria-hidden="true" />
+                </Link>
+              )}
+            </Card>
+          ))}
         </div>
-        <p className="zb-worker-portal-note">Already have an account? <Link href="/worker/login">Sign in to your worker space</Link>. You can also <Link href="/jobs">browse public job listings</Link> before joining.</p>
+        <p className="zb-worker-portal-note">New workers start by <Link href="/careers/apply">submitting a profile for review</Link>. Existing approved workers can <Link href="/worker/login">sign in to their worker space</Link>.</p>
       </section>
       <div className="zb-work-section">
         <CTASection
-          title="Find work that fits your skills and location."
-          description="Explore published roles, understand the responsibilities and use your worker account to apply and follow what comes next."
-          href="/jobs"
-          label={isPreview ? "Browse example jobs" : "Browse jobs"}
+          title="Ready to be considered for upcoming work?"
+          description="Submit your worker profile and CV first. Our team will review the required details and contact you after approval when a suitable project or role is available."
+          href="/careers/apply"
+          label="Submit your profile"
         />
       </div>
     </div>

@@ -4,7 +4,6 @@ import type { WorkerJob, WorkerJobFacets, WorkerJobList, WorkerProfileInput, Wor
 
 const writeHeaders = { "X-Requested-With": "XMLHttpRequest" };
 const json = (body: unknown) => ({ method: "POST", headers: writeHeaders, body: JSON.stringify(body) });
-export const registerWorker = (body: { fullName: string; phone: string; email: string; password: string; consent: boolean; next: string }) => apiFetch<ApiSuccessEnvelope<{ user: AuthUser; emailSent: boolean }>>("/auth/worker/register", json(body));
 export const loginWorker = (email: string, password: string) => apiFetch<ApiSuccessEnvelope<{ user: AuthUser }>>("/auth/worker/login", json({ email, password }));
 export const requestWorkerEmail = (kind: "resend-verification" | "forgot-password", email: string, next: string) => apiFetch<ApiSuccessEnvelope<{ accepted: boolean }>>(`/auth/worker/${kind}`, json({ email, next }));
 export const verifyWorkerEmail = (token: string) => apiFetch<ApiSuccessEnvelope<{ completed: boolean }>>("/auth/worker/verify-email", json({ token }));

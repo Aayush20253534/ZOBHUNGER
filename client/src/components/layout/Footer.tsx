@@ -9,7 +9,6 @@ import {
   Mail,
   MapPin,
   Megaphone,
-  Phone,
   ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
@@ -25,7 +24,7 @@ type MobileStore = (typeof site.mobileApps)[keyof typeof site.mobileApps];
 const businessLinks = [
   { label: "For business", href: "/for-business", icon: Building2 },
   { label: "Hire workforce", href: "/hire-workforce", icon: ClipboardList },
-  { label: "Business login", href: "/business/login", icon: LogIn },
+  { label: "Approved business login", href: "/business/login", icon: LogIn },
   { label: "Verification services", href: solutionHref("verification-services"), icon: ShieldCheck },
   { label: "Branding & activation", href: `${solutionHref("brand-activation")}#solution-services`, icon: Megaphone },
 ] as const satisfies readonly FooterLink[];
@@ -41,11 +40,9 @@ const companyLinks = [
 
 const opportunityLinks = [
   { label: "For workers", href: "/for-workers" },
+  { label: "Submit your profile", href: "/careers/apply" },
   { label: "Jobs & opportunities", href: "/jobs" },
-  { label: "Create worker account", href: "/worker/register" },
-  { label: "Worker sign in", href: "/worker/login" },
-  { label: "My profile & CV", href: "/worker/profile" },
-  { label: "Submit your CV / profile", href: "/careers/apply" },
+  { label: "Approved worker sign in", href: "/worker/login" },
   { label: "How it works", href: "/how-it-works" },
 ] as const;
 
@@ -215,38 +212,30 @@ export function Footer() {
                 <StoreBadge store={site.mobileApps.android} platform="android" />
               </div>
             </section>
-
-            <section className="zb-footer-contact" aria-labelledby="zb-footer-contact-title">
-              <span className="zb-footer-eyebrow">Connect with us</span>
-              <h2 id="zb-footer-contact-title">Talk to the ZOBHUNGER team.</h2>
-              <div className="zb-footer-contact-list">
-                <a href={contact.emailHref}>
-                  <Mail aria-hidden="true" />
-                  <span>
-                    <small>Email</small>
-                    <strong>{contact.email}</strong>
-                  </span>
-                </a>
-                <a href={contact.phoneHref}>
-                  <Phone aria-hidden="true" />
-                  <span>
-                    <small>Phone</small>
-                    <strong>{contact.phoneLabel}</strong>
-                  </span>
-                </a>
-                <a href={contact.mapsHref} target="_blank" rel="noreferrer">
-                  <MapPin aria-hidden="true" />
-                  <span>
-                    <small>Office</small>
-                    <strong>{contact.address}</strong>
-                  </span>
-                  <ArrowUpRight className="zb-footer-contact-arrow" aria-hidden="true" />
-                </a>
-              </div>
-            </section>
           </div>
 
           {footerGroups.map((group) => <FooterLinkGroup key={group.title} group={group} />)}
+
+          <section className="zb-footer-directory" aria-labelledby="zb-footer-directory-title">
+            <div className="zb-footer-office">
+              <span className="zb-footer-eyebrow">Contact ZOBHUNGER</span>
+              <h2 id="zb-footer-directory-title">The right inbox for the right conversation.</h2>
+              <a href={contact.mapsHref} target="_blank" rel="noreferrer">
+                <MapPin aria-hidden="true" />
+                <span>{contact.address}</span>
+                <ArrowUpRight aria-hidden="true" />
+              </a>
+            </div>
+            <div className="zb-footer-contact-channels">
+              {Object.values(contact.channels).map((channel) => (
+                <a href={`mailto:${channel.email}`} key={channel.email}>
+                  <span>{channel.label}</span>
+                  <strong>{channel.email}</strong>
+                  <Mail aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+          </section>
         </div>
 
         <div className="zb-footer-bottom">
