@@ -168,6 +168,12 @@ export function About() {
             filled.
           </p>
 
+          <p>
+            We serve clients worldwide while our current execution
+            footprint remains anchored in India and continues to
+            grow across priority locations.
+          </p>
+
           <ul aria-label="ZOBHUNGER focus areas">
             <li>Workforce</li>
             <li>Sales</li>
@@ -309,9 +315,10 @@ export function About() {
           </h2>
 
           <p>
-            ZOBHUNGER is building a focused operating footprint
-            anchored in Ghazipur, Uttar Pradesh, with presence
-            across priority markets.
+            ZOBHUNGER operates from Ghazipur, Uttar Pradesh, with
+            a growing presence across priority Indian markets.
+            Client relationships can extend worldwide while
+            operating coverage expands market by market.
           </p>
 
           <ActionLink

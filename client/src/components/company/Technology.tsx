@@ -1,6 +1,7 @@
 import {
   ArrowUpRight,
   Check,
+  GraduationCap,
   LayoutDashboard,
   PanelsTopLeft,
   Smartphone,
@@ -17,6 +18,7 @@ import "@/styles/company.css";
 const icons = {
   client: LayoutDashboard,
   worker: Smartphone,
+  institution: GraduationCap,
   admin: PanelsTopLeft,
 };
 
@@ -28,9 +30,9 @@ export function Technology() {
       />
       <div className="zb-company-hero">
         <PageShell
-          eyebrow="Our technology vision"
-          title="Technology that helps businesses manage better."
-          description="We're building toward connected tools for business teams, workers and the people coordinating delivery. One place to understand the requirement, the assignment and the progress."
+          eyebrow="Connected technology"
+          title="One platform for workforce and business execution."
+          description="ZOBHUNGER connects approved business teams, workers, institution partners and internal operations through role-based workspaces. Requirements, people, assignments and progress stay connected to the same operating flow."
           actions={
             <>
               <ActionLink href="/contact">
@@ -47,12 +49,12 @@ export function Technology() {
           className="zb-company-statement"
           aria-labelledby="technology-status-title"
         >
-          <span className="zb-eyebrow">Product direction</span>
-          <h2 id="technology-status-title">Connected portals are planned.</h2>
+          <span className="zb-eyebrow">Platform status</span>
+          <h2 id="technology-status-title">Role-based workspaces are available now.</h2>
           <span>
-            The features below describe future releases. Client accounts, worker
-            accounts and internal dashboards are not available on this website
-            yet.
+            Business, worker, institution and operations access is already part
+            of the platform. Each workspace exposes only the tools relevant to
+            that authorised account.
           </span>
         </aside>
       </div>
@@ -62,17 +64,18 @@ export function Technology() {
       >
         <SectionHeading
           id="technology-portals-title"
-          eyebrow="Three connected workspaces"
+          eyebrow="Four connected workspaces"
           title="Designed around the people using them."
+          description="Each audience gets a focused workspace while the underlying workflow stays connected across hiring, deployment and execution."
         />
-        <div className="zb-company-grid" data-columns="3">
+        <div className="zb-company-grid" data-columns="2">
           {technologyPortals.map((portal) => {
             const Icon = icons[portal.id];
             return (
               <Card key={portal.id} className="zb-card zb-technology-card">
                 <div className="zb-card-top">
                   <Icon className="zb-card-icon" aria-hidden="true" />
-                  <span className="zb-chip">Planned</span>
+                  <span className="zb-chip">Available</span>
                 </div>
                 <span className="zb-technology-audience">
                   {portal.audience}
@@ -98,12 +101,12 @@ export function Technology() {
       >
         <div>
           <h2 id="technology-requirement-title">
-            Your workflow starts with the brief.
+            The technology follows the work, not the other way around.
           </h2>
           <p>
-            Tell us which roles, work updates and reports matter to your
-            operation. Those details help define the requirement and the tools
-            it may need.
+            Start with the roles, locations, approvals and reporting your
+            operation actually needs. The connected workspaces then keep those
+            responsibilities visible to the right people.
           </p>
         </div>
         <ActionLink href="/hire-workforce" variant="secondary">
@@ -112,10 +115,10 @@ export function Technology() {
       </section>
       <div className="zb-company-section">
         <CTASection
-          title="Have a workflow you want us to understand?"
-          description="Share the work you manage today and the information your team needs to see."
-          href="/contact"
-          label="Talk about your workflow"
+          title="Need workforce or execution support?"
+          description="Share the requirement, locations and operating details. We’ll help connect the right service and workflow around it."
+          href="/hire-workforce"
+          label="Hire Workforce"
         />
       </div>
     </div>

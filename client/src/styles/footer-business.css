@@ -306,8 +306,12 @@
     display: grid;
   }
 
-  .zb-site .zb-footer-global {
-    margin-top: 0.1rem;
+  .zb-site .zb-footer-intro .zb-footer-global {
+    margin: 0.1rem 0 1.15rem;
+  }
+
+  .zb-site .zb-footer-intro .zb-action-link {
+    margin-top: 0;
   }
 
   .zb-site .zb-footer-utility {

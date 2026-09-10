@@ -5,7 +5,6 @@ import {
   BriefcaseBusiness,
   Building2,
   ClipboardCheck,
-  KeyRound,
   LogIn,
   Handshake,
   Megaphone,
@@ -38,14 +37,15 @@ const icons = {
 };
 
 const gettingStarted = [
-  { title: "Apply to partner", description: "Share your company, experience and partnership interests. No account or password is needed to apply.", icon: Handshake },
-  { title: "Company review", description: "Our team reviews your application and contacts you if more information is needed.", icon: ClipboardCheck },
-  { title: "Activate your access", description: "After approval, receive your unique Partner ID and temporary password. Change it on your first login.", icon: KeyRound },
+  { title: "Share your requirement", description: "Tell us the roles, team size, locations, timeline and work you need completed. You can start without a business account.", icon: ClipboardCheck },
+  { title: "Shape the right team", description: "ZOBHUNGER reviews the brief and coordinates the relevant sourcing, screening and execution plan around it.", icon: Users },
+  { title: "Manage delivery", description: "Approved business users can use the Business Portal to follow requirements, candidates, deployments, attendance approvals and reports.", icon: Building2 },
 ] as const;
 
 const accountQuestions = [
-  { question: "How do I create a business account?", answer: "Submit the Become a Partner application. Our company team reviews it in the admin portal. After approval, your account is created and your Partner ID and temporary password are issued. You must choose a new password on your first login." },
-  { question: "Where do I log in next time?", answer: "Use Business login at the top of this page or in the For business section of the website footer. Sign in with your Partner ID and password. An approved account email also works." },
+  { question: "Do I need a business account to share a requirement?", answer: "No. You can submit a workforce or execution requirement directly from the public Hire Workforce form. If your organisation already has approved portal access, use Business login to manage ongoing work." },
+  { question: "What can approved business users manage?", answer: "The Business Portal brings company details, requirements, candidate review, deployments, attendance approvals and reports into one authorised workspace." },
+  { question: "Where do I log in next time?", answer: "Use Business login at the top of this page or in the For business section of the website footer. Sign in with the credentials issued to your approved account." },
 ] as const;
 
 export function ForBusiness() {
@@ -56,17 +56,17 @@ export function ForBusiness() {
       />
       <div className="zb-business-access-hero">
         <PageShell
-          eyebrow="For business · Your company workspace"
-          title="Build your team. Manage the work."
-          description="Hire, deploy and stay connected to your team with ZOBHUNGER. Apply to become a partner. Once approved, access one workspace to manage requirements, review candidates and follow field execution."
+          eyebrow="For businesses & clients"
+          title="Hire workforce. Keep execution connected."
+          description="Start with the roles, locations, team size and work you need completed. ZOBHUNGER connects hiring with deployment and execution, while approved business users can manage ongoing activity from one workspace."
           actions={
             <>
-              <ActionLink href="/become-a-partner#partner-application"><Handshake aria-hidden="true" className="size-4" />Become a Partner</ActionLink>
+              <ActionLink href="/hire-workforce"><ClipboardCheck aria-hidden="true" className="size-4" />Hire Workforce</ActionLink>
               <ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Business login</ActionLink>
             </>
           }
         >
-          <p className="zb-business-access-help">Prefer to discuss your needs first?{" "}<ActionLink href="/hire-workforce" variant="text">Share a requirement<ArrowUpRight aria-hidden="true" className="size-4" /></ActionLink></p>
+          <p className="zb-business-access-help">Looking to collaborate independently rather than hire a team?{" "}<ActionLink href="/become-a-partner" variant="text">Become a Partner<ArrowUpRight aria-hidden="true" className="size-4" /></ActionLink></p>
         </PageShell>
         <BusinessWorkspacePreview />
       </div>
@@ -197,8 +197,8 @@ export function ForBusiness() {
         ))}
       </section>
       <section className="zb-company-section zb-business-entry-cta" aria-labelledby="business-account-cta-title">
-        <div><h2 id="business-account-cta-title">Your next team starts here.</h2><p>Apply for business access and bring your requirements, people and work updates together after approval.</p></div>
-        <div><ActionLink href="/become-a-partner#partner-application" variant="light"><Handshake aria-hidden="true" className="size-4" />Become a Partner</ActionLink><ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Business login</ActionLink></div>
+        <div><h2 id="business-account-cta-title">Ready to build your next team?</h2><p>Share the requirement first. Approved business users can then keep requirements, candidates, deployment updates and approvals together in the Business Portal.</p></div>
+        <div><ActionLink href="/hire-workforce" variant="light"><ClipboardCheck aria-hidden="true" className="size-4" />Hire Workforce</ActionLink><ActionLink href="/business/login" variant="secondary"><LogIn aria-hidden="true" className="size-4" />Business login</ActionLink></div>
       </section>
     </div>
   );

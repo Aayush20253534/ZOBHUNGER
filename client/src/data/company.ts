@@ -123,10 +123,10 @@ export const deliverySteps = [
 
 export const company = {
   description:
-    "ZOBHUNGER is building an integrated platform that helps businesses hire, deploy and manage workforce and business execution teams.",
+    "ZOBHUNGER is an integrated workforce, sales and business execution platform that helps businesses hire, deploy and coordinate teams around real operating requirements.",
   mission: "Make workforce management faster, smarter and more scalable.",
   vision:
-    "Create a connected ecosystem for businesses and workforce across India.",
+    "Create a connected ecosystem for businesses, partners and workforce, serving clients worldwide while expanding execution capabilities from India.",
   principles: [
     {
       title: "Start with the requirement",
@@ -141,58 +141,70 @@ export const company = {
     {
       title: "Make progress visible",
       description:
-        "Agree responsibilities and useful reporting around the assignment, with connected tools planned for future releases.",
+        "Agree responsibilities and useful reporting around the assignment, with connected tools that keep requirements, people and progress visible.",
     },
   ],
 } as const;
 
-/** This describes the product direction; none of these portals is a live account area. */
+/** Live role-based workspaces available to authorised users. */
 export const technologyPortals = [
   {
     id: "client",
-    title: "Client portal",
-    audience: "For business teams",
+    title: "Business portal",
+    audience: "For approved business teams",
     description:
-      "A planned workspace to bring your requirements, hiring decisions and workforce updates together.",
+      "A connected workspace for requirements, candidate decisions, deployment activity and business-side approvals.",
     features: [
-      "Submit requirements",
-      "Track hiring",
-      "Candidate approval",
+      "Company profile",
+      "Requirements & drafts",
+      "Candidate review",
       "Workforce deployment",
-      "Attendance",
-      "Performance reports",
-      "Campaign reports",
+      "Attendance approvals",
+      "Reports",
     ],
   },
   {
     id: "worker",
     title: "Worker portal",
-    audience: "For people doing the work",
+    audience: "For candidates and active workers",
     description:
-      "A planned place to manage a profile, explore work and stay connected to assignments.",
+      "A personal workspace to build a profile, explore opportunities and stay connected to applications and active assignments.",
     features: [
-      "Profile",
+      "Profile & CV",
       "Job search",
-      "Job application",
+      "Applications",
+      "Assignments",
       "Attendance",
-      "Tasks",
       "Earnings",
     ],
   },
   {
-    id: "admin",
-    title: "Admin portal",
-    audience: "For internal operations",
+    id: "institution",
+    title: "Institution partner portal",
+    audience: "For approved placement teams",
     description:
-      "Planned tools to coordinate business enquiries, candidates and project delivery across the team.",
+      "A dedicated workspace for institution representatives to coordinate candidate records and relevant opportunities.",
     features: [
-      "Lead management",
-      "Client management",
-      "Recruiter management",
+      "Institution profile",
+      "Candidate records",
+      "Opportunity visibility",
+      "Candidate matching",
+      "Application activity",
+      "Partner access",
+    ],
+  },
+  {
+    id: "admin",
+    title: "Operations portal",
+    audience: "For authorised ZOBHUNGER teams",
+    description:
+      "Internal tools for coordinating enquiries, accounts, candidates, deployments, attendance and operational reporting.",
+    features: [
+      "Business & partner review",
       "Candidate management",
-      "Workforce deployment",
-      "Attendance",
-      "Performance",
+      "Deployment management",
+      "Attendance operations",
+      "Earnings administration",
       "Reporting",
     ],
   },
