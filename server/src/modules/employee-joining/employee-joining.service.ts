@@ -11,7 +11,9 @@ import { requiredEmployeeDocumentKinds, type EmployeeJoiningQuery, type Employee
 
 const hash = (value: string | Buffer) => createHash("sha256").update(value).digest("hex");
 const tokenFor = (id: string, key: string) => createHmac("sha256", env.JWT_SECRET).update(`employee-joining:${id}:${key}`).digest("hex");
-const fail = (status: number, message: string, code: string): never => { throw new HttpError(status, message, { code }); };
+function fail(status: number, message: string, code: string): never {
+  throw new HttpError(status, message, { code });
+}
 const dateAtUtc = (value: string) => new Date(`${value}T00:00:00.000Z`);
 
 const documentSelect = { id: true, kind: true, fileName: true, mimeType: true, size: true, createdAt: true } satisfies Prisma.EmployeeJoiningDocumentSelect;

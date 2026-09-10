@@ -28,7 +28,7 @@ async function withApi(override, run) {
 test("deployment check probes real route methods without login data or cookies", async () => {
   await withApi(() => undefined, async (base, seen) => {
     const results = await checkBusinessRoutes(base);
-    assert.equal(results.length, 33);
+    assert.equal(results.length, 35);
     assert.ok(seen.some(request => request.path.endsWith("/auth/business-login") && request.method === "POST"));
     assert.ok(seen.every(request => !request.cookie));
     assert.ok(seen.filter(request => request.method !== "GET").every(request => request.body === "{}"));
