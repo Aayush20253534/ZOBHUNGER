@@ -150,7 +150,7 @@ referrer. The account team should review submitted files before sharing them.
 ## Interview delivery and future modules
 
 Interview requests are saved in the business/admin portal. They do **not** send
-emails/calendar invites, confirm availability or create assignments. Mailjet
+emails/calendar invites, confirm availability or create assignments. Resend
 suspension therefore does not block P2.4. Scheduling confirmation is currently
 coordinated by the account team. Attendance, earnings, automated notifications and
 AI matching remain separate planned modules.

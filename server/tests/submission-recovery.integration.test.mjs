@@ -1,23 +1,20 @@
 import assert from "node:assert/strict";
 import { randomUUID, createHash } from "node:crypto";
-import { createRequire } from "node:module";
 import { once } from "node:events";
 import { test } from "node:test";
 
 if (!process.env.TEST_DATABASE_URL) throw new Error("Set TEST_DATABASE_URL to a dedicated migrated test database. Temporary fixtures will be written.");
 Object.assign(process.env, { NODE_ENV: "test", DATABASE_URL: process.env.TEST_DATABASE_URL,
   JWT_SECRET: "submission-recovery-tests-only-not-production", REDIS_ENABLED: "false", LOG_LEVEL: "info",
-  MAILJET_API_KEY: "dummy-public", MAILJET_SECRET_KEY: "dummy-secret", MAIL_FROM_EMAIL: "verified@example.test",
-  SALES_TEAM_EMAIL: "sales@example.test", MAILJET_API_HOST: "api.mailjet.com", CLIENT_ORIGIN: "http://localhost:3000",
+  RESEND_API_KEY: "re_dummy-secret", RESEND_TIMEOUT_MS: "15000", MAIL_FROM_EMAIL: "mail@zobhungr.com",
+  MAIL_FROM_NAME: "ZOBHUNGER", SALES_TEAM_EMAIL: "sales@example.test", CLIENT_ORIGIN: "http://localhost:3000",
   PUBLIC_APP_URL: "https://frontend.example.test", API_RATE_LIMIT_MAX: "2000", SUBMISSION_RATE_LIMIT_MAX: "1000" });
-const Mailjet = createRequire(import.meta.url)("node-mailjet");
 const { app } = await import("../dist/app.js");
 const { prisma } = await import("../dist/config/db.js");
-const prefix = `mailfix-${randomUUID()}`, email = `${prefix}@example.test`;
+const prefix = `resendfix-${randomUUID()}`, email = `${prefix}@example.test`;
 const userIds = [], requirementIds = [], messages = [], logs = [];
 let mode = "success", server, base;
-const failedBody = { Messages: [{ Status: "error", Errors: [{ ErrorCode: "send-0008", StatusCode: 403,
-  ErrorMessage: "Do not log dummy-secret or a reset token", ErrorRelatedTo: ["From"] }] }] };
+const failedBody = { name: "validation_error", message: "The sender domain is not verified. Do not log re_dummy-secret or a reset token." };
 async function waitUntil(condition) {
   for (let attempt = 0; attempt < 100; attempt++) { if (await condition()) return; await new Promise(resolve => setTimeout(resolve, 10)); }
   assert.fail("Background submission task did not complete");
@@ -29,12 +26,21 @@ async function request(path, { body, cookie } = {}) {
   return { status: response.status, data: await response.json(), cookie: response.headers.get("set-cookie")?.split(";")[0] };
 }
 
-test("public requirement submissions and the real recovery service handle Mailjet failure correctly", async t => {
-  t.mock.method(Mailjet.prototype, "post", () => ({ request: async body => {
-    messages.push(body.Messages[0]);
-    if (mode === "rejected") throw { response: { status: 403, data: failedBody }, config: { private: "dummy-secret" } };
-    return { body: mode === "message-error" ? failedBody : { Messages: [{ Status: "success" }] } };
-  } }));
+test("public requirement submissions and the real recovery service handle Resend failure correctly", async t => {
+  const nativeFetch = globalThis.fetch.bind(globalThis);
+  t.mock.method(globalThis, "fetch", async (input, init) => {
+    const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+    if (url !== "https://api.resend.com/emails") return nativeFetch(input, init);
+    const body = JSON.parse(String(init?.body ?? "{}"));
+    messages.push(body);
+    if (mode === "rejected") {
+      return new Response(JSON.stringify(failedBody), { status: 403, headers: { "Content-Type": "application/json" } });
+    }
+    if (mode === "message-error") {
+      return new Response("{}", { status: 200, headers: { "Content-Type": "application/json" } });
+    }
+    return new Response(JSON.stringify({ id: randomUUID() }), { status: 200, headers: { "Content-Type": "application/json" } });
+  });
   t.mock.method(console, "log", value => logs.push(String(value)));
   t.mock.method(console, "warn", value => logs.push(String(value)));
   const brief = { companyName: "Example Company", contactPerson: "Owner", businessEmail: email, mobileNumber: "+91 9876543210",
@@ -75,7 +81,7 @@ test("public requirement submissions and the real recovery service handle Mailje
       await waitUntil(() => logs.some(value => value.includes('"message":"business.recovery_delivery_failed"')));
       await waitUntil(async () => !(await prisma.passwordResetToken.findUnique({ where: { userId } })));
       const diagnostic = JSON.parse(logs.find(value => value.includes('"message":"business.recovery_delivery_failed"')));
-      assert.equal(diagnostic.reason, "sender"); assert.equal(diagnostic.errorCode, "send-0008"); assert.ok(diagnostic.requestId);
+      assert.equal(diagnostic.reason, "sender"); assert.equal(diagnostic.errorCode, "validation_error"); assert.ok(diagnostic.requestId);
     });
 
     await t.test("HTTP-success/message-error is rejected, then corrected delivery produces a usable single-use link", async () => {
@@ -86,8 +92,8 @@ test("public requirement submissions and the real recovery service handle Mailje
       mode = "success";
       assert.equal((await request("/auth/business/forgot-password", { body: { email } })).status, 202);
       await waitUntil(() => logs.some(value => value.includes('"message":"business.recovery_email_accepted"')));
-      const message = messages.at(-1), link = new URL(message.TextPart.match(/https:\/\/\S+/)[0]);
-      assert.equal(link.pathname, "/business/reset-password"); assert.equal(link.search, ""); assert.equal(message.TrackClicks, "disabled");
+      const message = messages.at(-1), link = new URL(message.text.match(/https:\/\/\S+/)[0]);
+      assert.equal(link.pathname, "/business/reset-password"); assert.equal(link.search, ""); assert.equal("TrackClicks" in message, false);
       const token = new URLSearchParams(link.hash.slice(1)).get("token");
       const row = await prisma.passwordResetToken.findUnique({ where: { userId } });
       assert.equal(row.tokenHash, createHash("sha256").update(token).digest("hex"));
@@ -95,7 +101,7 @@ test("public requirement submissions and the real recovery service handle Mailje
       assert.equal((await request("/auth/business/reset-password", { body })).status, 200);
       assert.equal((await request("/auth/business/reset-password", { body })).status, 400);
       assert.equal((await request("/business/workspace", { cookie: account.cookie })).status, 401);
-      assert.equal(logs.join("\n").includes(token), false); assert.equal(logs.join("\n").includes("dummy-secret"), false);
+      assert.equal(logs.join("\n").includes(token), false); assert.equal(logs.join("\n").includes("re_dummy-secret"), false);
     });
   } finally {
     if (server) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }

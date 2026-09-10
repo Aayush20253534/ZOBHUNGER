@@ -8,6 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: [
         "/admin",
+        "/employee-joining",
         "/design-system",
         "/login",
         "/placement-cell-login",

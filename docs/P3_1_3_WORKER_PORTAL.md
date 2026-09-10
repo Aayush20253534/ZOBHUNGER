@@ -95,7 +95,7 @@ GET returns:
 ```
 
 This checks **process liveness**. It intentionally does not call PostgreSQL,
-Redis or Mailjet and cannot prove their availability. `/api/v1/health` remains
+Redis or Resend and cannot prove their availability. `/api/v1/health` remains
 available and now advertises the worker access/profile/discovery feature flags.
 Build and prestart checks verify that both worker routes and `/route` are mounted,
 without opening a database connection.
@@ -113,8 +113,7 @@ DATABASE_URL=postgresql://...
 JWT_SECRET=your-existing-strong-secret
 CLIENT_ORIGIN=https://YOUR-FRONTEND-DOMAIN
 PUBLIC_APP_URL=https://YOUR-FRONTEND-DOMAIN
-MAILJET_API_KEY=your-mailjet-public-key
-MAILJET_SECRET_KEY=your-mailjet-secret-key
+RESEND_API_KEY=re_your_api_key
 MAIL_FROM_EMAIL=your-verified-sender@example.com
 MAIL_FROM_NAME=ZOBHUNGER
 ```
@@ -143,8 +142,8 @@ The migration `20260909120000_worker_access_profiles_saved_jobs` adds worker
 profile fields, access tokens, private resume storage and saved-job records.
 It does not remove existing data or automatically verify old accounts.
 
-Mailjet must be active and its sender verified. A suspended Mailjet account
-still needs to be resolved with the provider. Registration preserves the new
+Resend must be active and the `MAIL_FROM_EMAIL` domain must be verified. API-key or account restrictions
+still need to be resolved with the provider. Registration preserves the new
 account when delivery fails and shows a resend/help path; it never marks an
 undelivered email as verified. `npm --prefix server run check:email` checks the
 existing transport configuration. Email delivery must also be checked using a

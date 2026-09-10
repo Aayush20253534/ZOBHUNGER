@@ -61,6 +61,8 @@ server/   Express + TypeScript + Prisma/PostgreSQL API
 - attendance management and approvals
 - worker application/attendance review
 - worker earnings administration
+- private employee-joining records, document review and Excel/Google Sheets CSV export
+- project-based employee-number generation and offer-letter approval/issuance
 - audit-aware operational workflows
 
 ### Platform infrastructure
@@ -70,8 +72,9 @@ server/   Express + TypeScript + Prisma/PostgreSQL API
 - JWT authentication using secure httpOnly cookies for the web client
 - Argon2 password hashing
 - Redis caching with PostgreSQL fallback
-- Mailjet operational email delivery
+- Resend operational email delivery
 - Cloudinary-backed private document storage support
+- AES-256-GCM encryption for Aadhaar, PAN, bank-account and UAN fields in the HR joining module
 - Helmet, CORS, request IDs, validation and rate limiting
 
 ## First-time local setup

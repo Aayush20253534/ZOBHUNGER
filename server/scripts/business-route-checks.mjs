@@ -33,6 +33,10 @@ const checks = [
   { method: "POST", path: "/auth/business-login", status: 400, code: "VALIDATION_ERROR" },
   { method: "POST", path: "/auth/business/forgot-password", status: 400, code: "VALIDATION_ERROR" },
   { method: "POST", path: "/auth/business/reset-password", status: 400, code: "VALIDATION_ERROR" },
+  // Internal HR joining module: the public submission route must validate
+  // before touching storage/database, while HR records stay behind admin auth.
+  { method: "POST", path: "/employee-joining", status: 400, code: "VALIDATION_ERROR" },
+  { method: "GET", path: "/admin/employee-joining", status: 401, code: "UNAUTHENTICATED" },
 ];
 
 export async function checkBusinessRoutes(baseUrl) {

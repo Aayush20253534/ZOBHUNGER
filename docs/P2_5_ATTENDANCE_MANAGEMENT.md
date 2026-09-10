@@ -126,7 +126,7 @@ maximum 20-hour elapsed span. Breaks cannot exceed the elapsed duration.
 
 This increment uses operations-entered attendance. Worker self check-in, geo
 attendance, payroll/earnings calculations, reports and automatic notifications
-remain separate portal phases. Attendance works independently of Mailjet delivery.
+remain separate portal phases. Attendance works independently of Resend delivery.
 
 ## API routes
 

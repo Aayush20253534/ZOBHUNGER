@@ -130,7 +130,7 @@ Non-admin roles must receive authorization failures for `/admin/*` routes.
 Check:
 
 - `X-Request-Id` is present and matches structured logs.
-- Mailjet notifications arrive when mail is enabled.
+- Resend notifications arrive when mail is enabled and the sender domain is verified.
 - Redis-backed reads work when Redis is available and PostgreSQL fallback works when it is intentionally unavailable.
 - private file downloads return restrictive headers and cannot be accessed by unauthorized users.
 - production CORS accepts only configured frontend origins.

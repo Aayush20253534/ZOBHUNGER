@@ -12,3 +12,4 @@ import "./business-requirements.schema.test.js";
 import "./business-candidates.schema.test.js";
 import "./business-attendance.schema.test.js";
 import "./business-deployments.schema.test.js";
+import "./employee-joining.schema.test.js";

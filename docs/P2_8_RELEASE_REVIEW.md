@@ -136,7 +136,7 @@ Record the reviewer, date and result before calling Phase 2 production-ready:
 4. **Hosted performance:** review large real-world lists/reports and API timings on
    the hosted database. The automated tests cover pagination and export limits;
    they do not provide a production load or capacity signoff.
-5. **Email:** confirm the previously reported Mailjet suspension is resolved and
+5. **Email:** confirm the Resend API key and verified sender domain are valid and
    the sender is verified. Run `npm --prefix server run check:email` in the backend
    environment. Then use an account you control to verify actual recovery delivery
    and the single-use reset link. A readiness check alone does not prove delivery.

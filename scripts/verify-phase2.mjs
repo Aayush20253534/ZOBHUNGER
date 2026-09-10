@@ -18,7 +18,7 @@ const steps = [
   { name: "Server build and route registration", folder: "server", script: "build" },
   { name: "Migrate dedicated test database", folder: "server", script: "db:deploy" },
   { name: "Database schema matches migrations", cwd: `${root}server`, args: ["node_modules/prisma/build/index.js", "migrate", "diff", "--from-config-datasource", "--to-schema", "prisma/schema.prisma", "--exit-code"] },
-  { name: "Requirement and Mailjet contract tests (mocked delivery)", cwd: `${root}server`, args: ["--import", "tsx", "--experimental-test-module-mocks", "--test", "tests/mailjet.test.mjs", "tests/public-requirement-contract.test.mjs"] },
+  { name: "Requirement and Resend contract tests (mocked delivery)", cwd: `${root}server`, args: ["--import", "tsx", "--experimental-test-module-mocks", "--test", "tests/resend.test.mjs", "tests/public-requirement-contract.test.mjs"] },
   ...suite.map(name => ({ name: `${name} database integration`, cwd: `${root}server`, args: ["--experimental-test-module-mocks", "--test", `tests/${name}.integration.test.mjs`] })),
   { name: "Client portal regression tests", folder: "client", script: "test:business" },
   { name: "Client lint", folder: "client", script: "lint" },
@@ -57,8 +57,7 @@ try {
   const env = {
     ...process.env, NODE_ENV: "test", DATABASE_URL: process.env.TEST_DATABASE_URL,
     REDIS_ENABLED: "false", JWT_SECRET: "phase2-release-tests-only-not-a-production-secret",
-    MAILJET_API_KEY: "", MAILJET_SECRET_KEY: "", MAILJET_API_SECRET: "",
-    MJ_APIKEY_PUBLIC: "", MJ_APIKEY_PRIVATE: "", MAIL_FROM_EMAIL: "", SALES_TEAM_EMAIL: "",
+    RESEND_API_KEY: "", MAIL_FROM_EMAIL: "", SALES_TEAM_EMAIL: "",
     NEXT_TELEMETRY_DISABLED: "1", NEXT_PUBLIC_API_URL: "http://127.0.0.1:5000/api/v1",
   };
   for (let index = 0; index < steps.length; index++) {

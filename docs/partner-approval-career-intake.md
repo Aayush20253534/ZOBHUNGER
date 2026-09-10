@@ -69,17 +69,16 @@ A partner who uses verified-email password recovery can choose their permanent p
 
 ### Email failure and credentials handover
 
-The existing Mailjet integration is used. No new environment variables are required. Confirm these backend settings are valid:
+The shared Resend integration is used. Confirm these backend settings are valid:
 
 ```dotenv
-MAILJET_API_KEY=your-existing-mailjet-key
-MAILJET_SECRET_KEY=your-existing-mailjet-secret
+RESEND_API_KEY=re_your_api_key
 MAIL_FROM_EMAIL=your-verified-sender@example.com
 MAIL_FROM_NAME=ZOBHUNGER
 PUBLIC_APP_URL=https://your-frontend-domain
 ```
 
-`PUBLIC_APP_URL` must point to the frontend; if omitted, the first configured `CLIENT_ORIGIN` is used. Keep Mailjet secrets on the server.
+`PUBLIC_APP_URL` must point to the frontend; if omitted, the first configured `CLIENT_ORIGIN` is used. Keep the Resend API key on the server.
 
 Check email configuration with:
 
@@ -137,4 +136,4 @@ npm --prefix server run test:partner-hr
 
 The suite uses a mocked mailer and covers blocked self-registration, account provisioning, unique IDs, concurrent/repeated approval, role checks, password setup, session invalidation, legacy account linking, email failure/reissue, recovery, form validation, safe submission retries, upload limits and tokens, private downloads, HR status/history and stale edits. Existing portal test fixtures were updated to use explicitly approved business accounts.
 
-The patch was checked using production builds, lint, schema/migration validation and integration tests on an isolated PostgreSQL-compatible [PGlite socket](https://pglite.dev/docs/pglite-socket) test database. PGlite is used only in the verification environment and is not added to application dependencies. Its connection multiplexer differs from a normal PostgreSQL server; staging on the deployed PostgreSQL version remains the final deployment check. Desktop/mobile browser rendering and live Mailjet inbox delivery were not verified in this environment.
+The patch was checked using production builds, lint, schema/migration validation and integration tests on an isolated PostgreSQL-compatible [PGlite socket](https://pglite.dev/docs/pglite-socket) test database. PGlite is used only in the verification environment and is not added to application dependencies. Its connection multiplexer differs from a normal PostgreSQL server; staging on the deployed PostgreSQL version remains the final deployment check. Desktop/mobile browser rendering and live Resend inbox delivery were not verified in this environment.

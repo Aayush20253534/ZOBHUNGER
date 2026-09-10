@@ -60,18 +60,17 @@ REDIS_COMMAND_TIMEOUT_MS=200
 
 Redis is optional for correctness. If it is unavailable, supported cache paths fall back to PostgreSQL.
 
-### Mailjet
+### Resend
 
 ```env
-MAILJET_API_KEY=...
-MAILJET_SECRET_KEY=...
-MAIL_FROM_EMAIL=verified-sender@example.com
+RESEND_API_KEY=re_...
+MAIL_FROM_EMAIL=mail@your-verified-domain.com
 MAIL_FROM_NAME=ZOBHUNGER
 SALES_TEAM_EMAIL=sales@example.com
-MAILJET_API_HOST=api.mailjet.com
+RESEND_TIMEOUT_MS=15000
 ```
 
-The sender/domain must be verified under the same Mailjet account/API credentials.
+Create the API key in Resend and verify the `MAIL_FROM_EMAIL` domain before production sending. Keep the API key only in the backend environment. `npm run check:email` sends a provider test message to Resend's safe `delivered@resend.dev` test recipient; it does not test delivery to a real customer inbox.
 
 ### Private file storage
 
@@ -136,7 +135,7 @@ Before handing over the production URL, verify:
 - the frontend proxy can reach the deployed API
 - PostgreSQL migrations are current
 - Redis does not continuously log connectivity failures when enabled
-- Mailjet sender/domain and operational email delivery are valid
+- Resend API key, sender domain and operational email delivery are valid
 - Cloudinary/private-file configuration is valid when file uploads are enabled
 - business, worker, institution and admin login flows operate over HTTPS
 - public forms submit successfully without duplicate/dead requests
@@ -145,3 +144,16 @@ Before handing over the production URL, verify:
 ## Rollback discipline
 
 Application rollback and database rollback are separate concerns. Prisma migrations should be forward-safe and reviewed before deployment. Do not delete or rewrite migration history after it has reached a shared or production database.
+
+## Employee joining / HR module
+
+Before enabling the private employee-joining link in production:
+
+1. Run `prisma migrate deploy` so the employee joining, document, sequence and offer-letter tables exist.
+2. Configure a stable `HR_PII_ENCRYPTION_KEY` of at least 32 characters. Store it only in the backend environment.
+3. Keep Cloudinary authenticated private-file storage configured for Aadhaar, PAN, bank and other joining documents.
+4. Keep Resend configured before HR uses **Issue & email final offer**.
+5. Confirm the admin account has MFA enabled; employee records, exports, documents and offer controls are ADMIN + MFA protected.
+6. Share `/employee-joining` directly with employees. Do not add it to public navigation, sitemap, campaigns or search-indexable pages.
+
+The HR export is CSV by design. It opens directly in Excel and imports into Google Sheets while PostgreSQL remains the source of truth, avoiding a second unsynchronised employee database.

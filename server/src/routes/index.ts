@@ -13,6 +13,7 @@ import { placementCellsRouter } from "../modules/placement-cells/placement-cells
 import { healthRouter } from "./health.routes.js";
 
 import { careersRouter } from "../modules/careers/careers.routes.js";
+import { employeeJoiningRouter } from "../modules/employee-joining/employee-joining.routes.js";
 
 export const apiRouter = Router();
 
@@ -31,3 +32,5 @@ apiRouter.use("/placement-cell-applications", placementCellsRouter);
 apiRouter.use("/career-applications", careersRouter);
 
 apiRouter.use("/vendor-applications", vendorsRouter);
+
+apiRouter.use("/employee-joining", employeeJoiningRouter);

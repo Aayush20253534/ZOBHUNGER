@@ -144,3 +144,27 @@ The API has a global rate limiter plus stricter authentication and public-submis
 ## Request tracing
 
 Every request receives an `X-Request-Id`. Preserve that value when reporting production failures so the corresponding structured server log can be found quickly.
+
+## Internal employee joining and offer workflow
+
+The employee joining intake is deliberately separate from the public website navigation. The employee receives `/employee-joining` directly from HR. The page is `noindex`, excluded from the sitemap and also disallowed in `robots.txt`.
+
+Public employee intake routes:
+
+- `POST /api/v1/employee-joining` validates and stores the joining details as an encrypted draft and returns a short-lived upload receipt.
+- `PUT /api/v1/employee-joining/:id/documents/:kind` uploads private PDF/JPG/PNG evidence using the receipt token.
+- `POST /api/v1/employee-joining/:id/submit` locks the record for HR review and allocates the project-scoped employee number, for example `ZBH-RETAIL-01-26-0001`.
+
+The employee-facing intake never exposes a record-listing or read endpoint. Aadhaar, PAN, bank-account and UAN values are encrypted before persistence; uploaded evidence uses authenticated private storage.
+
+Authenticated ADMIN + MFA routes under `/api/v1/admin/employee-joining` provide HR management:
+
+- list/search/filter joining records and open a full HR record;
+- review, approve or reject a submitted joining;
+- download private employee evidence;
+- export the maintained records as UTF-8 CSV for Excel or Google Sheets;
+- create offer-letter terms against an approved employee ID;
+- preview/download a generated PDF offer letter;
+- approve the offer, attach the authorized signature, and issue the final PDF through Resend.
+
+`HR_PII_ENCRYPTION_KEY` must be set to a stable high-entropy secret in production. Local/test environments may fall back to `JWT_SECRET`, but production startup fails without the dedicated HR key. Do not rotate this key without first migrating the encrypted HR data.

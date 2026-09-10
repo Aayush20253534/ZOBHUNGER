@@ -177,5 +177,5 @@ PostgreSQL engine with a single connection; it does not substitute for productio
 load testing on your hosted PostgreSQL service. The browser preview environment
 blocks localhost, so a rendered mobile/print walkthrough could not be completed
 here. The responsive styles are implemented; the real-device checks above remain
-the final visual signoff. Existing Mailjet account suspension must still be
-resolved with the provider for live email delivery.
+the final visual signoff. The Resend API key and verified sender domain must still be
+validated with the provider for live email delivery.

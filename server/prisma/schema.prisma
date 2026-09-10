@@ -88,6 +88,33 @@ enum PlacementCellApplicationStatus {
   REJECTED
 }
 
+
+enum EmployeeJoiningStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum EmployeeJoiningDocumentKind {
+  PHOTO
+  AADHAAR
+  PAN
+  BANK_PROOF
+  ADDRESS_PROOF
+  EDUCATION
+  EXPERIENCE
+  OTHER
+}
+
+enum EmployeeOfferStatus {
+  DRAFT
+  APPROVED
+  ISSUING
+  ISSUED
+}
+
 enum EarningsStatementStatus {
   DRAFT
   APPROVED
@@ -1025,4 +1052,148 @@ model WorkerAttendanceRequest {
   @@index([workerUserId, status, createdAt, id])
   @@index([status, createdAt, id])
   @@index([assignmentId, date, status])
+}
+
+model EmployeeJoining {
+  id                       String                @id @default(uuid())
+  submissionKey            String                @unique
+  submissionHash           String
+  employeeNumber           String?               @unique
+  projectCode              String
+  projectAssignment        String
+  fullName                 String
+  fatherGuardianName       String
+  personalEmail            String
+  phone                    String
+  alternatePhone           String?
+  dateOfBirth              DateTime
+  gender                   String
+  maritalStatus            String?
+  bloodGroup               String?
+  shirtSize                String?
+  currentAddressLine1      String
+  currentAddressLine2      String?
+  currentCity              String
+  currentState             String
+  currentPostalCode        String
+  permanentSameAsCurrent   Boolean               @default(true)
+  permanentAddressLine1    String
+  permanentAddressLine2    String?
+  permanentCity            String
+  permanentState           String
+  permanentPostalCode      String
+  emergencyContactName     String
+  emergencyRelationship    String
+  emergencyPhone           String
+  aadhaarEncrypted         String
+  aadhaarLast4             String
+  panEncrypted             String
+  panLast4                 String
+  bankAccountHolder        String
+  bankName                 String
+  bankAccountEncrypted     String
+  bankAccountLast4         String
+  ifscCode                 String
+  bankBranch               String
+  upiId                    String?
+  uanEncrypted             String?
+  highestQualification     String
+  institution              String
+  boardUniversity          String?
+  graduationYear           Int?
+  grade                     String?
+  previousEmployment       Json                  @default("[]")
+  consentAt                DateTime              @default(now())
+  status                   EmployeeJoiningStatus @default(DRAFT)
+  reviewNotes              String?
+  reviewedByUserId         String?
+  reviewedAt               DateTime?
+  approvedAt               DateTime?
+  submittedAt              DateTime?
+  uploadTokenHash          String?               @unique
+  uploadExpiresAt          DateTime?
+  revision                 Int                   @default(0)
+  createdAt                DateTime              @default(now())
+  updatedAt                DateTime              @updatedAt
+
+  documents                EmployeeJoiningDocument[]
+  offer                    EmployeeOfferLetter?
+
+  @@index([status, createdAt])
+  @@index([personalEmail])
+  @@index([projectCode, submittedAt])
+  @@index([employeeNumber])
+}
+
+model EmployeeJoiningDocument {
+  id                  String                      @id @default(uuid())
+  joiningId           String
+  kind                EmployeeJoiningDocumentKind
+  fileName            String
+  mimeType            String
+  size                Int
+  sha256              String
+  data                Bytes?
+  storagePublicId     String?
+  storageResourceType String?
+  storageDeliveryType String?
+  storageFormat       String?
+  storageVersion      String?
+  storageAssetId      String?
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+
+  joining             EmployeeJoining @relation(fields: [joiningId], references: [id], onDelete: Cascade)
+
+  @@unique([joiningId, kind])
+  @@index([joiningId])
+  @@index([storagePublicId])
+}
+
+model EmployeeNumberSequence {
+  key       String   @id
+  value     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model EmployeeOfferLetter {
+  id                      String              @id @default(uuid())
+  joiningId               String              @unique
+  status                  EmployeeOfferStatus @default(DRAFT)
+  designation             String
+  department              String
+  projectAssignment       String
+  workLocation            String
+  joiningDate             DateTime
+  employmentType          String
+  monthlyGrossSalary      Int
+  annualCtc               Int
+  probationMonths         Int                 @default(3)
+  noticePeriodDays        Int                 @default(30)
+  additionalTerms         String?
+  authorizedSignatoryName String?
+  authorizedSignatoryTitle String?
+  signatureFileName       String?
+  signatureMimeType       String?
+  signatureSize           Int?
+  signatureSha256         String?
+  signatureStoragePublicId String?
+  signatureStorageResourceType String?
+  signatureStorageDeliveryType String?
+  signatureStorageFormat  String?
+  signatureStorageVersion String?
+  signatureStorageAssetId String?
+  approvedByUserId        String?
+  approvedAt              DateTime?
+  issuedByUserId          String?
+  issuedAt                DateTime?
+  sentAt                  DateTime?
+  resendMessageId         String?
+  revision                Int                 @default(0)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+
+  joining                 EmployeeJoining @relation(fields: [joiningId], references: [id], onDelete: Cascade)
+
+  @@index([status, updatedAt])
 }

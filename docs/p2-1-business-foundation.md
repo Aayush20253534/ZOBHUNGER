@@ -37,15 +37,14 @@ Keep the existing database, JWT and Redis configuration. Set these values in the
 ```dotenv
 CLIENT_ORIGIN=http://localhost:3000
 PUBLIC_APP_URL=http://localhost:3000
-MAILJET_API_KEY=your-mailjet-api-key
-MAILJET_SECRET_KEY=your-mailjet-secret-key
+RESEND_API_KEY=re_your_api_key
 MAIL_FROM_EMAIL=your-verified-sender@example.com
 MAIL_FROM_NAME=ZOBHUNGER
 ```
 
 Use the deployed frontend URL for `CLIENT_ORIGIN` and `PUBLIC_APP_URL` in production. `CLIENT_ORIGIN` can contain a comma-separated list of permitted website origins. `PUBLIC_APP_URL` must be one frontend URL; it controls the destination of password recovery links. Keep `NODE_ENV=production` on the deployed API so cookies are Secure. Production portal access requires HTTPS.
 
-Mailjet recovery uses a verified sender and does not require `SALES_TEAM_EMAIL`. That setting remains necessary for existing operational enquiry emails. Blank optional mail settings are accepted; sign-in and company setup work without email configuration, while recovery returns an explicit unavailable message. Password recovery emails are delivered through Mailjet after a request is accepted. Check API delivery logs if a link does not arrive.
+Resend recovery uses a verified sender domain and does not require `SALES_TEAM_EMAIL`. That setting remains necessary for existing operational enquiry emails. Blank optional mail settings are accepted; sign-in and company setup work without email configuration, while recovery returns an explicit unavailable message. Password recovery emails are delivered through Resend after a request is accepted. Check API delivery logs if a link does not arrive.
 
 Frontend configuration (local `client/.env.local`, or frontend hosting settings):
 
@@ -114,7 +113,7 @@ Remove-Item Env:TEST_DATABASE_URL
 
 The suite rejects an absent `TEST_DATABASE_URL`; it never falls back to the application's database. It covers guest and wrong-role denial, independent company profiles, owner-field spoofing, requirement ownership, legacy sessions, recovery response privacy, token hashing, cooldown, expiry, reuse, password changes, and session invalidation. It removes the temporary records it creates.
 
-For visual review, check 320px, 390px, 768px and desktop widths: mobile navigation opens and closes, all three setup steps fit the screen width, inputs retain readable sizes, long company names/emails wrap, and actions remain reachable by keyboard. Reduced-motion preferences are respected. Live email delivery still requires your Mailjet configuration.
+For visual review, check 320px, 390px, 768px and desktop widths: mobile navigation opens and closes, all three setup steps fit the screen width, inputs retain readable sizes, long company names/emails wrap, and actions remain reachable by keyboard. Reduced-motion preferences are respected. Live email delivery still requires your Resend configuration.
 
 ## Commit
 

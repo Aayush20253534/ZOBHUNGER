@@ -1,5 +1,5 @@
-import { checkMailjetConfiguration } from "../src/services/mailjet.client.js";
+import { checkResendConfiguration } from "../src/services/resend.client.js";
 
-const result = await checkMailjetConfiguration();
+const result = await checkResendConfiguration();
 console.log(JSON.stringify(result, null, 2));
 if (!result.ready) process.exitCode = 1;

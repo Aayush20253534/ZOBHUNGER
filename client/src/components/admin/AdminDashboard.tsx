@@ -16,6 +16,7 @@ import {
   WalletCards,
   MapPin,
   FileText,
+  IdCard,
   ChevronRight,
   ShieldCheck,
 } from "lucide-react";
@@ -33,6 +34,7 @@ const adminActionGroups = [
       { href: "/admin/vendors", label: "Vendor empanelment & records", copy: "Supplier applications and vendor directory", icon: Handshake },
       { href: "/admin/partners", label: "Partner review & approvals", copy: "Business access approvals and credentials", icon: Building2 },
       { href: "/admin/careers", label: "Career profiles & HR review", copy: "General candidate profiles and CV review", icon: UsersRound },
+      { href: "/admin/employee-joining", label: "Employee joining & offer letters", copy: "Joining records, documents, employee IDs and offer issuance", icon: IdCard },
       { href: "/admin/worker-applications", label: "Worker applications & profiles", copy: "Worker hiring pipeline and profile records", icon: UsersRound },
       { href: "/admin/security", label: "Admin security", copy: "MFA and administrator account protection", icon: ShieldCheck },
     ],
