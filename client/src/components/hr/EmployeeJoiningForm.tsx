@@ -149,6 +149,7 @@ export function EmployeeJoiningForm() {
     } catch (caught) {
       const fields = apiFieldErrors(caught);
       const details = Object.entries(fields).map(([key, messages]) => `${key}: ${messages.join(" ")}`).join(" · ");
+      setProgress("");
       setError(details || (caught instanceof ApiError || caught instanceof Error ? caught.message : "We could not complete the employee joining form. Please try again."));
     } finally { setBusy(false); }
   }
@@ -177,23 +178,36 @@ export function EmployeeJoiningForm() {
       <div className="zhr-secure"><LockKeyhole aria-hidden="true" /><div><strong>Private HR form</strong><span>Not listed on the public website</span></div></div>
     </header>
 
-    <section className="zhr-intro" aria-labelledby="joining-form-title">
-      <div className="zhr-intro-copy">
-        <p className="zhr-kicker">EMPLOYEE JOINING · ZOBHUNGER HR</p>
-        <h1 id="joining-form-title">Complete your joining details.</h1>
-        <p>Fill the five short sections below. Your employee ID is generated after successful submission.</p>
-      </div>
-    </section>
+    <div className="zhr-page-grid">
+      <aside className="zhr-rail" aria-label="Employee onboarding progress">
+        <div className="zhr-rail-copy">
+          <p className="zhr-rail-eyebrow">EMPLOYEE ONBOARDING</p>
+          <h2>A clear path to your first day.</h2>
+          <p>Share your details once. HR will review the record, verify your documents and prepare your offer letter.</p>
+        </div>
+        <div className="zhr-rail-time"><strong>~8 minutes</strong><span>Save your documents before you begin.</span></div>
+        <div className="zhr-progress" aria-label={`Step ${step} of ${steps.length}`}>
+          <div className="zhr-progress-top"><span>Step {step} of {steps.length}</span><strong aria-live="polite">{completedStepCount ? `${completion} complete` : "Ready to begin"}</strong></div>
+          <div className="zhr-progress-track"><span style={{ width: completion }} /></div>
+          <nav aria-label="Joining form steps">{steps.map(item => { const Icon = item.icon; const canOpen = item.id <= completedStepCount + 1; return <button type="button" key={item.id} className={item.id === step ? "is-current" : item.id <= completedStepCount ? "is-done" : ""} aria-label={`Step ${item.id}: ${item.label}`} aria-current={item.id === step ? "step" : undefined} onClick={() => { if (!canOpen) return; setStep(item.id); window.scrollTo({ top: 0, behavior: "smooth" }); }} disabled={busy || !canOpen}><Icon aria-hidden="true" /><span>{item.label}</span></button>; })}</nav>
+        </div>
+        <div className="zhr-rail-note"><ShieldCheck aria-hidden="true" /><span>Your information is encrypted and shared only with authorised HR administrators.</span></div>
+      </aside>
 
-    <div className="zhr-progress" aria-label={`Step ${step} of ${steps.length}`}>
-      <div className="zhr-progress-top"><span>Step {step} of {steps.length}</span><strong>{completedStepCount ? `${completion} complete` : "Complete this step to begin"}</strong></div>
-      <div className="zhr-progress-track"><span style={{ width: completion }} /></div>
-      <nav>{steps.map(item => { const Icon = item.icon; const canOpen = item.id <= completedStepCount + 1; return <button type="button" key={item.id} className={item.id === step ? "is-current" : item.id <= completedStepCount ? "is-done" : ""} onClick={() => canOpen && setStep(item.id)} disabled={busy || !canOpen}><Icon aria-hidden="true" /><span>{item.label}</span></button>; })}</nav>
-    </div>
+      <section className="zhr-content" aria-labelledby="joining-form-title">
+        <section className="zhr-intro">
+          <div className="zhr-intro-copy">
+            <p className="zhr-kicker">EMPLOYEE JOINING · ZOBHUNGER HR</p>
+            <h1 id="joining-form-title">Complete your joining details.</h1>
+            <p>Use your legal details as they should appear in company records. You can move between completed sections before submitting.</p>
+          </div>
+          <div className="zhr-intro-meta" aria-label="Form overview"><span><strong>5</strong><small>sections</small></span><span><strong>~8</strong><small>minutes</small></span><span><strong>7</strong><small>documents</small></span></div>
+        </section>
 
-    <form ref={form} className="zhr-form" onSubmit={submit} aria-busy={busy}>
-      {error && <div className="zhr-alert" role="alert">{error}</div>}
-      {fileError && <div className="zhr-alert" role="alert">{fileError}</div>}
+        <div className="zhr-form-caption"><span>Step {step}: {steps[step - 1].label}</span><span><b aria-hidden="true">*</b> Required fields</span></div>
+        <form ref={form} className="zhr-form" onSubmit={submit} aria-busy={busy}>
+          {error && <div className="zhr-alert zhr-alert--error" role="alert"><strong>We couldn’t save this yet.</strong><span>{error}</span></div>}
+          {fileError && <div className="zhr-alert zhr-alert--file" role="alert"><strong>Check your documents.</strong><span>{fileError}</span></div>}
 
       {step === 1 && <fieldset disabled={busy}><legend className="zhr-sr-only">Personal & assignment details</legend><div className="zhr-section-heading"><span className="zhr-section-icon"><UserRound aria-hidden="true" /></span><div><span>STEP 01</span><h2>Personal & assignment details</h2></div></div><p className="zhr-section-copy">Use the details exactly as they should appear in company records.</p><div className="zhr-grid">
         <Field label="Project / assignment code" required hint="Use the short code shared by HR, e.g. PL, MCD01."><input required minLength={2} maxLength={16} pattern="[A-Za-z0-9-]+" value={profile.projectCode} onChange={e => set("projectCode", e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""))} /></Field>
@@ -242,13 +256,15 @@ export function EmployeeJoiningForm() {
       {hasEmployment && <div className="zhr-grid zhr-subgrid"><Field label="Previous company" required><input required minLength={2} maxLength={180} value={employment.company} onChange={e => setEmploymentField("company", e.target.value)} /></Field><Field label="Designation" required><input required minLength={2} maxLength={120} value={employment.designation} onChange={e => setEmploymentField("designation", e.target.value)} /></Field><Field label="Start date" required><input type="date" required value={employment.startDate} onChange={e => setEmploymentField("startDate", e.target.value)} /></Field><Field label="End date" required={!employment.current}><input type="date" required={!employment.current} disabled={employment.current} min={employment.startDate || undefined} value={employment.endDate} onChange={e => setEmploymentField("endDate", e.target.value)} /></Field><Field label="Last monthly salary"><input type="number" min={0} step={1} value={employment.lastMonthlySalary ?? ""} onChange={e => setEmploymentField("lastMonthlySalary", moneyNumber(e.target.value))} /></Field><Field label="Reason for leaving" wide><textarea rows={3} maxLength={500} value={employment.reasonForLeaving} onChange={e => setEmploymentField("reasonForLeaving", e.target.value)} /></Field><label className="zhr-check zhr-field--wide"><input type="checkbox" checked={employment.current} onChange={e => setEmployment(current => ({ ...current, current: e.target.checked, endDate: e.target.checked ? "" : current.endDate }))} /><span>I currently work here</span></label></div>}
       </fieldset>}
 
-      {step === 5 && <fieldset disabled={busy}><legend className="zhr-sr-only">Documents & declaration</legend><div className="zhr-section-heading"><span className="zhr-section-icon"><FileText aria-hidden="true" /></span><div><span>STEP 05</span><h2>Documents & declaration</h2></div></div><p className="zhr-section-copy">Required documents are marked below. PDF, JPG or PNG up to 5 MB each.</p><div className="zhr-upload-grid">{documentMeta.map(item => { const file = files[item.kind]; return <label className={`zhr-upload${file ? " has-file" : ""}`} key={item.kind}><input type="file" accept={item.imageOnly ? ".jpg,.jpeg,.png,image/jpeg,image/png" : ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"} onChange={event => chooseFile(item.kind, event.target.files?.[0], item.imageOnly)} /><span className="zhr-upload-icon">{file ? <CheckCircle2 /> : <Upload />}</span><span><strong>{item.title}{item.required && <b> *</b>}</strong><small>{file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB` : item.copy}</small></span>{file && <button type="button" aria-label={`Remove ${item.title}`} onClick={event => { event.preventDefault(); chooseFile(item.kind); }}><X /></button>}</label>; })}</div>
+      {step === 5 && <fieldset disabled={busy}><legend className="zhr-sr-only">Documents & declaration</legend><div className="zhr-section-heading"><span className="zhr-section-icon"><FileText aria-hidden="true" /></span><div><span>STEP 05</span><h2>Documents & declaration</h2></div></div><p className="zhr-section-copy">Required documents are marked below. PDF, JPG or PNG up to 5 MB each. Each file must be 5 MB or smaller.</p><div className="zhr-upload-grid">{documentMeta.map(item => { const file = files[item.kind]; const inputId = `joining-document-${item.kind.toLowerCase()}`; return <div className={`zhr-upload${file ? " has-file" : ""}`} key={item.kind}><input id={inputId} type="file" accept={item.imageOnly ? ".jpg,.jpeg,.png,image/jpeg,image/png" : ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"} onClick={event => { event.currentTarget.value = ""; }} onChange={event => chooseFile(item.kind, event.target.files?.[0], item.imageOnly)} /><label htmlFor={inputId} className="zhr-upload-main"><span className="zhr-upload-icon">{file ? <CheckCircle2 /> : <Upload />}</span><span><strong>{item.title}{item.required && <b> *</b>}</strong><small>{file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB` : item.copy}</small></span></label>{file && <button type="button" aria-label={`Remove ${item.title}`} onClick={() => chooseFile(item.kind)}><X /></button>}</div>; })}</div>
       <label className="zhr-check zhr-declaration"><input type="checkbox" required checked={profile.consent} onChange={e => set("consent", e.target.checked)} /><span><strong>I confirm these details and documents are accurate.</strong><small>I authorize Zobhungr Solutions Private Limited to securely store, review and verify this information for employment onboarding, payroll, statutory compliance and related HR administration.</small></span></label>
       {progress && <div className="zhr-submit-progress" role="status"><LoaderCircle className="zhr-spin" />{progress}</div>}
       </fieldset>}
 
-      <div className="zhr-actions">{step > 1 ? <button type="button" className="zhr-button zhr-button--secondary" onClick={back} disabled={busy}><ArrowLeft />Back</button> : <span />}{step < 5 ? <button type="button" className="zhr-button" onClick={next} disabled={busy}>Continue<ArrowRight /></button> : <button type="submit" className="zhr-button zhr-button--submit" disabled={busy}>{busy ? <LoaderCircle className="zhr-spin" /> : <BadgeCheck />}{busy ? "Submitting securely…" : "Submit joining form"}</button>}</div>
-    </form>
+          <div className="zhr-actions">{step > 1 ? <button type="button" className="zhr-button zhr-button--secondary" onClick={back} disabled={busy}><ArrowLeft />Back</button> : <span />}{step < 5 ? <button type="button" className="zhr-button" onClick={next} disabled={busy}>Continue<ArrowRight /></button> : <button type="submit" className="zhr-button zhr-button--submit" disabled={busy}>{busy ? <LoaderCircle className="zhr-spin" /> : <BadgeCheck />}{busy ? "Submitting securely…" : "Submit joining form"}</button>}</div>
+        </form>
+      </section>
+    </div>
     <footer className="zhr-foot"><LockKeyhole /><span>Private HR onboarding · Zobhungr Solutions Private Limited · Vijay Tower, Ghazipur, Uttar Pradesh 233001</span></footer>
   </div>;
 }
