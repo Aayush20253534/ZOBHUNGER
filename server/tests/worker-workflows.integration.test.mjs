@@ -53,7 +53,10 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       const detail = ok(await request(`/workers/applications/${applicationId}`, { user: worker })); assert.equal(detail.application.stage, 'SUBMITTED'); assert.equal(detail.history.total, 1); assert.deepEqual(detail.profile.skills, ['Retail', 'Customer service']);
       await prisma.workerProfile.update({ where: { id: profile.id }, data: { fullName: 'Updated name', skills: ['Changed skill'], revision: { increment: 1 } } });
       await prisma.workerResume.delete({ where: { profileId: profile.id } });
-      const download = await request(`/workers/applications/${applicationId}/resume`, { user: worker }); assert.equal(download.status, 200); assert.equal(download.body, cv.toString()); assert.equal(download.headers.get('cache-control'), 'no-store'); assert.match(download.headers.get('content-disposition'), /attachment/);
+      const download = await request(`/workers/applications/${applicationId}/resume`, { user: worker }); assert.equal(download.status, 200); assert.equal(download.body, cv.toString());
+      const cacheControl = download.headers.get('cache-control') ?? '';
+      assert.match(cacheControl, /\bprivate\b/); assert.match(cacheControl, /\bno-store\b/);
+      assert.match(download.headers.get('content-disposition'), /attachment/);
       assert.equal(ok(await request(`/workers/applications/${applicationId}`, { user: worker })).application.name, 'Asha Executive');
       for (const suffix of ['', '/resume']) assert.equal((await request(`/workers/applications/${applicationId}${suffix}`, { user: other })).status, 404);
       assert.equal(ok(await request('/workers/applications', { user: other })).total, 0);

@@ -138,7 +138,9 @@ test('vendor intake, private documents, review and vendor directory', async t =>
       const path = `/admin/vendors/${receipt.id}/documents/${current.documents[0].id}`;
       const download = await request(path, { cookie: cookieFor(admin) });
       assert.equal(download.status, 200); assert.deepEqual(download.bytes, pdf);
-      assert.equal(download.headers.get('cache-control'), 'no-store'); assert.equal(download.headers.get('x-content-type-options'), 'nosniff');
+      const cacheControl = download.headers.get('cache-control') ?? '';
+      assert.match(cacheControl, /\bprivate\b/); assert.match(cacheControl, /\bno-store\b/);
+      assert.equal(download.headers.get('x-content-type-options'), 'nosniff');
       assert.equal(download.headers.get('content-security-policy'), 'sandbox'); assert.match(download.headers.get('content-disposition'), /^attachment;/);
       const another = await start(profile('download-isolation'));
       assert.equal((await request(`/admin/vendors/${another.id}/documents/${current.documents[0].id}`, { cookie: cookieFor(admin) })).status, 404);
