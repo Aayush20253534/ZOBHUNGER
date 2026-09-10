@@ -9,10 +9,10 @@ test("public form payloads satisfy server validation and API errors retain actio
     import { requirementFormSchema } from './src/schemas/requirement-form.schema.ts';
     import { createRequirementSchema } from '../server/src/modules/requirements/requirements.schema.ts';
     import { industries } from './src/data/industries.ts';
-    import { solutions } from './src/data/solutions.ts';
+    import { workforceSolutions } from './src/data/solutions.ts';
     import { ApiError, apiFetch, apiFieldErrors } from './src/lib/api.ts';
-    const base={companyName:'Test company',contactPerson:'Test owner',businessEmail:'owner@example.test',mobileNumber:'+91 9876543210',industry:industries[0].slug,serviceRequired:solutions[0].slug,workforceCount:5,locations:[{name:'Delhi'}],projectDuration:'1 day',expectedStartAt:'',details:'Field staffing for five sites.'};
-    for(const industry of industries) for(const service of solutions) for(const date of ['', '2026-09-20', '2028-02-29', '2026-09-20T12:30:00Z']) {
+    const base={companyName:'Test company',contactPerson:'Test owner',businessEmail:'owner@example.test',mobileNumber:'+91 9876543210',industry:industries[0].slug,serviceRequired:workforceSolutions[0].slug,workforceCount:5,locations:[{name:'Delhi'}],projectDuration:'1 day',expectedStartAt:'',details:'Field staffing for five sites.'};
+    for(const industry of industries) for(const service of workforceSolutions) for(const date of ['', '2026-09-20', '2028-02-29', '2026-09-20T12:30:00Z']) {
       const form=requirementFormSchema.parse({...base,industry:industry.slug,serviceRequired:service.slug,expectedStartAt:date});
       const payload=JSON.parse(JSON.stringify(requirementSchema.parse(form)));
       const stored=createRequirementSchema.parse(payload);
