@@ -6,6 +6,22 @@ export const site = {
   tagline: "Hire. Deploy. Deliver.",
   primaryAction: { label: "Hire Workforce", href: "/hire-workforce" },
   workerAction: { label: "Find work", href: "/jobs" },
+  globalReach: {
+    label: "Serving clients worldwide",
+    primaryMarket: "India",
+  },
+  mobileApps: {
+    android: {
+      label: "Google Play",
+      statusLabel: "Coming soon on",
+      href: null as string | null,
+    },
+    ios: {
+      label: "App Store",
+      statusLabel: "Coming soon on the",
+      href: null as string | null,
+    },
+  },
   publicContact: {
     email: "help@zobhungr.com",
     phoneLabel: "+91-548-4051917",

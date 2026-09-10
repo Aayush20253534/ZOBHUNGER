@@ -1,20 +1,350 @@
-/* Six navigation groups need room after adding public business access. */
-.zb-footer .zb-footer-link-icon { width: 1rem; height: 1rem; flex-shrink: 0; margin-right: 0.55rem; }
-.zb-footer .zb-footer-business-group li a { color: #fff; }
+/* Public-site footer: business navigation, worldwide reach, app readiness and contact. */
+.zb-footer .zb-footer-link-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin-right: 0.55rem;
+}
+
+.zb-footer .zb-footer-business-group li a {
+  color: #fff;
+}
+
+.zb-footer-intro-copy {
+  min-width: 0;
+}
+
+.zb-footer-global {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  min-height: 2rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid #ffffff2e;
+  border-radius: 999px;
+  background: #ffffff10;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.zb-footer-global svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  color: var(--zb-highlight);
+}
+
+.zb-footer-utility {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(18rem, 0.8fr);
+  gap: 1rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #ffffff26;
+}
+
+.zb-footer-app,
+.zb-footer-contact {
+  min-width: 0;
+  border: 1px solid #ffffff24;
+  border-radius: 1rem;
+  background: linear-gradient(145deg, #ffffff12, #ffffff08);
+  box-shadow: inset 0 1px 0 #ffffff12;
+}
+
+.zb-footer-app {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  padding: clamp(1.15rem, 2.5vw, 1.6rem);
+}
+
+.zb-footer-contact {
+  padding: clamp(1.15rem, 2.5vw, 1.6rem);
+}
+
+.zb-footer-eyebrow {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--zb-highlight);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.zb-footer-app h2,
+.zb-footer-contact h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.35;
+}
+
+.zb-footer-app-copy p {
+  max-width: 56ch;
+  margin: 0.45rem 0 0;
+  color: var(--zb-on-panel-muted);
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+
+.zb-footer-store-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(9.7rem, 1fr));
+  gap: 0.65rem;
+}
+
+.zb-footer-store-badge {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  min-height: 3.6rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ffffff35;
+  border-radius: 0.7rem;
+  background: #1b1114;
+  color: #fff;
+  text-decoration: none;
+  transition: border-color var(--zb-transition), background-color var(--zb-transition), transform var(--zb-transition);
+}
+
+.zb-footer-store-badge[href]:hover {
+  transform: translateY(-1px);
+  border-color: #ffffff70;
+  background: #25171b;
+}
+
+.zb-footer-store-badge[data-coming-soon="true"] {
+  cursor: default;
+}
+
+.zb-footer-store-icon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+}
+
+.zb-footer-store-mark {
+  width: 1.65rem;
+  height: 1.65rem;
+}
+
+.zb-footer-store-copy {
+  display: grid;
+  min-width: 0;
+  line-height: 1.12;
+}
+
+.zb-footer-store-copy small {
+  color: #d7c6cb;
+  font-size: 0.57rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.zb-footer-store-copy strong {
+  margin-top: 0.16rem;
+  overflow: hidden;
+  font-size: 0.96rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zb-footer-store-arrow {
+  width: 0.9rem;
+  height: 0.9rem;
+  color: var(--zb-highlight);
+}
+
+.zb-footer-contact-list {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+}
+
+.zb-footer-contact-list a {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  padding: 0.35rem 0;
+  color: var(--zb-on-panel-muted);
+  text-decoration: none;
+}
+
+.zb-footer-contact-list a > svg:first-child {
+  width: 1rem;
+  height: 1rem;
+  color: var(--zb-highlight);
+}
+
+.zb-footer-contact-list a span {
+  display: grid;
+  min-width: 0;
+}
+
+.zb-footer-contact-list small {
+  color: #d9c5ca;
+  font-size: 0.62rem;
+  line-height: 1.2;
+}
+
+.zb-footer-contact-list strong {
+  margin-top: 0.1rem;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.zb-footer-contact-list a:hover strong {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.zb-footer-contact-arrow {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
 @media (min-width: 768px) {
-  .zb-site .zb-footer .zb-footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: clamp(1rem, 2.5vw, 2.5rem); row-gap: 2rem; }
-  .zb-site .zb-footer .zb-footer-intro { grid-column: 1 / -1; display: flex; align-items: center; gap: 1.5rem; max-width: none; padding-bottom: 1.5rem; border-bottom: 1px solid #ffffff26; }
-  .zb-site .zb-footer .zb-footer-intro .zb-wordmark { flex-shrink: 0; }
-  .zb-site .zb-footer .zb-footer-intro p { max-width: 52ch; margin: 0; font-size: 0.875rem; line-height: 1.65; }
-  .zb-site .zb-footer .zb-footer-intro .zb-action-link { margin-left: auto; flex-shrink: 0; }
-  .zb-site .zb-footer .zb-footer-desktop-group { min-width: 0; }
-  .zb-site .zb-footer .zb-footer-desktop-group li a { min-height: 2.75rem; line-height: 1.5; overflow-wrap: anywhere; }
+  .zb-site .zb-footer .zb-footer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: clamp(1rem, 2.5vw, 2.5rem);
+    row-gap: 2rem;
+  }
+
+  .zb-site .zb-footer .zb-footer-intro {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: none;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #ffffff26;
+  }
+
+  .zb-site .zb-footer .zb-footer-intro-copy {
+    display: grid;
+    grid-template-columns: auto minmax(16rem, 1fr);
+    align-items: center;
+    gap: 0.8rem 1.4rem;
+    flex: 1 1 auto;
+  }
+
+  .zb-site .zb-footer .zb-footer-intro .zb-wordmark {
+    grid-row: 1 / span 2;
+    flex-shrink: 0;
+  }
+
+  .zb-site .zb-footer .zb-footer-intro p {
+    max-width: 52ch;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.65;
+  }
+
+  .zb-site .zb-footer .zb-footer-global {
+    grid-column: 2;
+  }
+
+  .zb-site .zb-footer .zb-footer-intro .zb-action-link {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .zb-site .zb-footer .zb-footer-desktop-group {
+    min-width: 0;
+  }
+
+  .zb-site .zb-footer .zb-footer-desktop-group li a {
+    min-height: 2.75rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
 }
+
 @media (min-width: 1200px) {
-  .zb-site .zb-footer .zb-footer-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: 1.25rem; }
+  .zb-site .zb-footer .zb-footer-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: 1.25rem;
+  }
 }
+
 @media (min-width: 768px) and (max-width: 1099px) {
-  .zb-site .zb-footer .zb-footer-intro { flex-wrap: wrap; }
-  .zb-site .zb-footer .zb-footer-intro p { flex: 1 1 24rem; max-width: none; }
-  .zb-site .zb-footer .zb-footer-intro .zb-action-link { margin-left: 0; }
+  .zb-site .zb-footer .zb-footer-intro {
+    flex-wrap: wrap;
+  }
+
+  .zb-site .zb-footer .zb-footer-intro-copy {
+    flex: 1 1 100%;
+  }
+
+  .zb-site .zb-footer .zb-footer-intro .zb-action-link {
+    margin-left: 0;
+  }
+
+  .zb-footer-utility {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .zb-site .zb-footer-intro-copy {
+    display: grid;
+  }
+
+  .zb-site .zb-footer-global {
+    margin-top: 0.1rem;
+  }
+
+  .zb-site .zb-footer-utility {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+    padding-block: 0.75rem 1.25rem;
+  }
+
+  .zb-site .zb-footer-app {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .zb-site .zb-footer-store-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zb-site .zb-footer-contact-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 1rem;
+  }
+
+  .zb-site .zb-footer-contact-list a:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 479px) {
+  .zb-site .zb-footer-store-list,
+  .zb-site .zb-footer-contact-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .zb-site .zb-footer-contact-list a:last-child {
+    grid-column: auto;
+  }
+
+  .zb-site .zb-footer-store-badge {
+    min-height: 3.75rem;
+  }
 }
