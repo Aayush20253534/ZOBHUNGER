@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { SiteFrame } from "@/components/layout/SiteFrame";
+import { market } from "@/data/market";
 import { site } from "@/data/site";
+import { solutions } from "@/data/solutions";
 import "./globals.css";
 import "@/styles/mobile.css";
 
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en_IN",
+    locale: market.primaryMarket.locale,
     siteName: site.name,
     url: site.url,
     title: site.name,
@@ -65,18 +67,16 @@ const organizationSchema = {
     contactType: "customer support",
     email: site.publicContact.email,
     telephone: site.publicContact.phoneLabel,
-    areaServed: "IN",
+    areaServed: market.operatingCountries.map((country) => country.name),
   },
-  knowsAbout: [
-    "Workforce solutions",
-    "Recruitment",
-    "Sales force execution",
-    "Promoter management",
-    "Retail execution",
-    "Brand activation",
-    "Business operations",
-    "Gig workforce",
-  ],
+  knowsAbout: Array.from(
+    new Set(
+      solutions.flatMap((solution) => [
+        solution.title,
+        ...solution.services,
+      ]),
+    ),
+  ),
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

@@ -64,3 +64,14 @@ export const solutions = [
     services: ["Background checks", "KYC & business", "Field verification"],
   },
 ] as const satisfies readonly SolutionSummary[];
+
+export type PublicSolutionSlug = (typeof solutions)[number]["slug"];
+
+export function solutionHref(slug: PublicSolutionSlug) {
+  return `/${slug}` as const;
+}
+
+/** Route prefixes used by navigation and any other service-aware UI. */
+export const solutionRoutePrefixes = solutions.map((solution) =>
+  solutionHref(solution.slug),
+);

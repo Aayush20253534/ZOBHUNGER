@@ -27,7 +27,7 @@ export function OperatingFootprintPanel({
           <div className="zb-presence-network-status-copy">
             <small>Execution network</small>
             <span className="zb-presence-network-status-value">
-              <strong>5</strong>
+              <strong>{footprintLocations.length}</strong>
               <span>coordination points</span>
             </span>
           </div>

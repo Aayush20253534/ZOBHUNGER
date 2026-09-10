@@ -5,7 +5,6 @@ import {
   ChevronDown,
   ClipboardList,
   Globe2,
-  Handshake,
   LogIn,
   Mail,
   MapPin,
@@ -15,8 +14,9 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
+import { market } from "@/data/market";
 import { site } from "@/data/site";
-import { solutions } from "@/data/solutions";
+import { solutionHref, solutions } from "@/data/solutions";
 import "@/styles/footer-business.css";
 
 type FooterLink = { href: string; label: string; icon?: LucideIcon };
@@ -26,8 +26,8 @@ const businessLinks = [
   { label: "For business", href: "/for-business", icon: Building2 },
   { label: "Hire workforce", href: "/hire-workforce", icon: ClipboardList },
   { label: "Business login", href: "/business/login", icon: LogIn },
-  { label: "Verification services", href: "/verification-services", icon: ShieldCheck },
-  { label: "Branding & activation", href: "/brand-activation#solution-services", icon: Megaphone },
+  { label: "Verification services", href: solutionHref("verification-services"), icon: ShieldCheck },
+  { label: "Branding & activation", href: `${solutionHref("brand-activation")}#solution-services`, icon: Megaphone },
 ] as const satisfies readonly FooterLink[];
 
 const companyLinks = [
@@ -72,7 +72,7 @@ const footerGroups = [
       { label: "Our services", href: "/solutions" },
       ...solutions.map((solution) => ({
         label: solution.label,
-        href: `/${solution.slug}`,
+        href: solutionHref(solution.slug),
       })),
     ],
   },
@@ -104,16 +104,16 @@ function AppleMark() {
 }
 
 function StoreBadge({ store, platform }: { store: MobileStore; platform: "android" | "ios" }) {
+  const statusLabel = store.href ? store.availableLabel : store.comingSoonLabel;
   const content = (
     <>
       <span className="zb-footer-store-icon" aria-hidden="true">
         {platform === "android" ? <GooglePlayMark /> : <AppleMark />}
       </span>
       <span className="zb-footer-store-copy">
-        <small>{store.statusLabel}</small>
+        <small>{statusLabel}</small>
         <strong>{store.label}</strong>
       </span>
-      {store.href && <ArrowUpRight className="zb-footer-store-arrow" aria-hidden="true" />}
     </>
   );
 
@@ -126,7 +126,7 @@ function StoreBadge({ store, platform }: { store: MobileStore; platform: "androi
   }
 
   return (
-    <span className="zb-footer-store-badge" data-coming-soon="true" aria-label={`${store.label}, ${store.statusLabel}`}>
+    <span className="zb-footer-store-badge" data-coming-soon="true" aria-label={`${store.label}, ${store.comingSoonLabel}`}>
       {content}
     </span>
   );
@@ -171,6 +171,17 @@ function FooterLinkGroup({ group }: { group: (typeof footerGroups)[number] }) {
 
 export function Footer() {
   const contact = site.publicContact;
+  const publishedAppCount = Object.values(site.mobileApps).filter((store) => store.href).length;
+  const appHeading = publishedAppCount === 0
+    ? "Coming soon on mobile."
+    : publishedAppCount === Object.keys(site.mobileApps).length
+      ? "Download the ZOBHUNGER app."
+      : "ZOBHUNGER mobile access is rolling out.";
+  const appDescription = publishedAppCount === 0
+    ? "Google Play and App Store releases are in preparation."
+    : publishedAppCount === Object.keys(site.mobileApps).length
+      ? "Choose your app store below."
+      : "Available store links are active below.";
 
   return (
     <footer className="zb-footer">
@@ -178,13 +189,13 @@ export function Footer() {
         <div className="zb-footer-grid">
           <div className="zb-footer-intro">
             <div className="zb-footer-intro-copy">
-              <Link href="/" className="zb-wordmark" aria-label="ZOBHUNGER home">
+              <Link href="/" className="zb-wordmark" aria-label={`${site.name} home`}>
                 ZOB<span>HUNGER</span>
               </Link>
               <p>{site.description}</p>
-              <div className="zb-footer-global" aria-label={site.globalReach.label}>
+              <div className="zb-footer-global" aria-label={market.clientReach.label}>
                 <Globe2 aria-hidden="true" />
-                <span>{site.globalReach.label}</span>
+                <span>{market.clientReach.label}</span>
               </div>
             </div>
             <ActionLink href={site.primaryAction.href} variant="light">
@@ -196,12 +207,12 @@ export function Footer() {
             <section className="zb-footer-app" aria-labelledby="zb-footer-app-title">
               <div className="zb-footer-app-copy">
                 <span className="zb-footer-eyebrow">ZOBHUNGER mobile app</span>
-                <h2 id="zb-footer-app-title">Mobile access is coming soon.</h2>
-                <p>Our app is being prepared for Google Play and the Apple App Store. Download links will activate here when the app is published.</p>
+                <h2 id="zb-footer-app-title">{appHeading}</h2>
+                <p>{appDescription}</p>
               </div>
               <div className="zb-footer-store-list" aria-label="Mobile application availability">
-                <StoreBadge store={site.mobileApps.android} platform="android" />
                 <StoreBadge store={site.mobileApps.ios} platform="ios" />
+                <StoreBadge store={site.mobileApps.android} platform="android" />
               </div>
             </section>
 
@@ -209,7 +220,7 @@ export function Footer() {
               <span className="zb-footer-eyebrow">Connect with us</span>
               <h2 id="zb-footer-contact-title">Talk to the ZOBHUNGER team.</h2>
               <div className="zb-footer-contact-list">
-                <a href={`mailto:${contact.email}`}>
+                <a href={contact.emailHref}>
                   <Mail aria-hidden="true" />
                   <span>
                     <small>Email</small>

@@ -22,10 +22,10 @@ export function Navbar() {
       <header className="zb-header">
         <div className="zb-container zb-header-inner">
           <div className="zb-header-brand">
-            <Link href="/" className="zb-wordmark" aria-label="ZOBHUNGER home">
+            <Link href="/" className="zb-wordmark" aria-label={`${site.name} home`}>
               ZOB<span>HUNGER</span>
             </Link>
-            <span className="zb-header-tagline">Hire. Deploy. Deliver.</span>
+            <span className="zb-header-tagline">{site.tagline}</span>
           </div>
 
           <nav className="zb-desktop-nav" aria-label="Main navigation">

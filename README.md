@@ -1,32 +1,77 @@
 # ZOBHUNGER
 
-Business portal completion: [setup, page endpoints and client walkthrough](docs/PHASE2_COMPLETION.md).
-
-Phase 1 of ZOBHUNGER is a public workforce, sales hiring and business-execution website backed by a real Express/PostgreSQL API.
+ZOBHUNGER is a workforce, sales and business-execution platform with a public Next.js website and an Express/PostgreSQL API. The repository now includes the public experience plus operational portals for businesses, workers, placement/institution partners and administrators.
 
 ## Repository
 
 ```text
-client/   Next.js 16 frontend
-server/   Express + TypeScript + Prisma/PostgreSQL backend
+client/   Next.js frontend: public website + authenticated portals
+server/   Express + TypeScript + Prisma/PostgreSQL API
 ```
 
-## Phase 1 capabilities
+## Current capabilities
 
-- public marketing and solution pages
-- database-backed jobs and job details
-- worker job applications
-- workforce-requirement submissions
-- contact enquiries
-- database-backed blogs/articles
-- JWT authentication in httpOnly cookies
-- ADMIN/BUSINESS/WORKER roles
-- Phase 1 admin operations dashboard and protected admin APIs
-- audit logs for admin status changes
-- Mailjet operational notifications
-- structured request/error logging, request IDs and rate limiting
+### Public website
 
-Business and worker operational workspaces remain later-phase features; Phase 1 provides the authentication foundation but does not fabricate those dashboards.
+- service, industry, presence, company and brand-experience pages
+- database-backed jobs and published articles
+- public workforce requirement and contact flows
+- career profile submissions with resume upload
+- independent business partner applications
+- placement-cell/institution partnership applications
+- vendor empanelment applications and document upload
+- worldwide-client messaging with an India-focused operating footprint
+- mobile-app download slots that activate when store URLs are configured
+
+### Business portal
+
+- business authentication and password recovery
+- company profile and dashboard
+- workforce requirements and reusable requirement drafts
+- linked-job workflow and candidate management
+- deployment/roster management
+- attendance and correction workflow
+- attendance approvals
+- operational reports and CSV export
+
+### Worker portal
+
+- registration, email verification, login and password recovery
+- worker profile and resume management
+- job discovery and saved jobs
+- job applications and withdrawal
+- assignment and attendance workflows
+- earnings statements and exports
+
+### Placement/institution portal
+
+- institution activation and login
+- institution profile
+- candidate management
+- opportunity discovery
+- applications submitted for managed candidates
+
+### Admin/operations
+
+- protected ADMIN routes with MFA support
+- enquiries, requirements, jobs and applications
+- partner, placement-cell, career and vendor review
+- candidate and deployment operations
+- attendance management and approvals
+- worker application/attendance review
+- worker earnings administration
+- audit-aware operational workflows
+
+### Platform infrastructure
+
+- versioned `/api/v1` Express API
+- Prisma/PostgreSQL persistence
+- JWT authentication using secure httpOnly cookies for the web client
+- Argon2 password hashing
+- Redis caching with PostgreSQL fallback
+- Mailjet operational email delivery
+- Cloudinary-backed private document storage support
+- Helmet, CORS, request IDs, validation and rate limiting
 
 ## First-time local setup
 
@@ -40,11 +85,11 @@ cp .env.example .env
 
 Set a real PostgreSQL `DATABASE_URL`, a 32+ character `JWT_SECRET`, and an Argon2id value for `ADMIN_SEED_PASSWORD_HASH`.
 
-If this database has never been migrated:
+For a fresh local database:
 
 ```bash
 npx prisma generate
-npx prisma migrate dev --name init_phase1
+npx prisma migrate dev
 npm run db:seed
 npm run dev
 ```
@@ -61,14 +106,19 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Use:
+Typical local configuration:
 
 ```env
 NEXT_PUBLIC_DATA_MODE=api
 NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_GOOGLE_PLAY_URL=
+NEXT_PUBLIC_APP_STORE_URL=
 ```
 
 Frontend: `http://localhost:3000`
+
+The app-store URLs intentionally remain blank until the corresponding application is published. Supplying a valid URL and rebuilding the frontend activates that store badge automatically.
 
 ## Admin seed password
 
@@ -88,7 +138,9 @@ From the repository root after dependencies are installed:
 npm run verify
 ```
 
-This runs server tests, the server build, client lint and the client production build.
+This runs server tests, the server production build, client lint and the client production build.
+
+Useful focused checks are also available from `server/package.json`, including business, worker, attendance, deployment, candidate, vendor and cache integration suites.
 
 For a running API:
 
@@ -96,14 +148,15 @@ For a running API:
 npm run smoke:server
 ```
 
+## Mobile application integration
+
+The backend is already separated from the Next.js frontend and can be reused by a future native application. Current browser authentication is carried through secure httpOnly cookies. Native mobile support should add an appropriate Bearer/access-token and refresh-token transport while reusing the existing API/service layer rather than duplicating business logic.
+
 ## Documentation
 
-- `server/docs/API.md` - endpoint and response contract reference
-- `server/docs/TESTING.md` - automated tests and Phase 1 QA checklist
-- `server/docs/DEPLOYMENT.md` - production database/environment/deployment notes
-- `client/README.md` - frontend configuration
-## Redis performance setup
-
-Optional job catalogue caching and navigation improvements are documented in
-[docs/redis-performance.md](docs/redis-performance.md), including local Docker,
-hosted Redis configuration, cache invalidation and verification commands.
+- `server/docs/API.md` - API families, authentication and response conventions
+- `server/docs/TESTING.md` - automated and manual verification guidance
+- `server/docs/DEPLOYMENT.md` - production deployment and environment notes
+- `client/README.md` - frontend configuration and route overview
+- `docs/` - feature-specific implementation notes and historical delivery documentation
+- `docs/redis-performance.md` - Redis setup, cache invalidation and verification

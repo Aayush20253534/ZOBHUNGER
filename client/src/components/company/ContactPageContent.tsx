@@ -85,7 +85,7 @@ export function ContactPageContent({
                 </span>
                 <div>
                   <small>Email</small>
-                  <a href={`mailto:${publicContact.email}`}>
+                  <a href={publicContact.emailHref}>
                     {publicContact.email}
                   </a>
                 </div>

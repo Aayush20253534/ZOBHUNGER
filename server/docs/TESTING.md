@@ -1,58 +1,63 @@
 # Testing and verification
 
-## Automated server tests
+## Repository verification
 
-The Phase 1 test suite uses Node's built-in test runner through `tsx`; no additional test framework is required.
-
-```bash
-cd server
-npm install
-npm test
-```
-
-Coverage focuses on deterministic behavior that must not regress:
-
-- auth validation and public-role restrictions
-- password input requirements
-- requirement normalization/location rules
-- job filter compatibility aliases
-- application validation/date conversion
-- admin status validation and pagination bounds
-- article pagination defaults
-- API response envelopes
-- role authorization middleware
-
-These are unit/contract tests. They intentionally do not create or destroy PostgreSQL data.
-
-## Server build verification
+From the repository root:
 
 ```bash
 npm run verify
 ```
 
-This runs tests followed by Prisma generation and TypeScript compilation.
+This runs:
+
+1. server tests
+2. server production build and Prisma generation
+3. client lint
+4. client production build
+
+The release should not proceed while any stage fails.
+
+## Server test suites
+
+The default server suite is:
+
+```bash
+cd server
+npm test
+```
+
+Focused integration/contract commands are available for the operational modules, including:
+
+```text
+npm run test:business
+npm run test:dashboard
+npm run test:requirements
+npm run test:candidates
+npm run test:attendance
+npm run test:deployments
+npm run test:partner-hr
+npm run test:vendors
+npm run test:workers
+npm run test:cache
+```
+
+These suites cover authentication/authorization, validation, business ownership, revision protection, requirements, candidate/deployment workflows, attendance, partner/vendor flows, worker workflows, earnings and cache behavior.
 
 ## Running API smoke tests
 
-Start the API first with a migrated/seeded database:
-
-```bash
-npm run dev
-```
-
-In another terminal:
+Start the API with a migrated database, then in another terminal run:
 
 ```bash
 npm run test:smoke
 ```
 
-By default this checks:
+From the repository root the wrapper command is:
 
-- `GET /api/v1/health`
-- `GET /api/v1/jobs`
-- `GET /api/v1/articles`
+```bash
+npm run smoke:server
+```
 
-To test another deployment:
+To target another deployment:
 
 ```bash
 SMOKE_API_URL=https://api.example.com/api/v1 npm run test:smoke
@@ -65,25 +70,71 @@ $env:SMOKE_API_URL="https://api.example.com/api/v1"
 npm run test:smoke
 ```
 
-## End-to-end Phase 1 checklist
+## Public-site manual QA
 
-With `NEXT_PUBLIC_DATA_MODE=api`, verify manually:
+Verify at minimum:
 
-1. `/jobs` loads database jobs and filtering changes results.
-2. A job detail page loads by slug.
-3. A job application creates a `JobApplication`; submitting the same email for the same job returns a duplicate error.
-4. `/contact` creates `ContactEnquiry`.
-5. `/hire-workforce` creates `WorkforceRequirement`.
-6. `/blogs` loads articles from PostgreSQL and article detail pages open.
-7. `/login` accepts the seeded admin's plain password and redirects to `/admin`.
-8. `/admin` loads enquiries, requirements, jobs and applications.
-9. BUSINESS/WORKER accounts cannot access admin APIs.
-10. Logout clears access and protected admin requests become unauthorized.
-11. If Mailjet is configured, enquiry/requirement/application notifications arrive at `SALES_TEAM_EMAIL`.
-12. `X-Request-Id` appears on API responses and matching request events appear in server logs.
+1. navbar, mobile navigation and footer links open valid destinations.
+2. the footer shows the exact public office address and worldwide-client message.
+3. app-store badges show a coming-soon state while URLs are blank and become external links only when configured.
+4. `/jobs` and job detail pages load API data.
+5. public job applications submit and duplicate handling is understandable.
+6. `/hire-workforce` creates a workforce requirement.
+7. `/contact` creates a contact enquiry.
+8. `/careers/apply` remains visually contained at desktop/tablet/mobile widths and can submit a profile/resume.
+9. partner, placement-cell and vendor application forms submit correctly.
+10. articles/blog pages load published content.
+11. no public page has broken images, horizontal overflow, dead CTAs or console errors.
 
-Use Prisma Studio to confirm writes during local QA:
+## Business portal manual QA
+
+Verify:
+
+1. business login/recovery works.
+2. workspace/profile/dashboard load only for the correct business.
+3. requirement creation, editing, withdrawal and drafts work.
+4. candidate lists/details are scoped to the business.
+5. deployments/rosters are visible and protected correctly.
+6. attendance and correction flows work.
+7. attendance approvals and reports/CSV export work.
+8. stale revisions/ownership violations are rejected rather than silently overwritten.
+
+## Worker portal manual QA
+
+Verify:
+
+1. registration, email verification, login and recovery work.
+2. unverified accounts cannot bypass the verification gate.
+3. profile and resume operations work.
+4. jobs, filters and saved jobs work.
+5. application submit/detail/withdraw flows work.
+6. assignments and attendance work.
+7. earnings statements and export work.
+
+## Placement/institution portal manual QA
+
+Verify activation/login, institution profile, managed candidates, opportunities and submitted candidate applications.
+
+## Admin/operations manual QA
+
+Verify admin MFA and access control, then review representative records across enquiries, requirements, jobs, applications, partners, placement cells, careers, vendors, candidates, deployments, attendance and earnings.
+
+Non-admin roles must receive authorization failures for `/admin/*` routes.
+
+## Infrastructure QA
+
+Check:
+
+- `X-Request-Id` is present and matches structured logs.
+- Mailjet notifications arrive when mail is enabled.
+- Redis-backed reads work when Redis is available and PostgreSQL fallback works when it is intentionally unavailable.
+- private file downloads return restrictive headers and cannot be accessed by unauthorized users.
+- production CORS accepts only configured frontend origins.
+- secure-cookie authentication works over HTTPS.
+
+Use Prisma Studio during local QA when direct record inspection is useful:
 
 ```bash
+cd server
 npm run db:studio
 ```

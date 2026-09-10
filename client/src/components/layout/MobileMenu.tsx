@@ -17,7 +17,7 @@ import {
   navigation,
 } from "@/data/navigation";
 import { site } from "@/data/site";
-import { solutions } from "@/data/solutions";
+import { solutionHref, solutions } from "@/data/solutions";
 
 export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
   const [open, setOpen] = useState(false);
@@ -44,7 +44,7 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
       <SheetContent side="right" className="zb-mobile-drawer">
         <SheetHeader className="zb-mobile-brand-header border-b px-6 py-6">
           <SheetTitle className="zb-mobile-brand-title">
-            <span className="zb-wordmark" aria-label="ZOBHUNGER">
+            <span className="zb-wordmark" aria-label={site.name}>
               ZOB<span>HUNGER</span>
             </span>
             <span className="zb-mobile-brand-tagline">{site.tagline}</span>
@@ -78,8 +78,8 @@ export function MobileMenu({ pathname = "/" }: { pathname?: string }) {
                 {solutions.map((solution) => (
                   <Link
                     key={solution.slug}
-                    href={`/${solution.slug}`}
-                    aria-current={pathname === `/${solution.slug}` ? "page" : undefined}
+                    href={solutionHref(solution.slug)}
+                    aria-current={pathname === solutionHref(solution.slug) ? "page" : undefined}
                     onClick={() => setOpen(false)}
                   >
                     {solution.label}

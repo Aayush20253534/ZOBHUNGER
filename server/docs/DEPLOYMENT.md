@@ -1,20 +1,10 @@
-# Phase 1 deployment guide
+# ZOBHUNGER deployment guide
 
-## Business login/workspace 404 repair
+This guide covers the current public website and platform portals. Frontend and backend should be deployed from the same intended Git revision so the browser does not call routes that an older API build does not contain.
 
-The P2.1 source mounts `GET /api/v1/business/workspace` and
-`POST /api/v1/auth/business-login`. If the API logs `ROUTE_NOT_FOUND` for these
-paths while `/auth/register` succeeds, the deployed API does not contain the new
-route tree. Registration already existed before P2.1, so successful registration
-does not prove the business portal backend has been deployed. The frontend proxy
-is forwarding the request if that exact path appears in the API logs.
+## Recommended backend service settings
 
-Rebuild and deploy the **backend** from the same Git commit as the frontend.
-Rebuilding only the Vercel frontend cannot add routes to Express. Check that the
-API service tracks the intended repository and branch. A failed backend deploy
-can leave the older service running; review its latest build log.
-
-For an existing Render API service, use these settings:
+For a Render service whose root directory is `server`:
 
 | Setting | Value |
 | --- | --- |
@@ -23,92 +13,31 @@ For an existing Render API service, use these settings:
 | Start Command | `npm start` |
 | Health Check Path | `/api/v1/health` |
 
-These commands run relative to `server`. If keeping the repository root as the
-service root, use `npm --prefix server ci --include=dev && npm --prefix server run deploy`
-for the build and `npm --prefix server start` for startup. Choose one layout;
-do not use the `--prefix server` commands inside an already selected `server`
-root directory. The build needs TypeScript and Prisma, so include development
-dependencies during installation.
+If the service root is the repository root instead, use the corresponding `npm --prefix server ...` commands. Do not combine a `server` root directory with another `--prefix server`.
 
-After pushing this patch, manually deploy the latest commit on the API service.
-Make sure its auto-deploy filters include changes under `server/`.
-[Render monorepo settings](https://render.com/docs/monorepo-support) explain root
-directories and build filters; [Render's Express guide](https://render.com/docs/deploy-node-express-app)
-describes build/start commands and what happens after a failed build.
-
-`npm run deploy` now cleans and compiles the server, checks the compiled business
-routes, and applies committed database migrations. `npm start` repeats the route
-check before launching `dist/index.js`. The check imports compiled code and sends
-unauthenticated GET requests plus empty POST bodies to a temporary loopback
-server. It never creates accounts, sends emails or connects to the real database.
-A failed compilation cannot silently reuse an old `dist` directory. The route
-check catches missing mounts as well as accidentally unprotected endpoints.
-
-Keep the existing PostgreSQL, JWT, Redis and mail environment values. For this
-website, the API settings should include:
-
-```dotenv
-CLIENT_ORIGIN=https://client-nine-wheat.vercel.app
-PUBLIC_APP_URL=https://client-nine-wheat.vercel.app
-NODE_ENV=production
-```
-
-On Vercel, `NEXT_PUBLIC_API_URL` must point to that deployed API service and end
-in `/api/v1`. Rebuild the frontend after changing the value; the Next rewrite
-uses it at build time. Apply and redeploy the frontend changes in this patch too.
-Missing routes now show a useful unavailable message; background focus/timer
-checks pause until the user selects Try again. Authentication and company
-ownership checks remain on the server.
-
-### Verify the deployed service
-
-Open `/api/v1/health` on the API service, or `/api/backend/health` on the website.
-The JSON response must include `data.features.businessPortal: true`.
-Health responses are not cached. To test all business routes through the deployed
-website proxy from PowerShell at the repository root:
-
-```powershell
-$env:SMOKE_API_URL="https://client-nine-wheat.vercel.app/api/backend"
-npm --prefix server run check:business
-Remove-Item Env:SMOKE_API_URL
-```
-
-This checks the actual GET/POST route methods without submitting credentials or
-valid form data. Protected workspace/profile endpoints should return `401`, and
-empty login/recovery requests should return `400`; `404` means the route is still
-missing. A `500` after deployment needs its server error log inspected and is a
-different issue, such as an unapplied migration. Sign in at `/business/login`
-using the account already created; do not register it again.
-
-## Backend requirements
-
-- Node.js 22+ recommended
-- PostgreSQL
-- production environment variables from `.env.example`
-- writable network access to PostgreSQL and, when enabled, Mailjet
+`npm run deploy` cleans and compiles the server, generates Prisma Client, runs the compiled route/deployment checks, applies committed production migrations and runs the private-file storage migration helper. `npm start` validates the compiled business route surface again before starting `dist/index.js`.
 
 ## Production database
 
-Never run `prisma migrate dev` against production. After migrations have been committed, deploy them with:
+Never run `prisma migrate dev` against production. Commit migrations during development and deploy them with `prisma migrate deploy` through the deployment script.
+
+For a manual backend release:
 
 ```bash
-npm ci
-npm run db:generate
-npm run db:deploy
-npm run build
+npm ci --include=dev
+npm run deploy
 npm start
 ```
 
-The process must fail if required environment configuration is missing. This is intentional.
-
 ## Required backend environment
 
-At minimum configure:
+At minimum configure values equivalent to:
 
 ```env
 NODE_ENV=production
 PORT=5000
 CLIENT_ORIGIN=https://www.example.com
+PUBLIC_APP_URL=https://www.example.com
 DATABASE_URL=postgresql://...
 JWT_SECRET=<long-random-secret>
 AUTH_COOKIE_NAME=zobhunger_access
@@ -117,9 +46,21 @@ TRUST_PROXY=true
 LOG_LEVEL=info
 ```
 
-Use `TRUST_PROXY=true` only when the app is actually behind a trusted reverse proxy/load balancer.
+Use `TRUST_PROXY=true` only when Express is actually behind a trusted reverse proxy/load balancer.
 
-For email notifications also configure:
+### Redis
+
+```env
+REDIS_ENABLED=true
+REDIS_URL=rediss://...
+REDIS_KEY_PREFIX=zobhunger
+REDIS_TTL_SECONDS=60
+REDIS_COMMAND_TIMEOUT_MS=200
+```
+
+Redis is optional for correctness. If it is unavailable, supported cache paths fall back to PostgreSQL.
+
+### Mailjet
 
 ```env
 MAILJET_API_KEY=...
@@ -127,37 +68,80 @@ MAILJET_SECRET_KEY=...
 MAIL_FROM_EMAIL=verified-sender@example.com
 MAIL_FROM_NAME=ZOBHUNGER
 SALES_TEAM_EMAIL=sales@example.com
+MAILJET_API_HOST=api.mailjet.com
 ```
+
+The sender/domain must be verified under the same Mailjet account/API credentials.
+
+### Private file storage
+
+Production resume/vendor/private-document storage requires the Cloudinary variables documented in `server/.env.example`.
 
 ## Frontend environment
 
 ```env
 NEXT_PUBLIC_DATA_MODE=api
 NEXT_PUBLIC_API_URL=https://api.example.com/api/v1
+NEXT_PUBLIC_SITE_URL=https://www.example.com
+NEXT_PUBLIC_GOOGLE_PLAY_URL=
+NEXT_PUBLIC_APP_STORE_URL=
 ```
 
-The backend `CLIENT_ORIGIN` must exactly allow the deployed frontend origin. Auth requests use cookies, so HTTPS is required in production for the secure cookie behavior.
+The backend `CLIENT_ORIGIN` must allow the deployed frontend origin exactly. Authentication uses secure browser cookies, so production traffic must use HTTPS.
 
-## Admin account
+Leave each app-store URL blank until that application is published. Add the final Google Play/App Store URL and rebuild the frontend to activate the corresponding footer badge.
 
-Generate an Argon2id hash locally, place only the hash in `ADMIN_SEED_PASSWORD_HASH`, then run the seed in the intended environment. Do not commit the plain password or production `.env`.
+## Backend/frontend version mismatch
+
+If the frontend reports a missing portal route while older endpoints still work, first verify that the backend was actually rebuilt from the same Git revision. A successful frontend/Vercel deploy cannot add Express routes to an older backend service.
+
+`404` generally indicates the route is missing from the deployed API revision. `401` or `403` indicates the route exists and authorization/session state should be inspected instead. `500` usually requires the backend log and database/migration state to be checked.
 
 ## Pre-release gate
 
-Before deployment:
+From the repository root:
 
 ```bash
 npm run verify
 ```
 
-Then against the running backend:
+This must pass before production deployment:
+
+- server test suite
+- server production build
+- client lint
+- client production build
+
+Then validate the running API:
 
 ```bash
 npm run smoke:server
 ```
 
-Also execute the manual browser checklist in `server/docs/TESTING.md`.
+For the business route deployment probe against a deployed website proxy:
+
+```powershell
+$env:SMOKE_API_URL="https://www.example.com/api/backend"
+npm --prefix server run check:business
+Remove-Item Env:SMOKE_API_URL
+```
+
+Protected endpoints should normally return authorization responses when called without a session; `404` is the deployment failure signal the route probe is designed to catch.
+
+## Final release checks
+
+Before handing over the production URL, verify:
+
+- `/api/v1/health` is healthy
+- the frontend proxy can reach the deployed API
+- PostgreSQL migrations are current
+- Redis does not continuously log connectivity failures when enabled
+- Mailjet sender/domain and operational email delivery are valid
+- Cloudinary/private-file configuration is valid when file uploads are enabled
+- business, worker, institution and admin login flows operate over HTTPS
+- public forms submit successfully without duplicate/dead requests
+- no browser console CORS, mixed-content, asset 404 or server 500 errors remain
 
 ## Rollback discipline
 
-Application rollback and database rollback are separate concerns. Prisma migrations should be forward-safe and reviewed before deployment. Do not delete migration history after it has reached a shared or production database.
+Application rollback and database rollback are separate concerns. Prisma migrations should be forward-safe and reviewed before deployment. Do not delete or rewrite migration history after it has reached a shared or production database.

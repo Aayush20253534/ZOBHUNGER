@@ -1,3 +1,5 @@
+import { market, operatingLocations, type OperatingLocation } from "@/data/market";
+
 // SVG outline traced from the supplied operating-footprint reference.
 // Kashmir and Ladakh follow the reference silhouette; all geometry and pins
 // share one proportional coordinate system without horizontal stretching.
@@ -73,63 +75,33 @@ const INDIA_ISLANDS = [
   "Z",
 ].join(" ");
 
-const markers = [
-  {
-    name: "Delhi",
-    detail: "North",
-    x: 153.42,
-    y: 148.3,
-    tone: "market",
-    labelX: 14,
-    labelY: -23,
-    labelWidth: 66,
-  },
-  {
-    name: "Ghazipur",
-    detail: "HQ",
-    x: 203.24,
-    y: 192.82,
-    tone: "hq",
-    labelX: -85,
-    labelY: -16,
-    labelWidth: 72,
-  },
-  {
-    name: "Bihar",
-    detail: "East",
-    x: 225.5,
-    y: 206.07,
-    tone: "market",
-    labelX: 15,
-    labelY: -17,
-    labelWidth: 66,
-  },
-  {
-    name: "Mumbai",
-    detail: "West",
-    x: 90.35,
-    y: 276.56,
-    tone: "market",
-    labelX: 13,
-    labelY: -17,
-    labelWidth: 70,
-  },
-  {
-    name: "Bengaluru",
-    detail: "South",
-    x: 168.79,
-    y: 343.87,
-    tone: "market",
-    labelX: -72,
-    labelY: -3,
-    labelWidth: 62,
-  },
-] as const;
+type MappedOperatingLocation = OperatingLocation & {
+  mapMarker: NonNullable<OperatingLocation["mapMarker"]>;
+};
+
+const mappedLocations = operatingLocations.filter(
+  (location): location is MappedOperatingLocation => Boolean(location.mapMarker),
+);
+
+const markers = mappedLocations.map((location) => ({
+  name: location.mapName,
+  detail: location.mapDetail,
+  tone: location.type === "headquarters" ? "hq" : "market",
+  ...location.mapMarker,
+}));
 
 // Reuse the same labels in the readable phone key below the SVG.
 export const footprintLocations = markers.map(({ name, detail }) => ({ name, detail }));
 
-const headquarters = markers.find((marker) => marker.tone === "hq")!;
+const headquarters = markers.find((marker) => marker.tone === "hq");
+
+if (!headquarters) {
+  throw new Error("Operating footprint requires a mapped headquarters location.");
+}
+
+const branchNames = markers
+  .filter((marker) => marker.tone !== "hq")
+  .map((marker) => marker.name);
 
 export function OperatingFootprintMap({
   compact = false,
@@ -146,9 +118,11 @@ export function OperatingFootprintMap({
         role="img"
         aria-labelledby="zb-footprint-map-title zb-footprint-map-desc"
       >
-        <title id="zb-footprint-map-title">ZOBHUNGER operating footprint in India</title>
+        <title id="zb-footprint-map-title">
+          ZOBHUNGER operating footprint in {market.primaryMarket.name}
+        </title>
         <desc id="zb-footprint-map-desc">
-          Headquarters in Ghazipur with operating presence in Delhi, Mumbai, Bihar and Bengaluru.
+          Headquarters in {headquarters.name} with operating presence in {branchNames.join(", ")}.
         </desc>
 
         <defs>

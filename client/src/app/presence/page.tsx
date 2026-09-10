@@ -10,58 +10,20 @@ import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
 import { OperatingFootprintPanel } from "@/components/presence/OperatingFootprintPanel";
+import { market, operatingLocations } from "@/data/market";
 import { getPageMetadata } from "@/lib/page-metadata";
 import "@/styles/presence.css";
 import "@/styles/presence-map.css";
 
 export const metadata = getPageMetadata(
   "Our Presence",
-  "Explore ZOBHUNGER's headquarters and growing operating presence across key Indian markets.",
+  `Explore ZOBHUNGER's headquarters and growing operating presence across key ${market.primaryMarket.adjective} markets.`,
   "/presence",
 );
 
-const locations = [
-  {
-    label: "Headquarters",
-    title: "Ghazipur, Uttar Pradesh",
-    shortLabel: "HQ",
-    description:
-      "The central coordination point for workforce deployment, field execution and business support.",
-    className: "zb-presence-location-card--hq",
-  },
-  {
-    label: "Branch presence",
-    title: "Delhi",
-    shortLabel: "North",
-    description:
-      "Supporting requirements across an important northern business and workforce market.",
-    className: "",
-  },
-  {
-    label: "Branch presence",
-    title: "Mumbai, Maharashtra",
-    shortLabel: "West",
-    description:
-      "Extending ZOBHUNGER's execution capability into one of India's largest commercial markets.",
-    className: "",
-  },
-  {
-    label: "Branch presence",
-    title: "Bihar",
-    shortLabel: "East",
-    description:
-      "Strengthening regional workforce and field execution support across eastern markets.",
-    className: "",
-  },
-  {
-    label: "Branch presence",
-    title: "Bengaluru, Karnataka",
-    shortLabel: "South",
-    description:
-      "Supporting workforce, sales and execution requirements across a key southern business market.",
-    className: "",
-  },
-] as const;
+const headquartersLocation = operatingLocations.find(
+  (location) => location.type === "headquarters",
+);
 
 const executionSteps = [
   {
@@ -99,7 +61,7 @@ export default function PresencePage() {
           <PageShell
             eyebrow="Our presence"
             title="Closer to the markets where execution happens."
-            description="ZOBHUNGER is building a focused operating footprint across key Indian markets, anchored by our headquarters in Ghazipur, Uttar Pradesh."
+            description={`ZOBHUNGER is building a focused operating footprint across key ${market.primaryMarket.adjective} markets, anchored by our headquarters in ${headquartersLocation?.title ?? market.primaryMarket.name}.`}
             actions={
               <>
                 <ActionLink href="/hire-workforce">Hire workforce</ActionLink>
@@ -132,9 +94,9 @@ export default function PresencePage() {
         </div>
 
         <div className="zb-presence-location-grid">
-          {locations.map((location) => (
+          {operatingLocations.map((location) => (
             <article
-              className={`zb-presence-location-card ${location.className}`.trim()}
+              className={`zb-presence-location-card${location.type === "headquarters" ? " zb-presence-location-card--hq" : ""}`}
               key={location.title}
             >
               <div className="zb-presence-location-card-top">

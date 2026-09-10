@@ -15,6 +15,7 @@ import { SectionHeading } from "@/components/common/SectionHeading";
 import { WorkplacePhoto } from "@/components/common/WorkplacePhoto";
 
 import { company } from "@/data/company";
+import { market, operatingLocations } from "@/data/market";
 import {
   brandStrengths,
   coreCapabilities,
@@ -41,33 +42,6 @@ const capabilityLinks = [
   "/business-operations",
 ] as const;
 
-const presence = [
-  {
-    label: "Headquarters",
-    value: "Ghazipur, Uttar Pradesh",
-    icon: Building2,
-  },
-  {
-    label: "Presence",
-    value: "Delhi",
-    icon: MapPin,
-  },
-  {
-    label: "Presence",
-    value: "Mumbai",
-    icon: MapPin,
-  },
-  {
-    label: "Presence",
-    value: "Bihar",
-    icon: MapPin,
-  },
-  {
-    label: "Presence",
-    value: "Bengaluru",
-    icon: MapPin,
-  },
-] as const;
 
 export function About() {
   return (
@@ -169,8 +143,8 @@ export function About() {
           </p>
 
           <p>
-            We serve clients worldwide while our current execution
-            footprint remains anchored in India and continues to
+            We serve clients {market.clientReach.scope} while our current execution
+            footprint remains anchored in {market.primaryMarket.name} and continues to
             grow across priority locations.
           </p>
 
@@ -315,9 +289,9 @@ export function About() {
           </h2>
 
           <p>
-            ZOBHUNGER operates from Ghazipur, Uttar Pradesh, with
-            a growing presence across priority Indian markets.
-            Client relationships can extend worldwide while
+            ZOBHUNGER operates from {operatingLocations.find((location) => location.type === "headquarters")?.title}, with
+            a growing presence across priority {market.primaryMarket.adjective} markets.
+            Client relationships can extend {market.clientReach.scope} while
             operating coverage expands market by market.
           </p>
 
@@ -331,18 +305,16 @@ export function About() {
         </div>
 
         <div className="zb-about-presence-grid">
-          {presence.map((location) => {
-            const Icon = location.icon;
+          {operatingLocations.map((location) => {
+            const Icon = location.type === "headquarters" ? Building2 : MapPin;
 
             return (
-              <article
-                key={`${location.label}-${location.value}`}
-              >
+              <article key={location.id}>
                 <Icon aria-hidden="true" />
 
                 <small>{location.label}</small>
 
-                <strong>{location.value}</strong>
+                <strong>{location.title}</strong>
               </article>
             );
           })}

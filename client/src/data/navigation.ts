@@ -1,3 +1,5 @@
+import { solutionRoutePrefixes } from "@/data/solutions";
+
 export interface NavigationItem {
   label: string;
   href: string;
@@ -10,17 +12,7 @@ export const navigation: readonly NavigationItem[] = [
   {
     label: "Our Services",
     href: "/solutions",
-    activePrefixes: [
-      "/solutions",
-      "/workforce-solutions",
-      "/sales-force",
-      "/promoter-solutions",
-      "/retail-execution",
-      "/brand-activation",
-      "/business-operations",
-      "/gig-workforce",
-      "/verification-services",
-    ],
+    activePrefixes: ["/solutions", ...solutionRoutePrefixes],
   },
   { label: "Presence", href: "/presence" },
   {

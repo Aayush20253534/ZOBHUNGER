@@ -1,8 +1,12 @@
-# ZOBHUNGER Phase 1 API
+# ZOBHUNGER API
 
 Base path: `/api/v1`
 
-All successful JSON responses use:
+The Express API is the shared business-logic boundary for the public website and authenticated portals. A future native application should reuse this API rather than duplicate portal logic.
+
+## Response envelope
+
+Successful JSON responses use:
 
 ```json
 { "success": true, "message": "...", "data": {} }
@@ -18,82 +22,125 @@ Errors use:
 }
 ```
 
-## Public endpoints
-
-| Method | Path | Purpose |
-| --- | --- | --- |
-| GET | `/health` | API health check |
-| GET | `/jobs` | List OPEN jobs with filtering/pagination |
-| GET | `/jobs/:slug` | Read one OPEN job |
-| POST | `/jobs/:jobId/applications` | Submit an application; ID or slug is accepted |
-| GET | `/articles` | List published articles |
-| GET | `/articles/:slug` | Read a published article |
-| POST | `/contact` | Submit a contact enquiry |
-| POST | `/requirements` | Submit a workforce requirement |
-
-### Jobs query parameters
-
-`city`, `location`, `category`, `engagementType`, `jobType`, `query`, `page`, `pageSize`.
-`location` and `jobType` remain compatibility aliases for the frontend.
-
-### Articles query parameters
-
-`query`, `category`, `page`, `pageSize`.
+Responses include `X-Request-Id` so client failures can be correlated with structured server logs.
 
 ## Authentication
 
-Authentication is stored in an httpOnly cookie. Browser requests must include credentials.
+The current web client authenticates using JWT-backed secure httpOnly cookies. Browser requests to authenticated endpoints must include credentials.
+
+Primary auth routes include:
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| POST | `/auth/register` | Register BUSINESS or WORKER accounts |
-| POST | `/auth/login` | Authenticate and set access cookie |
-| POST | `/auth/logout` | Clear access cookie |
-| GET | `/auth/me` | Return current authenticated user |
+| POST | `/auth/register` | Register supported public account roles |
+| POST | `/auth/login` | Standard authenticated login |
+| POST | `/auth/business-login` | Business portal login |
+| POST | `/auth/placement-cell-login` | Institution/placement-cell login |
+| POST | `/auth/logout` | End the current browser session |
+| GET | `/auth/me` | Return the current authenticated user/session |
+| POST | `/auth/business/forgot-password` | Request business recovery |
+| POST | `/auth/business/reset-password` | Reset a business password |
+| POST | `/auth/business/change-password` | Change a temporary/current business password |
+| POST | `/auth/admin-mfa/setup` | Begin admin MFA setup |
+| POST | `/auth/admin-mfa/confirm` | Confirm admin MFA setup/challenge |
 
-Public registration never accepts the ADMIN role. The initial admin is created through the seed configuration.
+Worker-specific account access is mounted under `/auth/worker/*` and covers registration, login, verification-email delivery/consumption and password recovery/reset.
 
-## Admin endpoints
+Public registration never grants ADMIN access. Admin access is protected separately and MFA is enforced by the admin router.
 
-Every route below requires authentication and role `ADMIN`.
+### Native mobile note
 
-| Method | Path | Purpose |
+The API/service architecture is suitable for a future Android/iOS client, but the current authentication transport is browser-cookie oriented. Native support should add a properly scoped Bearer/access-token plus refresh-token flow while preserving the same authorization rules and service layer.
+
+## Public API families
+
+| Family | Representative paths | Purpose |
 | --- | --- | --- |
-| GET | `/admin/enquiries` | Paginated enquiries |
-| GET | `/admin/requirements` | Paginated requirements |
-| GET | `/admin/jobs` | Jobs across all statuses |
-| GET | `/admin/applications` | Paginated applications |
-| PATCH | `/admin/requirements/:id/status` | Change requirement status |
-| PATCH | `/admin/jobs/:id/status` | Change job status |
-| PATCH | `/admin/applications/:id/status` | Change application status |
+| Health | `/health` | API/service health |
+| Jobs | `/jobs`, `/jobs/:slug`, `/jobs/:jobId/applications` | Public opportunities and applications |
+| Articles | `/articles`, `/articles/:slug` | Published articles/blog content |
+| Contact | `/contact` | Public enquiry submission |
+| Requirements | `/requirements` | Public workforce requirement submission |
+| Partner applications | `/partner-applications` | Independent business partner intake and optional resume upload |
+| Placement-cell applications | `/placement-cell-applications` | Institution application/activation and portal routes |
+| Career applications | `/career-applications` | Career profile intake and optional PDF resume upload |
+| Vendor applications | `/vendor-applications` | Vendor empanelment and document submission |
 
-Status mutations create an `AuditLog` entry transactionally.
+Public submission routes use stricter submission rate limits in addition to the global API limiter.
 
-## Status values
+## Business portal
 
-- Requirement: `NEW`, `CONTACTED`, `QUALIFIED`, `CLOSED`
-- Job: `DRAFT`, `OPEN`, `CLOSED`
-- Application: `SUBMITTED`, `REVIEWED`, `SHORTLISTED`, `REJECTED`
+Protected by authenticated `BUSINESS` role access. The `/business` family includes:
 
-## Rate limits
+- `/business/workspace`
+- `/business/profile`
+- `/business/dashboard`
+- `/business/requirements` and requirement detail/update/withdrawal
+- `/business/requirement-drafts`
+- `/business/requirements/:id/jobs`
+- `/business/candidates/*`
+- `/business/deployments/*`
+- `/business/attendance/*`
+- `/business/attendance-approvals/*`
+- `/business/reports`, `/business/reports/print`, `/business/reports/export`
+- `/business/operations-summary`
 
-The server has a global API limit plus stricter limits for authentication and public submissions. Limits are environment configurable. A limit violation returns HTTP `429` with `RATE_LIMIT_EXCEEDED`.
+Mutating portal operations use the portal write guard and server-side ownership/role checks.
+
+## Worker portal
+
+Protected by authenticated `WORKER` role access. Email verification is required before profile/job workflow access beyond the initial workspace.
+
+The `/workers` family includes:
+
+- `/workers/workspace`
+- `/workers/profile` and `/workers/profile/resume`
+- `/workers/jobs` and `/workers/jobs/facets`
+- `/workers/saved-jobs`
+- worker application workflow routes
+- assignment and attendance workflow routes
+- worker earnings routes and statement export
+
+Worker resume downloads/uploads are private, validated and returned with restrictive browser headers.
+
+## Placement/institution portal
+
+The `/placement-cell-applications` family includes public application/activation plus authenticated `PLACEMENT_CELL` portal routes:
+
+- `/placement-cell-applications/portal/profile`
+- `/placement-cell-applications/portal/candidates`
+- `/placement-cell-applications/portal/opportunities`
+- `/placement-cell-applications/portal/applications`
+
+## Admin and operations
+
+Everything under `/admin` requires authenticated `ADMIN` access and admin MFA. Major route groups include:
+
+- enquiries, workforce requirements, jobs and job applications
+- partner and placement-cell application review
+- `/admin/partners/*` partner approval/credential operations
+- `/admin/careers/*` career-profile review/resume access
+- `/admin/vendors/*` vendor review, records and private documents
+- requirement/job linking and qualification workflows
+- `/admin/candidate-management/*`
+- `/admin/deployments/*`
+- `/admin/attendance/*`
+- worker application and worker attendance review
+- `/admin/earnings/*`
+- operational reports/export
+
+## Status, validation and concurrency
+
+The API uses Zod validation and machine-readable error codes. Operational entities use explicit status models and, where applicable, revision/updated-at checks to avoid silent overwrites from stale portal state.
+
+## Caching
+
+Redis is optional. When configured and available it is used for selected read-heavy flows such as job catalogue data. The application falls back to PostgreSQL when Redis is unavailable; cache failures must not become a data-source failure.
+
+## Rate limiting
+
+The API has a global rate limiter plus stricter authentication and public-submission limits. Limit violations return HTTP `429` with a machine-readable error code.
 
 ## Request tracing
 
-Responses include `X-Request-Id`. Use the same value to correlate a browser/API failure with structured server logs.
-
-## Independent Business Partner applications
-
-### `POST /api/v1/partner-applications`
-Creates a public Independent Business Partner application. The request is JSON and includes the applicant's professional profile, experience, specialization, contribution preference and preferred partnership area. The response includes a one-time `resumeUploadToken` used only if the applicant attaches a resume/profile.
-
-### `PUT /api/v1/partner-applications/:id/resume`
-Uploads an optional resume/profile after the application is created. Send the file body directly with `Content-Type` set to PDF, DOC or DOCX, plus `X-Upload-Token` and `X-File-Name` headers. Files are limited to 2 MB and the upload token is invalidated after a successful upload.
-
-### Admin endpoints
-- `GET /api/v1/admin/partner-applications`
-- `GET /api/v1/admin/partner-applications/:id/resume`
-- `PATCH /api/v1/admin/partner-applications/:id/status`
-
-Partner application status values are `SUBMITTED`, `REVIEWED`, `CONTACTED` and `CLOSED`. Admin endpoints require an authenticated `ADMIN` account.
+Every request receives an `X-Request-Id`. Preserve that value when reporting production failures so the corresponding structured server log can be found quickly.

@@ -1,3 +1,4 @@
+import { market } from "@/data/market";
 import type { SolutionSlug } from "@/types/solution-detail.types";
 
 /** Public copy adapted from the client brief. Examples are not delivery guarantees. */
@@ -126,7 +127,7 @@ export const company = {
     "ZOBHUNGER is an integrated workforce, sales and business execution platform that helps businesses hire, deploy and coordinate teams around real operating requirements.",
   mission: "Make workforce management faster, smarter and more scalable.",
   vision:
-    "Create a connected ecosystem for businesses, partners and workforce, serving clients worldwide while expanding execution capabilities from India.",
+    `Create a connected ecosystem for businesses, partners and workforce, serving clients ${market.clientReach.scope} while expanding execution capabilities from ${market.primaryMarket.name}.`,
   principles: [
     {
       title: "Start with the requirement",

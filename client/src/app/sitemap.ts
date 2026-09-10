@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { caseStudies } from "@/data/case-studies";
 import { industries } from "@/data/industries";
 import { site } from "@/data/site";
-import { solutions } from "@/data/solutions";
+import { solutionHref, solutions } from "@/data/solutions";
 
 const staticRoutes = [
   { path: "", priority: 1, changeFrequency: "weekly" },
@@ -40,7 +40,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   routes.push(
     ...solutions.map((item) => ({
-      url: `${site.url}/${item.slug}`,
+      url: `${site.url}${solutionHref(item.slug)}`,
       changeFrequency: "monthly" as const,
       priority: 0.9,
     })),
