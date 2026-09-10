@@ -1,7 +1,7 @@
 .zb-presence-page,
 .zb-presence-network {
-  --zb-presence-panel: #461820;
-  --zb-presence-soft: #fff5f6;
+  --zb-presence-panel: var(--zb-panel);
+  --zb-presence-soft: var(--zb-soft);
 }
 
 .zb-presence-hero {
@@ -33,7 +33,7 @@
   border: 1px solid var(--zb-soft-border);
   border-radius: 1rem;
   background:
-    radial-gradient(circle at 80% 12%, #c8202f10 0 12rem, transparent 12.1rem),
+    radial-gradient(circle at 80% 12%, #d9273b12 0 12rem, transparent 12.1rem),
     linear-gradient(145deg, #ffffff 0%, #fffafa 58%, #fff2f3 100%);
   box-shadow: 0 14px 34px var(--zb-shadow-subtle);
 }
@@ -44,8 +44,8 @@
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(#c8202f0d 1px, transparent 1px),
-    linear-gradient(90deg, #c8202f0d 1px, transparent 1px);
+    linear-gradient(#d9273b0d 1px, transparent 1px),
+    linear-gradient(90deg, #d9273b0d 1px, transparent 1px);
   background-size: 2rem 2rem;
   mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
 }
@@ -105,7 +105,7 @@
   top: 51%;
   z-index: 0;
   height: 1px;
-  background: linear-gradient(90deg, #c8202f66, #46182066);
+  background: linear-gradient(90deg, #d9273b73, #6a213266);
   transform-origin: left center;
 }
 
@@ -119,7 +119,7 @@
   border-radius: 999px;
   background: var(--zb-action);
   transform: translateY(-50%);
-  box-shadow: 0 0 0 0.25rem #c8202f14;
+  box-shadow: 0 0 0 0.25rem #d9273b16;
 }
 
 .zb-presence-network-line--north {
@@ -264,7 +264,7 @@
   width: 7.5rem;
   height: 7.5rem;
   border-radius: 999px;
-  border: 1rem solid #c8202f08;
+  border: 1rem solid #d9273b09;
 }
 
 .zb-presence-location-card--hq {

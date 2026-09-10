@@ -84,7 +84,7 @@
   padding: clamp(1.25rem, 2.3vw, 1.75rem);
   border-radius: var(--zb-radius);
   background:
-    linear-gradient(150deg, #461820 0%, #6d202b 58%, #c8202f 135%);
+    linear-gradient(150deg, #5a1827 0%, #7c2738 58%, #d9273b 135%);
   color: #fff;
 }
 

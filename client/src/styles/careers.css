@@ -1,6 +1,6 @@
 .zb-careers-page {
-  --zb-careers-panel: #461820;
-  --zb-careers-soft: #fff5f6;
+  --zb-careers-panel: var(--zb-panel);
+  --zb-careers-soft: var(--zb-soft);
   min-width: 0;
 }
 

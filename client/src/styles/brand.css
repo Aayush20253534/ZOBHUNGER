@@ -1,6 +1,6 @@
 @import "./page-layout.css";
 
-/* Shared ZOBHUNGER theme. Part 5: client-requested red and white. */
+/* Shared ZOBHUNGER theme: brighter premium red, cleaner surfaces and sharper contrast. */
 @font-face {
   font-family: "Zobhunger Manrope";
   src: url("/fonts/manrope-latin.woff2") format("woff2");
@@ -12,24 +12,24 @@
 html:root,
 html:root.dark {
   color-scheme: light;
-  --zb-page: #f8f8f9;
+  --zb-page: #fdfcfd;
   --zb-surface: #ffffff;
-  --zb-ink: #242328;
-  --zb-panel: #461820;
+  --zb-ink: #1f1e23;
+  --zb-panel: #6a2132;
   --zb-on-panel: #ffffff;
-  --zb-on-panel-muted: #efdde1;
-  --zb-action: #c8202f;
-  --zb-action-hover: #a61826;
-  --zb-highlight: #ffe2e5;
-  --zb-soft: #fff1f2;
-  --zb-soft-border: #f0c8ce;
-  --zb-muted: #615d65;
-  --zb-border: #e3e1e6;
-  --zb-strong-border: #9c8d95;
-  --zb-danger: #a11924;
-  --zb-danger-border: #d76d78;
-  --zb-shadow: #27212612;
-  --zb-shadow-subtle: #2721260a;
+  --zb-on-panel-muted: #f8e6ea;
+  --zb-action: #d9273b;
+  --zb-action-hover: #b91f31;
+  --zb-highlight: #ffe9ed;
+  --zb-soft: #fff7f8;
+  --zb-soft-border: #f2cdd4;
+  --zb-muted: #57525a;
+  --zb-border: #ebe6e9;
+  --zb-strong-border: #b9adb3;
+  --zb-danger: #b51f30;
+  --zb-danger-border: #e27a86;
+  --zb-shadow: #5a223014;
+  --zb-shadow-subtle: #5a22300b;
   --zb-radius: 0.75rem;
   --zb-transition: 180ms ease;
   --zb-header-height: 4.5rem;
@@ -45,7 +45,7 @@ html:root.dark {
   --primary-foreground: #ffffff;
   --secondary: var(--zb-soft);
   --secondary-foreground: var(--zb-ink);
-  --muted: #f3f1f2;
+  --muted: #f7f4f5;
   --muted-foreground: var(--zb-muted);
   --accent: var(--zb-soft);
   --accent-foreground: var(--zb-ink);
@@ -57,7 +57,7 @@ html:root.dark {
   --radius: 0.75rem;
   --chart-1: var(--zb-action);
   --chart-2: var(--zb-panel);
-  --chart-3: #d7838e;
+  --chart-3: #eb8d9b;
   --chart-4: var(--zb-muted);
   --chart-5: var(--zb-highlight);
   --sidebar: var(--zb-surface);
@@ -155,7 +155,7 @@ body > main[class] {
   letter-spacing: -0.04em;
 }
 .zb-header-tagline {
-  color: #4b4248;
+  color: #433e44;
   font-size: 0.6rem;
   line-height: 1.15;
   font-weight: 750;
@@ -167,8 +167,8 @@ body > main[class] {
   top: 0;
   z-index: 40;
   background: rgba(255, 255, 255, 0.97);
-  border-bottom: 1px solid rgba(62, 28, 46, 0.1);
-  box-shadow: 0 0.35rem 1.25rem rgba(62, 28, 46, 0.055);
+  border-bottom: 1px solid rgba(106, 33, 50, 0.09);
+  box-shadow: 0 0.35rem 1.25rem rgba(106, 33, 50, 0.045);
   backdrop-filter: blur(14px);
 }
 .zb-header-inner {

@@ -4,9 +4,9 @@
   isolation: isolate;
   overflow: hidden;
   background:
-    radial-gradient(circle at 12% 8%, rgba(191, 52, 78, 0.16), transparent 30rem),
-    radial-gradient(circle at 88% 92%, rgba(126, 27, 48, 0.18), transparent 28rem),
-    linear-gradient(145deg, #16070b 0%, #250a11 48%, #120609 100%);
+    radial-gradient(circle at 12% 8%, rgba(232, 75, 101, 0.20), transparent 30rem),
+    radial-gradient(circle at 88% 92%, rgba(183, 49, 77, 0.20), transparent 28rem),
+    linear-gradient(145deg, #42131f 0%, #5c1a2c 48%, #32101a 100%);
 }
 
 .zb-footer::before {
@@ -72,7 +72,7 @@
   border-radius: 1.25rem;
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.035)),
-    rgba(40, 7, 16, 0.35);
+    rgba(92, 26, 44, 0.36);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     0 1.25rem 3.5rem rgba(0, 0, 0, 0.16);
@@ -203,7 +203,7 @@
   max-width: 100%;
   min-height: 2.25rem;
   padding: 0.25rem 0;
-  color: rgba(244, 230, 234, 0.67);
+  color: rgba(255, 240, 244, 0.74);
   font-size: 0.8rem;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -377,7 +377,7 @@
 .zb-footer-contact-channels strong {
   grid-column: 1;
   min-width: 0;
-  color: rgba(244, 230, 234, 0.64);
+  color: rgba(255, 240, 244, 0.70);
   font-size: 0.73rem;
   font-weight: 500;
   line-height: 1.45;
@@ -427,7 +427,7 @@
 .zb-footer-app-copy p {
   max-width: 36ch;
   margin: 0.24rem 0 0;
-  color: rgba(244, 230, 234, 0.62);
+  color: rgba(255, 240, 244, 0.68);
   font-size: 0.7rem;
   line-height: 1.5;
 }
@@ -513,7 +513,7 @@
   margin-top: 0.15rem;
   padding-block: 1.15rem 1.35rem;
   border-top: 0;
-  color: rgba(244, 230, 234, 0.54);
+  color: rgba(255, 240, 244, 0.62);
   font-size: 0.72rem;
 }
 

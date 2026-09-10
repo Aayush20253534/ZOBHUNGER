@@ -3,25 +3,25 @@
 .zb-offering { display: flex; flex-direction: column; min-width: 0; padding: clamp(1.15rem, 2.5vw, 2rem); border: 1px solid #edc8cf; border-radius: 1.2rem; background: #fff; }
 .zb-offering[data-offering="branding"] { background: #fff8f9; }
 .zb-offering-heading { display: flex; align-items: center; gap: .8rem; }
-.zb-offering-icon { display: grid; place-items: center; width: 2.8rem; height: 2.8rem; flex: none; background: #bd1830; color: #fff; border-radius: .85rem; }
+.zb-offering-icon { display: grid; place-items: center; width: 2.8rem; height: 2.8rem; flex: none; background: var(--zb-action); color: #fff; border-radius: .85rem; }
 .zb-offering-icon svg { width: 1.4rem; height: 1.4rem; }
 .zb-offering h3 { margin: .2rem 0 0; font-size: clamp(1.2rem, 2vw, 1.55rem); line-height: 1.25; font-weight: 800; letter-spacing: -.025em; }
 .zb-offering .zb-eyebrow { font-size: .65rem; margin: 0; }
 .zb-offering > p { margin: 1rem 0; color: var(--zb-muted); font-size: .85rem; line-height: 1.7; }
 .zb-offering > ul { display: grid; gap: .1rem; margin: 0 0 1.1rem; padding: 0; list-style: none; }
 .zb-offering li { display: flex; align-items: start; gap: .65rem; padding: .65rem 0; font-size: .83rem; font-weight: 650; line-height: 1.45; border-bottom: 1px solid #ebdee2; }
-.zb-offering li svg { width: 1.05rem; height: 1.05rem; margin-top: .12rem; flex: none; color: #b41830; }
+.zb-offering li svg { width: 1.05rem; height: 1.05rem; margin-top: .12rem; flex: none; color: var(--zb-action-hover); }
 .zb-offering li small { display: block; margin-top: .15rem; font-size: .73rem; font-weight: 500; color: var(--zb-muted); }
 .zb-offering > a { margin-top: auto; align-self: start; min-height: 2.75rem; font-size: .85rem; }
 .zb-offering > a svg { width: 1rem; height: 1rem; flex: none; }
-.zb-offering-support { margin-top: 1rem; padding: clamp(1.15rem, 2vw, 1.8rem); color: #fff; background: #43131e; border-radius: 1.2rem; }
+.zb-offering-support { margin-top: 1rem; padding: clamp(1.15rem, 2vw, 1.8rem); color: #fff; background: var(--zb-panel); border-radius: 1.2rem; }
 .zb-offering-support-heading { display: flex; align-items: start; gap: .85rem; }
 .zb-offering-support-heading > svg { width: 1.6rem; height: 1.6rem; flex: none; margin-top: .2rem; color: #f7b9c5; }
 .zb-offering-support h3 { margin: 0; font-size: clamp(1.1rem, 2vw, 1.4rem); font-weight: 750; line-height: 1.4; }
 .zb-offering-support p { max-width: 65rem; margin: .6rem 0 0; color: #f1d9df; font-size: .8rem; line-height: 1.75; }
 .zb-offering-support nav { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
 .zb-offering-support nav a { display: inline-flex; align-items: center; justify-content: space-between; min-height: 2.75rem; gap: .6rem; padding: .5rem .75rem; border: 1px solid #936570; border-radius: .5rem; color: #fff; font-size: .75rem; text-decoration: none; }
-.zb-offering-support nav a:hover { background: #602b39; }
+.zb-offering-support nav a:hover { background: #7a2a3c; }
 .zb-offering-support nav a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .zb-offering-support nav a svg { width: .9rem; height: .9rem; flex: none; }
 @media (min-width: 760px) { .zb-offerings-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

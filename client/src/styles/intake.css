@@ -24,20 +24,20 @@
 .zb-intake-field > span > span { color: #bd1532; }
 .zb-intake-field input, .zb-intake-field textarea { width: 100%; min-width: 0; min-height: 2.85rem; border: 1px solid #cfc3ca; padding: .7rem .8rem; border-radius: .55rem; background: #fff; color: #26232a; font: inherit; font-weight: 400; }
 .zb-intake-field textarea { resize: vertical; line-height: 1.6; }
-.zb-intake-field :is(input, textarea):focus-visible { outline: 2px solid #c51a37; outline-offset: 2px; }
+.zb-intake-field :is(input, textarea):focus-visible { outline: 2px solid #d9273b; outline-offset: 2px; }
 .zb-intake-fields + .zb-intake-field { margin-top: 1rem; }
 .zb-intake-repeat { padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #ebe3e7; }
 .zb-intake-repeat-title { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .7rem; }
 .zb-intake-repeat-title h3 { font-size: .9rem; font-weight: 700; margin: 0; }
 .zb-intake-repeat-title button { width: 2.75rem; height: 2.75rem; display: grid; place-items: center; background: #fff4f6; border: 1px solid #e6cbd3; border-radius: .5rem; color: #9c1832; cursor: pointer; }
 .zb-intake-repeat-title button svg { width: 1.1rem; height: 1.1rem; }
-.zb-intake-button, .zb-intake-add { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; min-height: 2.85rem; padding: .7rem 1rem; background: #cb1734; border: 1px solid #cb1734; color: #fff; border-radius: .65rem; font-size: .9rem; font-weight: 700; text-decoration: none; cursor: pointer; }
+.zb-intake-button, .zb-intake-add { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; min-height: 2.85rem; padding: .7rem 1rem; background: #d9273b; border: 1px solid #d9273b; color: #fff; border-radius: .65rem; font-size: .9rem; font-weight: 700; text-decoration: none; cursor: pointer; }
 .zb-intake-button svg, .zb-intake-add svg { width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
-.zb-intake-button--secondary, .zb-intake-add { color: #982238; background: #fff; border-color: #d5b7c1; }
+.zb-intake-button--secondary, .zb-intake-add { color: #b91f31; background: #fff; border-color: #d5b7c1; }
 .zb-intake-button:focus-visible, .zb-intake-add:focus-visible { outline: 2px solid #ca1731; outline-offset: 3px; }
 .zb-intake-page button:disabled { opacity: .6; cursor: wait; }
 .zb-intake-check { display: flex; align-items: flex-start; gap: .65rem; margin: 1rem 0; font-size: .85rem; line-height: 1.65; }
-.zb-intake-check input { width: 1.15rem; height: 1.15rem; flex-shrink: 0; margin-top: .15rem; accent-color: #c51a37; }
+.zb-intake-check input { width: 1.15rem; height: 1.15rem; flex-shrink: 0; margin-top: .15rem; accent-color: #d9273b; }
 .zb-intake-upload { padding: 1.1rem; background: #fff9fa; border: 1px dashed #d8aebb; border-radius: .85rem; display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; min-width: 0; }
 .zb-intake-upload > svg { width: 1.6rem; height: 1.6rem; color: #a6233f; flex-shrink: 0; }
 .zb-intake-upload > div { min-width: 0; flex: 1; }
@@ -67,7 +67,7 @@
 .zb-intake-confirmation { display: flex; align-items: center; gap: .5rem; color: #286548 !important; }
 .zb-intake-confirmation svg { width: 1.2rem; height: 1.2rem; }
 .zb-intake-actions { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-top: 1.5rem; }
-.zb-intake-actions > a:not(.zb-intake-button) { color: #982238; font-size: .85rem; text-underline-offset: .2rem; }
+.zb-intake-actions > a:not(.zb-intake-button) { color: #b91f31; font-size: .85rem; text-underline-offset: .2rem; }
 .zb-intake-success > .zb-intake-button { margin-top: 1rem; }
 @media (max-width: 959px) { .zb-intake-layout { grid-template-columns: minmax(0, 1fr); } .zb-intake-aside { max-width: 36rem; } }
 @media (max-width: 639px) {

@@ -23,24 +23,24 @@
 .zb-vendor-section .zb-section-heading { margin-bottom: 1.25rem; }
 .zb-vendor-capability-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .75rem; }
 .zb-vendor-capability-grid article { padding: 1.1rem; border: 1px solid #e7dbe1; border-radius: 1rem; background: #fff; min-width: 0; }
-.zb-vendor-capability-grid article > svg { width: 1.6rem; height: 1.6rem; color: #bd1933; margin-bottom: .8rem; }
+.zb-vendor-capability-grid article > svg { width: 1.6rem; height: 1.6rem; color: #d9273b; margin-bottom: .8rem; }
 .zb-vendor-capability-grid h3 { font-size: .9rem; font-weight: 750; line-height: 1.4; margin: 0; }
 .zb-vendor-capability-grid p { font-size: .77rem; line-height: 1.65; margin: .6rem 0 0; color: #70616a; }
 .zb-vendor-journey { margin-top: 1.5rem; }
 .zb-vendor-page .zb-intake-field select { width: 100%; min-width: 0; min-height: 2.85rem; padding: .7rem .8rem; border: 1px solid #cfc3ca; border-radius: .55rem; color: #26232a; background: #fff; font: inherit; font-weight: 400; }
-.zb-vendor-page :is(input, select, textarea, button, a):focus-visible { outline: 2px solid #bd1933; outline-offset: 3px; }
+.zb-vendor-page :is(input, select, textarea, button, a):focus-visible { outline: 2px solid #d9273b; outline-offset: 3px; }
 .zb-vendor-check-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; margin: 0 0 1.25rem; }
 .zb-vendor-check-grid label { display: flex; align-items: start; gap: .5rem; min-width: 0; padding: .8rem; border: 1px solid #e6c7d1; border-radius: .65rem; background: #fff9fa; font-size: .78rem; line-height: 1.5; cursor: pointer; }
-.zb-vendor-check-grid input { width: 1rem; height: 1rem; flex: none; accent-color: #bd1933; margin-top: .15rem; }
-.zb-vendor-check-grid svg { width: 1rem; height: 1rem; flex: none; color: #bd1933; margin-top: .15rem; }
-.zb-vendor-check-grid label:has(input:checked) { border-color: #bd1933; background: #ffeef2; }
+.zb-vendor-check-grid input { width: 1rem; height: 1rem; flex: none; accent-color: #d9273b; margin-top: .15rem; }
+.zb-vendor-check-grid svg { width: 1rem; height: 1rem; flex: none; color: #d9273b; margin-top: .15rem; }
+.zb-vendor-check-grid label:has(input:checked) { border-color: #d9273b; background: #ffeef2; }
 .zb-vendor-documents { display: grid; gap: .8rem; }
 .zb-vendor-upload { padding: 1rem; border: 1px dashed #d9b2c0; border-radius: .8rem; background: #fff9fa; min-width: 0; }
 .zb-vendor-upload > div { display: flex; align-items: start; gap: .7rem; }
 .zb-vendor-document-icon { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; flex: none; border-radius: .65rem; color: #a7213e; background: #fff; border: 1px solid #edd0d9; }
 .zb-vendor-document-icon svg { width: 1.1rem; height: 1.1rem; }
 .zb-vendor-upload h3 { font-size: .85rem; line-height: 1.4; font-weight: 750; margin: 0; }
-.zb-vendor-upload h3 span { color: #bc1933; }
+.zb-vendor-upload h3 span { color: #d9273b; }
 .zb-vendor-upload p { color: #73636c; font-size: .75rem; line-height: 1.6; margin: .4rem 0 0; }
 .zb-vendor-upload input { max-width: 100%; width: 100%; font-size: .75rem; min-height: 2.75rem; margin-top: .8rem; }
 .zb-vendor-upload input::file-selector-button { border: 1px solid #d3b6c1; padding: .6rem .7rem; border-radius: .5rem; background: #fff; color: #98223c; cursor: pointer; margin-right: .6rem; }
@@ -58,9 +58,9 @@
 .zb-vendor-invitation > div > span { color: #a22640; font-size: .72rem; font-weight: 750; }
 .zb-vendor-invitation h2 { font-size: clamp(1.1rem, 2vw, 1.45rem); font-weight: 800; line-height: 1.3; margin: .4rem 0; }
 .zb-vendor-invitation p { font-size: .82rem; line-height: 1.65; max-width: 60rem; margin: 0; color: #6b5762; }
-.zb-vendor-invitation > a { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 2.85rem; padding: .65rem .9rem; border: 1px solid #bc1933; border-radius: .65rem; color: #fff; background: #bc1933; font-size: .8rem; font-weight: 750; text-decoration: none; }
+.zb-vendor-invitation > a { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 2.85rem; padding: .65rem .9rem; border: 1px solid #d9273b; border-radius: .65rem; color: #fff; background: #d9273b; font-size: .8rem; font-weight: 750; text-decoration: none; }
 .zb-vendor-invitation > a svg { width: 1rem; height: 1rem; flex: none; }
-.zb-vendor-invitation > a:focus-visible { outline: 2px solid #bd1933; outline-offset: 3px; }
+.zb-vendor-invitation > a:focus-visible { outline: 2px solid #d9273b; outline-offset: 3px; }
 .zb-vendor-admin { min-width: 0; overflow-wrap: anywhere; }
 .zb-vendor-admin .zb-review-nav [aria-current="page"] { text-decoration: underline; text-underline-offset: .3rem; }
 .zb-vendor-admin .zb-vendor-filters { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, .8fr) auto auto; }
@@ -105,7 +105,7 @@
 .zb-vendor-record-editor :is(input, textarea) { min-height: 2.85rem; width: 100%; min-width: 0; padding: .65rem; border: 1px solid #d5bfca; border-radius: .5rem; background: #fff; font: inherit; font-weight: 400; }
 .zb-vendor-record-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 .85rem; }
 .zb-vendor-admin button:disabled { opacity: .5; cursor: not-allowed; }
-.zb-vendor-admin :is(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid #bd1933; outline-offset: 3px; }
+.zb-vendor-admin :is(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid #d9273b; outline-offset: 3px; }
 @media (max-width: 640px) { .zb-vendor-page .zb-intake-field select, .zb-vendor-record-editor :is(input, textarea) { font-size: 1rem; } }
 @media (max-width: 1100px) { .zb-vendor-capability-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .zb-vendor-admin .zb-vendor-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .zb-vendor-invitation { flex-wrap: wrap; } .zb-vendor-invitation > a { margin-left: 4.25rem; } }
 @media (max-width: 850px) { .zb-vendor-hero { grid-template-columns: minmax(0, 1fr); } .zb-vendor-hero .zb-intake-heading { max-width: 100%; } .zb-vendor-page .zb-intake-layout { grid-template-columns: minmax(0, 1fr); } }

@@ -7,9 +7,9 @@
 .zb-scale-tile svg { width: 1.15rem; height: 1.15rem; flex: none; }
 .zb-scale-tile dd:not(.zb-scale-note) { order: -1; margin: 0 0 .6rem; font-size: clamp(2rem, 3.6vw, 3.35rem); font-weight: 800; line-height: 1.06; letter-spacing: -.055em; font-variant-numeric: tabular-nums; }
 .zb-scale-tile .zb-scale-note { margin: .65rem 0 0; font-size: .78rem; line-height: 1.7; }
-.zb-scale-force { background: linear-gradient(125deg, #d31932, #b61028); color: #fff; }
-.zb-scale-clients { background: #43131e; color: #fff; }
-.zb-scale-coverage { background: #fff0f2; border: 1px solid #f3cbd3; color: #661827; }
+.zb-scale-force { background: linear-gradient(125deg, #e03249, #c82036); color: #fff; }
+.zb-scale-clients { background: var(--zb-panel); color: #fff; }
+.zb-scale-coverage { background: var(--zb-soft); border: 1px solid #f3cbd3; color: #661827; }
 .zb-scale-offices { background: #fff; border: 1px solid var(--zb-border); }
 .zb-scale-offices a { margin-top: auto; padding-top: .7rem; font-size: .75rem; justify-content: start; }
 .zb-scale-markets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: 1fr auto; gap: .6rem .75rem; min-width: 0; }
@@ -23,16 +23,16 @@
 .zb-scale-markets > small { grid-column: 1 / -1; color: var(--zb-muted); font-size: .65rem; text-align: right; }
 .zb-scale-technology { display: grid; gap: 1.5rem; margin-top: 1rem; padding: clamp(1.15rem, 2vw, 1.75rem); border: 1px solid var(--zb-border); border-radius: 1.1rem; background: #fff; }
 .zb-scale-platform { display: flex; align-items: start; gap: 1rem; min-width: 0; }
-.zb-scale-tech-icon { display: grid; place-items: center; flex: none; width: 2.9rem; height: 2.9rem; border-radius: .85rem; background: #fff0f2; color: #bb1831; }
+.zb-scale-tech-icon { display: grid; place-items: center; flex: none; width: 2.9rem; height: 2.9rem; border-radius: .85rem; background: var(--zb-soft); color: var(--zb-action); }
 .zb-scale-tech-icon svg { width: 1.5rem; height: 1.5rem; }
 .zb-scale-platform h3 { margin: 0; font-size: 1.1rem; line-height: 1.4; font-weight: 750; }
-.zb-scale-platform h3 strong { display: block; margin-bottom: .15rem; color: #bf1730; font-size: 2rem; font-weight: 800; letter-spacing: -.045em; }
+.zb-scale-platform h3 strong { display: block; margin-bottom: .15rem; color: var(--zb-action); font-size: 2rem; font-weight: 800; letter-spacing: -.045em; }
 .zb-scale-platform p { max-width: 35rem; margin: .6rem 0 0; font-size: .82rem; line-height: 1.7; color: var(--zb-muted); }
 .zb-scale-capability-heading { display: flex; align-items: center; gap: .5rem; font-size: .8rem; font-weight: 750; }
-.zb-scale-capability-heading svg { width: 1.15rem; height: 1.15rem; color: #bd1730; flex: none; }
+.zb-scale-capability-heading svg { width: 1.15rem; height: 1.15rem; color: var(--zb-action); flex: none; }
 .zb-scale-capabilities ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; margin: .8rem 0 0; padding: 0; list-style: none; }
 .zb-scale-capabilities li { display: flex; align-items: start; gap: .5rem; padding: .65rem; border-radius: .6rem; background: #faf7f8; font-size: .72rem; line-height: 1.5; }
-.zb-scale-capabilities li svg { width: 1rem; height: 1rem; margin-top: .12rem; flex: none; color: #bd1730; }
+.zb-scale-capabilities li svg { width: 1rem; height: 1rem; margin-top: .12rem; flex: none; color: var(--zb-action); }
 @media (min-width: 900px) { .zb-scale-mosaic { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } .zb-scale-technology { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; } .zb-scale-capabilities { border-left: 1px solid var(--zb-border); padding-left: 1.5rem; } }
 @media (max-width: 479px) { .zb-scale-numbers { gap: .6rem; } .zb-scale-clients { grid-column: 1 / -1; grid-row: 2; } .zb-scale-force { grid-column: 1 / -1; } .zb-scale-clients dd:not(.zb-scale-note), .zb-scale-force dd:not(.zb-scale-note) { font-size: 2.65rem; } .zb-scale-markets figure { min-height: 14rem; } .zb-scale-markets figcaption { padding: .8rem; } .zb-scale-markets figcaption > svg { display: none; } .zb-scale-markets figcaption p { font-size: .68rem; } .zb-scale-platform { gap: .7rem; } .zb-scale-capabilities ul { grid-template-columns: minmax(0, 1fr); } }
 

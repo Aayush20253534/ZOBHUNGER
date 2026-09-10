@@ -1066,8 +1066,8 @@
   border: 1px solid var(--zb-panel);
   border-radius: 1rem;
   background:
-    radial-gradient(circle at 92% 8%, rgb(200 32 47 / 20%) 0 9rem, transparent 9.1rem),
-    linear-gradient(145deg, #511a23 0%, var(--zb-panel) 58%, #351116 100%);
+    radial-gradient(circle at 92% 8%, rgb(217 39 59 / 20%) 0 9rem, transparent 9.1rem),
+    linear-gradient(145deg, #7b2538 0%, var(--zb-panel) 58%, #4b1522 100%);
   color: #fff;
   box-shadow: 0 1.2rem 2.8rem rgb(38 22 27 / 14%);
 }

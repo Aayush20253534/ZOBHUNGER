@@ -1,7 +1,7 @@
 .zb-footprint-map {
-  --zb-map-fill-start: #fff4f5;
-  --zb-map-fill-end: #f2c7cc;
-  --zb-map-outline: #7c2935;
+  --zb-map-fill-start: #fff8f9;
+  --zb-map-fill-end: #f5d3d8;
+  --zb-map-outline: #8a3041;
   --zb-map-grid-color: rgba(124, 41, 53, 0.09);
   --zb-map-route: rgba(124, 41, 53, 0.35);
   --zb-map-label-bg: rgba(63, 20, 27, 0.94);
@@ -81,7 +81,7 @@
 }
 
 .zb-footprint-marker--hq .zb-footprint-marker-ring {
-  fill: #461820;
+  fill: var(--zb-panel);
   stroke: #ffffff;
 }
 
@@ -145,7 +145,7 @@
 }
 
 .zb-footprint-map-legend i[data-tone="hq"] {
-  background: #461820;
+  background: var(--zb-panel);
 }
 
 .zb-footprint-map--compact {
@@ -172,7 +172,7 @@
 }
 
 .zb-home-presence-board .zb-footprint-marker-ring {
-  fill: #461820;
+  fill: var(--zb-panel);
   stroke: rgba(255, 255, 255, 0.76);
 }
 
@@ -217,11 +217,11 @@
 
 /* Reference-matched India map treatment from the approved visual. */
 .zb-presence-network .zb-footprint-map {
-  --zb-map-fill-start: #fff6f7;
-  --zb-map-fill-end: #f6d7db;
-  --zb-map-outline: #7c2935;
+  --zb-map-fill-start: #fff9fa;
+  --zb-map-fill-end: #f8dde1;
+  --zb-map-outline: #8a3041;
   --zb-map-grid-color: rgba(124, 41, 53, 0.045);
-  --zb-map-route: rgba(210, 31, 43, 0.34);
+  --zb-map-route: rgba(217, 39, 59, 0.36);
   --zb-map-label-bg: rgba(75, 24, 33, 0.96);
   --zb-map-label-border: rgba(255, 255, 255, 0.16);
 }
