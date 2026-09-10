@@ -9,6 +9,7 @@ import {
   Mail,
   MapPin,
   Megaphone,
+  Phone,
   ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
@@ -184,21 +185,60 @@ export function Footer() {
     <footer className="zb-footer">
       <div className="zb-container">
         <div className="zb-footer-grid">
-          <div className="zb-footer-intro">
+          <section className="zb-footer-intro" aria-label="ZOBHUNGER overview">
             <div className="zb-footer-intro-copy">
-              <Link href="/" className="zb-wordmark" aria-label={`${site.name} home`}>
+              <Link href="/" className="zb-wordmark zb-footer-wordmark" aria-label={`${site.name} home`}>
                 ZOB<span>HUNGER</span>
               </Link>
-              <p>{site.description}</p>
-              <div className="zb-footer-global" aria-label={market.clientReach.label}>
-                <Globe2 aria-hidden="true" />
-                <span>{market.clientReach.label}</span>
+              <div className="zb-footer-brand-copy">
+                <strong className="zb-footer-tagline">{site.tagline}</strong>
+                <p>{site.description}</p>
+                <div className="zb-footer-global" aria-label={market.clientReach.label}>
+                  <Globe2 aria-hidden="true" />
+                  <span>{market.clientReach.label}</span>
+                </div>
               </div>
             </div>
-            <ActionLink href={site.primaryAction.href} variant="light">
-              Tell us what you need
-            </ActionLink>
-          </div>
+            <div className="zb-footer-intro-action">
+              <span>Ready to build your workforce?</span>
+              <ActionLink href={site.primaryAction.href} variant="light">
+                {site.primaryAction.label}
+              </ActionLink>
+            </div>
+          </section>
+
+          {footerGroups.map((group) => <FooterLinkGroup key={group.title} group={group} />)}
+
+          <section className="zb-footer-directory" aria-labelledby="zb-footer-directory-title">
+            <div className="zb-footer-office">
+              <span className="zb-footer-eyebrow">Contact ZOBHUNGER</span>
+              <h2 id="zb-footer-directory-title">Talk to the right team.</h2>
+              <a className="zb-footer-address" href={contact.mapsHref} target="_blank" rel="noreferrer">
+                <MapPin aria-hidden="true" />
+                <span>{contact.address}</span>
+                <ArrowUpRight aria-hidden="true" />
+              </a>
+              <div className="zb-footer-office-meta">
+                <a href={contact.phoneHref}>
+                  <Phone aria-hidden="true" />
+                  <span>{contact.phoneLabel}</span>
+                </a>
+                <a href={contact.emailHref}>
+                  <Mail aria-hidden="true" />
+                  <span>{contact.email}</span>
+                </a>
+              </div>
+            </div>
+            <div className="zb-footer-contact-channels">
+              {Object.values(contact.channels).map((channel) => (
+                <a href={`mailto:${channel.email}`} key={channel.email}>
+                  <span>{channel.label}</span>
+                  <strong>{channel.email}</strong>
+                  <Mail aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+          </section>
 
           <div className="zb-footer-utility">
             <section className="zb-footer-app" aria-labelledby="zb-footer-app-title">
@@ -213,29 +253,6 @@ export function Footer() {
               </div>
             </section>
           </div>
-
-          {footerGroups.map((group) => <FooterLinkGroup key={group.title} group={group} />)}
-
-          <section className="zb-footer-directory" aria-labelledby="zb-footer-directory-title">
-            <div className="zb-footer-office">
-              <span className="zb-footer-eyebrow">Contact ZOBHUNGER</span>
-              <h2 id="zb-footer-directory-title">The right inbox for the right conversation.</h2>
-              <a href={contact.mapsHref} target="_blank" rel="noreferrer">
-                <MapPin aria-hidden="true" />
-                <span>{contact.address}</span>
-                <ArrowUpRight aria-hidden="true" />
-              </a>
-            </div>
-            <div className="zb-footer-contact-channels">
-              {Object.values(contact.channels).map((channel) => (
-                <a href={`mailto:${channel.email}`} key={channel.email}>
-                  <span>{channel.label}</span>
-                  <strong>{channel.email}</strong>
-                  <Mail aria-hidden="true" />
-                </a>
-              ))}
-            </div>
-          </section>
         </div>
 
         <div className="zb-footer-bottom">
