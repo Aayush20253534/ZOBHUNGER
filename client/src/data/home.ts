@@ -19,7 +19,7 @@ export const home = {
     eyebrow: "Our services",
     title: "Services built around the work you need done.",
     description:
-      "From workforce deployment and sales teams to retail execution and brand activation, connect people with a clear operating plan.",
+      "From workforce deployment and field execution to website and application development, connect the right people and delivery model to a clear business need.",
   },
   why: {
     eyebrow: "Why ZOBHUNGER",

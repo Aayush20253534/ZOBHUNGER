@@ -8,6 +8,7 @@ import {
   LogIn,
   Handshake,
   Megaphone,
+  MonitorSmartphone,
   Store,
   ShieldCheck,
   Users,
@@ -34,6 +35,7 @@ const icons = {
   execution: Store,
   verification: ShieldCheck,
   branding: Megaphone,
+  digital: MonitorSmartphone,
 };
 
 const gettingStarted = [
@@ -104,7 +106,7 @@ export function ForBusiness() {
               <Link
                 href={"/" + need.solutionSlug}
                 key={need.id}
-                className="zb-card-link"
+                className={`zb-card-link${need.id === "digital" ? " zb-business-need-featured" : ""}`}
               >
                 <Card className="zb-card zb-business-card">
                   <div className="zb-card-top">

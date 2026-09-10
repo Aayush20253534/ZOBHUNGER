@@ -7,6 +7,7 @@ export const solutions = [
     label: "Workforce",
     description:
       "Recruitment and staffing for permanent, contract and project roles.",
+    leadKind: "workforce",
     services: ["Bulk hiring", "Contract staffing", "Recruitment & RPO"],
   },
   {
@@ -14,6 +15,7 @@ export const solutions = [
     title: "ZOBHUNGER Sales Force",
     label: "Sales Force",
     description: "Build field sales, telesales and business development teams.",
+    leadKind: "workforce",
     services: ["Field sales", "Telesales", "Lead generation"],
   },
   {
@@ -22,6 +24,7 @@ export const solutions = [
     label: "Promoters",
     description:
       "People to represent your brand in stores, at events and on campaigns.",
+    leadKind: "workforce",
     services: ["In-store promoters", "Demonstrators", "Event teams"],
   },
   {
@@ -30,6 +33,7 @@ export const solutions = [
     label: "Retail Execution",
     description:
       "Support merchandising, store audits and product availability checks.",
+    leadKind: "workforce",
     services: ["Merchandising", "Store audits", "Market surveys"],
   },
   {
@@ -38,6 +42,7 @@ export const solutions = [
     label: "Brand Activation",
     description:
       "Execute branding, advertising, sticker deployment, flyer distribution and consumer campaigns.",
+    leadKind: "workforce",
     services: ["Product sampling", "Sticker deployment", "Branding campaigns"],
   },
   {
@@ -46,6 +51,7 @@ export const solutions = [
     label: "Operations",
     description:
       "Recruit teams for customer support, telecalling and back-office work.",
+    leadKind: "workforce",
     services: ["Customer support", "Back office", "Remote teams"],
   },
   {
@@ -54,6 +60,7 @@ export const solutions = [
     label: "Gig Workforce",
     description:
       "Find people for short assignments, seasonal demand and project work.",
+    leadKind: "workforce",
     services: ["Daily assignments", "Seasonal teams", "Project staffing"],
   },
   {
@@ -61,9 +68,23 @@ export const solutions = [
     title: "ZOBHUNGER Verification",
     label: "Verification",
     description: "Reliable checks for candidates, employees, documents, businesses and on-ground information.",
+    leadKind: "workforce",
     services: ["Background checks", "KYC & business", "Field verification"],
   },
+  {
+    slug: "website-application-development",
+    title: "ZOBHUNGER Digital",
+    label: "Web & App Development",
+    description:
+      "Design and build business websites, web platforms, mobile applications and API integrations.",
+    leadKind: "digital",
+    services: ["Business websites", "Web applications", "Mobile applications"],
+  },
 ] as const satisfies readonly SolutionSummary[];
+
+export const workforceSolutions = solutions.filter(
+  (solution) => solution.leadKind === "workforce",
+);
 
 export type PublicSolutionSlug = (typeof solutions)[number]["slug"];
 

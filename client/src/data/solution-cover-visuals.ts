@@ -2,6 +2,7 @@ import type { ExecutionVisualId } from "@/data/execution-visuals";
 import type { SolutionSlug } from "@/types/solution-detail.types";
 
 export const solutionCoverVisuals = {
+  "website-application-development": "digital-development",
   "verification-services": "verification",
   "workforce-solutions": "workforce-hiring",
   "sales-force": "field-executives",

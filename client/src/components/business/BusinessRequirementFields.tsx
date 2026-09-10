@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import { Controller, useFieldArray, type UseFormReturn } from "react-hook-form";
 import { BriefcaseBusiness, ClipboardList, MapPin, Megaphone, Plus, Settings2, Shapes, Sparkles, Store, Trash2, TrendingUp, UsersRound } from "lucide-react";
 import { industries } from "@/data/industries";
-import { solutions } from "@/data/solutions";
+import { workforceSolutions } from "@/data/solutions";
 import type { BusinessRequirementFormValues } from "@/schemas/business-requirement.schema";
 
 const serviceIcons = [UsersRound, TrendingUp, Megaphone, Store, Sparkles, Settings2, BriefcaseBusiness];
@@ -17,13 +17,13 @@ export function BusinessRequirementFields({ step, form }: { step: number; form: 
   const { fields, append, remove } = useFieldArray({ control, name: "locations" });
   const [customService, setCustomService] = useState(() => {
     const value = getValues("serviceRequired");
-    return Boolean(value) && !solutions.some(service => service.slug === value || service.label === value);
+    return Boolean(value) && !workforceSolutions.some(service => service.slug === value || service.label === value);
   });
   const described = (id: string, error?: string, hint?: boolean) => [hint ? `${id}-hint` : "", error ? `${id}-error` : ""].filter(Boolean).join(" ") || undefined;
 
   if (step === 0) return <>
     <fieldset className="zb-req-service-field"><legend>What kind of team do you need? <span aria-hidden="true">*</span></legend><Controller name="serviceRequired" control={control} render={({ field }) => <>
-      <div className="zb-req-service-options">{solutions.map((service, index) => {
+      <div className="zb-req-service-options">{workforceSolutions.map((service, index) => {
         const Icon = serviceIcons[index] ?? ClipboardList;
         return <label key={service.slug}><input ref={index === 0 && !customService ? field.ref : undefined} type="radio" name="requirement-service" value={service.slug} checked={!customService && (field.value === service.slug || field.value === service.label)} onBlur={field.onBlur} onChange={() => { setCustomService(false); field.onChange(service.slug); }} aria-describedby={errors.serviceRequired ? "req-service-error" : undefined} /><span><Icon aria-hidden="true" /><strong>{service.label}</strong></span></label>;
       })}<label><input type="radio" name="requirement-service" checked={customService} onChange={() => { setCustomService(true); field.onChange(""); }} /><span><Shapes aria-hidden="true" /><strong>Other service</strong></span></label></div>

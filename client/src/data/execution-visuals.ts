@@ -5,7 +5,11 @@ interface ExecutionScene {
   steps: readonly [string, string, string];
 }
 
-function createVisual(id: string, scene: ExecutionScene) {
+function createVisual(
+  id: string,
+  scene: ExecutionScene,
+  sourceLabel = "AI-generated scene",
+) {
   const base = `/images/execution/${id}`;
 
   return {
@@ -15,13 +19,19 @@ function createVisual(id: string, scene: ExecutionScene) {
     srcSet: `${base}-600.webp 600w, ${base}-960.webp 960w, ${base}-1200.webp 1200w, ${base}-1536.webp 1536w`,
     width: 1200,
     height: 800,
-    sourceLabel: "AI-generated scene",
+    sourceLabel,
   } as const;
 }
 
 // Illustrative service scenes, not photographs or evidence of client campaigns.
 // Reuse the descriptions and steps when building service and editorial stories.
 export const executionVisuals = {
+  "digital-development": createVisual("digital-development", {
+    title: "Website & application development",
+    alt: "Designed illustration showing a responsive business website on a laptop beside a mobile application, with a discover, design, build and launch workflow.",
+    caption: "A digital project connects the business requirement with UX, engineering, integrations, testing and launch.",
+    steps: ["Define the product", "Design and build", "Test and launch"],
+  }, "Designed service illustration"),
   verification: createVisual("verification", {
     title: "Verification services",
     alt: "AI-generated illustration of a ZOBHUNGER verification executive reviewing business documents and a tablet checklist with a business owner.",

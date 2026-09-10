@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { solutions } from "@/data/solutions";
+import { solutions, workforceSolutions } from "@/data/solutions";
 
 export const phoneSchema = z
   .string()
@@ -18,6 +18,13 @@ export const serviceSchema = z
   .refine(
     (value) => solutions.some((solution) => solution.slug === value),
     "Choose a service.",
+  );
+
+export const workforceServiceSchema = z
+  .string()
+  .refine(
+    (value) => workforceSolutions.some((solution) => solution.slug === value),
+    "Choose a workforce or execution service.",
   );
 
 export const emailSchema = z

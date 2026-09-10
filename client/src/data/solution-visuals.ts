@@ -64,6 +64,14 @@ export const solutionVisuals: Record<SolutionSlug, SolutionVisualProfile> = {
     stages: ["Workflow", "Hire", "Onboard", "Coordinate"],
     workModes: ["Support", "Back office", "Remote teams"],
   },
+  "website-application-development": {
+    eyebrow: "Digital product delivery",
+    title: "From business idea to a product ready to launch.",
+    description:
+      "Connect discovery, design, engineering and launch so the website or application is built around a real user and business need.",
+    stages: ["Discover", "Design", "Build", "Launch"],
+    workModes: ["Website", "Web app", "Mobile app"],
+  },
   "gig-workforce": {
     eyebrow: "Flexible execution",
     title: "Match short-duration work with a clear assignment flow.",

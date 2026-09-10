@@ -3,6 +3,7 @@ import {
   ArrowUpRight,
   BriefcaseBusiness,
   CheckCircle2,
+  Code2,
   Layers3,
   MapPinned,
   MessagesSquare,
@@ -37,6 +38,14 @@ const executionLanes = [
     flow: ["Plan", "Activate", "Report"],
   },
   {
+    icon: Code2,
+    label: "Build digital products",
+    description:
+      "Websites, web applications, mobile products and APIs shaped around a clear business and user requirement.",
+    services: ["Web & App Development"],
+    flow: ["Discover", "Build", "Launch"],
+  },
+  {
     icon: Workflow,
     label: "Support operations",
     description:
@@ -56,7 +65,7 @@ export function SolutionsOverview() {
         <PageShell
           eyebrow="Hire. Deploy. Manage. Execute. Scale."
           title="Our services"
-          description="Everything your business needs to hire, deploy and manage teams. Find recruitment, verification, sales, campaign and operations support in one connected service catalogue."
+          description="Bring workforce, field execution and digital product delivery into one service catalogue. Find recruitment, verification, sales, campaign, operations, website and application support around the business outcome you need."
           actions={
             <>
               <ActionLink href="/hire-workforce">
@@ -155,8 +164,8 @@ export function SolutionsOverview() {
         <SectionHeading
           id="solution-catalogue-heading"
           eyebrow="The service catalogue"
-          title="Eight services. One connected execution system."
-          description="Explore each service for the roles, execution support and engagement options it covers."
+          title={`${solutions.length} services. One connected business support system.`}
+          description="Explore each service for the workforce, execution or digital product support it covers."
         />
         <div className="zb-solutions-catalog">
           {solutions.map((solution) => (
@@ -169,8 +178,9 @@ export function SolutionsOverview() {
             </h3>
             <p className="zb-card-copy">
               A product launch may need promoters and activation support. A new
-              market may need hiring and field sales. Tell us the outcome you
-              need, and we’ll help you connect the requirements.
+              market may need hiring and field sales. A digital project may need
+              a website, application and API work. Tell us the outcome you need,
+              and we’ll help you connect the requirements.
             </p>
             <ActionLink href="/contact" variant="text">
               Talk through your requirement

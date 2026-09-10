@@ -31,5 +31,10 @@ export interface SolutionDetailContent {
   };
   industrySlugs: readonly IndustrySlug[];
   relatedSlugs: readonly SolutionSlug[];
-  cta: { title: string; description: string; label: string };
+  cta: {
+    title: string;
+    description: string;
+    label: string;
+    leadPath?: "hire-workforce" | "contact";
+  };
 }

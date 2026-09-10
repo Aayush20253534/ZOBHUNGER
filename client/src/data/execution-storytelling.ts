@@ -149,6 +149,18 @@ const fieldStories = {
     ],
     outcome: "Work completed, pending items, assigned follow-up and quality observations in the agreed updates.",
   },
+  digital: {
+    title: "Make every screen and integration serve the product goal.",
+    description:
+      "A digital build connects the user journey, interface, engineering and production handover instead of treating them as separate pieces.",
+    visualId: "digital-development",
+    actions: [
+      { title: "Shape the product", description: "Translate the business requirement into users, journeys, features and a practical first scope." },
+      { title: "Design and engineer", description: "Build the interface, application logic, APIs and integrations around the agreed product flow." },
+      { title: "Test and launch", description: "Review the important journeys across devices, resolve release issues and verify the production deployment." },
+    ],
+    outcome: "A responsive, production-ready digital product with a clear scope, tested user journeys and an agreed path for future improvements.",
+  },
   gig: {
     title: "Give a short assignment a clear start and finish.",
     description:
@@ -164,6 +176,7 @@ const fieldStories = {
 } as const satisfies Record<string, ExecutionStoryContent>;
 
 export const solutionFieldStories = {
+  "website-application-development": [{ id: "digital-product", label: "Product design & delivery", story: fieldStories.digital }],
   "verification-services": [{ id: "verification", label: "Document & field checks", story: fieldStories.verification }],
   "workforce-solutions": [{ id: "workforce", label: "Field team deployment", story: fieldStories.workforce }],
   "sales-force": [

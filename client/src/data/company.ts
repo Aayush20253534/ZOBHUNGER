@@ -55,6 +55,15 @@ export const businessNeeds = [
     solutionSlug: "brand-activation",
     linkLabel: "Explore branding & activation",
   },
+  {
+    id: "digital",
+    title: "Need a website or application?",
+    description:
+      "Turn a business idea into a responsive website, web platform or mobile application with UX/UI, backend, API and launch support.",
+    services: ["Business websites", "Web applications", "Mobile applications"],
+    solutionSlug: "website-application-development",
+    linkLabel: "Explore web & app development",
+  },
 ] as const satisfies readonly {
   id: string;
   title: string;

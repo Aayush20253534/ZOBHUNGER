@@ -1,8 +1,8 @@
 import {
   BadgeCheck, BriefcaseBusiness, CalendarClock, CalendarDays, ChartNoAxesCombined,
-  ClipboardCheck, ClipboardList, ClipboardPenLine, Database, Eye, Flag,
+  ClipboardCheck, ClipboardList, ClipboardPenLine, Code2, Database, Eye, Flag,
   GraduationCap, Handshake, Headset, Laptop, LayoutGrid, ListChecks, MapPin,
-  Megaphone, MessageCircle, Package, Phone, Presentation, Route, Search,
+  Megaphone, MessageCircle, MonitorSmartphone, Package, Palette, Phone, Presentation, Rocket, Route, Search,
   Send, ShieldCheck, ShoppingBag, Sparkles, Store, Target, TrendingUp,
   Truck, UserCheck, UserRoundSearch, UsersRound, Workflow, Zap,
   type LucideIcon,
@@ -10,6 +10,7 @@ import {
 import type { SolutionSlug } from "@/types/solution-detail.types";
 
 export const solutionIcons = {
+  "website-application-development": MonitorSmartphone,
   "verification-services": ShieldCheck,
   "workforce-solutions": UsersRound,
   "sales-force": TrendingUp,
@@ -21,6 +22,7 @@ export const solutionIcons = {
 } satisfies Record<SolutionSlug, LucideIcon>;
 
 export const solutionStageIcons = {
+  "website-application-development": [Search, Palette, Code2, Rocket],
   "verification-services": [ClipboardList, Search, ClipboardCheck, Send],
   "workforce-solutions": [ClipboardList, UserRoundSearch, UserCheck, Send],
   "sales-force": [MapPin, UsersRound, Zap, ChartNoAxesCombined],
@@ -32,6 +34,13 @@ export const solutionStageIcons = {
 } satisfies Record<SolutionSlug, readonly [LucideIcon, LucideIcon, LucideIcon, LucideIcon]>;
 
 const activityIcons: Record<string, LucideIcon> = {
+  "Business websites": MonitorSmartphone,
+  "Web applications & portals": LayoutGrid,
+  "Mobile application development": Phone,
+  "UI/UX design": Palette,
+  "Backend & API development": Code2,
+  "Third-party integrations": Workflow,
+  "Redesign, optimisation & support": Sparkles,
   "Candidate & Employee Verification": UserCheck,
   "Identity & Document Verification": BadgeCheck,
   "Address Verification": MapPin,

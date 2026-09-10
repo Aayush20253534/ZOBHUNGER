@@ -4,7 +4,7 @@ import { getPageMetadata } from "@/lib/page-metadata";
 
 export const metadata = getPageMetadata(
   "Contact ZOBHUNGER",
-  "Ask about workforce, sales, promoters, retail execution and business operations. Start with a business enquiry.",
+  "Ask about workforce, sales, promoters, retail execution, business operations, websites and application development. Start with a business enquiry.",
   "/contact",
 );
 

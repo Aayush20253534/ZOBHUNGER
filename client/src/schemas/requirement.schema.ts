@@ -3,7 +3,7 @@ import { industries } from "@/data/industries";
 import {
   emailSchema,
   phoneSchema,
-  serviceSchema,
+  workforceServiceSchema,
 } from "@/schemas/common.schema";
 import { isoDateSchema, isoDateTimeSchema } from "@/schemas/date.schema";
 
@@ -22,7 +22,7 @@ export const requirementSchema = z.object({
       (value) => industries.some((industry) => industry.slug === value),
       "Choose an industry.",
     ),
-  serviceRequired: serviceSchema,
+  serviceRequired: workforceServiceSchema,
   workforceCount: z
     .custom<number>(
       (value) => typeof value === "number" && Number.isFinite(value),

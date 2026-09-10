@@ -14,7 +14,7 @@ import {
 import { FormModeNotice } from "@/components/forms/FormModeNotice";
 import { SubmissionResult } from "@/components/forms/SubmissionResult";
 import { industries } from "@/data/industries";
-import { solutions } from "@/data/solutions";
+import { workforceSolutions } from "@/data/solutions";
 import { useFormSubmission } from "@/hooks/use-form-submission";
 import {
   requirementFormSchema,
@@ -213,7 +213,7 @@ export function RequirementForm({
                   onBlur={field.onBlur}
                   inputRef={field.ref}
                   disabled={busy}
-                  options={solutions.map((solution) => ({
+                  options={workforceSolutions.map((solution) => ({
                     value: solution.slug,
                     label: solution.label,
                   }))}

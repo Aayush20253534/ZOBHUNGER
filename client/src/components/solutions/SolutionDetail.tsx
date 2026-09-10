@@ -28,8 +28,8 @@ export function SolutionDetail({ slug }: { slug: string }) {
   const solution = solutions.find((item) => item.slug === slug);
   if (!solution) notFound();
   const detail: SolutionDetailContent = solutionDetails[solution.slug];
-  // Part 5's requirement form can consume this existing catalogue slug.
-  const requirementHref = `/hire-workforce?service=${encodeURIComponent(solution.slug)}`;
+  const leadPath = detail.cta.leadPath === "contact" ? "/contact" : "/hire-workforce";
+  const leadHref = `${leadPath}?service=${encodeURIComponent(solution.slug)}`;
   const relevantIndustries = industries.filter((industry) =>
     detail.industrySlugs.includes(industry.slug),
   );
@@ -54,7 +54,7 @@ export function SolutionDetail({ slug }: { slug: string }) {
           description={detail.description}
           actions={
             <>
-              <ActionLink href={requirementHref}>{detail.cta.label}</ActionLink>
+              <ActionLink href={leadHref}>{detail.cta.label}</ActionLink>
               <ActionLink href="#solution-services" variant="secondary">
                 See services
               </ActionLink>
@@ -180,7 +180,7 @@ export function SolutionDetail({ slug }: { slug: string }) {
         <ProcessFlow
           steps={detail.process.steps}
           label={`${solution.label} delivery steps`}
-          action={{ href: requirementHref, label: detail.cta.label }}
+          action={{ href: leadHref, label: detail.cta.label }}
         />
       </section>
       {caseStudy && <div className="zb-solution-section">
@@ -235,7 +235,12 @@ export function SolutionDetail({ slug }: { slug: string }) {
         </div>
       </section>
       <div className="zb-solution-section">
-        <CTASection {...detail.cta} href={requirementHref} />
+        <CTASection
+          title={detail.cta.title}
+          description={detail.cta.description}
+          label={detail.cta.label}
+          href={leadHref}
+        />
       </div>
     </div>
   );

@@ -922,4 +922,133 @@ export const solutionDetails = {
       label: "Find workforce now",
     },
   },
+  "website-application-development": {
+    heading: "Website & application development built around your business.",
+    description:
+      "Turn an idea or business requirement into a responsive website, web platform or mobile application. We bring planning, UX/UI, engineering, integrations, testing and launch into one practical delivery flow.",
+    bestFor:
+      "Businesses that need a new website, customer or partner portal, internal web platform, mobile application or API-connected digital product.",
+    facts: [
+      { label: "Builds", value: "Websites, web apps, mobile apps & APIs" },
+      { label: "Delivery", value: "UX/UI, engineering, testing & launch" },
+      { label: "Engagement", value: "New builds, redesigns & integrations" },
+    ],
+    servicesHeading: "Digital products designed to solve real business needs.",
+    servicesDescription:
+      "Start with the outcome you need, then choose the right mix of design, frontend, backend, mobile and integration work.",
+    services: [
+      {
+        title: "Business websites",
+        description:
+          "Build responsive, fast and professional websites for company presence, services, lead generation and customer communication.",
+      },
+      {
+        title: "Web applications & portals",
+        description:
+          "Create secure browser-based platforms for customers, partners, teams, workflows, dashboards and operational processes.",
+      },
+      {
+        title: "Mobile application development",
+        description:
+          "Build practical mobile experiences for Android and iOS around the features, users and workflows your business needs.",
+      },
+      {
+        title: "UI/UX design",
+        description:
+          "Turn requirements into clear user journeys, wireframes and interfaces that are easy to understand and use.",
+      },
+      {
+        title: "Backend & API development",
+        description:
+          "Build the server-side logic, databases and APIs that power websites, applications and connected business systems.",
+      },
+      {
+        title: "Third-party integrations",
+        description:
+          "Connect payments, maps, email, authentication, analytics, cloud services and other APIs required by the product.",
+      },
+      {
+        title: "Redesign, optimisation & support",
+        description:
+          "Improve an existing digital product with better usability, responsive behaviour, performance and maintainable implementation.",
+      },
+    ],
+    focus: {
+      id: "planning",
+      label: "Product planning",
+      heading: "Build the right product before adding more features.",
+      description:
+        "A useful digital project starts with the users, business goal and core workflow. We shape the implementation around those priorities rather than adding technology for its own sake.",
+      items: [
+        {
+          title: "Business outcome",
+          description:
+            "Define what the website or application should help the business achieve and how success will be judged.",
+        },
+        {
+          title: "Users & journeys",
+          description:
+            "Identify the people using the product, the actions they need to complete and the information they need along the way.",
+        },
+        {
+          title: "Technology & integrations",
+          description:
+            "Choose an architecture that fits the product today while keeping APIs, integrations and future growth practical.",
+        },
+      ],
+    },
+    process: {
+      heading: "From idea to a production-ready digital product.",
+      description:
+        "Each stage produces something reviewable before the project moves forward.",
+      steps: [
+        {
+          title: "Discover",
+          description:
+            "Understand the business goal, users, features, integrations and project constraints.",
+        },
+        {
+          title: "Design",
+          description:
+            "Shape the information architecture, user journeys and interface before full development.",
+        },
+        {
+          title: "Build",
+          description:
+            "Develop the frontend, backend, mobile experience and integrations required by the agreed scope.",
+        },
+        {
+          title: "Test",
+          description:
+            "Review functionality, responsive behaviour, performance and important user flows before release.",
+        },
+        {
+          title: "Launch",
+          description:
+            "Deploy the product, verify the production setup and plan the next improvements or support requirements.",
+        },
+      ],
+    },
+    industrySlugs: [
+      "fmcg",
+      "retail",
+      "e-commerce",
+      "bfsi-fintech",
+      "telecom",
+      "logistics",
+      "food-beverage",
+      "consumer-electronics",
+      "manufacturing",
+      "healthcare",
+      "startups",
+    ],
+    relatedSlugs: ["business-operations", "verification-services", "brand-activation"],
+    cta: {
+      title: "Have a website or application idea?",
+      description:
+        "Tell us what you want to build, who will use it, the features you have in mind and any timeline you are working toward. We’ll review the requirement and discuss the right next step.",
+      label: "Discuss your digital project",
+      leadPath: "contact",
+    },
+  },
 } as const satisfies Record<SolutionSlug, SolutionDetailContent>;

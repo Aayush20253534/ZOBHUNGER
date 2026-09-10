@@ -19,6 +19,8 @@ export function ContactPageContent({
 }: {
   serviceRequired: string;
 }) {
+  const isDigitalProject = serviceRequired === "website-application-development";
+
   return (
     <div className="zb-company zb-company-form-page">
       <Breadcrumbs
@@ -28,7 +30,7 @@ export function ContactPageContent({
       <PageShell
         eyebrow="Contact ZOBHUNGER"
         title="Let's talk about the work ahead."
-        description="Have a question about staffing, sales teams or business execution? Tell us the service you are exploring and what you want to discuss."
+        description={isDigitalProject ? "Planning a website, web platform or mobile application? Share the users, features and business outcome you have in mind." : "Have a question about staffing, sales teams or business execution? Tell us the service you are exploring and what you want to discuss."}
       />
 
       <div className="zb-company-form-layout">
@@ -108,24 +110,39 @@ export function ContactPageContent({
           className="zb-company-form-aside"
           aria-label="Other ways to get started"
         >
-          <section className="zb-company-aside-card zb-company-aside-soft">
-            <span className="zb-eyebrow">For your business</span>
-            <h2>Already have a requirement?</h2>
-            <p>
-              Use the detailed form to share your team size, locations, timeline
-              and responsibilities.
-            </p>
-            <ActionLink
-              href={
-                serviceRequired
-                  ? "/hire-workforce?service=" +
-                    encodeURIComponent(serviceRequired)
-                  : "/hire-workforce"
-              }
-            >
-              Hire workforce
-            </ActionLink>
-          </section>
+          {isDigitalProject ? (
+            <section className="zb-company-aside-card zb-company-aside-soft">
+              <span className="zb-eyebrow">Digital project brief</span>
+              <h2>What should you include?</h2>
+              <p>
+                Tell us what you want to build, who will use it, the main
+                features, any existing system it should connect with and your
+                preferred timeline.
+              </p>
+              <ActionLink href="#contact-form-title">
+                Share your project
+              </ActionLink>
+            </section>
+          ) : (
+            <section className="zb-company-aside-card zb-company-aside-soft">
+              <span className="zb-eyebrow">For your business</span>
+              <h2>Already have a requirement?</h2>
+              <p>
+                Use the detailed form to share your team size, locations,
+                timeline and responsibilities.
+              </p>
+              <ActionLink
+                href={
+                  serviceRequired
+                    ? "/hire-workforce?service=" +
+                      encodeURIComponent(serviceRequired)
+                    : "/hire-workforce"
+                }
+              >
+                Hire workforce
+              </ActionLink>
+            </section>
+          )}
 
           <section className="zb-company-aside-card">
             <span className="zb-eyebrow">Independent business partners</span>
