@@ -154,13 +154,14 @@ export function EmployeeJoiningForm() {
   }
 
   if (employeeNumber && receipt?.submitted) return <section className="zhr-success" aria-labelledby="joining-complete-title">
-    <div className="zhr-success-mark"><CheckCircle2 aria-hidden="true" /></div>
-    <p className="zhr-kicker">Joining form submitted</p>
-    <h1 id="joining-complete-title">Your employee number is ready.</h1>
+    <div className="zhr-success-head">
+      <div className="zhr-success-mark"><CheckCircle2 aria-hidden="true" /></div>
+      <div><p className="zhr-kicker">Joining form submitted</p><h1 id="joining-complete-title">Submission received.</h1></div>
+    </div>
     <div className="zhr-employee-number"><span>EMPLOYEE ID</span><strong>{employeeNumber}</strong></div>
-    <p>Your personal, statutory and bank details have been securely submitted to ZOBHUNGER HR. The team will review your documents and contact you if anything needs clarification.</p>
-    <div className="zhr-success-note"><ShieldCheck aria-hidden="true" /><div><strong>What happens next?</strong><span>HR review → approval → offer-letter preparation → authorized signature → issue to your registered email.</span></div></div>
-    <p className="zhr-reference">Submission reference: <strong>{receipt.id}</strong></p>
+    <p className="zhr-success-copy">Your details and documents were securely sent to ZOBHUNGER HR. Keep this Employee ID for future reference.</p>
+    <div className="zhr-success-note"><ShieldCheck aria-hidden="true" /><div><strong>Next step</strong><span>HR review → approval → offer letter → registered email.</span></div></div>
+    <p className="zhr-reference">Reference: <strong>{receipt.id}</strong></p>
   </section>;
 
   return <div className="zhr-shell">
@@ -246,7 +247,7 @@ export function EmployeeJoiningForm() {
       {progress && <div className="zhr-submit-progress" role="status"><LoaderCircle className="zhr-spin" />{progress}</div>}
       </fieldset>}
 
-      <div className="zhr-actions">{step > 1 ? <button type="button" className="zhr-button zhr-button--secondary" onClick={back} disabled={busy}><ArrowLeft />Back</button> : <span />}{step < 5 ? <button type="button" className="zhr-button" onClick={next} disabled={busy}>Continue<ArrowRight /></button> : <button type="submit" className="zhr-button" disabled={busy}>{busy ? <LoaderCircle className="zhr-spin" /> : <BadgeCheck />}{busy ? "Submitting securely…" : "Submit joining form"}</button>}</div>
+      <div className="zhr-actions">{step > 1 ? <button type="button" className="zhr-button zhr-button--secondary" onClick={back} disabled={busy}><ArrowLeft />Back</button> : <span />}{step < 5 ? <button type="button" className="zhr-button" onClick={next} disabled={busy}>Continue<ArrowRight /></button> : <button type="submit" className="zhr-button zhr-button--submit" disabled={busy}>{busy ? <LoaderCircle className="zhr-spin" /> : <BadgeCheck />}{busy ? "Submitting securely…" : "Submit joining form"}</button>}</div>
     </form>
     <footer className="zhr-foot"><LockKeyhole /><span>Private HR onboarding · Zobhungr Solutions Private Limited · Vijay Tower, Ghazipur, Uttar Pradesh 233001</span></footer>
   </div>;
