@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ActionLink } from "@/components/common/ActionLink";
 import { MobileMenu } from "@/components/layout/MobileMenu";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import {
   isNavigationItemActive,
   navigation,
@@ -45,16 +44,14 @@ export function Navbar() {
             })}
           </nav>
 
-          <div className="zb-header-actions">
-            <ThemeToggle />
-            <ActionLink
-              href={site.primaryAction.href}
-              className="zb-header-primary-action"
-            >
-              {site.primaryAction.label}
-            </ActionLink>
-            <MobileMenu key={pathname} pathname={pathname} />
-          </div>
+          <ActionLink
+            href={site.primaryAction.href}
+            className="zb-header-primary-action"
+          >
+            {site.primaryAction.label}
+          </ActionLink>
+
+          <MobileMenu key={pathname} pathname={pathname} />
         </div>
       </header>
     </>
