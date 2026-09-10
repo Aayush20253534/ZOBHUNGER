@@ -1,0 +1,110 @@
+/* Employee joining HR workspace refresh. The admin screen shares the same
+ * restrained red/ink system as the employee form, with a dense layout that
+ * remains readable when the outer site frame is present. */
+.zhr-admin {
+  width: min(1280px, calc(100% - 40px));
+  padding: 24px 0 56px;
+  --zhr-red: #b5122d;
+  --zhr-red-dark: #8f0d23;
+  --zhr-burgundy: #4d1522;
+  --zhr-ink: #251f21;
+  --zhr-muted: #6d6265;
+  --zhr-border: #e2d9db;
+  --zhr-soft: #fff1f3;
+  --zhr-green: #167256;
+  --zhr-amber: #986112;
+}
+.zhr-admin-nav { margin-bottom: 14px; }
+.zhr-admin-nav a { min-height: 34px; color: #6d6265; }
+.zhr-admin-nav a:hover { color: var(--zhr-red); }
+.zhr-admin-hero, .zhr-admin-detail-head {
+  padding: clamp(25px, 4vw, 42px);
+  border: 1px solid #512d36;
+  border-radius: 18px;
+  background: #2d2024;
+  box-shadow: 0 16px 34px rgba(45, 26, 31, .16);
+}
+.zhr-admin-hero::after, .zhr-admin-detail-head::after { display: none; }
+.zhr-admin-kicker { color: #f15a6c; }
+.zhr-admin-hero h1, .zhr-admin-detail-head h1 { color: #fff7f8; letter-spacing: -.045em; }
+.zhr-admin-hero > div:first-child > p:last-child, .zhr-admin-detail-head > div > p:last-child { color: #dfcfd2; }
+.zhr-admin-hero-actions { gap: 8px; }
+.zhr-admin-hero-actions button, .zhr-admin-primary, .zhr-admin-secondary, .zhr-admin-issue {
+  min-height: 43px;
+  border-radius: 9px;
+  background: var(--zhr-red);
+  box-shadow: none;
+}
+.zhr-admin-hero-actions button:hover, .zhr-admin-primary:hover, .zhr-admin-issue:hover { background: var(--zhr-red-dark); box-shadow: none; transform: none; }
+.zhr-admin-hero-actions .secondary, .zhr-admin-secondary { border-color: #cdbec2; background: transparent; color: #fff2f4; }
+.zhr-admin-hero-actions .secondary:hover, .zhr-admin-secondary:hover { border-color: #f1b7c0; background: rgba(255,255,255,.08); color: #fff; }
+.zhr-admin-stats { gap: 10px; margin: 14px 0; }
+.zhr-admin-stats article {
+  min-height: 96px;
+  padding: 15px 17px;
+  border: 1px solid var(--zhr-border);
+  border-top: 3px solid #d34a5d;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.zhr-admin-stats article > svg { border-radius: 9px; color: var(--zhr-red); background: var(--zhr-soft); }
+.zhr-admin-filters { gap: 10px; margin-bottom: 14px; padding: 13px; border: 1px solid var(--zhr-border); border-radius: 12px; box-shadow: none; }
+.zhr-admin-filters input, .zhr-admin-filters select, .zhr-admin-field input, .zhr-admin-field select, .zhr-admin-field textarea { min-height: 43px; border-radius: 9px; background: #fcfbfb; }
+.zhr-admin-filters input:focus, .zhr-admin-filters select:focus, .zhr-admin-field input:focus, .zhr-admin-field select:focus, .zhr-admin-field textarea:focus { border-color: var(--zhr-red); box-shadow: 0 0 0 3px rgba(181,18,45,.12); }
+.zhr-admin-filters > button { min-height: 43px; border-radius: 9px; background: #2d2024; }
+.zhr-admin-filters > button:hover { background: var(--zhr-red); }
+.zhr-admin-cards { gap: 12px; }
+.zhr-admin-cards article { padding: 18px; border: 1px solid var(--zhr-border); border-radius: 14px; box-shadow: none; }
+.zhr-admin-cards article:hover { transform: translateY(-1px); border-color: #d99aa4; box-shadow: 0 12px 24px rgba(57,26,33,.08); }
+.zhr-admin-avatar { border-radius: 10px; color: var(--zhr-red); background: var(--zhr-soft); }
+.zhr-admin-code { color: var(--zhr-red)!important; }
+.zhr-admin-card-meta { border-color: #eee6e8; }
+.zhr-admin-cards article > a { color: var(--zhr-burgundy); }
+.zhr-admin-badge { min-height: 26px; border-radius: 7px; }
+.zhr-admin-state { min-height: 160px; border-radius: 12px; }
+.zhr-admin-error, .zhr-admin-success { border-radius: 9px; }
+.zhr-admin-detail-head { padding: 24px 28px; }
+.zhr-admin-detail-head .zhr-admin-avatar { color: #ffdce1; background: rgba(181,18,45,.34); }
+.zhr-admin-detail-head > .zhr-admin-badge { margin-left: auto; }
+.zhr-admin-contact { gap: 7px; margin: 11px 0 16px; }
+.zhr-admin-contact a, .zhr-admin-contact span { min-height: 34px; border-radius: 8px; background: #fff; }
+.zhr-admin-detail-grid { gap: 14px; }
+.zhr-admin-detail-main, .zhr-admin-side { gap: 14px; }
+.zhr-admin-panel { padding: 19px; border: 1px solid var(--zhr-border); border-radius: 14px; box-shadow: none; }
+.zhr-admin-panel > h2 { margin-bottom: 15px; }
+.zhr-admin-panel > h2 svg { border-radius: 9px; color: var(--zhr-red); background: var(--zhr-soft); }
+.zhr-admin-facts { border-radius: 10px; }
+.zhr-admin-facts > div { padding: 12px 13px; }
+.zhr-admin-addresses > div { border-radius: 10px; }
+.zhr-admin-sensitive { border-radius: 9px; background: #f3fbf7; }
+.zhr-admin-docs { gap: 8px; }
+.zhr-admin-docs button { padding: 11px; border-radius: 10px; }
+.zhr-admin-docs button:hover { transform: none; }
+.zhr-admin-primary, .zhr-admin-secondary, .zhr-admin-issue { margin-top: 10px; }
+.zhr-admin-field-hint { color: #8d1c30; font-size: .68rem; font-weight: 600; line-height: 1.4; }
+.zhr-signature-upload { min-height: 43px; border-radius: 9px; }
+.zhr-admin-issue { background: #167256; }
+.zhr-admin-issue:hover { background: #105e43; }
+
+@media (max-width: 780px) {
+  .zhr-admin { width: min(100% - 24px, 680px); padding: 18px 0 40px; }
+  .zhr-admin-hero { padding: 24px 19px; border-radius: 14px; }
+  .zhr-admin-hero h1 { font-size: clamp(1.8rem, 9vw, 2.8rem); }
+  .zhr-admin-hero > div:first-child > p:last-child { margin-top: 13px; font-size: .86rem; line-height: 1.55; }
+  .zhr-admin-hero-actions { gap: 8px; }
+  .zhr-admin-hero-actions button { flex: 1 1 170px; }
+  .zhr-admin-stats { gap: 8px; }
+  .zhr-admin-stats article { min-height: 84px; padding: 12px; }
+  .zhr-admin-filters { border-radius: 10px; }
+  .zhr-admin-detail-head { padding: 20px 17px; border-radius: 14px; }
+  .zhr-admin-detail-head h1 { font-size: clamp(1.65rem, 8vw, 2.4rem); }
+  .zhr-admin-panel { padding: 16px; border-radius: 12px; }
+}
+@media (max-width: 520px) {
+  .zhr-admin { width: min(100% - 16px, 680px); }
+  .zhr-admin-hero-actions { flex-direction: column; }
+  .zhr-admin-hero-actions button { width: 100%; flex-basis: auto; }
+  .zhr-admin-stats article { padding: 11px; }
+  .zhr-admin-stats article > svg { width: 30px; height: 30px; padding: 6px; }
+  .zhr-admin-contact a, .zhr-admin-contact span { min-height: 38px; }
+}
