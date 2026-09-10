@@ -18,6 +18,17 @@ const steps = [
   { id: 4, label: "Education", icon: GraduationCap },
   { id: 5, label: "Documents", icon: FileCheck2 },
 ] as const;
+const indiaStates = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana",
+  "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+  "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana",
+  "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+] as const;
+
+const indiaUnionTerritories = [
+  "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi (NCT)",
+  "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry",
+] as const;
 
 const emptyEmployment = (): PreviousEmploymentInput => ({ company: "", designation: "", startDate: "", endDate: "", current: false, lastMonthlySalary: null, reasonForLeaving: "" });
 const initial: EmployeeJoiningInput = {
@@ -44,6 +55,14 @@ function Field({ label, required, wide, hint, children }: { label: string; requi
   return <label className={`zhr-field${wide ? " zhr-field--wide" : ""}`}><span>{label}{required && <b aria-hidden="true"> *</b>}</span>{children}{hint && <small>{hint}</small>}</label>;
 }
 
+function IndiaStateSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  return <select required autoComplete="address-level1" value={value} onChange={event => onChange(event.target.value)}>
+    <option value="">Select state / union territory</option>
+    <optgroup label="States">{indiaStates.map(state => <option key={state} value={state}>{state}</option>)}</optgroup>
+    <optgroup label="Union territories">{indiaUnionTerritories.map(territory => <option key={territory} value={territory}>{territory}</option>)}</optgroup>
+  </select>;
+}
+
 function moneyNumber(value: string) {
   if (!value.trim()) return null;
   const number = Number(value);
@@ -52,6 +71,7 @@ function moneyNumber(value: string) {
 
 export function EmployeeJoiningForm() {
   const [step, setStep] = useState(1);
+  const [completedStepCount, setCompletedStepCount] = useState(0);
   const [profile, setProfile] = useState<EmployeeJoiningInput>(initial);
   const [hasEmployment, setHasEmployment] = useState(false);
   const [employment, setEmployment] = useState<PreviousEmploymentInput>(emptyEmployment());
@@ -65,7 +85,7 @@ export function EmployeeJoiningForm() {
   const requestKey = useRef("");
   const form = useRef<HTMLFormElement>(null);
 
-  const completion = useMemo(() => `${Math.round((step / steps.length) * 100)}%`, [step]);
+  const completion = useMemo(() => `${Math.round((completedStepCount / steps.length) * 100)}%`, [completedStepCount]);
   function set<K extends keyof EmployeeJoiningInput>(key: K, value: EmployeeJoiningInput[K]) { setProfile(current => ({ ...current, [key]: value })); }
   function setEmploymentField<K extends keyof PreviousEmploymentInput>(key: K, value: PreviousEmploymentInput[K]) { setEmployment(current => ({ ...current, [key]: value })); }
 
@@ -81,6 +101,7 @@ export function EmployeeJoiningForm() {
   function next() {
     setError(""); setFileError("");
     if (!form.current?.reportValidity()) return;
+    setCompletedStepCount(value => Math.max(value, step));
     setStep(value => Math.min(5, value + 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -121,6 +142,7 @@ export function EmployeeJoiningForm() {
       }
       setProgress("Generating your employee number…");
       const finalized = await finalizeEmployeeJoining(saved);
+      setCompletedStepCount(steps.length);
       setEmployeeNumber(finalized.data.employeeNumber);
       setReceipt({ ...saved, employeeNumber: finalized.data.employeeNumber, submitted: true, submittedAt: finalized.data.submittedAt, uploadToken: null });
       setProgress("");
@@ -164,16 +186,16 @@ export function EmployeeJoiningForm() {
     </section>
 
     <div className="zhr-progress" aria-label={`Step ${step} of ${steps.length}`}>
-      <div className="zhr-progress-top"><span>Step {step} of {steps.length}</span><strong>{completion} complete</strong></div>
+      <div className="zhr-progress-top"><span>Step {step} of {steps.length}</span><strong>{completedStepCount ? `${completion} complete` : "Complete this step to begin"}</strong></div>
       <div className="zhr-progress-track"><span style={{ width: completion }} /></div>
-      <nav>{steps.map(item => { const Icon = item.icon; return <button type="button" key={item.id} className={item.id === step ? "is-current" : item.id < step ? "is-done" : ""} onClick={() => item.id < step && setStep(item.id)} disabled={busy || item.id > step}><Icon aria-hidden="true" /><span>{item.label}</span></button>; })}</nav>
+      <nav>{steps.map(item => { const Icon = item.icon; const canOpen = item.id <= completedStepCount + 1; return <button type="button" key={item.id} className={item.id === step ? "is-current" : item.id <= completedStepCount ? "is-done" : ""} onClick={() => canOpen && setStep(item.id)} disabled={busy || !canOpen}><Icon aria-hidden="true" /><span>{item.label}</span></button>; })}</nav>
     </div>
 
     <form ref={form} className="zhr-form" onSubmit={submit} aria-busy={busy}>
       {error && <div className="zhr-alert" role="alert">{error}</div>}
       {fileError && <div className="zhr-alert" role="alert">{fileError}</div>}
 
-      {step === 1 && <fieldset disabled={busy}><legend><UserRound /><span><b>01</b> Personal & assignment details</span></legend><p className="zhr-section-copy">Use the details exactly as they should appear in company records.</p><div className="zhr-grid">
+      {step === 1 && <fieldset disabled={busy}><legend className="zhr-sr-only">Personal & assignment details</legend><div className="zhr-section-heading"><span className="zhr-section-icon"><UserRound aria-hidden="true" /></span><div><span>STEP 01</span><h2>Personal & assignment details</h2></div></div><p className="zhr-section-copy">Use the details exactly as they should appear in company records.</p><div className="zhr-grid">
         <Field label="Project / assignment code" required hint="Use the short code shared by HR, e.g. PL, MCD01."><input required minLength={2} maxLength={16} pattern="[A-Za-z0-9-]+" value={profile.projectCode} onChange={e => set("projectCode", e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""))} /></Field>
         <Field label="Project / assignment name" required><input required minLength={2} maxLength={180} value={profile.projectAssignment} onChange={e => set("projectAssignment", e.target.value)} /></Field>
         <Field label="Full legal name" required><input autoComplete="name" required minLength={2} maxLength={120} value={profile.fullName} onChange={e => set("fullName", e.target.value)} /></Field>
@@ -188,17 +210,17 @@ export function EmployeeJoiningForm() {
         <Field label="Employee kit shirt size"><select value={profile.shirtSize} onChange={e => set("shirtSize", e.target.value as EmployeeJoiningInput["shirtSize"])}><option value="">Select (optional)</option>{["XS","S","M","L","XL","XXL","XXXL"].map(value => <option key={value}>{value}</option>)}</select></Field>
       </div></fieldset>}
 
-      {step === 2 && <fieldset disabled={busy}><legend><Building2 /><span><b>02</b> Address & emergency contact</span></legend><p className="zhr-section-copy">These details are maintained in the employee record and used only for legitimate HR requirements.</p><div className="zhr-grid">
+      {step === 2 && <fieldset disabled={busy}><legend className="zhr-sr-only">Address & emergency contact</legend><div className="zhr-section-heading"><span className="zhr-section-icon"><Building2 aria-hidden="true" /></span><div><span>STEP 02</span><h2>Address & emergency contact</h2></div></div><p className="zhr-section-copy">These details are maintained in the employee record and used only for legitimate HR requirements.</p><div className="zhr-grid">
         <Field label="Current address" required wide><input required minLength={5} maxLength={220} autoComplete="street-address" value={profile.currentAddressLine1} onChange={e => set("currentAddressLine1", e.target.value)} /></Field>
         <Field label="Address line 2" wide><input maxLength={220} value={profile.currentAddressLine2} onChange={e => set("currentAddressLine2", e.target.value)} /></Field>
         <Field label="City" required><input required minLength={2} maxLength={120} value={profile.currentCity} onChange={e => set("currentCity", e.target.value)} /></Field>
-        <Field label="State" required><input required minLength={2} maxLength={120} value={profile.currentState} onChange={e => set("currentState", e.target.value)} /></Field>
+        <Field label="State / union territory" required><IndiaStateSelect value={profile.currentState} onChange={value => set("currentState", value)} /></Field>
         <Field label="PIN code" required><input inputMode="numeric" required pattern="[0-9]{6}" maxLength={6} value={profile.currentPostalCode} onChange={e => set("currentPostalCode", e.target.value.replace(/\D/g, "").slice(0,6))} /></Field>
       </div><label className="zhr-check"><input type="checkbox" checked={profile.permanentSameAsCurrent} onChange={e => set("permanentSameAsCurrent", e.target.checked)} /><span>Permanent address is the same as current address</span></label>
-      {!profile.permanentSameAsCurrent && <div className="zhr-grid zhr-subgrid"><Field label="Permanent address" required wide><input required minLength={5} maxLength={220} value={profile.permanentAddressLine1} onChange={e => set("permanentAddressLine1", e.target.value)} /></Field><Field label="Address line 2" wide><input maxLength={220} value={profile.permanentAddressLine2} onChange={e => set("permanentAddressLine2", e.target.value)} /></Field><Field label="City" required><input required minLength={2} maxLength={120} value={profile.permanentCity} onChange={e => set("permanentCity", e.target.value)} /></Field><Field label="State" required><input required minLength={2} maxLength={120} value={profile.permanentState} onChange={e => set("permanentState", e.target.value)} /></Field><Field label="PIN code" required><input inputMode="numeric" required pattern="[0-9]{6}" maxLength={6} value={profile.permanentPostalCode} onChange={e => set("permanentPostalCode", e.target.value.replace(/\D/g, "").slice(0,6))} /></Field></div>}
+      {!profile.permanentSameAsCurrent && <div className="zhr-grid zhr-subgrid"><Field label="Permanent address" required wide><input required minLength={5} maxLength={220} value={profile.permanentAddressLine1} onChange={e => set("permanentAddressLine1", e.target.value)} /></Field><Field label="Address line 2" wide><input maxLength={220} value={profile.permanentAddressLine2} onChange={e => set("permanentAddressLine2", e.target.value)} /></Field><Field label="City" required><input required minLength={2} maxLength={120} value={profile.permanentCity} onChange={e => set("permanentCity", e.target.value)} /></Field><Field label="State / union territory" required><IndiaStateSelect value={profile.permanentState} onChange={value => set("permanentState", value)} /></Field><Field label="PIN code" required><input inputMode="numeric" required pattern="[0-9]{6}" maxLength={6} value={profile.permanentPostalCode} onChange={e => set("permanentPostalCode", e.target.value.replace(/\D/g, "").slice(0,6))} /></Field></div>}
       <div className="zhr-divider" /><h3 className="zhr-mini-title"><HeartHandshake />Emergency contact</h3><div className="zhr-grid"><Field label="Contact name" required><input required minLength={2} maxLength={120} value={profile.emergencyContactName} onChange={e => set("emergencyContactName", e.target.value)} /></Field><Field label="Relationship" required><input required minLength={2} maxLength={80} value={profile.emergencyRelationship} onChange={e => set("emergencyRelationship", e.target.value)} /></Field><Field label="Emergency mobile" required><input type="tel" required minLength={7} maxLength={24} value={profile.emergencyPhone} onChange={e => set("emergencyPhone", e.target.value)} /></Field></div></fieldset>}
 
-      {step === 3 && <fieldset disabled={busy}><legend><Banknote /><span><b>03</b> Statutory & bank details</span></legend><div className="zhr-security-note"><ShieldCheck /><div><strong>Sensitive fields are protected.</strong><span>Aadhaar, PAN, bank account and UAN values are encrypted before they are stored and are available only to authenticated HR administrators.</span></div></div><div className="zhr-grid">
+      {step === 3 && <fieldset disabled={busy}><legend className="zhr-sr-only">Statutory & bank details</legend><div className="zhr-section-heading"><span className="zhr-section-icon"><Banknote aria-hidden="true" /></span><div><span>STEP 03</span><h2>Statutory & bank details</h2></div></div><div className="zhr-security-note"><ShieldCheck /><div><strong>Sensitive fields are protected.</strong><span>Aadhaar, PAN, bank account and UAN values are encrypted before they are stored and are available only to authenticated HR administrators.</span></div></div><div className="zhr-grid">
         <Field label="Aadhaar number" required><input inputMode="numeric" autoComplete="off" required pattern="[0-9]{12}" maxLength={12} value={profile.aadhaarNumber} onChange={e => set("aadhaarNumber", e.target.value.replace(/\D/g, "").slice(0,12))} /></Field>
         <Field label="PAN number" required><input autoComplete="off" required pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]" maxLength={10} value={profile.panNumber} onChange={e => set("panNumber", e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0,10))} /></Field>
         <Field label="Bank account holder" required><input required minLength={2} maxLength={120} value={profile.bankAccountHolder} onChange={e => set("bankAccountHolder", e.target.value)} /></Field>
@@ -210,7 +232,7 @@ export function EmployeeJoiningForm() {
         <Field label="UAN / PF number" hint="Optional, if already allotted."><input inputMode="numeric" pattern="[0-9]{12}" maxLength={12} value={profile.uanNumber} onChange={e => set("uanNumber", e.target.value.replace(/\D/g, "").slice(0,12))} /></Field>
       </div></fieldset>}
 
-      {step === 4 && <fieldset disabled={busy}><legend><BriefcaseBusiness /><span><b>04</b> Education & previous employment</span></legend><div className="zhr-grid">
+      {step === 4 && <fieldset disabled={busy}><legend className="zhr-sr-only">Education & previous employment</legend><div className="zhr-section-heading"><span className="zhr-section-icon"><BriefcaseBusiness aria-hidden="true" /></span><div><span>STEP 04</span><h2>Education & previous employment</h2></div></div><div className="zhr-grid">
         <Field label="Highest qualification" required><input required minLength={2} maxLength={120} placeholder="e.g. B.Tech, B.Com, Class 12" value={profile.highestQualification} onChange={e => set("highestQualification", e.target.value)} /></Field>
         <Field label="School / college / institution" required><input required minLength={2} maxLength={180} value={profile.institution} onChange={e => set("institution", e.target.value)} /></Field>
         <Field label="Board / university"><input maxLength={180} value={profile.boardUniversity} onChange={e => set("boardUniversity", e.target.value)} /></Field>
@@ -220,7 +242,7 @@ export function EmployeeJoiningForm() {
       {hasEmployment && <div className="zhr-grid zhr-subgrid"><Field label="Previous company" required><input required minLength={2} maxLength={180} value={employment.company} onChange={e => setEmploymentField("company", e.target.value)} /></Field><Field label="Designation" required><input required minLength={2} maxLength={120} value={employment.designation} onChange={e => setEmploymentField("designation", e.target.value)} /></Field><Field label="Start date" required><input type="date" required value={employment.startDate} onChange={e => setEmploymentField("startDate", e.target.value)} /></Field><Field label="End date" required={!employment.current}><input type="date" required={!employment.current} disabled={employment.current} min={employment.startDate || undefined} value={employment.endDate} onChange={e => setEmploymentField("endDate", e.target.value)} /></Field><Field label="Last monthly salary"><input type="number" min={0} step={1} value={employment.lastMonthlySalary ?? ""} onChange={e => setEmploymentField("lastMonthlySalary", moneyNumber(e.target.value))} /></Field><Field label="Reason for leaving" wide><textarea rows={3} maxLength={500} value={employment.reasonForLeaving} onChange={e => setEmploymentField("reasonForLeaving", e.target.value)} /></Field><label className="zhr-check zhr-field--wide"><input type="checkbox" checked={employment.current} onChange={e => setEmployment(current => ({ ...current, current: e.target.checked, endDate: e.target.checked ? "" : current.endDate }))} /><span>I currently work here</span></label></div>}
       </fieldset>}
 
-      {step === 5 && <fieldset disabled={busy}><legend><FileText /><span><b>05</b> Documents & declaration</span></legend><p className="zhr-section-copy">Required documents are marked below. PDF, JPG or PNG up to 5 MB each.</p><div className="zhr-upload-grid">{documentMeta.map(item => { const file = files[item.kind]; return <label className={`zhr-upload${file ? " has-file" : ""}`} key={item.kind}><input type="file" accept={item.imageOnly ? ".jpg,.jpeg,.png,image/jpeg,image/png" : ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"} onChange={event => chooseFile(item.kind, event.target.files?.[0], item.imageOnly)} /><span className="zhr-upload-icon">{file ? <CheckCircle2 /> : <Upload />}</span><span><strong>{item.title}{item.required && <b> *</b>}</strong><small>{file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB` : item.copy}</small></span>{file && <button type="button" aria-label={`Remove ${item.title}`} onClick={event => { event.preventDefault(); chooseFile(item.kind); }}><X /></button>}</label>; })}</div>
+      {step === 5 && <fieldset disabled={busy}><legend className="zhr-sr-only">Documents & declaration</legend><div className="zhr-section-heading"><span className="zhr-section-icon"><FileText aria-hidden="true" /></span><div><span>STEP 05</span><h2>Documents & declaration</h2></div></div><p className="zhr-section-copy">Required documents are marked below. PDF, JPG or PNG up to 5 MB each.</p><div className="zhr-upload-grid">{documentMeta.map(item => { const file = files[item.kind]; return <label className={`zhr-upload${file ? " has-file" : ""}`} key={item.kind}><input type="file" accept={item.imageOnly ? ".jpg,.jpeg,.png,image/jpeg,image/png" : ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"} onChange={event => chooseFile(item.kind, event.target.files?.[0], item.imageOnly)} /><span className="zhr-upload-icon">{file ? <CheckCircle2 /> : <Upload />}</span><span><strong>{item.title}{item.required && <b> *</b>}</strong><small>{file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB` : item.copy}</small></span>{file && <button type="button" aria-label={`Remove ${item.title}`} onClick={event => { event.preventDefault(); chooseFile(item.kind); }}><X /></button>}</label>; })}</div>
       <label className="zhr-check zhr-declaration"><input type="checkbox" required checked={profile.consent} onChange={e => set("consent", e.target.checked)} /><span><strong>I confirm these details and documents are accurate.</strong><small>I authorize Zobhungr Solutions Private Limited to securely store, review and verify this information for employment onboarding, payroll, statutory compliance and related HR administration.</small></span></label>
       {progress && <div className="zhr-submit-progress" role="status"><LoaderCircle className="zhr-spin" />{progress}</div>}
       </fieldset>}
