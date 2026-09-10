@@ -73,7 +73,6 @@ export async function uploadCareerResume(id: string, uploadToken: string | undef
     resumeFileName: file.fileName, resumeMimeType: file.mimeType, resumeSize: file.data.length, resumeData: null, resumeSha256: file.hash,
     resumeStoragePublicId: asset.publicId, resumeStorageResourceType: asset.resourceType, resumeStorageDeliveryType: asset.deliveryType,
     resumeStorageFormat: asset.format, resumeStorageVersion: asset.version, resumeStorageAssetId: asset.assetId,
-    resumeUploadTokenHash: null, resumeUploadExpiresAt: null,
   } });
   if (changed.count !== 1) {
     const saved = await prisma.careerApplication.findUnique({ where: { id }, select: { resumeSha256: true } });

@@ -30,8 +30,8 @@ async function request(path, { method = 'GET', body, cookie, raw, csrf = true, h
   return { ...result, body: await response.json() };
 }
 async function submitPartner(suffix) {
-  const response = await request('/partner-applications', { method: 'POST', body: partner(suffix) });
-  assert.equal(response.status, 201);
+  const response = await request('/partner-applications', { method: 'POST', body: { requestKey: randomUUID(), ...partner(suffix) } });
+  assert.equal(response.status, 201, JSON.stringify(response.body));
   return response.body.data.id;
 }
 async function readPartner(id) { return (await request(`/admin/partners/${id}`, { cookie: cookieFor(admin) })).body.data; }
@@ -184,7 +184,9 @@ test('partner approval, first-login enforcement and HR career intake', async t =
       assert.equal((await upload(Buffer.from('%PDF-1.7\ndifferent content\n%%EOF\n'))).status, 409);
       const row = await prisma.careerApplication.findUnique({ where: { id: careerReceipt.id } });
       assert.equal(row.resumeUploadTokenHash, createHash('sha256').update(careerReceipt.resumeUploadToken).digest('hex'));
-      assert.deepEqual(Buffer.from(row.resumeData), pdf);
+      assert.equal(row.resumeData, null);
+      assert.ok(row.resumeStoragePublicId);
+      assert.equal(row.resumeSha256, createHash('sha256').update(pdf).digest('hex'));
     });
     await t.test('only HR/admin can read profiles and download CVs; review, filtering and history persist', async () => {
       const path = `/admin/careers/${careerReceipt.id}`;
