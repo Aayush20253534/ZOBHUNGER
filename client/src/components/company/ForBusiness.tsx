@@ -6,7 +6,6 @@ import {
   Building2,
   ClipboardCheck,
   LogIn,
-  Handshake,
   Megaphone,
   MonitorSmartphone,
   Store,
