@@ -433,3 +433,174 @@
     box-shadow: none;
   }
 }
+
+/* Digital-product example: use the wide desktop canvas efficiently so the
+   visual, delivery steps and review outcome read as one complete section. */
+@media (min-width: 960px) {
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action {
+    margin-top: clamp(1.85rem, 2.6vw, 2.5rem);
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    > .zb-section-heading {
+    margin-bottom: 1rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    > .zb-section-heading
+    h2 {
+    font-size: clamp(1.8rem, 2.45vw, 2.3rem);
+    line-height: 1.12;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    > .zb-section-heading
+    p {
+    margin-top: 0.55rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story {
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+    gap: clamp(1.25rem, 2vw, 2rem);
+    padding: clamp(1rem, 1.6vw, 1.35rem);
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-scene
+    figcaption {
+    padding: 0.65rem 0.85rem;
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-copy {
+    gap: 0.8rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-copy
+    .zb-eyebrow {
+    margin-bottom: 0.35rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-copy
+    h3 {
+    max-width: 24ch;
+    font-size: clamp(1.65rem, 2vw, 2rem);
+    line-height: 1.12;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-copy
+    header
+    > p {
+    margin-top: 0.55rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-actions {
+    gap: 0.65rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-actions
+    > li {
+    grid-template-columns: 1.8rem minmax(0, 1fr);
+    gap: 0.65rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-actions
+    > li
+    > span {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-actions
+    > li:not(:last-child)::after {
+    top: 2rem;
+    bottom: -0.5rem;
+    left: 0.9rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-actions
+    h4,
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-outcome
+    h4 {
+    font-size: 0.9rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-actions
+    p,
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-outcome
+    p {
+    margin-top: 0.18rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-outcome {
+    gap: 0.65rem;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-footer {
+    margin-top: 0.65rem;
+  }
+}
+
+@media (min-width: 960px) and (max-height: 800px) {
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story {
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    padding: 0.9rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-copy {
+    gap: 0.65rem;
+  }
+
+  .zb-solutions[data-solution="website-application-development"]
+    #solution-in-action
+    .zb-execution-story-actions {
+    gap: 0.5rem;
+  }
+}
