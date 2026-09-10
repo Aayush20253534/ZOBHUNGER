@@ -14,7 +14,9 @@ export function workerDestination(value: unknown) {
   if (/^\/worker\/jobs\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,179}(?:\/apply)?$/.test(value)) return value;
   if (/^\/worker\/(applications|assignments|earnings)\/[a-zA-Z0-9_-]{1,64}$/.test(value)) return value;
   if (/^\/jobs\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,179}$/.test(value)) return `/worker${value}`;
-  return "/worker";
+  // An invalid destination should return the worker to the profile flow,
+  // where the account can continue onboarding without exposing a redirect.
+  return "/worker/profile";
 }
 const next = z.string().max(240).optional().transform(workerDestination);
 export const workerClosedRegisterSchema = z.object({
