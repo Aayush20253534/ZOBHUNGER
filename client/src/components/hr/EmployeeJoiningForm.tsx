@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
   ArrowLeft, ArrowRight, BadgeCheck, Banknote, BriefcaseBusiness, Building2, CheckCircle2,
@@ -167,8 +166,9 @@ export function EmployeeJoiningForm() {
   return <div className="zhr-shell">
     <header className="zhr-header">
       <div className="zhr-brand">
-        <div className="zhr-logo">
-          <Image src="/Logo/ZOBHUNGER-wordmark.png" alt="ZOBHUNGER — Hire. Deploy. Deliver." width={252} height={88} priority />
+        <div className="zhr-wordmark" aria-label="ZOBHUNGER — Hire. Deploy. Deliver.">
+          <div className="zhr-wordmark-name" aria-hidden="true"><span>ZOB</span><b>HUNGER</b></div>
+          <div className="zhr-wordmark-tagline" aria-hidden="true">Hire. Deploy. Deliver.</div>
         </div>
         <span className="zhr-brand-divider" aria-hidden="true" />
         <span className="zhr-brand-context">Secure employee onboarding</span>
@@ -176,12 +176,11 @@ export function EmployeeJoiningForm() {
       <div className="zhr-secure"><LockKeyhole aria-hidden="true" /><div><strong>Private HR form</strong><span>Not listed on the public website</span></div></div>
     </header>
 
-    <section className="zhr-intro">
-      <div className="zhr-intro-copy"><p className="zhr-kicker">EMPLOYEE JOINING · ZOBHUNGER HR</p><h1>One smooth joining form.<br />Everything HR needs.</h1><p>Complete your personal, bank, statutory and employment details, attach the required documents, and receive your employee number after successful submission.</p></div>
-      <div className="zhr-intro-card" aria-label="Joining workflow">
-        <span><UserRound /><b>Fill details</b></span><i />
-        <span><FileCheck2 /><b>Attach documents</b></span><i />
-        <span><BadgeCheck /><b>Get employee ID</b></span>
+    <section className="zhr-intro" aria-labelledby="joining-form-title">
+      <div className="zhr-intro-copy">
+        <p className="zhr-kicker">EMPLOYEE JOINING · ZOBHUNGER HR</p>
+        <h1 id="joining-form-title">Complete your joining details.</h1>
+        <p>Fill the five short sections below. Your employee ID is generated after successful submission.</p>
       </div>
     </section>
 
