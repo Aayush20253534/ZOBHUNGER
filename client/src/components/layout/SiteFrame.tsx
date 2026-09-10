@@ -7,6 +7,9 @@ import { Navbar } from "./Navbar";
 
 export function SiteFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  if (pathname === "/admin/security") {
+    return <main className="zb-admin-security-root">{children}</main>;
+  }
   if (pathname === "/employee-joining" || pathname.startsWith("/employee-joining/")) {
     return <main className="zb-employee-joining-root">{children}</main>;
   }
