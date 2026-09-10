@@ -17,6 +17,14 @@ export function workerDestination(value: unknown) {
   return "/worker";
 }
 const next = z.string().max(240).optional().transform(workerDestination);
+export const workerClosedRegisterSchema = z.object({
+  fullName: z.string().trim().min(2).max(120),
+  email,
+  phone: workerPhone,
+  password: passwordSchema,
+  consent: z.literal(true, "Please confirm your worker profile submission"),
+  next,
+}).strict();
 export const workerLoginSchema = z.object({ email, password: z.string().min(1).max(128) }).strict();
 export const workerEmailSchema = z.object({ email, next }).strict();
 export const workerTokenSchema = z.object({ token: z.string().regex(/^[a-f0-9]{64}$/, "This link is invalid. Request a new email.") }).strict();

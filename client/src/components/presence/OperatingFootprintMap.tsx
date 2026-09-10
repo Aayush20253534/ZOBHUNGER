@@ -93,11 +93,9 @@ const markers = mappedLocations.map((location) => ({
 // Reuse the same labels in the readable phone key below the SVG.
 export const footprintLocations = markers.map(({ name, detail }) => ({ name, detail }));
 
-const headquarters = markers.find((marker) => marker.tone === "hq");
-
-if (!headquarters) {
+const headquarters = markers.find((marker) => marker.tone === "hq") ?? (() => {
   throw new Error("Operating footprint requires a mapped headquarters location.");
-}
+})();
 
 const branchNames = markers
   .filter((marker) => marker.tone !== "hq")
