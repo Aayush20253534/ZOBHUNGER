@@ -195,7 +195,9 @@ test('partner approval, first-login enforcement and HR career intake', async t =
       assert.equal((await request(`${path}/resume`, { cookie: permanentCookie })).status, 403);
       const downloaded = await request(`${path}/resume`, { cookie: cookieFor(admin) });
       assert.equal(downloaded.status, 200); assert.deepEqual(downloaded.bytes, pdf);
-      assert.equal(downloaded.headers.get('cache-control'), 'no-store');
+      const cacheControl = downloaded.headers.get('cache-control') ?? '';
+      assert.match(cacheControl, /\bprivate\b/);
+      assert.match(cacheControl, /\bno-store\b/);
       assert.match(downloaded.headers.get('content-disposition'), /^attachment;/);
       const detail = (await request(path, { cookie: cookieFor(admin) })).body.data;
       assert.equal('resumeData' in detail, false); assert.equal('resumeUploadTokenHash' in detail, false);
