@@ -21,6 +21,7 @@ import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
+import { PublicVisualStory } from "@/components/common/PublicVisualStory";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import {
   candidateProfileFactors,
@@ -97,6 +98,17 @@ export function PlacementCellPartnership() {
       <p className="zb-placement-tagline">
         Connect Your Students With Jobs, Internships, Freelance Work and Career Opportunities.
       </p>
+
+      <PublicVisualStory
+        eyebrow="Experience beyond the classroom"
+        title="Show students what practical work can look like."
+        description="Institution partnerships can connect candidates with customer-facing, retail and operational experiences alongside conventional job opportunities."
+        items={[
+          { visual: "field-executives", title: "Customer-facing experience", description: "Sales and field assignments can help candidates build communication, discipline and market exposure." },
+          { visual: "product-demonstration", title: "Retail & promoter experience", description: "Structured in-store work gives candidates practical exposure to products, customers and brand representation." },
+          { visual: "operations-coordination", title: "Operations exposure", description: "Coordination-led work can help candidates understand reporting, follow-up and day-to-day execution." },
+        ]}
+      />
 
       <section className="zb-placement-section" aria-labelledby="placement-process-title">
         <SectionHeading

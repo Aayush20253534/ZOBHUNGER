@@ -4,6 +4,7 @@ import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { IntroPanel } from "@/components/common/IntroPanel";
 import { PageShell } from "@/components/common/PageShell";
+import { PublicVisualStory } from "@/components/common/PublicVisualStory";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { IndustryCard } from "@/components/industries/IndustryCard";
 import { Card } from "@/components/ui/card";
@@ -55,6 +56,18 @@ export function IndustriesOverview() {
           ]}
         />
       </div>
+
+      <PublicVisualStory
+        eyebrow="Across markets"
+        title="Different sectors. Different execution realities."
+        description="The service changes with the environment: a retail audit, seller onboarding programme and delivery operation each need a different field rhythm."
+        items={[
+          { visual: "audit", title: "Retail & consumer markets", description: "Outlet visits, availability checks and field evidence help teams understand what is happening where customers buy.", href: "/industries/retail", linkLabel: "Explore retail" },
+          { visual: "seller-onboarding", title: "E-commerce & digital commerce", description: "Onboarding support helps merchants move from interest to registration and listing readiness.", href: "/industries/e-commerce", linkLabel: "Explore e-commerce" },
+          { visual: "last-mile-delivery", title: "Logistics & mobility", description: "Operational teams support handovers, local coverage and the coordination needed for distributed delivery work.", href: "/industries/logistics", linkLabel: "Explore logistics" },
+        ]}
+      />
+
       <section
         id="industry-catalogue"
         className="zb-industry-section"

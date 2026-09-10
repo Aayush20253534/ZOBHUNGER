@@ -12,6 +12,7 @@ import {
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { SectionHeading } from "@/components/common/SectionHeading";
+import { WorkplacePhoto } from "@/components/common/WorkplacePhoto";
 
 import { company } from "@/data/company";
 import {
@@ -176,6 +177,10 @@ export function About() {
             <li>Business operations</li>
           </ul>
         </div>
+      </section>
+
+      <section className="zb-company-section" aria-label="ZOBHUNGER workforce in context">
+        <WorkplacePhoto />
       </section>
 
       {/* EXECUTION MODEL */}

@@ -17,6 +17,7 @@ import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { BusinessWorkspacePreview } from "./BusinessWorkspacePreview";
 import { PageShell } from "@/components/common/PageShell";
+import { PublicVisualStory } from "@/components/common/PublicVisualStory";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Card } from "@/components/ui/card";
 import {
@@ -69,6 +70,17 @@ export function ForBusiness() {
         </PageShell>
         <BusinessWorkspacePreview />
       </div>
+
+      <PublicVisualStory
+        eyebrow="Execution in view"
+        title="From hiring to field delivery."
+        description="See how workforce, customer-facing teams and coordination come together across a business requirement."
+        items={[
+          { visual: "workforce-hiring", title: "Build the right workforce", description: "Recruitment starts with role fit, screening and joining coordination rather than simply collecting profiles.", href: "/workforce-solutions", linkLabel: "Explore workforce solutions" },
+          { visual: "field-executives", title: "Put teams closer to customers", description: "Deploy field and sales teams for market-facing work where conversations, follow-ups and coverage matter.", href: "/sales-force", linkLabel: "Explore sales force" },
+          { visual: "operations-coordination", title: "Keep execution connected", description: "Coordinate updates, next actions and completion so field work remains visible after deployment.", href: "/business-operations", linkLabel: "Explore business operations" },
+        ]}
+      />
 
       <section className="zb-business-get-started" id="business-get-started" aria-labelledby="business-get-started-title">
         <div className="zb-business-get-started-heading"><div><span className="zb-eyebrow">A clear way to get started</span><h2 id="business-get-started-title">From your first brief to the field.</h2></div><Building2 aria-hidden="true" /></div>

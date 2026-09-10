@@ -1,0 +1,274 @@
+.zb-public-visual-story {
+  --zb-visual-story-gap: clamp(1rem, 2vw, 1.35rem);
+  margin-top: clamp(2.75rem, 5vw, 4.75rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--zb-soft-border);
+  border-radius: clamp(1rem, 2vw, 1.35rem);
+  background:
+    radial-gradient(circle at 100% 0%, rgb(163 33 56 / 8%), transparent 28rem),
+    linear-gradient(180deg, #fff 0%, #fffafb 100%);
+}
+
+.zb-public-visual-story__heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.8rem 2rem;
+  align-items: end;
+  margin-bottom: clamp(1.2rem, 2.5vw, 1.7rem);
+}
+
+.zb-public-visual-story__heading h2 {
+  max-width: 20ch;
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.65rem, 2.8vw, 2.35rem);
+  line-height: 1.14;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.zb-public-visual-story__heading > p {
+  max-width: 42rem;
+  margin: 0;
+  color: var(--zb-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.zb-public-visual-story__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--zb-visual-story-gap);
+}
+
+.zb-public-visual-story__card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--zb-border);
+  border-radius: 0.9rem;
+  background: var(--zb-surface);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgb(36 24 29 / 4%);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.zb-public-visual-story__card:is(a):hover {
+  transform: translateY(-3px);
+  border-color: rgb(163 33 56 / 34%);
+  box-shadow: 0 18px 38px rgb(36 24 29 / 9%);
+}
+
+.zb-public-visual-story__card:is(a):focus-visible {
+  outline: 2px solid var(--zb-action);
+  outline-offset: 4px;
+}
+
+.zb-public-visual-story__image {
+  position: relative;
+  overflow: hidden;
+  background: var(--zb-soft);
+}
+
+.zb-public-visual-story__image .zb-execution-image {
+  aspect-ratio: 16 / 10;
+}
+
+.zb-public-visual-story__image img {
+  transition: transform 300ms ease;
+}
+
+.zb-public-visual-story__card:is(a):hover .zb-public-visual-story__image img {
+  transform: scale(1.025);
+}
+
+.zb-public-visual-story__image::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 44%;
+  pointer-events: none;
+  background: linear-gradient(to top, rgb(31 15 20 / 72%), transparent);
+}
+
+.zb-public-visual-story__number {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid rgb(255 255 255 / 55%);
+  border-radius: 999px;
+  background: rgb(31 15 20 / 72%);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(8px);
+}
+
+.zb-public-visual-story__label {
+  position: absolute;
+  right: 0.85rem;
+  bottom: 0.75rem;
+  left: 0.85rem;
+  z-index: 2;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.zb-public-visual-story__body {
+  display: flex;
+  min-height: 12rem;
+  flex-direction: column;
+  padding: clamp(1rem, 2vw, 1.3rem);
+}
+
+.zb-public-visual-story__body h3 {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+.zb-public-visual-story__body p {
+  margin: 0.65rem 0 0;
+  color: var(--zb-muted);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.zb-public-visual-story__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  color: var(--zb-action);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.zb-public-visual-story__link svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.zb-about-workplace-photo {
+  position: relative;
+  min-height: 18rem;
+  overflow: hidden;
+  border-radius: var(--zb-radius);
+  background: var(--zb-soft);
+  box-shadow: 0 14px 34px rgb(36 24 29 / 8%);
+}
+
+.zb-about-workplace-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 18rem;
+  object-fit: cover;
+  object-position: center;
+}
+
+.zb-about-workplace-photo::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 42%;
+  background: linear-gradient(to top, rgb(31 15 20 / 80%), transparent);
+}
+
+.zb-about-workplace-photo__caption {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #fff;
+}
+
+.zb-about-workplace-photo__caption strong {
+  max-width: 24ch;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.zb-about-workplace-photo__caption span {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 999px;
+  background: rgb(31 15 20 / 55%);
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+@media (min-width: 700px) {
+  .zb-public-visual-story__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zb-public-visual-story__card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .zb-public-visual-story__card:last-child:nth-child(odd) {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+
+  .zb-public-visual-story__card:last-child:nth-child(odd) .zb-public-visual-story__image .zb-execution-image {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+}
+
+@media (min-width: 980px) {
+  .zb-public-visual-story__heading {
+    grid-template-columns: minmax(0, 0.92fr) minmax(20rem, 0.68fr);
+  }
+
+  .zb-public-visual-story__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .zb-public-visual-story__card:last-child:nth-child(odd) {
+    grid-column: auto;
+    display: block;
+  }
+
+  .zb-public-visual-story__card:last-child:nth-child(odd) .zb-public-visual-story__image .zb-execution-image {
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+@media (max-width: 520px) {
+  .zb-public-visual-story {
+    margin-inline: -0.25rem;
+    padding: 1rem;
+  }
+
+  .zb-public-visual-story__body {
+    min-height: 0;
+  }
+
+  .zb-about-workplace-photo__caption {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

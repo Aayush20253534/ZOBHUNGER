@@ -15,6 +15,7 @@ import { PartnerApplicationForm } from "@/components/partners/PartnerApplication
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { SectionHeading } from "@/components/common/SectionHeading";
+import { PublicVisualStory } from "@/components/common/PublicVisualStory";
 import {
   partnerContributions,
   partnerEarningModels,
@@ -76,6 +77,17 @@ export function PartnerProgramPage() {
           </div>
         </aside>
       </section>
+
+      <PublicVisualStory
+        eyebrow="Where partnership meets execution"
+        title="Bring the opportunity. Connect it to delivery."
+        description="Partnership becomes useful when expertise and market access can connect with teams capable of executing the work."
+        items={[
+          { visual: "workforce-hiring", title: "Workforce requirements", description: "Bring relevant business opportunities while ZOBHUNGER supports screening, coordination and workforce readiness.", href: "/workforce-solutions", linkLabel: "See workforce capability" },
+          { visual: "brand-deployment", title: "Market activation", description: "Partner knowledge can help shape campaigns while field teams support deployment and customer engagement.", href: "/brand-activation", linkLabel: "See activation capability" },
+          { visual: "operations-coordination", title: "Project execution", description: "Coordinate requirements and execution updates through an operating model built around real project delivery.", href: "/business-operations", linkLabel: "See operations capability" },
+        ]}
+      />
 
       <section className="zb-partner-section zb-partner-not-job" aria-labelledby="partner-not-job-title">
         <div>

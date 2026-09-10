@@ -15,6 +15,7 @@ import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
+import { PublicVisualStory } from "@/components/common/PublicVisualStory";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Card } from "@/components/ui/card";
 import { workerCategories } from "@/data/workers";
@@ -101,6 +102,17 @@ export function ForWorkers() {
           </ActionLink>
         </aside>
       </div>
+
+      <PublicVisualStory
+        eyebrow="Work in the real world"
+        title="Roles built around practical, on-ground work."
+        description="Explore the kinds of assignments that can place people in stores, markets, customer conversations and delivery operations."
+        items={[
+          { visual: "field-executives", title: "Sales & field roles", description: "Customer-facing work that combines communication, local movement and disciplined follow-up.", href: "/jobs", linkLabel: "Browse opportunities" },
+          { visual: "product-demonstration", title: "Promoter & retail roles", description: "In-store work focused on product explanation, customer engagement and a clear brand experience.", href: "/jobs", linkLabel: "Explore open roles" },
+          { visual: "last-mile-delivery", title: "Operations & delivery support", description: "Execution roles where handovers, timing and coordination keep day-to-day operations moving.", href: "/jobs", linkLabel: "View all jobs" },
+        ]}
+      />
 
       <section
         className="zb-work-section"
