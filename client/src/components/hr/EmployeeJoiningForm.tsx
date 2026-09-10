@@ -144,13 +144,23 @@ export function EmployeeJoiningForm() {
 
   return <div className="zhr-shell">
     <header className="zhr-header">
-      <div className="zhr-brand"><Image src="/Logo/Logo.png" alt="ZOBHUNGER" width={196} height={70} priority /><span>Secure employee onboarding</span></div>
+      <div className="zhr-brand">
+        <div className="zhr-logo">
+          <Image src="/Logo/ZOBHUNGER-wordmark.png" alt="ZOBHUNGER — Hire. Deploy. Deliver." width={252} height={88} priority />
+        </div>
+        <span className="zhr-brand-divider" aria-hidden="true" />
+        <span className="zhr-brand-context">Secure employee onboarding</span>
+      </div>
       <div className="zhr-secure"><LockKeyhole aria-hidden="true" /><div><strong>Private HR form</strong><span>Not listed on the public website</span></div></div>
     </header>
 
     <section className="zhr-intro">
-      <div><p className="zhr-kicker">EMPLOYEE JOINING · ZOBHUNGER HR</p><h1>One smooth joining form.<br />Everything HR needs.</h1><p>Complete your personal, bank, statutory and employment details, then attach the required documents. Your unique employee number is generated automatically after successful submission.</p></div>
-      <div className="zhr-intro-card" aria-label="Joining workflow"><span><UserRound />Fill details</span><i /><span><FileCheck2 />Attach documents</span><i /><span><BadgeCheck />Get employee ID</span></div>
+      <div className="zhr-intro-copy"><p className="zhr-kicker">EMPLOYEE JOINING · ZOBHUNGER HR</p><h1>One smooth joining form.<br />Everything HR needs.</h1><p>Complete your personal, bank, statutory and employment details, attach the required documents, and receive your employee number after successful submission.</p></div>
+      <div className="zhr-intro-card" aria-label="Joining workflow">
+        <span><UserRound /><b>Fill details</b></span><i />
+        <span><FileCheck2 /><b>Attach documents</b></span><i />
+        <span><BadgeCheck /><b>Get employee ID</b></span>
+      </div>
     </section>
 
     <div className="zhr-progress" aria-label={`Step ${step} of ${steps.length}`}>
