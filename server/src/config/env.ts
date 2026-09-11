@@ -88,6 +88,15 @@ if (!parsedEnv.success) {
   throw new Error(`Invalid environment configuration:\n${errors}`);
 }
 
+// Zod's safeParse data is typed as optional by the generated declaration used in
+// this project. Keep one explicitly narrowed value after the error branch so
+// strict TypeScript builds never have to dereference a possibly undefined data
+// property repeatedly.
+const parsedData = parsedEnv.data;
+if (!parsedData) {
+  throw new Error("Invalid environment configuration: parsed environment data is unavailable");
+}
+
 function parseClientOrigins(value: string) {
   const origins = value.split(",").map(item => item.trim()).filter(Boolean);
   if (!origins.length) throw new Error("CLIENT_ORIGIN must contain at least one frontend origin");
@@ -103,13 +112,13 @@ function parseClientOrigins(value: string) {
 
 let clientOrigins: string[];
 try {
-  clientOrigins = [...new Set(parseClientOrigins(parsedEnv.data.CLIENT_ORIGIN))];
+  clientOrigins = [...new Set(parseClientOrigins(parsedData.CLIENT_ORIGIN))];
 } catch (error) {
   throw new Error(`Invalid environment configuration:\nCLIENT_ORIGIN: ${error instanceof Error ? error.message : "invalid origins"}`);
 }
 
 function productionProblems() {
-  if (parsedEnv.data.NODE_ENV !== "production") return [] as string[];
+  if (parsedData.NODE_ENV !== "production") return [] as string[];
   const problems: string[] = [];
   const loopback = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
@@ -118,30 +127,30 @@ function productionProblems() {
     if (url.protocol !== "https:" || loopback.has(url.hostname)) problems.push(`CLIENT_ORIGIN must use a public HTTPS origin in production: ${origin}`);
   }
 
-  if (!parsedEnv.data.PUBLIC_APP_URL) {
+  if (!parsedData.PUBLIC_APP_URL) {
     problems.push("PUBLIC_APP_URL is required in production");
   } else {
-    const publicUrl = new URL(parsedEnv.data.PUBLIC_APP_URL);
+    const publicUrl = new URL(parsedData.PUBLIC_APP_URL);
     if (publicUrl.protocol !== "https:" || loopback.has(publicUrl.hostname)) problems.push("PUBLIC_APP_URL must use a public HTTPS origin in production");
     if (!clientOrigins.includes(publicUrl.origin)) problems.push("PUBLIC_APP_URL must also be present in CLIENT_ORIGIN");
   }
 
-  if (parsedEnv.data.JWT_SECRET === "replace-with-at-least-32-random-characters") problems.push("JWT_SECRET still uses the example placeholder");
-  if (!parsedEnv.data.MFA_ENCRYPTION_KEY) problems.push("MFA_ENCRYPTION_KEY is required in production");
-  if (!parsedEnv.data.HR_PII_ENCRYPTION_KEY) problems.push("HR_PII_ENCRYPTION_KEY is required in production");
-  if (parsedEnv.data.HR_PII_ENCRYPTION_KEY === "replace-with-a-long-random-secret-at-least-32-characters") problems.push("HR_PII_ENCRYPTION_KEY still uses the example placeholder");
-  if (parsedEnv.data.MFA_ENCRYPTION_KEY && parsedEnv.data.MFA_ENCRYPTION_KEY === parsedEnv.data.JWT_SECRET) problems.push("MFA_ENCRYPTION_KEY must be distinct from JWT_SECRET in production");
-  if (parsedEnv.data.HR_PII_ENCRYPTION_KEY && parsedEnv.data.HR_PII_ENCRYPTION_KEY === parsedEnv.data.JWT_SECRET) problems.push("HR_PII_ENCRYPTION_KEY must be distinct from JWT_SECRET in production");
+  if (parsedData.JWT_SECRET === "replace-with-at-least-32-random-characters") problems.push("JWT_SECRET still uses the example placeholder");
+  if (!parsedData.MFA_ENCRYPTION_KEY) problems.push("MFA_ENCRYPTION_KEY is required in production");
+  if (!parsedData.HR_PII_ENCRYPTION_KEY) problems.push("HR_PII_ENCRYPTION_KEY is required in production");
+  if (parsedData.HR_PII_ENCRYPTION_KEY === "replace-with-a-long-random-secret-at-least-32-characters") problems.push("HR_PII_ENCRYPTION_KEY still uses the example placeholder");
+  if (parsedData.MFA_ENCRYPTION_KEY && parsedData.MFA_ENCRYPTION_KEY === parsedData.JWT_SECRET) problems.push("MFA_ENCRYPTION_KEY must be distinct from JWT_SECRET in production");
+  if (parsedData.HR_PII_ENCRYPTION_KEY && parsedData.HR_PII_ENCRYPTION_KEY === parsedData.JWT_SECRET) problems.push("HR_PII_ENCRYPTION_KEY must be distinct from JWT_SECRET in production");
 
-  if (!parsedEnv.data.RESEND_API_KEY) problems.push("RESEND_API_KEY is required in production");
-  if (!parsedEnv.data.MAIL_FROM_EMAIL) problems.push("MAIL_FROM_EMAIL is required in production");
-  if (!parsedEnv.data.SALES_TEAM_EMAIL) problems.push("SALES_TEAM_EMAIL is required in production");
+  if (!parsedData.RESEND_API_KEY) problems.push("RESEND_API_KEY is required in production");
+  if (!parsedData.MAIL_FROM_EMAIL) problems.push("MAIL_FROM_EMAIL is required in production");
+  if (!parsedData.SALES_TEAM_EMAIL) problems.push("SALES_TEAM_EMAIL is required in production");
 
-  if (!parsedEnv.data.CLOUDINARY_CLOUD_NAME) problems.push("CLOUDINARY_CLOUD_NAME is required in production");
-  if (!parsedEnv.data.CLOUDINARY_API_KEY) problems.push("CLOUDINARY_API_KEY is required in production");
-  if (!parsedEnv.data.CLOUDINARY_API_SECRET) problems.push("CLOUDINARY_API_SECRET is required in production");
+  if (!parsedData.CLOUDINARY_CLOUD_NAME) problems.push("CLOUDINARY_CLOUD_NAME is required in production");
+  if (!parsedData.CLOUDINARY_API_KEY) problems.push("CLOUDINARY_API_KEY is required in production");
+  if (!parsedData.CLOUDINARY_API_SECRET) problems.push("CLOUDINARY_API_SECRET is required in production");
 
-  if (parsedEnv.data.REDIS_ENABLED && !parsedEnv.data.REDIS_URL) problems.push("REDIS_URL is required when REDIS_ENABLED=true in production");
+  if (parsedData.REDIS_ENABLED && !parsedData.REDIS_URL) problems.push("REDIS_URL is required when REDIS_ENABLED=true in production");
   return problems;
 }
 
@@ -150,5 +159,5 @@ if (problems.length) {
   throw new Error(`Invalid production environment configuration:\n${problems.map(problem => `- ${problem}`).join("\n")}`);
 }
 
-export const env = parsedEnv.data;
+export const env = parsedData;
 export const configuredClientOrigins = clientOrigins;

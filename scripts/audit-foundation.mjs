@@ -1,8 +1,11 @@
 import { readdir, readFile } from "node:fs/promises";
-import { join, relative } from "node:path";
+import { basename, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = new URL("../", import.meta.url);
-const rootPath = root.pathname;
+// URL.pathname produces values such as /C:/Users/... on Windows. Feeding that
+// string into node:path.join duplicates the drive prefix (C:\\C:\\...), so
+// convert the file URL with Node's platform-aware helper instead.
+const rootPath = fileURLToPath(new URL("../", import.meta.url));
 
 async function walk(directory, predicate) {
   const output = [];
@@ -25,7 +28,7 @@ function requireIncludes(source, values, label) {
   if (missing.length) throw new Error(`${label} is missing: ${missing.join(", ")}`);
 }
 
-const clientPages = (await walk(join(rootPath, "client/src/app"), file => file.endsWith("/page.tsx"))).map(appRoute).sort();
+const clientPages = (await walk(join(rootPath, "client/src/app"), file => basename(file) === "page.tsx")).map(appRoute).sort();
 const serverRouteFiles = await walk(join(rootPath, "server/src"), file => file.endsWith(".routes.ts"));
 const migrations = (await readdir(join(rootPath, "server/prisma/migrations"), { withFileTypes: true })).filter(entry => entry.isDirectory()).map(entry => entry.name).sort();
 const routeIndex = await readFile(join(rootPath, "server/src/routes/index.ts"), "utf8");
