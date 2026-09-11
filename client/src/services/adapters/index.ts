@@ -5,9 +5,11 @@ import type { SiteDataAdapter } from "@/types/data.types";
 const mockAdapter = createMockAdapter();
 
 export function getDataMode(): "mock" | "api" {
-  const mode = process.env.NEXT_PUBLIC_DATA_MODE ?? "mock";
+  const mode = process.env.NEXT_PUBLIC_DATA_MODE ?? (process.env.NODE_ENV === "production" ? "api" : "mock");
   if (mode !== "mock" && mode !== "api")
     throw new Error("NEXT_PUBLIC_DATA_MODE must be 'mock' or 'api'.");
+  if (process.env.NODE_ENV === "production" && mode !== "api")
+    throw new Error("Mock data mode is disabled in production.");
   return mode;
 }
 

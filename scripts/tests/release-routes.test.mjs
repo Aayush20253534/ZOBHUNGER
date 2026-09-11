@@ -5,7 +5,8 @@ import { checkRelease, pages, protectedRoutes, siteOrigin } from "../release-rou
 const revision = "a".repeat(40);
 function response(path) {
   if (path === "/api/release") return Response.json({ service: "zobhunger-web", phase2ReleaseChecks: true, revision });
-  if (path === "/api/backend/health") return Response.json({ success: true, data: { service: "zobhunger-api", revision, features: Object.fromEntries(["businessPortal", "businessDashboard", "businessRequirements", "businessCandidates", "businessDeployments", "businessAttendance", "businessPhase2Complete"].map(key => [key, true])) } });
+  if (path === "/api/backend/health/ready") return Response.json({ status: "ready", service: "zobhunger-api", revision, checks: { database: true, privateFileStorage: true, email: true, publicApp: true, cache: "ready" } });
+  if (path === "/api/backend/health") return Response.json({ success: true, data: { service: "zobhunger-api", revision, features: Object.fromEntries(["businessPortal", "businessDashboard", "businessRequirements", "businessCandidates", "businessDeployments", "businessAttendance", "businessPhase2Complete", "productionFoundation"].map(key => [key, true])) } });
   if (path.startsWith("/api/backend/")) return Response.json({ success: false, error: { code: "UNAUTHENTICATED" } }, { status: 401 });
   return new Response('<html><head><meta name="robots" content="noindex, nofollow"></head><body>ZOBHUNGER</body></html>', { headers: { "Content-Type": "text/html" } });
 }
@@ -19,8 +20,8 @@ test("release checks are read-only and cover every listed route through the fron
     return fetcher(url);
   } });
   assert.equal(report.status, "passed"); assert.equal(report.revisionCheck, "expected_commit_verified");
-  assert.equal(requests.length, pages.length + protectedRoutes.length + 2);
-  assert.ok(report.notVerified.includes("Live email delivery"));
+  assert.equal(requests.length, pages.length + protectedRoutes.length + 3);
+  assert.ok(report.notVerified.includes("Live provider email delivery"));
 });
 test("unknown revisions are never reported as a matched deployment", async () => {
   const missing = async url => {

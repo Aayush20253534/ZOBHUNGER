@@ -10,14 +10,11 @@ import { requirementsRouter } from "../modules/requirements/requirements.routes.
 import { jobsRouter } from "../modules/jobs/jobs.routes.js";
 import { partnersRouter } from "../modules/partners/partners.routes.js";
 import { placementCellsRouter } from "../modules/placement-cells/placement-cells.routes.js";
-import { healthRouter } from "./health.routes.js";
-
 import { careersRouter } from "../modules/careers/careers.routes.js";
 import { employeeJoiningRouter } from "../modules/employee-joining/employee-joining.routes.js";
 
 export const apiRouter = Router();
 
-apiRouter.use("/health", healthRouter);
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/business", businessRouter);
 apiRouter.use("/workers", workersRouter);

@@ -44,6 +44,14 @@ export function stopRedis(): void {
   if (client?.isOpen) client.destroy();
 }
 
+export function redisStatus() {
+  return {
+    enabled: env.REDIS_ENABLED,
+    configured: redisConfigured,
+    ready: client?.isReady ?? false,
+  };
+}
+
 export const redisTransport: CacheTransport = {
   isReady: () => client?.isReady ?? false,
   async command(args) {

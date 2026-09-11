@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
+import { resolveClientRuntimeConfig } from "./config/runtime-env.mjs";
 
 const production = process.env.NODE_ENV === "production";
+const runtimeConfig = resolveClientRuntimeConfig(process.env);
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -35,8 +37,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   async rewrites() {
     // Keep browser authentication first-party even when Express is hosted separately.
-    const api = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1").replace(/\/+$/, "");
-    return [{ source: "/api/backend/:path*", destination: `${api}/:path*` }];
+    return [{ source: "/api/backend/:path*", destination: `${runtimeConfig.apiUrl}/:path*` }];
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

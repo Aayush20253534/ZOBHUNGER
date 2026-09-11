@@ -1,6 +1,8 @@
 // Read-only deployment smoke checks. No credentials, submissions or emails.
 export const pages = [
-  "/for-business", "/become-a-partner", "/vendor-empanelment",
+  "/", "/solutions", "/industries", "/technology", "/for-business", "/for-workers",
+  "/jobs", "/blogs", "/contact", "/careers", "/hire-workforce", "/become-a-partner",
+  "/vendor-empanelment", "/employee-joining", "/login", "/admin", "/worker/login", "/placement-portal",
   "/business/login", "/business/forgot-password", "/business/change-password",
   "/business/dashboard", "/business/requirements", "/business/requirements/new",
   "/business/requirements/drafts", "/business/candidates", "/business/deployments",
@@ -14,7 +16,12 @@ export const protectedRoutes = [
   "/business/reports/export", "/business/reports/print", "/business/operations-summary",
   "/admin/requirement-jobs", "/admin/attendance-approvals", "/admin/reports",
 ];
-const features = ["businessPortal", "businessDashboard", "businessRequirements", "businessCandidates", "businessDeployments", "businessAttendance", "businessPhase2Complete"];
+
+const noIndexPages = new Set([
+  "/employee-joining", "/login", "/admin", "/worker/login", "/placement-portal",
+  ...pages.filter(path => path.startsWith("/business/")),
+]);
+const features = ["businessPortal", "businessDashboard", "businessRequirements", "businessCandidates", "businessDeployments", "businessAttendance", "businessPhase2Complete", "productionFoundation"];
 
 export function siteOrigin(value) {
   let url;
@@ -45,7 +52,11 @@ export async function checkRelease(origin, { fetcher = fetch, expectedRevision }
   }
   const health = await read("/api/backend/health", 200, "application/json");
   if (health.success !== true || health.data?.service !== "zobhunger-api" || features.some(feature => health.data?.features?.[feature] !== true)) {
-    throw new Error("The frontend proxy does not reach an API reporting all Phase 2 modules.");
+    throw new Error("The frontend proxy does not reach the expected production API surface.");
+  }
+  const readiness = await read("/api/backend/health/ready", 200, "application/json");
+  if (readiness.status !== "ready" || readiness.service !== "zobhunger-api" || readiness.checks?.database !== true) {
+    throw new Error("The API readiness probe is not ready. Check database and required production configuration.");
   }
   const frontend = await read("/api/release", 200, "application/json");
   if (frontend.service !== "zobhunger-web" || frontend.phase2ReleaseChecks !== true) throw new Error("The frontend is missing the P2.8 release patch.");
@@ -60,15 +71,15 @@ export async function checkRelease(origin, { fetcher = fetch, expectedRevision }
   for (const path of pages) {
     const html = await read(path, 200, "text/html");
     if (!/<html\b/i.test(html) || !/ZOBHUNGER/i.test(html)) throw new Error(`${path}: expected a ZOBHUNGER page.`);
-    if (path.startsWith("/business/") && !/<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["'][^"']*noindex)[^>]*>/i.test(html)) {
-      throw new Error(`${path}: business pages must carry noindex metadata.`);
+    if (noIndexPages.has(path) && !/<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["'][^"']*noindex)[^>]*>/i.test(html)) {
+      throw new Error(`${path}: private/access pages must carry noindex metadata.`);
     }
   }
   return {
-    scope: "Read-only frontend pages, API proxy, authentication gates and deployment revisions",
+    scope: "Read-only frontend pages, API liveness/readiness, authentication gates and deployment revisions",
     origin: base, status: "passed", checkedAt: new Date().toISOString(),
     revisionCheck: expectedRevision ? "expected_commit_verified" : webRevision && apiRevision ? "services_match" : "not_verified",
     results,
-    notVerified: ["Authenticated production workflows", "Production database migrations and performance", "Real-device layout and print", "Live email delivery"],
+    notVerified: ["Authenticated production workflows", "Database migration currency/performance", "Real-device layout and print", "Live provider email delivery"],
   };
 }

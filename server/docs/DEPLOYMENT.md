@@ -11,7 +11,7 @@ For a Render service whose root directory is `server`:
 | Root Directory | `server` |
 | Build Command | `npm ci --include=dev && npm run deploy` |
 | Start Command | `npm start` |
-| Health Check Path | `/api/v1/health` |
+| Health Check Path | `/api/v1/health/ready` |
 
 If the service root is the repository root instead, use the corresponding `npm --prefix server ...` commands. Do not combine a `server` root directory with another `--prefix server`.
 
@@ -31,7 +31,7 @@ npm start
 
 ## Required backend environment
 
-At minimum configure values equivalent to:
+Production startup now validates the complete operational configuration and fails fast when required values are missing or still use example placeholders. Configure values equivalent to:
 
 ```env
 NODE_ENV=production
@@ -40,13 +40,15 @@ CLIENT_ORIGIN=https://www.example.com
 PUBLIC_APP_URL=https://www.example.com
 DATABASE_URL=postgresql://...
 JWT_SECRET=<long-random-secret>
+MFA_ENCRYPTION_KEY=<different-long-random-secret>
+HR_PII_ENCRYPTION_KEY=<different-stable-long-random-secret>
 AUTH_COOKIE_NAME=zobhunger_access
 AUTH_COOKIE_MAX_AGE_MS=900000
 TRUST_PROXY=true
 LOG_LEVEL=info
 ```
 
-Use `TRUST_PROXY=true` only when Express is actually behind a trusted reverse proxy/load balancer.
+Use `TRUST_PROXY=true` only when Express is actually behind a trusted reverse proxy/load balancer. `PUBLIC_APP_URL` must also be present in the comma-separated `CLIENT_ORIGIN` allow-list. Production browser origins and the canonical app URL must use HTTPS.
 
 ### Redis
 
@@ -58,7 +60,7 @@ REDIS_TTL_SECONDS=60
 REDIS_COMMAND_TIMEOUT_MS=200
 ```
 
-Redis is optional for correctness. If it is unavailable, supported cache paths fall back to PostgreSQL.
+Redis is optional for correctness. If it is unavailable at runtime, supported cache paths fall back to PostgreSQL. When `REDIS_ENABLED=true` in production, a valid `REDIS_URL` must still be configured so an accidental missing cache configuration is not mistaken for a transient outage.
 
 ### Resend
 
@@ -74,7 +76,7 @@ Create the API key in Resend and verify the `MAIL_FROM_EMAIL` domain before prod
 
 ### Private file storage
 
-Production resume/vendor/private-document storage requires the Cloudinary variables documented in `server/.env.example`.
+Production resume/vendor/private-document storage requires the Cloudinary variables documented in `server/.env.example`; the API now refuses to start in production without them.
 
 ## Frontend environment
 
@@ -86,7 +88,7 @@ NEXT_PUBLIC_GOOGLE_PLAY_URL=
 NEXT_PUBLIC_APP_STORE_URL=
 ```
 
-The backend `CLIENT_ORIGIN` must allow the deployed frontend origin exactly. Authentication uses secure browser cookies, so production traffic must use HTTPS.
+The backend `CLIENT_ORIGIN` must allow the deployed frontend origin exactly. Authentication uses secure browser cookies, so production traffic must use HTTPS. Vercel production builds enforce this automatically; on another frontend host set `ZOBHUNGER_STRICT_PRODUCTION_CONFIG=true` in the build environment.
 
 Leave each app-store URL blank until that application is published. Add the final Google Play/App Store URL and rebuild the frontend to activate the corresponding footer badge.
 
@@ -97,6 +99,18 @@ If the frontend reports a missing portal route while older endpoints still work,
 `404` generally indicates the route is missing from the deployed API revision. `401` or `403` indicates the route exists and authorization/session state should be inspected instead. `500` usually requires the backend log and database/migration state to be checked.
 
 ## Pre-release gate
+
+Validate the resolved backend environment before a production start:
+
+```bash
+npm --prefix server run check:env
+```
+
+Validate the frontend build environment as well:
+
+```bash
+npm --prefix client run check:env
+```
 
 From the repository root:
 
@@ -131,7 +145,7 @@ Protected endpoints should normally return authorization responses when called w
 
 Before handing over the production URL, verify:
 
-- `/api/v1/health` is healthy
+- `/api/v1/health` is healthy and `/api/v1/health/ready` returns `ready`
 - the frontend proxy can reach the deployed API
 - PostgreSQL migrations are current
 - Redis does not continuously log connectivity failures when enabled

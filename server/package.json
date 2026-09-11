@@ -34,7 +34,8 @@
     "test:vendors": "npm run build && node --experimental-test-module-mocks --test tests/vendor-empanelment.integration.test.mjs",
     "test:workers": "npm run build && node --experimental-test-module-mocks --test tests/workers.integration.test.mjs",
     "files:migrate:cloudinary": "tsx scripts/migrate-cloudinary-assets.ts",
-    "check:storage": "tsx scripts/check-storage.ts"
+    "check:storage": "tsx scripts/check-storage.ts",
+    "check:env": "tsx scripts/check-env.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

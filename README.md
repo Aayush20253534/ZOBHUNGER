@@ -142,7 +142,14 @@ From the repository root after dependencies are installed:
 npm run verify
 ```
 
-This runs server tests, the server production build, client lint and the client production build.
+The release gate now runs the production-foundation inventory audit and read-only release-check tests first, followed by server tests/build and client lint/build. Production environment contracts are checked separately with:
+
+```bash
+npm --prefix client run check:env
+npm --prefix server run check:env
+```
+
+See `docs/PHASE3_PART1_PRODUCTION_FOUNDATION.md` for the Part 1 production-readiness contract.
 
 Useful focused checks are also available from `server/package.json`, including business, worker, attendance, deployment, candidate, vendor and cache integration suites.
 

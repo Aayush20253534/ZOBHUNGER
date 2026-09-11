@@ -20,7 +20,7 @@ NEXT_PUBLIC_GOOGLE_PLAY_URL=
 NEXT_PUBLIC_APP_STORE_URL=
 ```
 
-`NEXT_PUBLIC_DATA_MODE=mock` remains available for isolated frontend previews. API mode is the intended integrated configuration.
+`NEXT_PUBLIC_DATA_MODE=mock` remains available for isolated local/frontend previews only. Production runtime rejects mock mode. Vercel production builds also reject localhost/non-HTTPS production URLs automatically; other hosts can enable the same strict gate with `ZOBHUNGER_STRICT_PRODUCTION_CONFIG=true`.
 
 ## App-store configuration
 
@@ -70,6 +70,7 @@ Authenticated portal routes live under `/business`, `/worker`, `/placement-porta
 ## Quality checks
 
 ```bash
+npm run check:env
 npm run lint
 npm run build
 ```
