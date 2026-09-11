@@ -1119,3 +1119,475 @@
     grid-column: 2;
   }
 }
+
+/* 2026-09 admin visual refresh: footer-inspired crimson navigation + compact desk intros. */
+:root {
+  --zbo-sidebar: #c91530;
+  --zbo-sidebar-2: #a90e27;
+  --zbo-sidebar-text: #fff8fa;
+  --zbo-sidebar-muted: rgba(255, 238, 242, .72);
+}
+
+/* Sidebar: use the same geometric crimson language as the public footer. */
+.zbo-admin-sidebar {
+  isolation: isolate;
+  color: var(--zbo-sidebar-text);
+  background:
+    radial-gradient(circle at 10% -7%, rgba(255, 255, 255, .19), transparent 17rem),
+    radial-gradient(circle at 105% 105%, rgba(88, 0, 17, .34), transparent 23rem),
+    linear-gradient(150deg, transparent 0 50%, rgba(112, 0, 22, .13) 50% 66%, transparent 66%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, .026) 0 1px, transparent 1px 72px),
+    linear-gradient(155deg, #f42642 0%, #e21d36 43%, #c91530 76%, #a80e27 100%);
+  border-right-color: rgba(112, 0, 22, .35);
+  box-shadow: 1rem 0 2.5rem rgba(83, 0, 17, .09);
+}
+
+.zbo-admin-sidebar::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .86), rgba(255, 218, 224, .9), transparent);
+  box-shadow: 0 1px 14px rgba(255, 255, 255, .15);
+  pointer-events: none;
+}
+
+.zbo-admin-sidebar::after {
+  content: "Z";
+  position: absolute;
+  z-index: 0;
+  right: -3.9rem;
+  bottom: 1.8rem;
+  color: rgba(255, 255, 255, .045);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18rem;
+  font-weight: 900;
+  line-height: .78;
+  letter-spacing: -.12em;
+  transform: rotate(-8deg);
+  pointer-events: none;
+  user-select: none;
+}
+
+.zbo-admin-sidebar > * {
+  position: relative;
+  z-index: 1;
+}
+
+.zbo-admin-sidebar-brand {
+  min-height: 5rem;
+  padding: 1.15rem 1.25rem .95rem;
+  border-bottom-color: rgba(255, 255, 255, .14);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, 0));
+}
+
+.zbo-admin-wordmark strong span {
+  color: #ffd3da;
+}
+
+.zbo-admin-wordmark > span {
+  color: var(--zbo-sidebar-muted);
+}
+
+.zbo-admin-sidebar-scroll {
+  scrollbar-color: rgba(255, 255, 255, .32) transparent;
+}
+
+.zbo-admin-nav-label {
+  color: rgba(255, 238, 242, .62);
+}
+
+.zbo-admin-nav-item,
+.zbo-admin-security-link {
+  color: rgba(255, 248, 250, .88);
+}
+
+.zbo-admin-nav-item:hover,
+.zbo-admin-security-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, .095);
+  border-color: rgba(255, 255, 255, .15);
+}
+
+.zbo-admin-nav-item.is-active,
+.zbo-admin-security-link.is-active {
+  color: #fff;
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, .17), rgba(255, 255, 255, .08)),
+    rgba(111, 0, 21, .12);
+  border-color: rgba(255, 255, 255, .24);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .13),
+    0 .45rem 1.15rem rgba(91, 0, 17, .1);
+}
+
+.zbo-admin-nav-item.is-active::before,
+.zbo-admin-security-link.is-active::before {
+  background: #fff;
+}
+
+.zbo-admin-nav-icon,
+.zbo-admin-security-link > svg {
+  color: rgba(255, 244, 247, .76);
+}
+
+.zbo-admin-nav-item.is-active .zbo-admin-nav-icon,
+.zbo-admin-security-link.is-active > svg {
+  color: #fff;
+}
+
+.zbo-admin-nav-item.is-active .zbo-admin-nav-icon {
+  background: rgba(255, 255, 255, .14);
+}
+
+.zbo-admin-nav-copy small,
+.zbo-admin-security-link small {
+  color: rgba(255, 235, 240, .62);
+}
+
+.zbo-admin-nav-item.is-active .zbo-admin-nav-copy small,
+.zbo-admin-security-link.is-active small {
+  color: rgba(255, 239, 243, .78);
+}
+
+.zbo-admin-sidebar-bottom {
+  border-top-color: rgba(255, 255, 255, .14);
+  background: linear-gradient(0deg, rgba(92, 0, 18, .13), rgba(92, 0, 18, 0));
+}
+
+.zbo-admin-site-link {
+  color: rgba(255, 244, 247, .76);
+}
+
+.zbo-admin-security-status {
+  color: rgba(255, 235, 240, .68);
+}
+
+/* Dashboard intro: preserve the dark operations identity, but stop spending half a screen on a greeting. */
+.zbo-dashboard-hero {
+  align-items: center;
+  gap: 1.15rem;
+  min-height: 8rem;
+  padding: clamp(1.05rem, 2vw, 1.45rem) clamp(1.15rem, 2.4vw, 1.65rem);
+  border-radius: .88rem;
+  box-shadow: 0 .8rem 2rem rgba(22, 24, 30, .1);
+}
+
+.zbo-dashboard-hero .zbo-eyebrow {
+  margin-bottom: .36rem;
+}
+
+.zbo-dashboard-hero h1 {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+.zbo-dashboard-hero p:not(.zbo-eyebrow) {
+  margin-top: .48rem;
+  font-size: .8rem;
+  line-height: 1.48;
+}
+
+.zbo-dashboard-user {
+  margin-top: .58rem;
+  font-size: .66rem;
+}
+
+.zbo-dashboard-hero-actions button,
+.zbo-dashboard-hero-actions a {
+  min-height: 2.35rem;
+  padding: .52rem .76rem;
+  font-size: .72rem;
+}
+
+/* Shared compact intros for every admin desk. Scoping prevents business/worker/public pages from changing. */
+.zbo-admin-content-inner .zb-review-hero {
+  gap: 1rem;
+  min-height: 0;
+  padding: 1rem 1.15rem;
+  border-radius: .82rem;
+}
+
+.zbo-admin-content-inner .zb-review-hero h1 {
+  margin: .34rem 0 .45rem;
+  font-size: clamp(1.42rem, 2.2vw, 1.82rem);
+  line-height: 1.12;
+}
+
+.zbo-admin-content-inner .zb-review-hero p {
+  font-size: .78rem;
+  line-height: 1.48;
+}
+
+.zbo-admin-content-inner .zb-review-hero-art {
+  gap: .42rem;
+}
+
+.zbo-admin-content-inner .zb-review-hero-art span,
+.zbo-admin-content-inner .zb-review-hero-art span:nth-child(2) {
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: .68rem;
+}
+
+.zbo-admin-content-inner .zb-review-hero-art svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.zbo-admin-content-inner .zw .zwf-banner,
+.zbo-admin-content-inner .zwf-banner {
+  align-items: center;
+  gap: .85rem;
+  min-height: 0;
+  margin-bottom: 1rem;
+  padding: .95rem 1.05rem;
+  border-radius: .82rem;
+}
+
+.zbo-admin-content-inner .zw .zwf-banner > .zw-icon,
+.zbo-admin-content-inner .zwf-banner > .zw-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: .7rem;
+}
+
+.zbo-admin-content-inner .zw .zwf-banner > .zw-icon svg,
+.zbo-admin-content-inner .zwf-banner > .zw-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.zbo-admin-content-inner .zw .zwf-banner .zw-heading {
+  gap: .38rem;
+}
+
+.zbo-admin-content-inner .zw .zwf-banner .zw-heading h1,
+.zbo-admin-content-inner .zw .zwf-banner > div > h1 {
+  max-width: 34ch;
+  font-size: clamp(1.4rem, 2.25vw, 1.8rem);
+  line-height: 1.12;
+}
+
+.zbo-admin-content-inner .zw .zwf-banner .zw-heading > p:last-child,
+.zbo-admin-content-inner .zw .zwf-banner > div > p:not(.zw-eyebrow) {
+  font-size: .78rem;
+  line-height: 1.48;
+}
+
+.zbo-admin-content-inner .zb-p2-heading {
+  gap: 1rem;
+  padding: .85rem 0 1rem;
+}
+
+.zbo-admin-content-inner .zb-p2 .zb-p2-heading h1 {
+  margin: .32rem 0 .42rem;
+  font-size: clamp(1.42rem, 2.2vw, 1.82rem);
+  line-height: 1.12;
+}
+
+.zbo-admin-content-inner .zb-p2-heading p:not(.zb-biz-eyebrow) {
+  font-size: .78rem;
+  line-height: 1.48;
+}
+
+.zbo-admin-content-inner .zb-p2-story {
+  gap: .65rem;
+  margin-bottom: 1rem;
+  padding: .85rem 1rem;
+  border-radius: .78rem;
+}
+
+.zbo-admin-content-inner .zb-p2-story span {
+  gap: .55rem;
+  font-size: .7rem;
+}
+
+.zbo-admin-content-inner .zb-p2-story svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: .34rem;
+  border-radius: .48rem;
+}
+
+.zbo-admin-content-inner .zb-att-heading,
+.zbo-admin-content-inner .zb-att-person-heading,
+.zbo-admin-content-inner .zb-deploy-heading {
+  gap: 1rem;
+  min-height: 0;
+  padding: .78rem 0 1rem;
+  margin-top: 0;
+}
+
+.zbo-admin-content-inner .zb-att-heading h1,
+.zbo-admin-content-inner .zb-att-person-heading h1,
+.zbo-admin-content-inner .zb-deploy-heading h1 {
+  margin-block: .3rem .4rem;
+  font-size: clamp(1.42rem, 2.2vw, 1.82rem);
+  line-height: 1.12;
+}
+
+.zbo-admin-content-inner .zb-att-heading p:not(.zb-biz-eyebrow),
+.zbo-admin-content-inner .zb-att-person-heading p:not(.zb-biz-eyebrow),
+.zbo-admin-content-inner .zb-deploy-heading p:not(.zb-biz-eyebrow) {
+  font-size: .78rem;
+  line-height: 1.48;
+}
+
+.zbo-admin-content-inner .zb-att-heading-icon {
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 1.1rem;
+  transform: rotate(-3deg);
+}
+
+.zbo-admin-content-inner .zb-att-heading-icon > svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.zbo-admin-content-inner .zb-att-heading-icon > span {
+  right: -.35rem;
+  bottom: -.35rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-width: 3px;
+  border-radius: .58rem;
+}
+
+.zbo-admin-content-inner .zb-cand-admin {
+  padding-top: .5rem;
+}
+
+.zb-site .zbo-admin-shell .zbo-admin-content-inner .zb-cand-heading {
+  align-items: center;
+  gap: 1rem;
+  margin-block: .35rem 1rem;
+  padding: .95rem 1.05rem;
+  border: 1px solid var(--zbo-border);
+  border-top: 3px solid var(--zbo-red);
+  border-radius: .82rem;
+  background: var(--zbo-surface);
+  box-shadow: 0 .3rem 1.1rem rgba(24, 28, 36, .035);
+}
+
+.zb-site .zbo-admin-shell .zbo-admin-content-inner .zb-cand-heading h1 {
+  margin-block: .28rem .38rem;
+  font-size: clamp(1.42rem, 2.2vw, 1.82rem);
+  line-height: 1.12;
+}
+
+.zb-site .zbo-admin-shell .zbo-admin-content-inner .zb-cand-heading > div > p:last-child {
+  font-size: .78rem;
+  line-height: 1.48;
+}
+
+.zbo-admin-content-inner .zhr-admin-hero,
+.zbo-admin-content-inner .zhr-admin-detail-head {
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1rem 1.15rem;
+  border-radius: .85rem;
+  box-shadow: 0 .45rem 1.35rem rgba(46, 22, 30, .05);
+}
+
+.zbo-admin-content-inner .zhr-admin-hero::after,
+.zbo-admin-content-inner .zhr-admin-detail-head::after {
+  width: 12rem;
+  height: 12rem;
+  right: -5.5rem;
+  top: -7rem;
+  border-width: 1.8rem;
+}
+
+.zbo-admin-content-inner .zhr-admin-kicker {
+  margin-bottom: .35rem;
+  font-size: .65rem;
+}
+
+.zbo-admin-content-inner .zhr-admin-hero h1,
+.zbo-admin-content-inner .zhr-admin-detail-head h1 {
+  font-size: clamp(1.42rem, 2.2vw, 1.86rem);
+  line-height: 1.1;
+}
+
+.zbo-admin-content-inner .zhr-admin-hero > div:first-child > p:last-child,
+.zbo-admin-content-inner .zhr-admin-detail-head > div > p:last-child {
+  margin-top: .45rem;
+  font-size: .78rem;
+  line-height: 1.48;
+}
+
+.zbo-admin-content-inner .zhr-admin-hero-actions button {
+  min-height: 2.4rem;
+  padding-inline: .78rem;
+  border-radius: .62rem;
+  font-size: .72rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-page .zb-admin-security-card {
+  padding: 1.1rem;
+  border-radius: .85rem;
+  box-shadow: 0 .45rem 1.35rem rgba(58, 22, 34, .05);
+}
+
+.zbo-admin-content-inner .zb-admin-security-heading {
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-icon {
+  width: 2.45rem;
+  height: 2.45rem;
+  border-radius: .7rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-heading h1 {
+  font-size: clamp(1.4rem, 2.1vw, 1.72rem);
+}
+
+.zbo-admin-content-inner .zb-admin-security-heading > div > p:last-child {
+  margin-top: .35rem;
+  font-size: .78rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 980px) {
+  .zbo-admin-close {
+    border-color: rgba(255, 255, 255, .3);
+    color: #fff;
+    background: rgba(255, 255, 255, .08);
+  }
+}
+
+@media (max-width: 720px) {
+  .zbo-dashboard-hero {
+    align-items: stretch;
+    min-height: 0;
+    padding: 1rem;
+  }
+
+  .zbo-admin-content-inner .zb-review-hero,
+  .zbo-admin-content-inner .zw .zwf-banner,
+  .zbo-admin-content-inner .zwf-banner,
+  .zb-site .zbo-admin-shell .zbo-admin-content-inner .zb-cand-heading,
+  .zbo-admin-content-inner .zhr-admin-hero,
+  .zbo-admin-content-inner .zhr-admin-detail-head {
+    padding: .9rem;
+  }
+
+  .zbo-admin-content-inner .zb-review-hero-art {
+    display: none;
+  }
+
+  .zbo-admin-content-inner .zhr-admin-hero,
+  .zbo-admin-content-inner .zhr-admin-detail-head {
+    align-items: flex-start;
+    gap: .8rem;
+  }
+}
