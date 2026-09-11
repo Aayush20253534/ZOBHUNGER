@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { ArrowUpRight, Menu, ShieldCheck, X } from "lucide-react";
+import { ArrowUpRight, Menu, PanelLeftClose, PanelLeftOpen, ShieldCheck, X } from "lucide-react";
 import {
   adminNavigation,
   adminSecurityNavigationItem,
@@ -16,6 +16,7 @@ import { site } from "@/data/site";
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? "/admin";
   const [navigationOpen, setNavigationOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const isSecurityRoute = pathname.startsWith(adminSecurityNavigationItem.href);
   const currentItem = isSecurityRoute ? adminSecurityNavigationItem : findAdminNavigationItem(pathname);
   const currentGroup = isSecurityRoute ? { label: "Account" } : findAdminNavigationGroup(pathname);
@@ -34,9 +35,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }, [navigationOpen]);
 
   return (
-    <div className="zbo-admin-shell">
+    <div className={`zbo-admin-shell${sidebarCollapsed ? " is-sidebar-collapsed" : ""}`}>
       <aside
-        className={`zbo-admin-sidebar${navigationOpen ? " is-open" : ""}`}
+        className={`zbo-admin-sidebar${navigationOpen ? " is-open" : ""}${sidebarCollapsed ? " is-collapsed" : ""}`}
         aria-label="Operations navigation"
       >
         <div className="zbo-admin-sidebar-brand">
@@ -44,6 +45,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <strong>ZOB<span>HUNGER</span></strong>
             <span>Operations workspace</span>
           </Link>
+          <button
+            className="zbo-admin-collapse"
+            type="button"
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-pressed={sidebarCollapsed}
+            title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            onClick={() => setSidebarCollapsed((value) => !value)}
+          >
+            {sidebarCollapsed ? <PanelLeftOpen aria-hidden="true" /> : <PanelLeftClose aria-hidden="true" />}
+          </button>
           <button
             className="zbo-admin-close"
             type="button"

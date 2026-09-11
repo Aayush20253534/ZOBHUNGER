@@ -1591,3 +1591,619 @@
     gap: .8rem;
   }
 }
+
+/* 2026-09 follow-up: exact footer red, collapsible navigation, tighter admin spacing. */
+.zbo-admin-shell {
+  transition: grid-template-columns 180ms ease;
+}
+
+.zbo-admin-shell.is-sidebar-collapsed {
+  grid-template-columns: 4.75rem minmax(0, 1fr);
+}
+
+.zbo-admin-sidebar {
+  /* Keep this background byte-for-byte aligned with .zb-footer's color recipe. */
+  background:
+    radial-gradient(circle at 12% -8%, rgba(255, 255, 255, 0.22), transparent 27rem),
+    radial-gradient(circle at 90% 112%, rgba(101, 0, 19, 0.34), transparent 34rem),
+    linear-gradient(116deg, transparent 0 57%, rgba(126, 0, 24, 0.14) 57% 69%, transparent 69%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.028) 0 1px, transparent 1px 74px),
+    linear-gradient(138deg, #f42642 0%, #e21d36 46%, #c91530 100%);
+  border-right-color: rgba(126, 0, 24, .28);
+  transition: width 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.zbo-admin-sidebar::after {
+  right: -2.5rem;
+  top: 1.5rem;
+  bottom: auto;
+  color: rgba(255, 255, 255, .055);
+  font-size: 22rem;
+  transform: rotate(-7deg);
+}
+
+.zbo-admin-collapse {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 2rem;
+  margin-left: auto;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: .55rem;
+  background: rgba(255, 255, 255, .08);
+  color: rgba(255, 255, 255, .9);
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.zbo-admin-collapse:hover {
+  border-color: rgba(255, 255, 255, .34);
+  background: rgba(255, 255, 255, .16);
+}
+
+.zbo-admin-collapse svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.zbo-admin-sidebar.is-collapsed {
+  width: 4.75rem;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-sidebar-brand {
+  justify-content: center;
+  min-height: 4.35rem;
+  padding: .8rem .6rem;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-wordmark {
+  display: none;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-collapse {
+  margin-left: 0;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-sidebar-scroll {
+  gap: .85rem;
+  padding: .8rem .5rem;
+  overflow-x: hidden;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-nav-group {
+  gap: .25rem;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-nav-label,
+.zbo-admin-sidebar.is-collapsed .zbo-admin-nav-copy,
+.zbo-admin-sidebar.is-collapsed .zbo-admin-security-link > span,
+.zbo-admin-sidebar.is-collapsed .zbo-admin-site-link > span,
+.zbo-admin-sidebar.is-collapsed .zbo-admin-security-status > span:last-child {
+  display: none;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-nav-group nav {
+  gap: .28rem;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-nav-item,
+.zbo-admin-sidebar.is-collapsed .zbo-admin-security-link {
+  display: grid;
+  grid-template-columns: 1fr;
+  place-items: center;
+  width: 3.25rem;
+  min-height: 3.05rem;
+  margin-inline: auto;
+  padding: .38rem;
+  border-radius: .72rem;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-nav-icon {
+  width: 2.1rem;
+  height: 2.1rem;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-nav-icon svg,
+.zbo-admin-sidebar.is-collapsed .zbo-admin-security-link > svg {
+  width: 1.08rem;
+  height: 1.08rem;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-nav-item.is-active::before,
+.zbo-admin-sidebar.is-collapsed .zbo-admin-security-link.is-active::before {
+  top: .55rem;
+  bottom: .55rem;
+  width: 3px;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-sidebar-bottom {
+  gap: .5rem;
+  padding: .7rem .5rem .8rem;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-site-link {
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: .35rem;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-site-link svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-security-status {
+  justify-content: center;
+  min-height: 2.1rem;
+  padding: .4rem;
+}
+
+/* Most admin pages were inheriting a page wrapper + feature wrapper + shell padding.
+   Three layers of top whitespace was a brave design choice. It is no longer with us. */
+.zbo-admin-content-inner {
+  width: min(100%, 94rem);
+  padding: .72rem clamp(.9rem, 2vw, 1.45rem) 1.5rem;
+}
+
+.zbo-admin-content-inner > .zb-portal-page,
+.zbo-admin-content-inner > .zb-review-page,
+.zbo-admin-content-inner > .zb-biz,
+.zbo-admin-content-inner > .zw,
+.zbo-admin-content-inner > .zb-admin-security-page,
+.zbo-admin-content-inner .zhr-admin {
+  min-height: 0;
+  padding-top: 0 !important;
+}
+
+.zbo-admin-content-inner .zhr-admin {
+  width: 100%;
+  padding-bottom: 1.5rem;
+}
+
+.zbo-admin-content-inner .zhr-admin-nav,
+.zbo-admin-content-inner .zb-review-nav,
+.zbo-admin-content-inner .zb-cand-admin > .zb-biz-text-link,
+.zbo-admin-content-inner .zb-att-admin > .zb-biz-text-link,
+.zbo-admin-content-inner .zb-deploy-admin > .zb-biz-text-link {
+  margin-top: 0;
+  margin-bottom: .6rem;
+}
+
+.zbo-admin-content-inner .zb-cand-admin {
+  padding: 0 !important;
+  margin: 0 0 1.5rem !important;
+  border-radius: 0;
+}
+
+/* Employee joining title became nearly white when its legacy dark hero was converted
+   to a light card by the admin shell. Restore actual contrast. */
+.zbo-admin-content-inner .zhr-admin-hero h1,
+.zbo-admin-content-inner .zhr-admin-detail-head h1 {
+  color: var(--zbo-ink);
+}
+
+.zbo-admin-content-inner .zhr-admin-hero > div:first-child > p:last-child,
+.zbo-admin-content-inner .zhr-admin-detail-head > div > p:last-child {
+  color: var(--zbo-muted);
+}
+
+.zbo-admin-content-inner .zhr-admin-hero-actions .secondary,
+.zbo-admin-content-inner .zhr-admin-secondary {
+  border-color: #d9dce1;
+  background: #fff;
+  color: var(--zbo-ink);
+}
+
+.zbo-admin-content-inner .zhr-admin-hero-actions .secondary:hover,
+.zbo-admin-content-inner .zhr-admin-secondary:hover {
+  border-color: #e39aa5;
+  background: #fff7f8;
+  color: var(--zbo-red-dark);
+}
+
+/* Candidate sharing: make the selector desk read as one compact, intentional workflow. */
+.zb-site .zbo-admin-shell .zbo-admin-content-inner .zb-cand-heading {
+  margin: 0 0 .75rem;
+  padding: .82rem .95rem;
+}
+
+.zbo-admin-content-inner .zb-cand-admin-label {
+  flex: 0 0 auto;
+  min-height: 2rem;
+  padding: .38rem .6rem;
+  border: 1px solid #ead8dc;
+  border-radius: 999px;
+  background: #fff8f9;
+  color: #7f4250;
+  font-weight: 750;
+}
+
+.zbo-admin-content-inner .zb-cand-admin-label svg {
+  width: .95rem;
+  height: .95rem;
+  color: var(--zbo-red-dark);
+}
+
+.zbo-admin-content-inner .zb-cand-share {
+  margin: 0 0 1rem;
+  padding: 1rem;
+  border: 1px solid var(--zbo-border);
+  border-top: 3px solid var(--zbo-red);
+  border-radius: .82rem;
+  box-shadow: 0 .3rem 1.1rem rgba(24, 28, 36, .035);
+}
+
+.zbo-admin-content-inner .zb-cand-section-title {
+  align-items: center;
+  gap: .7rem;
+  margin-bottom: .95rem;
+}
+
+.zbo-admin-content-inner .zb-cand-section-title > svg {
+  width: 2.15rem;
+  height: 2.15rem;
+  padding: .48rem;
+  border: 1px solid #f0d1d6;
+  border-radius: .58rem;
+  background: #fff3f5;
+  color: var(--zbo-red-dark);
+}
+
+.zbo-admin-content-inner .zb-cand-section-title h2 {
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.zbo-admin-content-inner .zb-cand-section-title p {
+  margin-top: .12rem;
+  font-size: .72rem;
+}
+
+.zbo-admin-content-inner .zb-cand-share-pickers {
+  gap: .85rem;
+}
+
+.zbo-admin-content-inner .zb-cand-share-pickers > div {
+  min-width: 0;
+  padding: .85rem;
+  border: 1px solid #ece8ea;
+  border-radius: .72rem;
+  background: #fcfcfd;
+}
+
+.zbo-admin-content-inner .zb-cand-share h3 {
+  margin-bottom: .6rem;
+  font-size: .8rem;
+}
+
+.zbo-admin-content-inner .zb-cand-share h3 > span {
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: .4rem;
+  background: var(--zbo-red-soft);
+  color: var(--zbo-red-dark);
+}
+
+.zbo-admin-content-inner .zb-cand-picker > form {
+  gap: .4rem;
+  margin-bottom: .55rem;
+}
+
+.zbo-admin-content-inner .zb-cand-search {
+  min-height: 2.55rem;
+  padding-inline: .7rem;
+  border-color: #dfe1e5;
+  border-radius: .55rem;
+}
+
+.zbo-admin-content-inner .zb-cand .zb-cand-search input {
+  height: 2.45rem;
+  font-size: .82rem;
+}
+
+.zbo-admin-content-inner .zb-cand-icon-button {
+  min-width: 2.55rem;
+  width: 2.55rem;
+  height: 2.55rem;
+  border-color: #e0e2e6;
+  border-radius: .55rem;
+  color: var(--zbo-red-dark);
+}
+
+.zbo-admin-content-inner .zb-cand-picker > ul {
+  max-height: 15rem;
+  border-color: #e7e8eb;
+  border-radius: .58rem;
+  background: #fff;
+}
+
+.zbo-admin-content-inner .zb-cand-picker li button {
+  min-height: 3.65rem;
+  padding: .68rem .72rem;
+}
+
+.zbo-admin-content-inner .zb-cand-picker li button:hover {
+  background: #fff7f8;
+}
+
+.zbo-admin-content-inner .zb-cand-picker > p {
+  min-height: 3.65rem;
+  padding: .78rem;
+  border: 1px dashed #e2d7da;
+  border-radius: .55rem;
+  background: #fff;
+  color: #796d72;
+  font-size: .72rem;
+  line-height: 1.45;
+}
+
+.zbo-admin-content-inner .zb-cand-selection {
+  padding: .8rem;
+  border-color: #ead7dc;
+  border-radius: .6rem;
+  background: #fff8f9;
+}
+
+.zbo-admin-content-inner .zb-cand-share-form {
+  margin-block: 1rem;
+  padding-top: 1rem;
+}
+
+.zbo-admin-content-inner #candidate-review-desk {
+  scroll-margin-top: 5rem;
+  padding-top: .15rem;
+}
+
+/* Security: full-width compact account panel instead of a small card floating in a sea of grey. */
+.zbo-admin-content-inner .zb-admin-security-page {
+  width: 100%;
+  max-width: none;
+  padding: 0 0 1.5rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-page .zb-admin-security-card {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--zbo-border);
+  border-top: 3px solid var(--zbo-red);
+  border-radius: .85rem;
+  background: #fff;
+  box-shadow: 0 .35rem 1.2rem rgba(24, 28, 36, .04);
+}
+
+.zbo-admin-content-inner .zb-admin-security-heading {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .7rem;
+  margin-bottom: .85rem;
+  padding-bottom: .85rem;
+  border-bottom: 1px solid #eceef1;
+}
+
+.zbo-admin-content-inner .zb-admin-security-heading .zb-eyebrow {
+  color: var(--zbo-red-dark);
+}
+
+.zbo-admin-content-inner .zb-admin-security-heading h1 {
+  color: var(--zbo-ink);
+  font-size: clamp(1.3rem, 2vw, 1.62rem);
+  line-height: 1.08;
+}
+
+.zbo-admin-content-inner .zb-admin-security-heading > div > p:last-child {
+  color: var(--zbo-muted);
+  font-size: .76rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status {
+  padding: .45rem .65rem;
+  border-radius: .55rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-state,
+.zbo-admin-content-inner .zb-admin-security-start {
+  min-height: 0;
+  padding: .9rem 1rem;
+  border-radius: .68rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-state {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .75rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-state > svg {
+  width: 1.7rem;
+  height: 1.7rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-state strong {
+  margin-bottom: .15rem;
+  font-size: .9rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-state p {
+  font-size: .74rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-state a {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 2.35rem;
+  padding: .5rem .7rem;
+  border: 1px solid #efd1d6;
+  border-radius: .55rem;
+  background: #fff;
+  color: var(--zbo-red-dark);
+  font-size: .72rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.zbo-admin-content-inner .zb-admin-security-state a:hover {
+  border-color: #e59aa5;
+  background: #fff7f8;
+}
+
+.zbo-admin-content-inner .zb-admin-security-state a svg {
+  width: .9rem;
+  height: .9rem;
+}
+
+@media (max-width: 1240px) and (min-width: 981px) {
+  .zbo-admin-shell.is-sidebar-collapsed {
+    grid-template-columns: 4.75rem minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 980px) {
+  .zbo-admin-shell.is-sidebar-collapsed {
+    display: block;
+  }
+
+  .zbo-admin-sidebar.is-collapsed {
+    width: min(20rem, calc(100vw - 3.5rem));
+  }
+
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-sidebar-brand {
+    justify-content: flex-start;
+    min-height: 5rem;
+    padding: 1.15rem 1.25rem .95rem;
+  }
+
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-wordmark,
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-nav-label,
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-nav-copy,
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-security-link > span,
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-site-link > span,
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-security-status > span:last-child {
+    display: initial;
+  }
+
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-wordmark,
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-nav-copy,
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-security-link > span {
+    display: grid;
+  }
+
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-nav-label {
+    display: block;
+  }
+
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-nav-item,
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-security-link {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    place-items: initial;
+    align-items: center;
+    width: auto;
+    min-height: 2.8rem;
+    margin-inline: 0;
+    padding: .48rem .62rem;
+  }
+
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-security-link {
+    grid-template-columns: 1.55rem minmax(0, 1fr);
+    padding: .65rem .62rem;
+  }
+
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-site-link {
+    justify-content: space-between;
+    padding: .2rem .62rem;
+  }
+
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-security-status {
+    justify-content: flex-start;
+    padding: .62rem;
+  }
+
+  .zbo-admin-collapse {
+    display: none;
+  }
+
+  .zbo-admin-content-inner {
+    padding: .65rem 1rem 1.25rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .zbo-admin-content-inner .zb-cand-share-pickers {
+    grid-template-columns: 1fr;
+  }
+
+  .zbo-admin-content-inner .zb-admin-security-heading {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .zbo-admin-content-inner .zb-admin-security-status {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .zbo-admin-content-inner .zb-admin-security-state {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .zbo-admin-content-inner .zb-admin-security-state a {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    justify-content: center;
+  }
+}
+
+/* Keep the shell chrome compact too, so content starts where users expect it to. */
+.zbo-admin-topbar {
+  min-height: 3.9rem;
+  padding: .65rem clamp(1rem, 2.2vw, 1.7rem);
+}
+
+/* The second candidate heading belongs to the actual review desk, not another hero. */
+.zbo-admin-content-inner #candidate-review-desk {
+  margin-top: .2rem;
+  padding: .85rem;
+  border: 1px solid var(--zbo-border);
+  border-radius: .82rem;
+  background: #fff;
+  box-shadow: 0 .3rem 1.1rem rgba(24, 28, 36, .035);
+}
+
+.zb-site .zbo-admin-shell .zbo-admin-content-inner #candidate-review-desk .zb-cand-heading {
+  margin: 0 0 .75rem;
+  padding: 0 0 .72rem;
+  border: 0;
+  border-bottom: 1px solid #eceef1;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.zb-site .zbo-admin-shell .zbo-admin-content-inner #candidate-review-desk .zb-cand-heading h2 {
+  margin-block: .18rem .3rem;
+  color: var(--zbo-ink);
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+.zb-site .zbo-admin-shell .zbo-admin-content-inner #candidate-review-desk .zb-cand-heading > div > p:last-child {
+  color: var(--zbo-muted);
+  font-size: .72rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .zbo-admin-topbar {
+    min-height: 3.75rem;
+    padding: .6rem .85rem;
+  }
+
+  .zbo-admin-content-inner #candidate-review-desk {
+    padding: .75rem;
+  }
+}
