@@ -277,10 +277,14 @@ async function invitationRecord(token: string) {
 
 export async function inspectAdminInvitation(token: string) {
   const record = await invitationRecord(token);
+  const department = record.user.adminDepartment;
+  if (!department) {
+    throw new HttpError(400, "Administrator department is missing", { code: "ADMIN_DEPARTMENT_REQUIRED" });
+  }
   return {
     email: record.user.email,
-    department: record.user.adminDepartment,
-    departmentLabel: DEPARTMENT_LABELS[record.user.adminDepartment],
+    department,
+    departmentLabel: DEPARTMENT_LABELS[department],
     expiresAt: record.expiresAt,
   };
 }
