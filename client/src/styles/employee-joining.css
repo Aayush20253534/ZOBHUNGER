@@ -869,3 +869,90 @@
   .zhr-employee-number > strong { font-size: clamp(1.12rem, 7vw, 1.42rem); letter-spacing: .035em; }
   .zhr-employee-number > small { font-size: .67rem; }
 }
+
+/*
+ * Employee joining viewport fix
+ * The public-site brand stylesheet caps direct <main> elements at 75rem.
+ * This route is a standalone HR workspace, so it must own the viewport just
+ * like the business workspace does instead of leaving a blank strip on wide
+ * screens.
+ */
+body.zb-site > main.zb-employee-joining-root {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow-x: clip;
+  background: #f4f2f1;
+}
+
+/* Use the available laptop/desktop width without turning the form into an
+   edge-to-edge wall of inputs. The rail stays compact and the form gets the
+   extra space. */
+@media (min-width: 981px) {
+  .zb-employee-joining-root .zhr-shell {
+    width: min(1500px, calc(100% - 48px));
+    max-width: none;
+    margin-inline: auto;
+    padding: 18px 0 48px;
+  }
+
+  .zb-employee-joining-root .zhr-page-grid {
+    grid-template-columns: minmax(238px, 280px) minmax(0, 1fr);
+    gap: clamp(22px, 2.2vw, 34px);
+    margin-top: 24px;
+  }
+
+  .zb-employee-joining-root .zhr-content .zhr-intro {
+    flex-wrap: wrap;
+    gap: 18px 24px;
+    padding-bottom: 18px;
+  }
+
+  .zb-employee-joining-root .zhr-intro-copy {
+    flex: 1 1 520px;
+  }
+
+  .zb-employee-joining-root .zhr-intro-meta {
+    align-self: flex-end;
+  }
+
+  .zb-employee-joining-root .zhr-form fieldset {
+    padding: clamp(24px, 2.6vw, 38px);
+  }
+}
+
+/* Mid-size laptops need the same full viewport treatment, but a slightly
+   tighter rail leaves the form enough room for two clean input columns. */
+@media (min-width: 981px) and (max-width: 1180px) {
+  .zb-employee-joining-root .zhr-shell {
+    width: calc(100% - 32px);
+  }
+
+  .zb-employee-joining-root .zhr-page-grid {
+    grid-template-columns: 238px minmax(0, 1fr);
+    gap: 22px;
+  }
+
+  .zb-employee-joining-root .zhr-content .zhr-intro {
+    align-items: flex-start;
+  }
+
+  .zb-employee-joining-root .zhr-intro-meta {
+    align-self: flex-start;
+  }
+}
+
+/* The existing tablet/mobile layout already becomes one column. These rules
+   only ensure the global public-main padding can never squeeze the workspace
+   a second time. */
+@media (max-width: 980px) {
+  body.zb-site > main.zb-employee-joining-root {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
