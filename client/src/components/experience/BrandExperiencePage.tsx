@@ -10,6 +10,24 @@ import { brandExperienceIntro } from "@/data/brand-experience";
 import { caseStudies } from "@/data/case-studies";
 import "@/styles/experience.css";
 
+function ExperienceIconFallback() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8 12h8" />
+      <path d="M12 8v8" />
+    </svg>
+  );
+}
+
 const experiencePillars = [
   {
     icon: UsersRound,
@@ -76,7 +94,7 @@ export function BrandExperiencePage() {
       >
         {experiencePillars.map(({ icon: Icon, title, description }) => (
           <article key={title} className="zb-experience-pillar">
-            <Icon aria-hidden="true" />
+            {Icon ? <Icon aria-hidden="true" /> : <ExperienceIconFallback />}
             <h2>{title}</h2>
             <p>{description}</p>
           </article>

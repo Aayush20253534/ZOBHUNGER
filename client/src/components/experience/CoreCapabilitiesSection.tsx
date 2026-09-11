@@ -20,6 +20,24 @@ const capabilityIcons = {
   "seller-onboarding-training": Store,
 } as const;
 
+function CapabilityIconFallback() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8 12h8" />
+      <path d="M12 8v8" />
+    </svg>
+  );
+}
+
 export function CoreCapabilitiesSection() {
   return (
     <section
@@ -36,7 +54,13 @@ export function CoreCapabilitiesSection() {
 
       <div className="zb-core-capability-grid">
         {coreCapabilities.map((capability, index) => {
-          const Icon = capabilityIcons[capability.id as keyof typeof capabilityIcons];
+          const Icon = Object.prototype.hasOwnProperty.call(
+            capabilityIcons,
+            capability.id,
+          )
+            ? capabilityIcons[capability.id as keyof typeof capabilityIcons]
+            : undefined;
+
           return (
             <article key={capability.id} className="zb-core-capability-card">
               <div className="zb-core-capability-topline">
@@ -44,7 +68,7 @@ export function CoreCapabilitiesSection() {
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span className="zb-core-capability-icon" aria-hidden="true">
-                  <Icon />
+                  {Icon ? <Icon /> : <CapabilityIconFallback />}
                 </span>
               </div>
               <h3>{capability.title}</h3>
