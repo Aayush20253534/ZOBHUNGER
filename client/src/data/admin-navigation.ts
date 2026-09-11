@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { AdminPermission } from "@/types/auth.types";
 import {
   Activity,
   BadgeIndianRupee,
@@ -15,6 +16,7 @@ import {
   LockKeyhole,
   UsersRound,
   UserRoundCheck,
+  UserCog,
 } from "lucide-react";
 
 export interface AdminNavigationItem {
@@ -22,6 +24,7 @@ export interface AdminNavigationItem {
   label: string;
   description: string;
   icon: LucideIcon;
+  permission?: AdminPermission;
 }
 
 export interface AdminNavigationGroup {
@@ -35,6 +38,7 @@ export const adminNavigation: readonly AdminNavigationGroup[] = [
     items: [
       {
         href: "/admin",
+        permission: "DASHBOARD_VIEW",
         label: "Overview",
         description: "Live operations summary",
         icon: LayoutDashboard,
@@ -46,36 +50,42 @@ export const adminNavigation: readonly AdminNavigationGroup[] = [
     items: [
       {
         href: "/admin/partners",
+        permission: "PARTNERS_MANAGE",
         label: "Partner approvals",
         description: "Review access requests",
         icon: Handshake,
       },
       {
         href: "/admin/vendors",
+        permission: "VENDORS_MANAGE",
         label: "Vendor network",
         description: "Empanelment and records",
         icon: Building2,
       },
       {
         href: "/admin/careers",
+        permission: "CAREERS_MANAGE",
         label: "Career profiles",
         description: "Applicant review desk",
         icon: UserRoundCheck,
       },
       {
         href: "/admin/employee-joining",
+        permission: "EMPLOYEE_JOINING_MANAGE",
         label: "Employee joining",
         description: "HR records and offers",
         icon: IdCard,
       },
       {
         href: "/admin/worker-applications",
+        permission: "WORKERS_MANAGE",
         label: "Worker applications",
         description: "Worker profile pipeline",
         icon: UsersRound,
       },
       {
         href: "/admin/candidate-management",
+        permission: "CANDIDATES_MANAGE",
         label: "Candidate sharing",
         description: "Business review pipeline",
         icon: ClipboardCheck,
@@ -87,33 +97,50 @@ export const adminNavigation: readonly AdminNavigationGroup[] = [
     items: [
       {
         href: "/admin/requirement-jobs",
+        permission: "REQUIREMENTS_MANAGE",
         label: "Hiring briefs",
         description: "Requirements and openings",
         icon: ClipboardList,
       },
       {
         href: "/admin/deployments",
+        permission: "DEPLOYMENTS_MANAGE",
         label: "Deployments",
         description: "Assignments and rosters",
         icon: BriefcaseBusiness,
       },
       {
         href: "/admin/attendance",
+        permission: "ATTENDANCE_MANAGE",
         label: "Attendance",
         description: "Official work records",
         icon: CalendarCheck2,
       },
       {
         href: "/admin/worker-attendance",
+        permission: "ATTENDANCE_MANAGE",
         label: "Attendance requests",
         description: "Worker submissions",
         icon: Activity,
       },
       {
         href: "/admin/attendance-approvals",
+        permission: "ATTENDANCE_MANAGE",
         label: "Approval history",
         description: "Business decisions",
         icon: FileCheck2,
+      },
+    ],
+  },
+  {
+    label: "Administration",
+    items: [
+      {
+        href: "/admin/access",
+        permission: "ADMIN_USERS_MANAGE",
+        label: "Admin access",
+        description: "Departments and permissions",
+        icon: UserCog,
       },
     ],
   },
@@ -122,12 +149,14 @@ export const adminNavigation: readonly AdminNavigationGroup[] = [
     items: [
       {
         href: "/admin/earnings",
+        permission: "EARNINGS_MANAGE",
         label: "Earnings & payments",
         description: "Statements and payouts",
         icon: BadgeIndianRupee,
       },
       {
         href: "/admin/reports",
+        permission: "REPORTS_VIEW",
         label: "Reports",
         description: "Operational exports",
         icon: BarChart3,

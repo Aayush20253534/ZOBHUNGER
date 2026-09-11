@@ -13,6 +13,9 @@ export function SiteFrame({ children }: { children: ReactNode }) {
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     return <div className="zb-admin-route-root">{children}</div>;
   }
+  if (pathname === "/admin-access" || pathname.startsWith("/admin-access/")) {
+    return <div className="zb-admin-activation-root">{children}</div>;
+  }
   if (pathname === "/employee-joining" || pathname.startsWith("/employee-joining/")) {
     return <main className="zb-employee-joining-root">{children}</main>;
   }

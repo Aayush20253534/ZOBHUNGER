@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, JobStatus, Prisma, UserRole } from "../src/generated/prisma/client.js";
+import { AdminDepartment, AdminPermission, PrismaClient, JobStatus, Prisma, UserRole } from "../src/generated/prisma/client.js";
 import { seedArticles } from "./seed-articles.js";
 import { seedJobs } from "./seed-jobs.js";
 import { z } from "zod";
@@ -25,12 +25,16 @@ async function seed(): Promise<void> {
     update: {
       passwordHash: seedEnv.ADMIN_SEED_PASSWORD_HASH,
       role: UserRole.ADMIN,
+      adminDepartment: AdminDepartment.MAIN_ADMIN,
+      adminPermissions: Object.values(AdminPermission),
       isActive: true,
     },
     create: {
       email: seedEnv.ADMIN_SEED_EMAIL,
       passwordHash: seedEnv.ADMIN_SEED_PASSWORD_HASH,
       role: UserRole.ADMIN,
+      adminDepartment: AdminDepartment.MAIN_ADMIN,
+      adminPermissions: Object.values(AdminPermission),
       isActive: true,
     },
     select: { id: true, email: true },

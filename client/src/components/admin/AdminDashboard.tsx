@@ -19,7 +19,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { apiFetch, ApiError, type ApiSuccessEnvelope } from "@/lib/api";
-import { adminNavigation } from "@/data/admin-navigation";
+import { adminNavigation, adminSecurityNavigationItem } from "@/data/admin-navigation";
 import { getCurrentUser, logout } from "@/services/auth.service";
 import type { AuthUser } from "@/types/auth.types";
 
@@ -85,6 +85,12 @@ interface PartnerApplication {
   createdAt: string;
 }
 
+function departmentName(value?: string | null) {
+  if (!value) return "Administrator";
+  const labels: Record<string, string> = { MAIN_ADMIN: "Main Administration", HR: "Career & HR", TECHNICAL: "Technical", PLACEMENT_CELL: "Placement Cell", LEGAL: "Legal" };
+  return labels[value] ?? value.replaceAll("_", " ");
+}
+
 interface PlacementCellApplication {
   id: string;
   institutionName: string;
@@ -101,19 +107,12 @@ interface PlacementCellApplication {
 }
 
 interface DashboardData {
-  enquiries: Paginated<Enquiry>;
-  requirements: Paginated<Requirement>;
-  jobs: Paginated<AdminJob>;
-  applications: Paginated<Application>;
-  partnerApplications: Paginated<PartnerApplication>;
-  placementCellApplications: Paginated<PlacementCellApplication>;
-}
-
-async function fetchPage<T>(path: string) {
-  const response = await apiFetch<ApiSuccessEnvelope<Paginated<T>>>(
-    `${path}?page=1&pageSize=5`,
-  );
-  return response.data;
+  enquiries: Paginated<Enquiry> | null;
+  requirements: Paginated<Requirement> | null;
+  jobs: Paginated<AdminJob> | null;
+  applications: Paginated<Application> | null;
+  partnerApplications: Paginated<PartnerApplication> | null;
+  placementCellApplications: Paginated<PlacementCellApplication> | null;
 }
 
 export function AdminDashboard() {
@@ -138,15 +137,8 @@ export function AdminDashboard() {
       }
       setUser(current.data.user);
 
-      const [enquiries, requirements, jobs, applications, partnerApplications, placementCellApplications] = await Promise.all([
-        fetchPage<Enquiry>("/admin/enquiries"),
-        fetchPage<Requirement>("/admin/requirements"),
-        fetchPage<AdminJob>("/admin/jobs"),
-        fetchPage<Application>("/admin/applications"),
-        fetchPage<PartnerApplication>("/admin/partner-applications"),
-        fetchPage<PlacementCellApplication>("/admin/placement-cell-applications"),
-      ]);
-      setData({ enquiries, requirements, jobs, applications, partnerApplications, placementCellApplications });
+      const overview = await apiFetch<ApiSuccessEnvelope<DashboardData>>("/admin/overview");
+      setData(overview.data);
     } catch (caught) {
       if (caught instanceof ApiError && (caught.status === 401 || caught.status === 403)) {
         router.replace("/login");
@@ -170,40 +162,17 @@ export function AdminDashboard() {
     return () => window.clearTimeout(timer);
   }, [load]);
 
-  const stats = useMemo(
-    () =>
-      data
-        ? [
-            { label: "Enquiries", value: data.enquiries.total, href: "/admin/reports", icon: Inbox },
-            {
-              label: "Requirements",
-              value: data.requirements.total,
-              href: "/admin/requirement-jobs",
-              icon: ClipboardList,
-            },
-            { label: "Jobs", value: data.jobs.total, href: "/admin/requirement-jobs", icon: BriefcaseBusiness },
-            {
-              label: "Applications",
-              value: data.applications.total,
-              href: "/admin/worker-applications",
-              icon: UsersRound,
-            },
-            {
-              label: "Partner leads",
-              value: data.partnerApplications.total,
-              href: "/admin/partners",
-              icon: Handshake,
-            },
-            {
-              label: "Institution partners",
-              value: data.placementCellApplications.total,
-              href: "/admin/partners",
-              icon: Building2,
-            },
-          ]
-        : [],
-    [data],
-  );
+  const stats = useMemo(() => {
+    if (!data) return [];
+    return [
+      data.enquiries ? { label: "Enquiries", value: data.enquiries.total, href: "/admin/reports", icon: Inbox } : null,
+      data.requirements ? { label: "Requirements", value: data.requirements.total, href: "/admin/requirement-jobs", icon: ClipboardList } : null,
+      data.jobs ? { label: "Jobs", value: data.jobs.total, href: "/admin/requirement-jobs", icon: BriefcaseBusiness } : null,
+      data.applications ? { label: "Applications", value: data.applications.total, href: "/admin/candidate-management", icon: UsersRound } : null,
+      data.partnerApplications ? { label: "Partner leads", value: data.partnerApplications.total, href: "/admin/partners", icon: Handshake } : null,
+      data.placementCellApplications ? { label: "Institution partners", value: data.placementCellApplications.total, href: "/admin#institution-onboarding", icon: Building2 } : null,
+    ].filter((item): item is NonNullable<typeof item> => Boolean(item));
+  }, [data]);
 
   async function updatePlacementCellStatus(
     id: string,
@@ -247,10 +216,13 @@ export function AdminDashboard() {
 
   if (!data) return null;
 
-  const quickLinks = adminNavigation
-    .flatMap((group) => group.items)
-    .filter((item) => item.href !== "/admin")
-    .slice(0, 7);
+  const granted = new Set(user?.adminPermissions ?? []);
+  const quickLinks = [
+    ...adminNavigation
+      .flatMap((group) => group.items)
+      .filter((item) => item.href !== "/admin" && (!item.permission || granted.has(item.permission))),
+    adminSecurityNavigationItem,
+  ].slice(0, 7);
 
   return (
     <div className="zbo-dashboard">
@@ -261,7 +233,7 @@ export function AdminDashboard() {
           <p>
             Review incoming work, move people through the pipeline and keep every active assignment accountable.
           </p>
-          {user?.email && <span className="zbo-dashboard-user">Signed in as {user.email}</span>}
+          {user?.email && <span className="zbo-dashboard-user">{departmentName(user.adminDepartment)} · {user.email}</span>}
         </div>
         <div className="zbo-dashboard-hero-actions" aria-label="Dashboard actions">
           <button type="button" onClick={() => void load()} disabled={loading}>
@@ -275,7 +247,7 @@ export function AdminDashboard() {
 
       {error && <p className="zb-login-error" role="alert">{error}</p>}
 
-      <section className="zbo-dashboard-kpis" aria-label="Operational totals">
+      {stats.length > 0 && <section className="zbo-dashboard-kpis" aria-label="Operational totals">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -286,7 +258,7 @@ export function AdminDashboard() {
             </article>
           );
         })}
-      </section>
+      </section>}
 
       <section className="zbo-dashboard-layout">
         <article className="zbo-dashboard-card">
@@ -295,10 +267,11 @@ export function AdminDashboard() {
             <Inbox aria-hidden="true" />
           </header>
           <div className="zbo-dashboard-queue">
-            <QueueItem icon={Inbox} title="Incoming enquiries" copy={`${data.enquiries.total} total enquiries in the system`} href="/admin/reports" label="Review" />
-            <QueueItem icon={Handshake} title="Partner access" copy={`${data.partnerApplications.total} partner applications received`} href="/admin/partners" label="Open" />
-            <QueueItem icon={UsersRound} title="Worker applications" copy={`${data.applications.total} job applications available`} href="/admin/worker-applications" label="Review" />
-            <QueueItem icon={CalendarCheck2} title="Attendance requests" copy="Check worker submissions before records are approved" href="/admin/worker-attendance" label="Open" />
+            {data.enquiries && <QueueItem icon={Inbox} title="Incoming enquiries" copy={`${data.enquiries.total} total enquiries in the system`} href="/admin/reports" label="Review" />}
+            {data.partnerApplications && <QueueItem icon={Handshake} title="Partner access" copy={`${data.partnerApplications.total} partner applications received`} href="/admin/partners" label="Open" />}
+            {data.applications && <QueueItem icon={UsersRound} title="Job applications" copy={`${data.applications.total} applications available`} href="/admin/candidate-management" label="Review" />}
+            {granted.has("ATTENDANCE_MANAGE") && <QueueItem icon={CalendarCheck2} title="Attendance requests" copy="Check worker submissions before records are approved" href="/admin/worker-attendance" label="Open" />}
+            {!data.enquiries && !data.partnerApplications && !data.applications && !granted.has("ATTENDANCE_MANAGE") && <p className="zbo-dashboard-empty">Your department has no pending shared review queues.</p>}
           </div>
         </article>
 
@@ -323,43 +296,43 @@ export function AdminDashboard() {
       </section>
 
       <section className="zbo-dashboard-panels" aria-label="Latest records">
-        <AdminPanel title="Recent enquiries" icon={Inbox}>
+        {data.enquiries && <AdminPanel title="Recent enquiries" icon={Inbox}>
           {data.enquiries.items.length === 0 ? <EmptyRow /> : data.enquiries.items.map((item) => (
             <AdminRow key={item.id} title={item.name} meta={`${item.companyName || item.email} · ${item.serviceRequired || "General enquiry"}`} tag={new Date(item.createdAt).toLocaleDateString()} />
           ))}
-        </AdminPanel>
+        </AdminPanel>}
 
-        <AdminPanel title="Workforce requirements" icon={ClipboardList}>
+        {data.requirements && <AdminPanel title="Workforce requirements" icon={ClipboardList}>
           {data.requirements.items.length === 0 ? <EmptyRow /> : data.requirements.items.map((item) => (
             <AdminRow key={item.id} title={item.companyName} meta={`${item.workforceCount} people · ${item.serviceRequired} · ${item.jobLocation}`} tag={item.status} />
           ))}
-        </AdminPanel>
+        </AdminPanel>}
 
-        <AdminPanel title="Published roles" icon={BriefcaseBusiness}>
+        {data.jobs && <AdminPanel title="Published roles" icon={BriefcaseBusiness}>
           {data.jobs.items.length === 0 ? <EmptyRow /> : data.jobs.items.map((item) => (
             <AdminRow key={item.id} title={item.title} meta={`${item.location} · ${item._count.applications} applications`} tag={item.status} />
           ))}
-        </AdminPanel>
+        </AdminPanel>}
 
-        <AdminPanel title="Recent applications" icon={UsersRound}>
+        {data.applications && <AdminPanel title="Recent applications" icon={UsersRound}>
           {data.applications.items.length === 0 ? <EmptyRow /> : data.applications.items.map((item) => (
             <AdminRow key={item.id} title={item.name} meta={`${item.job.title} · ${item.email}`} tag={item.status} />
           ))}
-        </AdminPanel>
+        </AdminPanel>}
 
-        <AdminPanel title="Partner access applications" icon={Handshake}>
+        {data.partnerApplications && <AdminPanel title="Partner access applications" icon={Handshake}>
           <div className="zb-admin-panel-action">
             <div><strong>Review the business access queue</strong><span>Open the approval desk to check the submission and issue controlled access.</span></div>
             <Link href="/admin/partners"><Handshake aria-hidden="true" />Open desk</Link>
           </div>
           {data.partnerApplications.items.length === 0 ? <EmptyRow /> : data.partnerApplications.items.map((item) => <PartnerAdminRow key={item.id} item={item} />)}
-        </AdminPanel>
+        </AdminPanel>}
 
-        <AdminPanel title="Institution onboarding" icon={Building2}>
+        {data.placementCellApplications && <div id="institution-onboarding" className="zbo-dashboard-anchor"><AdminPanel title="Institution onboarding" icon={Building2}>
           {data.placementCellApplications.items.length === 0 ? <EmptyRow /> : data.placementCellApplications.items.map((item) => (
             <PlacementCellAdminRow key={item.id} item={item} onStatusChange={updatePlacementCellStatus} />
           ))}
-        </AdminPanel>
+        </AdminPanel></div>}
       </section>
     </div>
   );

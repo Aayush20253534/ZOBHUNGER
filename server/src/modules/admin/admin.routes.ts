@@ -1,3 +1,4 @@
+import { adminAccessRouter } from "../admin-access/admin-access.routes.js";
 import { adminEmployeeJoiningRouter } from "../employee-joining/employee-joining.routes.js";
 import { adminWorkerWorkflowRouter } from "../workers/worker-workflow.routes.js";
 import { adminVendorsRouter } from "../vendors/vendors.routes.js";
@@ -11,9 +12,11 @@ import { Router } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
 import { requireAdminMfa } from "../../middlewares/admin-mfa.middleware.js";
+import { requireMappedAdminPermission } from "../../middlewares/admin-permission.middleware.js";
 import { portalWrite } from "../../middlewares/portal-write.middleware.js";
 import { validate } from "../../middlewares/validate.middleware.js";
 import {
+  adminOverviewController,
   listApplicationsController,
   listEnquiriesController,
   listJobsController,
@@ -46,6 +49,8 @@ export const adminRouter = Router();
 
 adminRouter.use(requireAuth, requireRole("ADMIN"), requireAdminMfa);
 adminRouter.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
+adminRouter.use(requireMappedAdminPermission);
+adminRouter.use("/access", adminAccessRouter);
 adminRouter.use("/vendors", adminVendorsRouter);
 adminRouter.use("/partners", adminPartnerAccessRouter);
 adminRouter.use("/careers", adminCareersRouter);
@@ -55,6 +60,8 @@ adminRouter.use(adminWorkerWorkflowRouter);
 adminRouter.use("/attendance", adminAttendanceRouter);
 adminRouter.use("/deployments", adminDeploymentsRouter);
 adminRouter.use("/candidate-management", adminCandidatesRouter);
+
+adminRouter.get("/overview", adminOverviewController);
 
 adminRouter.get(
   "/enquiries",

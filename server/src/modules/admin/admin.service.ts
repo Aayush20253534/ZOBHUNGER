@@ -5,6 +5,7 @@ import {
   RequirementStatus,
   PartnerApplicationStatus,
   PlacementCellApplicationStatus,
+  AdminPermission,
 } from "../../generated/prisma/client.js";
 import { env } from "../../config/env.js";
 import { sendOperationalEmail } from "../../services/email.service.js";
@@ -84,6 +85,20 @@ export async function listPartnerApplicationsForAdmin(filters: ListPartnerApplic
 export async function listPlacementCellApplicationsForAdmin(filters: ListPlacementCellApplicationsQuery) {
   const { items, total } = await findAdminPlacementCellApplications(filters);
   return paginated(items, total, filters.page, filters.pageSize);
+}
+
+export async function adminOverviewForPermissions(permissions: AdminPermission[]) {
+  const granted = new Set(permissions);
+  const page = { page: 1, pageSize: 5 };
+  const [enquiries, requirements, jobs, applications, partnerApplications, placementCellApplications] = await Promise.all([
+    granted.has(AdminPermission.ENQUIRIES_MANAGE) ? listEnquiriesForAdmin(page) : null,
+    granted.has(AdminPermission.REQUIREMENTS_MANAGE) ? listRequirementsForAdmin(page) : null,
+    granted.has(AdminPermission.JOBS_MANAGE) ? listJobsForAdmin(page) : null,
+    granted.has(AdminPermission.APPLICATIONS_MANAGE) ? listApplicationsForAdmin(page) : null,
+    granted.has(AdminPermission.PARTNERS_MANAGE) ? listPartnerApplicationsForAdmin(page) : null,
+    granted.has(AdminPermission.PLACEMENT_MANAGE) ? listPlacementCellApplicationsForAdmin(page) : null,
+  ]);
+  return { enquiries, requirements, jobs, applications, partnerApplications, placementCellApplications };
 }
 
 export async function changePlacementCellApplicationStatus(

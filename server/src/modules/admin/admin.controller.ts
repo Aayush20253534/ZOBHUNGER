@@ -27,6 +27,7 @@ import {
   listEnquiriesForAdmin,
   listJobsForAdmin,
   listRequirementsForAdmin,
+  adminOverviewForPermissions,
 } from "./admin.service.js";
 
 function auditContext(req: Request, actorUserId: string) {
@@ -40,6 +41,12 @@ function auditContext(req: Request, actorUserId: string) {
 function adminId(res: Response): string {
   return (res.locals.authUser as { id: string }).id;
 }
+
+export const adminOverviewController: RequestHandler = async (_req, res) => {
+  const user = res.locals.authUser as { adminPermissions?: import("../../generated/prisma/client.js").AdminPermission[] };
+  const data = await adminOverviewForPermissions(user.adminPermissions ?? []);
+  res.status(200).json(apiSuccessResponse("Administrator overview retrieved", data));
+};
 
 export const listEnquiriesController: RequestHandler = async (_req, res) => {
   const data = await listEnquiriesForAdmin(

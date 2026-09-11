@@ -1,0 +1,81 @@
+.zaa-page,
+.zaa-page * { box-sizing: border-box; }
+.zaa-page {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem,3vw,2.5rem);
+  background:
+    radial-gradient(circle at 7% 5%, rgba(210,31,61,.09), transparent 25rem),
+    radial-gradient(circle at 90% 88%, rgba(125,4,30,.07), transparent 30rem),
+    #f6f5f6;
+  color: #1c181b;
+}
+.zaa-shell { display: grid; grid-template-columns: minmax(19rem,.88fr) minmax(24rem,1.12fr); width: min(100%,68rem); min-height: 37rem; overflow: hidden; border: 1px solid #e4dce0; border-radius: 1.25rem; background: #fff; box-shadow: 0 1.8rem 5rem rgba(54,14,25,.12); }
+.zaa-brand-panel { position: relative; isolation: isolate; display: grid; grid-template-rows: auto 1fr auto auto; gap: 1.5rem; overflow: hidden; padding: 1.7rem; color: #fff; background: radial-gradient(circle at 8% -4%, rgba(255,255,255,.20), transparent 19rem), repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 1px,transparent 1px 72px), linear-gradient(138deg,#7b0b25 0%,#a5102f 48%,#c91530 100%); }
+.zaa-brand-panel::after { content:"Z"; position:absolute; z-index:-1; right:-2.3rem; bottom:1rem; color:rgba(255,255,255,.055); font:900 18rem/.8 Arial,sans-serif; transform:rotate(-7deg); }
+.zaa-wordmark { display:grid; gap:.25rem; }
+.zaa-wordmark strong { color:#fff; font-size:1.3rem; letter-spacing:-.05em; }
+.zaa-wordmark strong span { color:#ffd7df; }
+.zaa-wordmark small { color:rgba(255,255,255,.68); font-size:.65rem; font-weight:700; letter-spacing:.06em; }
+.zaa-brand-copy { align-self:center; max-width:27rem; }
+.zaa-brand-copy > span { display:inline-flex; align-items:center; gap:.4rem; color:#ffd9e0; font-size:.63rem; font-weight:850; letter-spacing:.14em; text-transform:uppercase; }
+.zaa-brand-copy > span svg { width:.9rem; height:.9rem; }
+.zaa-brand-copy h1 { margin:.65rem 0 .65rem; color:#fff; font-size:clamp(2rem,4vw,3.25rem); line-height:.98; letter-spacing:-.06em; }
+.zaa-brand-copy p { margin:0; color:rgba(255,255,255,.75); font-size:.76rem; line-height:1.65; }
+.zaa-security-points { display:grid; gap:.55rem; }
+.zaa-security-points > span { display:grid; grid-template-columns:1.7rem minmax(0,1fr); gap:.05rem .55rem; padding:.6rem .65rem; border:1px solid rgba(255,255,255,.15); border-radius:.65rem; background:rgba(255,255,255,.055); backdrop-filter:blur(6px); }
+.zaa-security-points svg { grid-row:1/span 2; align-self:center; width:1rem; height:1rem; color:#ffd5de; }
+.zaa-security-points strong { font-size:.67rem; }
+.zaa-security-points small { color:rgba(255,255,255,.62); font-size:.58rem; line-height:1.4; }
+.zaa-brand-panel footer { color:rgba(255,255,255,.55); font-size:.58rem; }
+.zaa-form-panel { display:grid; place-items:center; padding:clamp(1.4rem,4vw,3rem); background:linear-gradient(180deg,#fff,#fefcfd); }
+.zaa-form { width:min(100%,31rem); }
+.zaa-form header { display:grid; grid-template-columns:2.75rem minmax(0,1fr); gap:.8rem; align-items:start; margin-bottom:1.05rem; }
+.zaa-icon,.zaa-state > span { display:grid; place-items:center; width:2.75rem; height:2.75rem; border:1px solid #f0d4da; border-radius:.78rem; background:#fff2f4; color:#bd1a36; }
+.zaa-icon svg,.zaa-state > span svg { width:1.25rem; height:1.25rem; }
+.zaa-eyebrow { margin:0 0 .18rem; color:#af1a34; font-size:.62rem; font-weight:850; letter-spacing:.13em; text-transform:uppercase; }
+.zaa-form h2,.zaa-state h2 { margin:0; color:#231d21; font-size:clamp(1.4rem,3vw,1.8rem); line-height:1.08; letter-spacing:-.045em; }
+.zaa-form header p:last-child,.zaa-state > p:last-of-type { margin:.35rem 0 0; color:#786c73; font-size:.69rem; line-height:1.5; }
+.zaa-form header p strong { color:#4b3e45; }
+.zaa-department { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:0 0 1rem; padding:.6rem .7rem; border:1px solid #eadde0; border-left:3px solid #c91530; border-radius:.58rem; background:#fffafb; }
+.zaa-department span { color:#7f1429; font-size:.7rem; font-weight:850; }
+.zaa-department small { color:#91848b; font-size:.6rem; }
+.zaa-form label { display:grid; gap:.35rem; margin-top:.75rem; color:#4b4046; font-size:.67rem; font-weight:780; }
+.zaa-input { display:flex; align-items:center; min-height:2.7rem; border:1px solid #ddd4d8; border-radius:.62rem; background:#fff; color:#8e8188; }
+.zaa-input:focus-within { border-color:#d15e73; box-shadow:0 0 0 3px rgba(201,21,48,.08); }
+.zaa-input > svg { width:.95rem; height:.95rem; margin-left:.72rem; flex:0 0 auto; }
+.zaa-input input { width:100%; min-width:0; height:2.6rem; padding:0 .65rem; border:0; outline:0; background:transparent; color:#211b1e; font:inherit; font-size:.72rem; }
+.zaa-input button { display:grid; place-items:center; width:2.3rem; height:2.3rem; margin-right:.18rem; border:0; border-radius:.48rem; background:transparent; color:#786b72; cursor:pointer; }
+.zaa-input button:hover { background:#fff3f5; color:#a91832; }
+.zaa-input button svg { width:.9rem; height:.9rem; }
+.zaa-rules { display:grid; grid-template-columns:1fr 1fr; gap:.35rem .6rem; margin:.75rem 0; }
+.zaa-rules span { display:flex; align-items:center; gap:.35rem; color:#8c8087; font-size:.59rem; }
+.zaa-rules i { display:grid; place-items:center; width:.85rem; height:.85rem; border:1px solid #d7cbcf; border-radius:50%; background:#fff; color:#fff; font-style:normal; }
+.zaa-rules i svg { width:.55rem; height:.55rem; stroke-width:3; }
+.zaa-rules span.is-valid { color:#287052; }
+.zaa-rules span.is-valid i { border-color:#2d8a64; background:#2d8a64; }
+.zaa-error { margin:.65rem 0; padding:.55rem .65rem; border:1px solid #efc5cc; border-radius:.55rem; background:#fff4f5; color:#9d2337; font-size:.64rem; line-height:1.45; }
+.zaa-submit { display:flex; align-items:center; justify-content:center; gap:.45rem; width:100%; min-height:2.75rem; margin-top:.65rem; border:1px solid #b81330; border-radius:.65rem; background:linear-gradient(135deg,#d5223e,#ba1230); color:#fff; font:inherit; font-size:.72rem; font-weight:850; cursor:pointer; box-shadow:0 .5rem 1.2rem rgba(113,7,32,.14); }
+.zaa-submit:hover:not(:disabled) { background:linear-gradient(135deg,#c91b38,#a80e29); }
+.zaa-submit:disabled { opacity:.5; cursor:not-allowed; box-shadow:none; }
+.zaa-submit svg { width:.95rem; height:.95rem; }
+.zaa-footnote { margin:.7rem 0 0; color:#94878e; font-size:.57rem; line-height:1.45; text-align:center; }
+.zaa-state { width:min(100%,28rem); text-align:left; }
+.zaa-state > span { margin-bottom:1rem; }
+.zaa-state.is-success > span { border-color:#c7e5d6; background:#f1faf5; color:#277252; }
+.zaa-state.is-error > span { border-color:#edd0d6; background:#fff4f5; color:#a51a33; }
+.zaa-state a { display:inline-flex; margin-top:1rem; min-height:2.55rem; align-items:center; padding:.58rem .8rem; border-radius:.6rem; background:#c91530; color:#fff; font-size:.68rem; font-weight:820; text-decoration:none; }
+.zaa-state a:hover { background:#aa102a; }
+.zaa-spin { animation:zaa-spin .8s linear infinite; }
+@keyframes zaa-spin { to { transform:rotate(360deg); } }
+@media(max-width:800px){.zaa-page{padding:0;background:#fff}.zaa-shell{grid-template-columns:1fr;min-height:100svh;border:0;border-radius:0;box-shadow:none}.zaa-brand-panel{min-height:auto;padding:1.1rem 1.15rem}.zaa-brand-copy{align-self:auto}.zaa-brand-copy h1{font-size:1.75rem}.zaa-brand-copy p{font-size:.69rem}.zaa-security-points{display:none}.zaa-brand-panel footer{display:none}.zaa-form-panel{padding:1.3rem 1.1rem 2rem;align-items:start}.zaa-form,.zaa-state{width:100%;max-width:31rem;margin:auto}}
+@media(max-width:480px){.zaa-rules{grid-template-columns:1fr}.zaa-form header{grid-template-columns:2.4rem minmax(0,1fr)}.zaa-icon{width:2.4rem;height:2.4rem}.zaa-department{align-items:flex-start;flex-direction:column;gap:.15rem}}
+
+/* Secure activation owns the viewport instead of inheriting the public site's
+   constrained content wrapper. */
+.zb-admin-activation-root {
+  min-height: 100vh;
+  width: 100%;
+  background: #f7f3f4;
+}

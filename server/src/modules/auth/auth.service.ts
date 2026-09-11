@@ -4,9 +4,17 @@ import type { BusinessLoginInput, LoginInput, RegisterInput } from "./auth.schem
 import { findUserByEmail, findUserById, findUserByPartnerCode, markLogin } from "./auth.repository.js";
 import { prisma } from "../../config/db.js";
 import { verifyAdminMfaForLogin } from "./admin-mfa.service.js";
+import type { AdminDepartment, AdminPermission } from "../../generated/prisma/client.js";
 
-export function safeUser(user: { id: string; email: string; phone: string | null; role: unknown; isActive: boolean; emailVerifiedAt: Date | null; lastLoginAt: Date | null; createdAt: Date; sessionVersion: number; partnerCode?: string | null; businessAccessApproved?: boolean; mustChangePassword?: boolean; temporaryPasswordExpiresAt?: Date | null; adminMfaEnabledAt?: Date | null }) {
-  return { id: user.id, email: user.email, phone: user.phone, role: user.role, isActive: user.isActive, emailVerifiedAt: user.emailVerifiedAt, lastLoginAt: user.lastLoginAt, createdAt: user.createdAt, sessionVersion: user.sessionVersion, partnerCode: user.partnerCode ?? null, businessAccessApproved: user.businessAccessApproved ?? false, mustChangePassword: user.mustChangePassword ?? false, temporaryPasswordExpiresAt: user.temporaryPasswordExpiresAt ?? null, adminMfaEnabled: Boolean(user.adminMfaEnabledAt) };
+export function safeUser(user: { id: string; email: string; phone: string | null; role: unknown; isActive: boolean; emailVerifiedAt: Date | null; lastLoginAt: Date | null; createdAt: Date; sessionVersion: number; partnerCode?: string | null; businessAccessApproved?: boolean; mustChangePassword?: boolean; temporaryPasswordExpiresAt?: Date | null; adminMfaEnabledAt?: Date | null; adminDepartment?: AdminDepartment | null; adminPermissions?: AdminPermission[] }) {
+  return {
+    id: user.id, email: user.email, phone: user.phone, role: user.role, isActive: user.isActive,
+    emailVerifiedAt: user.emailVerifiedAt, lastLoginAt: user.lastLoginAt, createdAt: user.createdAt,
+    sessionVersion: user.sessionVersion, partnerCode: user.partnerCode ?? null,
+    businessAccessApproved: user.businessAccessApproved ?? false, mustChangePassword: user.mustChangePassword ?? false,
+    temporaryPasswordExpiresAt: user.temporaryPasswordExpiresAt ?? null, adminMfaEnabled: Boolean(user.adminMfaEnabledAt),
+    adminDepartment: user.adminDepartment ?? null, adminPermissions: user.adminPermissions ?? [],
+  };
 }
 
 export function assertBusinessAccountAccess(user: { role: unknown; businessAccessApproved?: boolean; mustChangePassword?: boolean; temporaryPasswordExpiresAt?: Date | null }) {

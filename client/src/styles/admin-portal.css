@@ -2207,3 +2207,94 @@
     padding: .75rem;
   }
 }
+
+/* Department RBAC shell states. */
+.zbo-admin-department-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.9rem;
+  padding: .34rem .58rem;
+  border: 1px solid #ecd8dc;
+  border-radius: .55rem;
+  background: #fff7f8;
+  color: #9e1830;
+  font-size: .67rem;
+  font-weight: 800;
+  letter-spacing: .015em;
+  white-space: nowrap;
+}
+
+.zbo-admin-shell-state,
+.zbo-admin-access-denied {
+  width: min(100%, 52rem);
+  margin: 1rem auto 0;
+  border: 1px solid var(--zbo-border);
+  border-top: 3px solid var(--zbo-red);
+  border-radius: .95rem;
+  background: #fff;
+  box-shadow: 0 .7rem 2rem rgba(31, 20, 24, .055);
+}
+
+.zbo-admin-shell-state {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: .18rem .75rem;
+  align-items: center;
+  padding: 1rem 1.15rem;
+}
+
+.zbo-admin-shell-state > svg {
+  grid-row: 1 / span 2;
+  width: 1.35rem;
+  height: 1.35rem;
+  color: var(--zbo-red);
+}
+
+.zbo-admin-shell-state strong { font-size: .88rem; }
+.zbo-admin-shell-state span { color: var(--zbo-muted); font-size: .72rem; }
+.zbo-admin-spin { animation: zbo-admin-spin .8s linear infinite; }
+@keyframes zbo-admin-spin { to { transform: rotate(360deg); } }
+
+.zbo-admin-access-denied {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.3rem, 3vw, 2rem);
+}
+
+.zbo-admin-access-denied::after {
+  content: "";
+  position: absolute;
+  width: 16rem;
+  height: 16rem;
+  right: -6rem;
+  top: -8rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217, 39, 59, .10), transparent 70%);
+  pointer-events: none;
+}
+
+.zbo-admin-access-denied-icon {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  margin-bottom: 1rem;
+  border-radius: .75rem;
+  background: #fff0f2;
+  color: var(--zbo-red-dark);
+}
+
+.zbo-admin-access-denied-icon svg { width: 1.3rem; height: 1.3rem; }
+.zbo-admin-access-denied .zbo-eyebrow { margin: 0 0 .35rem; color: var(--zbo-red-dark); font-size: .67rem; font-weight: 850; letter-spacing: .15em; text-transform: uppercase; }
+.zbo-admin-access-denied h1 { max-width: 34rem; margin: 0; color: var(--zbo-ink); font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.04; letter-spacing: -.045em; }
+.zbo-admin-access-denied p:not(.zbo-eyebrow) { max-width: 38rem; margin: .75rem 0 1.15rem; color: var(--zbo-muted); font-size: .84rem; line-height: 1.65; }
+.zbo-admin-access-denied a { display: inline-flex; min-height: 2.45rem; align-items: center; padding: .58rem .78rem; border-radius: .58rem; background: var(--zbo-red); color: #fff; font-size: .74rem; font-weight: 800; text-decoration: none; }
+.zbo-admin-access-denied a:hover { background: var(--zbo-red-dark); }
+
+@media (max-width: 840px) {
+  .zbo-admin-department-chip { display: none; }
+}
+
+.zbo-dashboard-anchor {
+  scroll-margin-top: 6.5rem;
+}
