@@ -1,5 +1,4 @@
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
-import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { getPageMetadata } from "@/lib/page-metadata";
 import "@/styles/portal.css";
 
@@ -14,11 +13,6 @@ export const metadata = {
 
 export default function AdminPage() {
   return (
-    <div className="zb-portal-page">
-      <Breadcrumbs
-        items={[{ label: "Home", href: "/" }, { label: "Admin dashboard" }]}
-      />
-      <AdminDashboard />
-    </div>
+    <div className="zb-portal-page"><AdminDashboard /></div>
   );
 }

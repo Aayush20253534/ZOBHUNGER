@@ -6,62 +6,22 @@ import { useRouter } from "next/navigation";
 import {
   BriefcaseBusiness,
   Building2,
-  ClipboardList,
   CalendarCheck2,
+  ClipboardList,
   Inbox,
   Handshake,
   LogOut,
   RefreshCw,
   UsersRound,
-  WalletCards,
   MapPin,
   FileText,
-  IdCard,
   ChevronRight,
-  ShieldCheck,
+  type LucideIcon,
 } from "lucide-react";
 import { apiFetch, ApiError, type ApiSuccessEnvelope } from "@/lib/api";
+import { adminNavigation } from "@/data/admin-navigation";
 import { getCurrentUser, logout } from "@/services/auth.service";
 import type { AuthUser } from "@/types/auth.types";
-
-
-const adminActionGroups = [
-  {
-    eyebrow: "People & access",
-    title: "Partners and talent",
-    copy: "Review organisations, partner access and candidate intake.",
-    actions: [
-      { href: "/admin/vendors", label: "Vendor empanelment & records", copy: "Supplier applications and vendor directory", icon: Handshake },
-      { href: "/admin/partners", label: "Partner review & approvals", copy: "Business access approvals and credentials", icon: Building2 },
-      { href: "/admin/careers", label: "Career profiles & HR review", copy: "General candidate profiles and CV review", icon: UsersRound },
-      { href: "/admin/employee-joining", label: "Employee joining & offer letters", copy: "Joining records, documents, employee IDs and offer issuance", icon: IdCard },
-      { href: "/admin/worker-applications", label: "Worker applications & profiles", copy: "Worker hiring pipeline and profile records", icon: UsersRound },
-      { href: "/admin/security", label: "Admin security", copy: "MFA and administrator account protection", icon: ShieldCheck },
-    ],
-  },
-  {
-    eyebrow: "Workforce operations",
-    title: "Hiring and deployment",
-    copy: "Move people from candidate review into active assignments.",
-    actions: [
-      { href: "/admin/candidate-management", label: "Candidate sharing & reviews", copy: "Business-facing candidate decisions", icon: UsersRound },
-      { href: "/admin/deployments", label: "Deployment & team roster", copy: "Confirmed assignments and active teams", icon: BriefcaseBusiness },
-      { href: "/admin/requirement-jobs", label: "Hiring briefs & job openings", copy: "Requirements linked to published roles", icon: ClipboardList },
-      { href: "/admin/worker-attendance", label: "Worker attendance requests", copy: "Worker submissions awaiting operations review", icon: CalendarCheck2 },
-    ],
-  },
-  {
-    eyebrow: "Control & finance",
-    title: "Attendance and payments",
-    copy: "Review official work records, earnings and reporting outputs.",
-    actions: [
-      { href: "/admin/attendance", label: "Attendance & corrections", copy: "Official records and correction handling", icon: CalendarCheck2 },
-      { href: "/admin/attendance-approvals", label: "Attendance approval history", copy: "Business approvals and decision history", icon: CalendarCheck2 },
-      { href: "/admin/earnings", label: "Worker earnings & payments", copy: "Statements, adjustments and payment records", icon: WalletCards },
-      { href: "/admin/reports", label: "Reports & exports", copy: "Operational summaries and controlled exports", icon: FileText },
-    ],
-  },
-] as const;
 
 interface Paginated<T> {
   items: T[];
@@ -214,26 +174,30 @@ export function AdminDashboard() {
     () =>
       data
         ? [
-            { label: "Enquiries", value: data.enquiries.total, icon: Inbox },
+            { label: "Enquiries", value: data.enquiries.total, href: "/admin/reports", icon: Inbox },
             {
               label: "Requirements",
               value: data.requirements.total,
+              href: "/admin/requirement-jobs",
               icon: ClipboardList,
             },
-            { label: "Jobs", value: data.jobs.total, icon: BriefcaseBusiness },
+            { label: "Jobs", value: data.jobs.total, href: "/admin/requirement-jobs", icon: BriefcaseBusiness },
             {
               label: "Applications",
               value: data.applications.total,
+              href: "/admin/worker-applications",
               icon: UsersRound,
             },
             {
               label: "Partner leads",
               value: data.partnerApplications.total,
+              href: "/admin/partners",
               icon: Handshake,
             },
             {
               label: "Institution partners",
               value: data.placementCellApplications.total,
+              href: "/admin/partners",
               icon: Building2,
             },
           ]
@@ -283,167 +247,133 @@ export function AdminDashboard() {
 
   if (!data) return null;
 
-  return (
-    <div className="zb-admin-dashboard">
-      <section className="zb-admin-toolbar" aria-labelledby="admin-dashboard-title">
-        <div className="zb-admin-toolbar-head">
-          <div className="zb-admin-toolbar-copy">
-            <p className="zb-eyebrow">Authenticated administrator</p>
-            <h1 id="admin-dashboard-title">Operations dashboard</h1>
-            <p>{user?.email}</p>
-          </div>
-          <div className="zb-admin-session-actions" aria-label="Dashboard session actions">
-            <button type="button" onClick={() => void load()} disabled={loading}>
-              <RefreshCw aria-hidden="true" /> {loading ? "Refreshing…" : "Refresh"}
-            </button>
-            <button type="button" onClick={() => void handleLogout()}>
-              <LogOut aria-hidden="true" /> Log out
-            </button>
-          </div>
-        </div>
+  const quickLinks = adminNavigation
+    .flatMap((group) => group.items)
+    .filter((item) => item.href !== "/admin")
+    .slice(0, 7);
 
-        <nav className="zb-admin-command-grid" aria-label="Administration workspaces">
-          {adminActionGroups.map((group) => (
-            <section className="zb-admin-command-group" key={group.title}>
-              <header>
-                <p className="zb-eyebrow">{group.eyebrow}</p>
-                <h2>{group.title}</h2>
-                <p>{group.copy}</p>
-              </header>
-              <div className="zb-admin-command-list">
-                {group.actions.map((action) => {
-                  const Icon = action.icon;
-                  return (
-                    <Link className="zb-admin-command" href={action.href} key={action.href}>
-                      <span className="zb-admin-command-icon" aria-hidden="true"><Icon /></span>
-                      <span className="zb-admin-command-copy">
-                        <strong>{action.label}</strong>
-                        <small>{action.copy}</small>
-                      </span>
-                      <ChevronRight className="zb-admin-command-arrow" aria-hidden="true" />
-                    </Link>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
-        </nav>
+  return (
+    <div className="zbo-dashboard">
+      <section className="zbo-dashboard-hero" aria-labelledby="admin-dashboard-title">
+        <div className="zbo-dashboard-hero-copy">
+          <p className="zbo-eyebrow">Operations overview</p>
+          <h1 id="admin-dashboard-title">Keep the operation moving.</h1>
+          <p>
+            Review incoming work, move people through the pipeline and keep every active assignment accountable.
+          </p>
+          {user?.email && <span className="zbo-dashboard-user">Signed in as {user.email}</span>}
+        </div>
+        <div className="zbo-dashboard-hero-actions" aria-label="Dashboard actions">
+          <button type="button" onClick={() => void load()} disabled={loading}>
+            <RefreshCw aria-hidden="true" /> {loading ? "Refreshing…" : "Refresh data"}
+          </button>
+          <button type="button" onClick={() => void handleLogout()}>
+            <LogOut aria-hidden="true" /> Sign out
+          </button>
+        </div>
       </section>
 
-      {error && <p className="zb-login-error">{error}</p>}
+      {error && <p className="zb-login-error" role="alert">{error}</p>}
 
-      <section className="zb-admin-stats" aria-label="Admin totals">
+      <section className="zbo-dashboard-kpis" aria-label="Operational totals">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <article key={stat.label}>
-              <Icon aria-hidden="true" />
-              <span>{stat.label}</span>
+            <article className="zbo-dashboard-kpi" key={stat.label}>
+              <div className="zbo-dashboard-kpi-head"><span>{stat.label}</span><Icon aria-hidden="true" /></div>
               <strong>{stat.value}</strong>
+              <Link href={stat.href}>Open workspace <ChevronRight aria-hidden="true" /></Link>
             </article>
           );
         })}
       </section>
 
-      <section className="zb-admin-panels">
-        <AdminPanel title="Recent enquiries">
-          {data.enquiries.items.length === 0 ? (
-            <EmptyRow />
-          ) : (
-            data.enquiries.items.map((item) => (
-              <AdminRow
-                key={item.id}
-                title={item.name}
-                meta={`${item.companyName || item.email} · ${item.serviceRequired || "General enquiry"}`}
-                tag={new Date(item.createdAt).toLocaleDateString()}
-              />
-            ))
-          )}
-        </AdminPanel>
-
-        <AdminPanel title="Recent workforce requirements">
-          {data.requirements.items.length === 0 ? (
-            <EmptyRow />
-          ) : (
-            data.requirements.items.map((item) => (
-              <AdminRow
-                key={item.id}
-                title={item.companyName}
-                meta={`${item.workforceCount} people · ${item.serviceRequired} · ${item.jobLocation}`}
-                tag={item.status}
-              />
-            ))
-          )}
-        </AdminPanel>
-
-        <AdminPanel title="Jobs in the database">
-          {data.jobs.items.length === 0 ? (
-            <EmptyRow />
-          ) : (
-            data.jobs.items.map((item) => (
-              <AdminRow
-                key={item.id}
-                title={item.title}
-                meta={`${item.location} · ${item._count.applications} applications`}
-                tag={item.status}
-              />
-            ))
-          )}
-        </AdminPanel>
-
-        <AdminPanel title="Recent applications">
-          {data.applications.items.length === 0 ? (
-            <EmptyRow />
-          ) : (
-            data.applications.items.map((item) => (
-              <AdminRow
-                key={item.id}
-                title={item.name}
-                meta={`${item.job.title} · ${item.email}`}
-                tag={item.status}
-              />
-            ))
-          )}
-        </AdminPanel>
-
-        <AdminPanel title="Business Partner applications">
-          <div className="zb-admin-panel-action">
-            <div>
-              <strong>Partner access approvals</strong>
-              <span>Review submitted applications and issue business access from the dedicated approval workspace.</span>
-            </div>
-            <Link href="/admin/partners"><Handshake aria-hidden="true" />Review partners</Link>
+      <section className="zbo-dashboard-layout">
+        <article className="zbo-dashboard-card">
+          <header className="zbo-dashboard-card-header">
+            <div><h2>Review queue</h2><p>The latest records that may need an operations decision.</p></div>
+            <Inbox aria-hidden="true" />
+          </header>
+          <div className="zbo-dashboard-queue">
+            <QueueItem icon={Inbox} title="Incoming enquiries" copy={`${data.enquiries.total} total enquiries in the system`} href="/admin/reports" label="Review" />
+            <QueueItem icon={Handshake} title="Partner access" copy={`${data.partnerApplications.total} partner applications received`} href="/admin/partners" label="Open" />
+            <QueueItem icon={UsersRound} title="Worker applications" copy={`${data.applications.total} job applications available`} href="/admin/worker-applications" label="Review" />
+            <QueueItem icon={CalendarCheck2} title="Attendance requests" copy="Check worker submissions before records are approved" href="/admin/worker-attendance" label="Open" />
           </div>
-          {data.partnerApplications.items.length === 0 ? (
-            <EmptyRow />
-          ) : (
-            data.partnerApplications.items.map((item) => <PartnerAdminRow key={item.id} item={item} />)
-          )}
+        </article>
+
+        <aside className="zbo-dashboard-card">
+          <header className="zbo-dashboard-card-header">
+            <div><h2>Jump to a workspace</h2><p>Direct links to the most-used desks.</p></div>
+            <ChevronRight aria-hidden="true" />
+          </header>
+          <nav className="zbo-dashboard-quicklinks" aria-label="Quick workspaces">
+            {quickLinks.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link className="zbo-dashboard-quicklink" href={item.href} key={item.href}>
+                  <span><Icon aria-hidden="true" /></span>
+                  <span className="zbo-dashboard-quicklink-copy"><strong>{item.label}</strong><small>{item.description}</small></span>
+                  <ChevronRight aria-hidden="true" />
+                </Link>
+              );
+            })}
+          </nav>
+        </aside>
+      </section>
+
+      <section className="zbo-dashboard-panels" aria-label="Latest records">
+        <AdminPanel title="Recent enquiries" icon={Inbox}>
+          {data.enquiries.items.length === 0 ? <EmptyRow /> : data.enquiries.items.map((item) => (
+            <AdminRow key={item.id} title={item.name} meta={`${item.companyName || item.email} · ${item.serviceRequired || "General enquiry"}`} tag={new Date(item.createdAt).toLocaleDateString()} />
+          ))}
         </AdminPanel>
 
-        <AdminPanel title="Placement Cell & Institution onboarding">
-          {data.placementCellApplications.items.length === 0 ? (
-            <EmptyRow />
-          ) : (
-            data.placementCellApplications.items.map((item) => (
-              <PlacementCellAdminRow
-                key={item.id}
-                item={item}
-                onStatusChange={updatePlacementCellStatus}
-              />
-            ))
-          )}
+        <AdminPanel title="Workforce requirements" icon={ClipboardList}>
+          {data.requirements.items.length === 0 ? <EmptyRow /> : data.requirements.items.map((item) => (
+            <AdminRow key={item.id} title={item.companyName} meta={`${item.workforceCount} people · ${item.serviceRequired} · ${item.jobLocation}`} tag={item.status} />
+          ))}
+        </AdminPanel>
+
+        <AdminPanel title="Published roles" icon={BriefcaseBusiness}>
+          {data.jobs.items.length === 0 ? <EmptyRow /> : data.jobs.items.map((item) => (
+            <AdminRow key={item.id} title={item.title} meta={`${item.location} · ${item._count.applications} applications`} tag={item.status} />
+          ))}
+        </AdminPanel>
+
+        <AdminPanel title="Recent applications" icon={UsersRound}>
+          {data.applications.items.length === 0 ? <EmptyRow /> : data.applications.items.map((item) => (
+            <AdminRow key={item.id} title={item.name} meta={`${item.job.title} · ${item.email}`} tag={item.status} />
+          ))}
+        </AdminPanel>
+
+        <AdminPanel title="Partner access applications" icon={Handshake}>
+          <div className="zb-admin-panel-action">
+            <div><strong>Review the business access queue</strong><span>Open the approval desk to check the submission and issue controlled access.</span></div>
+            <Link href="/admin/partners"><Handshake aria-hidden="true" />Open desk</Link>
+          </div>
+          {data.partnerApplications.items.length === 0 ? <EmptyRow /> : data.partnerApplications.items.map((item) => <PartnerAdminRow key={item.id} item={item} />)}
+        </AdminPanel>
+
+        <AdminPanel title="Institution onboarding" icon={Building2}>
+          {data.placementCellApplications.items.length === 0 ? <EmptyRow /> : data.placementCellApplications.items.map((item) => (
+            <PlacementCellAdminRow key={item.id} item={item} onStatusChange={updatePlacementCellStatus} />
+          ))}
         </AdminPanel>
       </section>
     </div>
   );
 }
 
-function AdminPanel({ title, children }: { title: string; children: ReactNode }) {
+function QueueItem({ icon: Icon, title, copy, href, label }: { icon: LucideIcon; title: string; copy: string; href: string; label: string }) {
+  return <div className="zbo-dashboard-queue-item"><span className="zbo-dashboard-queue-icon"><Icon aria-hidden="true" /></span><span className="zbo-dashboard-queue-copy"><strong>{title}</strong><span>{copy}</span></span><Link href={href}>{label}</Link></div>;
+}
+
+function AdminPanel({ title, icon: Icon, children }: { title: string; icon: LucideIcon; children: ReactNode }) {
   return (
-    <article className="zb-admin-panel">
-      <h2>{title}</h2>
-      <div className="zb-admin-list">{children}</div>
+    <article className="zbo-dashboard-card">
+      <header className="zbo-dashboard-card-header"><div><h2>{title}</h2><p>Latest five records</p></div><Icon aria-hidden="true" /></header>
+      <div className="zbo-dashboard-panel-list">{children}</div>
     </article>
   );
 }
@@ -508,5 +438,5 @@ function PlacementCellAdminRow({
 }
 
 function EmptyRow() {
-  return <p className="zb-admin-empty">No records yet.</p>;
+  return <p className="zbo-dashboard-empty">No records yet.</p>;
 }

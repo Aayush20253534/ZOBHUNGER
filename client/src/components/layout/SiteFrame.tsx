@@ -8,7 +8,10 @@ import { Navbar } from "./Navbar";
 export function SiteFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   if (pathname === "/admin/security") {
-    return <main className="zb-admin-security-root">{children}</main>;
+    return <div className="zb-admin-security-root">{children}</div>;
+  }
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return <div className="zb-admin-route-root">{children}</div>;
   }
   if (pathname === "/employee-joining" || pathname.startsWith("/employee-joining/")) {
     return <main className="zb-employee-joining-root">{children}</main>;
