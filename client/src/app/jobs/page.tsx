@@ -11,6 +11,12 @@ import { getPageMetadata } from "@/lib/page-metadata";
 import { getDataMode } from "@/services/adapters";
 import { getJobs } from "@/services/jobs.service";
 
+// Jobs are backed by the configured API in production. Keep this route out of
+// the build-time prerender pass so a deployment never depends on the API being
+// reachable from the Vercel build worker. The page still renders the latest
+// catalogue on every request.
+export const dynamic = "force-dynamic";
+
 export function generateMetadata() {
   return {
     ...getPageMetadata(
