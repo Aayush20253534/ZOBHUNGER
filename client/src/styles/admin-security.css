@@ -77,21 +77,37 @@
 
 .zb-admin-security-status {
   display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+  min-height: 38px;
+  flex: 0 0 auto;
   align-items: center;
+  justify-content: center;
+  justify-self: end;
   gap: 7px;
-  padding: 8px 10px;
+  padding: 8px 12px;
   border: 1px solid #efdadd;
   border-radius: 999px;
   background: #fff8f9;
   color: #81293a;
   font-size: .72rem;
   font-weight: 800;
+  line-height: 1;
   white-space: nowrap;
+  overflow: visible;
 }
 
 .zb-admin-security-status svg {
   width: 15px;
   height: 15px;
+  flex: 0 0 15px;
+}
+
+.zb-admin-security-status-label {
+  display: block;
+  min-width: max-content;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .zb-admin-security-status.is-enabled {

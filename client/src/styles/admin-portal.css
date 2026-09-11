@@ -1999,8 +1999,19 @@
 }
 
 .zbo-admin-content-inner .zb-admin-security-status {
-  padding: .45rem .65rem;
-  border-radius: .55rem;
+  width: max-content;
+  min-width: max-content;
+  min-height: 2.45rem;
+  flex: 0 0 auto;
+  justify-self: end;
+  padding: .5rem .72rem;
+  border-radius: 999px;
+  overflow: visible;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status-label {
+  min-width: max-content;
+  white-space: nowrap;
 }
 
 .zbo-admin-content-inner .zb-admin-security-state,

@@ -112,7 +112,7 @@ export function AdminSecurity() {
         </div>
         <span className={`zb-admin-security-status${enabled ? " is-enabled" : ""}`}>
           {enabled ? <CheckCircle2 aria-hidden="true" /> : <KeyRound aria-hidden="true" />}
-          {enabled ? "Protected" : "Setup required"}
+          <span className="zb-admin-security-status-label">{enabled ? "Protected" : "Setup required"}</span>
         </span>
       </header>
 
