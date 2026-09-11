@@ -32,6 +32,14 @@ export const solutionVisuals: Record<SolutionSlug, SolutionVisualProfile> = {
     stages: ["Territory", "Hire", "Activate", "Track"],
     workModes: ["Field sales", "Telesales", "Lead generation"],
   },
+  "telecaller-telesales-services": {
+    eyebrow: "Calling execution",
+    title: "Turn every conversation into a useful next step.",
+    description:
+      "Brief the team, train the conversation, make the call and keep the follow-up visible until the outcome is clear.",
+    stages: ["Brief", "Train", "Call", "Convert"],
+    workModes: ["Telesales", "Lead follow-up", "Customer support"],
+  },
   "promoter-solutions": {
     eyebrow: "Promoter execution",
     title: "Put trained people where customers meet your brand.",

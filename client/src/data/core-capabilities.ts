@@ -30,6 +30,12 @@ export const coreCapabilities: readonly CoreCapability[] = [
       "Qualified lead generation through field sales, customer acquisition and targeted project-led campaigns.",
   },
   {
+    id: "telecaller-telesales",
+    title: "Telecaller & Telesales Services",
+    description:
+      "Trained telecallers for telesales, lead generation, customer engagement, follow-up and business conversion.",
+  },
+  {
     id: "consumer-engagement",
     title: "Consumer Engagement",
     description:

@@ -278,6 +278,144 @@ export const solutionDetails = {
       label: "Build your sales team",
     },
   },
+  "telecaller-telesales-services": {
+    heading: "Conversations that move customers forward.",
+    description:
+      "Deploy trained telecallers for telesales, lead generation, customer engagement and business conversion. We build the calling team, prepare the conversation and keep follow-ups moving.",
+    bestFor:
+      "Businesses that need consistent outbound outreach, responsive customer calling or a dedicated telephone sales team.",
+    facts: [
+      { label: "Channels", value: "Inbound, outbound & follow-up calls" },
+      { label: "Team model", value: "Dedicated, campaign or project teams" },
+      { label: "Focus", value: "Qualified conversations & conversion" },
+    ],
+    servicesHeading: "Trained calling teams for every customer conversation.",
+    servicesDescription:
+      "Choose a focused calling service or combine multiple workstreams into one managed telecaller and telesales team.",
+    services: [
+      {
+        title: "Telecalling / outbound calling",
+        description:
+          "Reach prospects and customers with a clear script, approved offer and structured call outcome tracking.",
+      },
+      {
+        title: "Telesales",
+        description:
+          "Build telephone sales capacity for product conversations, objection handling and order or application conversion.",
+      },
+      {
+        title: "Lead generation",
+        description:
+          "Research, contact and qualify prospects against your customer profile and hand over actionable leads.",
+      },
+      {
+        title: "Lead follow-up & conversion",
+        description:
+          "Keep warm leads moving with timely callbacks, context from earlier conversations and clear next actions.",
+      },
+      {
+        title: "Customer calling & support",
+        description:
+          "Handle customer questions, service callbacks and routine support conversations with a helpful, consistent tone.",
+      },
+      {
+        title: "Sales calling",
+        description:
+          "Run focused sales campaigns around a product, territory, customer segment or seasonal offer.",
+      },
+      {
+        title: "Appointment / demo booking",
+        description:
+          "Qualify interest and schedule sales meetings, product demos or service appointments for your team.",
+      },
+      {
+        title: "Verification & feedback calling",
+        description:
+          "Confirm information, collect structured feedback and flag records that need a human review.",
+      },
+      {
+        title: "Inbound & outbound call handling",
+        description:
+          "Combine responsive inbound coverage with proactive outbound activity in one coordinated operating model.",
+      },
+      {
+        title: "Dedicated telecaller / telesales manpower",
+        description:
+          "Add a trained, supervised calling team that works to your hours, tools, reporting format and campaign goals.",
+      },
+    ],
+    focus: {
+      id: "planning",
+      label: "Calling programme design",
+      heading: "Make every call part of a clear customer journey.",
+      description:
+        "The strongest calling programmes align the audience, the conversation and the follow-up before the first dial.",
+      items: [
+        {
+          title: "Audience & offer",
+          description:
+            "Define who the team will call, why the conversation matters and what a successful outcome looks like.",
+        },
+        {
+          title: "Script & training",
+          description:
+            "Prepare the team with product context, call guidance, objection handling and the right escalation path.",
+        },
+        {
+          title: "Follow-up & reporting",
+          description:
+            "Set outcome codes, callback rules and reporting checkpoints so the team can improve conversion over time.",
+        },
+      ],
+    },
+    process: {
+      heading: "From brief to a calling team that delivers.",
+      description:
+        "A clear operating brief gives the team the context and support needed to have better conversations.",
+      steps: [
+        {
+          title: "Brief",
+          description:
+            "Confirm the audience, offer, call volume, working hours and success measures.",
+        },
+        {
+          title: "Train",
+          description:
+            "Prepare the team on the product, script, CRM workflow and quality expectations.",
+        },
+        {
+          title: "Call",
+          description:
+            "Start inbound, outbound or mixed calling with supervised early conversations.",
+        },
+        {
+          title: "Follow up",
+          description:
+            "Prioritise callbacks, appointments and qualified opportunities against the agreed rules.",
+        },
+        {
+          title: "Review",
+          description:
+            "Review call outcomes, quality signals and conversion trends with your team.",
+        },
+      ],
+    },
+    industrySlugs: [
+      "e-commerce",
+      "bfsi-fintech",
+      "telecom",
+      "healthcare",
+      "retail",
+      "startups",
+    ],
+    relatedSlugs: ["sales-force", "business-operations", "workforce-solutions"],
+    cta: {
+      title: "Need a trained calling team?",
+      description:
+        "Share your audience, offer, call volume and conversion goal. We’ll help you plan the right telecaller or telesales engagement.",
+      label: "Plan your calling team",
+    },
+  },
   "promoter-solutions": {
     heading: "Promoters for every brand and campaign.",
     description:

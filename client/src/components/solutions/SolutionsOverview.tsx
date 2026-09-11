@@ -26,7 +26,7 @@ const executionLanes = [
     label: "Build the team",
     description:
       "Recruitment, staffing and flexible workforce for defined roles and timelines.",
-    services: ["Workforce", "Gig Workforce"],
+    services: ["Workforce", "Telecaller & Telesales", "Gig Workforce"],
     flow: ["Brief", "Match", "Deploy"],
   },
   {
@@ -50,7 +50,7 @@ const executionLanes = [
     label: "Support operations",
     description:
       "Coordinated capacity for verification, customer support, data and back-office workflows.",
-    services: ["Business Operations", "Verification"],
+    services: ["Business Operations", "Telecaller & Telesales", "Verification"],
     flow: ["Scope", "Onboard", "Coordinate"],
   },
 ] as const;

@@ -187,11 +187,13 @@ export function Footer() {
         <div className="zb-footer-grid">
           <section className="zb-footer-intro" aria-label="ZOBHUNGER overview">
             <div className="zb-footer-intro-copy">
-              <Link href="/" className="zb-wordmark zb-footer-wordmark" aria-label={`${site.name} home`}>
-                ZOB<span>HUNGER</span>
-              </Link>
+              <div className="zb-footer-brand-lockup">
+                <Link href="/" className="zb-wordmark zb-footer-wordmark" aria-label={`${site.name} home`}>
+                  ZOB<span>HUNGER</span>
+                </Link>
+                <span className="zb-header-tagline zb-footer-tagline">{site.tagline}</span>
+              </div>
               <div className="zb-footer-brand-copy">
-                <strong className="zb-footer-tagline">{site.tagline}</strong>
                 <p>{site.description}</p>
                 <div className="zb-footer-global" aria-label={market.clientReach.label}>
                   <Globe2 aria-hidden="true" />
@@ -257,7 +259,6 @@ export function Footer() {
 
         <div className="zb-footer-bottom">
           <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
-          <p>{site.tagline}</p>
         </div>
       </div>
     </footer>

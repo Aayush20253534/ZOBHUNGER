@@ -6,6 +6,7 @@ export const solutionCoverVisuals = {
   "verification-services": "verification",
   "workforce-solutions": "workforce-hiring",
   "sales-force": "field-executives",
+  "telecaller-telesales-services": "telecaller-telesales",
   "promoter-solutions": "product-demonstration",
   "retail-execution": "audit",
   "brand-activation": "brand-deployment",

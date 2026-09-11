@@ -5,11 +5,7 @@ export interface BrandExperienceGroup {
   brands: readonly string[];
 }
 
-/**
- * Brand names below come from the client-provided brand experience brief.
- * Names explicitly flagged by the client for spelling/legal verification are
- * intentionally excluded from the public list until they are confirmed.
- */
+/** Brand names below come from the client-provided brand experience brief. */
 export const brandExperienceGroups: readonly BrandExperienceGroup[] = [
   {
     id: "commerce-hyperlocal",
@@ -30,7 +26,9 @@ export const brandExperienceGroups: readonly BrandExperienceGroup[] = [
       "Uber",
       "InDrive",
       "Oye Rickshaw",
+      "KiranKart",
       "Bikayi",
+      "Locooff",
     ],
   },
   {
@@ -49,7 +47,10 @@ export const brandExperienceGroups: readonly BrandExperienceGroup[] = [
       "Pine Labs",
       "Tide",
       "Cheq",
+      "PagarBook",
       "BharatPe",
+      "Tonetag",
+      "VacoBinary",
     ],
   },
   {
@@ -82,6 +83,7 @@ export const brandExperienceGroups: readonly BrandExperienceGroup[] = [
       "Subway",
       "McDonald's",
       "ASUS",
+      // The brief spells this brand "Malboro"; the public-facing trademark is "Marlboro".
       "Marlboro",
       "Brown-Forman",
       "Jim Beam",
@@ -106,17 +108,8 @@ export const brandExperienceIntro = {
     "ZOBHUNGER has supported assignments across e-commerce, logistics, fintech, banking, retail, food & beverage and digital services through manpower, field operations, auditing, sampling, lead generation, onboarding, training and consumer engagement.",
 } as const;
 
-export const featuredBrandExperience = [
-  "Amazon",
-  "Flipkart",
-  "Zepto",
-  "Zomato",
-  "Swiggy",
-  "Paytm",
-  "Google Pay",
-  "Axis Bank",
-  "Upstox",
-  "Pine Labs",
-  "McDonald's",
-  "ASUS",
-] as const;
+// The compact marquee is intentionally sourced from the complete grouped list,
+// so a partner added to the brief appears in both logo sliders automatically.
+export const featuredBrandExperience = Array.from(
+  new Set(brandExperienceGroups.flatMap((group) => group.brands)),
+) as readonly string[];

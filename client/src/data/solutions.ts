@@ -19,6 +19,15 @@ export const solutions = [
     services: ["Field sales", "Telesales", "Lead generation"],
   },
   {
+    slug: "telecaller-telesales-services",
+    title: "ZOBHUNGER Telecaller & Telesales",
+    label: "Telecaller & Telesales",
+    description:
+      "Trained telecallers for telesales, lead generation, customer engagement and business conversion.",
+    leadKind: "workforce",
+    services: ["Outbound calling", "Lead follow-up", "Appointment booking"],
+  },
+  {
     slug: "promoter-solutions",
     title: "ZOBHUNGER Promoter",
     label: "Promoters",

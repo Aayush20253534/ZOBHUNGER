@@ -3,10 +3,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useId, useRef, useState } from "react";
 import { featuredBrandExperience } from "@/data/brand-experience";
+import { brandLogoUrl } from "@/data/brand-logos";
 import "@/styles/trusted-partners.css";
 
 // Local brand artwork avoids third-party favicon failures and blurry app icons.
-const partnerArtwork: Record<(typeof featuredBrandExperience)[number], string> = {
+const partnerArtwork: Partial<Record<string, string>> = {
   Amazon: "amazon.png",
   Flipkart: "flipkart.svg",
   Zepto: "zepto.svg",
@@ -21,21 +22,23 @@ const partnerArtwork: Record<(typeof featuredBrandExperience)[number], string> =
   ASUS: "asus.svg",
 };
 
-function PartnerMark({ brand }: { brand: (typeof featuredBrandExperience)[number] }) {
+function PartnerMark({ brand }: { brand: string }) {
   const [failed, setFailed] = useState(false);
+  const artwork = partnerArtwork[brand];
+  const source = artwork ? `/images/partners/${artwork}` : brandLogoUrl(brand);
 
   return (
     <span className="zb-partner-mark">
-      {failed ? (
+      {failed || !source ? (
         <span className="zb-partner-mark-fallback">{brand}</span>
       ) : (
         <img
-          src={`/images/partners/${partnerArtwork[brand]}`}
+          src={source}
           className={brand === "Zomato" ? "zb-partner-mark-dark" : undefined}
           alt={brand}
           width={128}
           height={48}
-          loading="eager"
+          loading={artwork ? "eager" : "lazy"}
           decoding="async"
           draggable={false}
           ref={(image) => {
@@ -160,7 +163,7 @@ export function TrustedPartnerMarquee() {
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.altKey || event.ctrlKey || event.metaKey) return;
-      const step = groupWidth / featuredBrandExperience.length;
+      const step = groupWidth / Math.max(featuredBrandExperience.length, 1);
       let distance: number;
       switch (event.key) {
         case "ArrowLeft": distance = -step; break;

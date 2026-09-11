@@ -2,9 +2,9 @@
 
 import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
-  ArrowLeft, ArrowRight, BadgeCheck, Banknote, BriefcaseBusiness, Building2, CheckCircle2,
+  ArrowLeft, ArrowRight, Banknote, BriefcaseBusiness, Building2, CheckCircle2,
   FileCheck2, FileText, GraduationCap, HeartHandshake, IdCard, LoaderCircle, LockKeyhole,
-  ShieldCheck, Upload, UserRound, X,
+  Send, ShieldCheck, Upload, UserRound, X,
 } from "lucide-react";
 import { ApiError, apiFieldErrors } from "@/lib/api";
 import { finalizeEmployeeJoining, startEmployeeJoining, uploadEmployeeDocument } from "@/services/employee-joining.service";
@@ -159,7 +159,11 @@ export function EmployeeJoiningForm() {
       <div className="zhr-success-mark"><CheckCircle2 aria-hidden="true" /></div>
       <div><p className="zhr-kicker">Joining form submitted</p><h1 id="joining-complete-title">Submission received.</h1></div>
     </div>
-    <div className="zhr-employee-number"><span>EMPLOYEE ID</span><strong>{employeeNumber}</strong></div>
+    <div className="zhr-employee-number">
+      <div className="zhr-employee-number-head"><span>EMPLOYEE ID</span><b>Assigned</b></div>
+      <strong>{employeeNumber}</strong>
+      <small>Use this ID when you contact the ZOBHUNGER HR team.</small>
+    </div>
     <p className="zhr-success-copy">Your details and documents were securely sent to ZOBHUNGER HR. Keep this Employee ID for future reference.</p>
     <div className="zhr-success-note"><ShieldCheck aria-hidden="true" /><div><strong>Next step</strong><span>HR review → approval → offer letter → registered email.</span></div></div>
     <p className="zhr-reference">Reference: <strong>{receipt.id}</strong></p>
@@ -234,7 +238,7 @@ export function EmployeeJoiningForm() {
       {!profile.permanentSameAsCurrent && <div className="zhr-grid zhr-subgrid"><Field label="Permanent address" required wide><input required minLength={5} maxLength={220} value={profile.permanentAddressLine1} onChange={e => set("permanentAddressLine1", e.target.value)} /></Field><Field label="Address line 2" wide><input maxLength={220} value={profile.permanentAddressLine2} onChange={e => set("permanentAddressLine2", e.target.value)} /></Field><Field label="City" required><input required minLength={2} maxLength={120} value={profile.permanentCity} onChange={e => set("permanentCity", e.target.value)} /></Field><Field label="State / union territory" required><IndiaStateSelect value={profile.permanentState} onChange={value => set("permanentState", value)} /></Field><Field label="PIN code" required><input inputMode="numeric" required pattern="[0-9]{6}" maxLength={6} value={profile.permanentPostalCode} onChange={e => set("permanentPostalCode", e.target.value.replace(/\D/g, "").slice(0,6))} /></Field></div>}
       <div className="zhr-divider" /><h3 className="zhr-mini-title"><HeartHandshake />Emergency contact</h3><div className="zhr-grid"><Field label="Contact name" required><input required minLength={2} maxLength={120} value={profile.emergencyContactName} onChange={e => set("emergencyContactName", e.target.value)} /></Field><Field label="Relationship" required><input required minLength={2} maxLength={80} value={profile.emergencyRelationship} onChange={e => set("emergencyRelationship", e.target.value)} /></Field><Field label="Emergency mobile" required><input type="tel" required minLength={7} maxLength={24} value={profile.emergencyPhone} onChange={e => set("emergencyPhone", e.target.value)} /></Field></div></fieldset>}
 
-      {step === 3 && <fieldset disabled={busy}><legend className="zhr-sr-only">Statutory & bank details</legend><div className="zhr-section-heading"><span className="zhr-section-icon"><Banknote aria-hidden="true" /></span><div><span>STEP 03</span><h2>Statutory & bank details</h2></div></div><div className="zhr-security-note"><ShieldCheck /><div><strong>Sensitive fields are protected.</strong><span>Aadhaar, PAN, bank account and UAN values are encrypted before they are stored and are available only to authenticated HR administrators.</span></div></div><div className="zhr-grid">
+      {step === 3 && <fieldset disabled={busy}><legend className="zhr-sr-only">Statutory & bank details</legend><div className="zhr-section-heading"><span className="zhr-section-icon"><Banknote aria-hidden="true" /></span><div><span>STEP 03</span><h2>Statutory & bank details</h2></div></div><div className="zhr-grid">
         <Field label="Aadhaar number" required><input inputMode="numeric" autoComplete="off" required pattern="[0-9]{12}" maxLength={12} value={profile.aadhaarNumber} onChange={e => set("aadhaarNumber", e.target.value.replace(/\D/g, "").slice(0,12))} /></Field>
         <Field label="PAN number" required><input autoComplete="off" required pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]" maxLength={10} value={profile.panNumber} onChange={e => set("panNumber", e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0,10))} /></Field>
         <Field label="Bank account holder" required><input required minLength={2} maxLength={120} value={profile.bankAccountHolder} onChange={e => set("bankAccountHolder", e.target.value)} /></Field>
@@ -261,10 +265,9 @@ export function EmployeeJoiningForm() {
       {progress && <div className="zhr-submit-progress" role="status"><LoaderCircle className="zhr-spin" />{progress}</div>}
       </fieldset>}
 
-          <div className="zhr-actions">{step > 1 ? <button type="button" className="zhr-button zhr-button--secondary" onClick={back} disabled={busy}><ArrowLeft />Back</button> : <span />}{step < 5 ? <button type="button" className="zhr-button" onClick={next} disabled={busy}>Continue<ArrowRight /></button> : <button type="submit" className="zhr-button zhr-button--submit" disabled={busy}>{busy ? <LoaderCircle className="zhr-spin" /> : <BadgeCheck />}{busy ? "Submitting securely…" : "Submit joining form"}</button>}</div>
+          <div className="zhr-actions">{step > 1 ? <button type="button" className="zhr-button zhr-button--secondary" onClick={back} disabled={busy}><ArrowLeft />Back</button> : <span />}{step < 5 ? <button type="button" className="zhr-button" onClick={next} disabled={busy}>Continue<ArrowRight /></button> : <button type="submit" className="zhr-button zhr-button--submit" disabled={busy}>{busy ? <LoaderCircle className="zhr-spin" /> : <Send aria-hidden="true" />}{busy ? "Sending…" : "Submit to HR"}</button>}</div>
         </form>
       </section>
     </div>
-    <footer className="zhr-foot"><LockKeyhole /><span>Private HR onboarding · Zobhungr Solutions Private Limited · Vijay Tower, Ghazipur, Uttar Pradesh 233001</span></footer>
   </div>;
 }

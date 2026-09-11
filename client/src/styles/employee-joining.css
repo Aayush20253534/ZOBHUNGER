@@ -803,3 +803,69 @@
   .zhr-upload > button { margin-right: 8px; }
   .zhr-actions .zhr-button--secondary { min-width: 74px; }
 }
+
+/* Confirmation and submit controls: quiet, useful, and human-readable. */
+.zhr-button--submit,
+.zhr-button--submit:disabled {
+  min-width: 168px;
+  border: 1px solid #671629;
+  border-radius: 8px;
+  background: #671629;
+  box-shadow: none;
+  font-size: .84rem;
+  letter-spacing: .005em;
+  white-space: nowrap;
+}
+.zhr-button--submit:hover:not(:disabled) { background: #50111f; box-shadow: none; }
+.zhr-button--submit svg { width: 17px; height: 17px; }
+.zhr-employee-number {
+  display: grid;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 19px 21px 18px;
+  border: 1px solid #ddcfd2;
+  border-left: 4px solid #b5122d;
+  border-radius: 12px;
+  background: #fcf9fa;
+  box-shadow: none;
+}
+.zhr-employee-number-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.zhr-employee-number-head span {
+  color: #7b4d58;
+  font-size: .64rem;
+  font-weight: 850;
+  letter-spacing: .16em;
+}
+.zhr-employee-number-head b {
+  color: #147455;
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.zhr-employee-number > strong {
+  color: #441421;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: clamp(1.35rem, 4vw, 1.85rem);
+  font-weight: 760;
+  letter-spacing: .055em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+.zhr-employee-number > small {
+  color: #7b7073;
+  font-size: .72rem;
+  line-height: 1.45;
+}
+@media (max-width: 430px) {
+  .zhr-button--submit,
+  .zhr-button--submit:disabled { min-width: 0; font-size: .78rem; }
+  .zhr-employee-number { margin-top: 18px; padding: 17px 16px 16px; }
+  .zhr-employee-number > strong { font-size: clamp(1.12rem, 7vw, 1.42rem); letter-spacing: .035em; }
+  .zhr-employee-number > small { font-size: .67rem; }
+}

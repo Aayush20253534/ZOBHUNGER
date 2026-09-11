@@ -80,6 +80,12 @@ export const executionVisuals = {
     caption: "Field executives explain the offering, answer questions and record enquiries for follow-up.",
     steps: ["Explain the offering", "Answer questions", "Record follow-up"],
   }),
+  "telecaller-telesales": createVisual("telecaller-telesales", {
+    title: "Telecaller and telesales teams",
+    alt: "Professional illustration of a trained telecaller team using headsets and a CRM dashboard to manage conversations, follow-ups and appointments.",
+    caption: "A trained calling team turns customer conversations into qualified leads, booked appointments and clear next actions.",
+    steps: ["Brief and train", "Call and qualify", "Follow up and convert"],
+  }, "Generated service illustration"),
   "workforce-hiring": createVisual("workforce-hiring", {
     title: "Workforce recruitment",
     alt: "AI illustration of a ZOBHUNGER recruiter discussing a role with a candidate and reviewing a screening checklist.",

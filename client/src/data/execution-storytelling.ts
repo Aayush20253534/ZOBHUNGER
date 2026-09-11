@@ -93,6 +93,18 @@ const fieldStories = {
     ],
     outcome: "Customer enquiries, common questions and follow-up actions, using the agreed reporting format.",
   },
+  telecaller: {
+    title: "Turn a calling list into a managed customer journey.",
+    description:
+      "A trained telecaller team combines a clear opening, useful qualification and disciplined follow-up so every conversation has a visible next step.",
+    visualId: "telecaller-telesales",
+    actions: [
+      { title: "Prepare the conversation", description: "Review the audience, product brief, approved script and outcome options before the campaign starts." },
+      { title: "Call and qualify", description: "Speak with prospects or customers, answer the first questions and capture the agreed call outcome." },
+      { title: "Follow up and convert", description: "Prioritise callbacks, appointments and qualified opportunities, then share the activity record with your team." },
+    ],
+    outcome: "Call outcomes, qualified leads, appointments and follow-up actions in the agreed reporting format.",
+  },
   sampling: {
     title: "Approach. Introduce. Put a sample in hand.",
     description:
@@ -184,6 +196,7 @@ export const solutionFieldStories = {
     { id: "qr", label: "QR deployment", story: fieldStories.qr },
     { id: "conversations", label: "Card & field executives", story: fieldStories.conversations },
   ],
+  "telecaller-telesales-services": [{ id: "telecaller", label: "Calling & follow-up", story: fieldStories.telecaller }],
   "promoter-solutions": [{ id: "sampling", label: "Customer engagement", story: fieldStories.sampling }],
   "retail-execution": [
     { id: "audits", label: "Store audits", story: fieldStories.audits },
