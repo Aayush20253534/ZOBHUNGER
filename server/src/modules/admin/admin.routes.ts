@@ -1,3 +1,4 @@
+import { adminIntakeRouter } from "../intake/intake.routes.js";
 import { adminAccessRouter } from "../admin-access/admin-access.routes.js";
 import { adminEmployeeJoiningRouter } from "../employee-joining/employee-joining.routes.js";
 import { adminWorkerWorkflowRouter } from "../workers/worker-workflow.routes.js";
@@ -51,6 +52,7 @@ adminRouter.use(requireAuth, requireRole("ADMIN"), requireAdminMfa);
 adminRouter.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
 adminRouter.use(requireMappedAdminPermission);
 adminRouter.use("/access", adminAccessRouter);
+adminRouter.use("/intake", adminIntakeRouter);
 adminRouter.use("/vendors", adminVendorsRouter);
 adminRouter.use("/partners", adminPartnerAccessRouter);
 adminRouter.use("/careers", adminCareersRouter);

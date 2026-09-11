@@ -9,7 +9,7 @@ const text = (relative) => readFile(path.join(root, relative), "utf8");
 
 test("department RBAC migration upgrades legacy admins without creating a lockout", async () => {
   const dirs = (await readdir(path.join(root, "server/prisma/migrations"))).filter((name) => /^\d+/.test(name)).sort();
-  assert.equal(dirs.at(-1), "20260914100000_department_admin_rbac");
+  assert.ok(dirs.includes("20260914100000_department_admin_rbac"));
   const sql = await text("server/prisma/migrations/20260914100000_department_admin_rbac/migration.sql");
   assert.match(sql, /CREATE TYPE "AdminDepartment"/);
   assert.match(sql, /CREATE TYPE "AdminPermission"/);

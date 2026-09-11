@@ -10,7 +10,7 @@ export const enquirySchema = z.object({
   companyName: z.string().trim().max(160).optional(),
   email: emailSchema,
   phone: phoneSchema,
-  serviceRequired: serviceSchema,
+  serviceRequired: serviceSchema.or(z.literal("legal-privacy-compliance")),
   message: z
     .string()
     .trim()

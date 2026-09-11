@@ -49,13 +49,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const currentGroup = matchedGroup ?? { label: "Operations" };
 
   useEffect(() => {
-    try {
-      setSidebarCollapsed(window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "true");
-    } catch {
-      setSidebarCollapsed(false);
-    } finally {
-      setCollapsePreferenceReady(true);
-    }
+    const frame = window.requestAnimationFrame(() => {
+      try {
+        setSidebarCollapsed(window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "true");
+      } catch {
+        setSidebarCollapsed(false);
+      } finally {
+        setCollapsePreferenceReady(true);
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -77,7 +80,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }, [isSecurityRoute, router]);
 
   useEffect(() => {
-    setNavigationOpen(false);
+    const frame = window.requestAnimationFrame(() => setNavigationOpen(false));
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
 
   useEffect(() => {

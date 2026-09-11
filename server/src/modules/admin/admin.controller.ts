@@ -43,8 +43,8 @@ function adminId(res: Response): string {
 }
 
 export const adminOverviewController: RequestHandler = async (_req, res) => {
-  const user = res.locals.authUser as { adminPermissions?: import("../../generated/prisma/client.js").AdminPermission[] };
-  const data = await adminOverviewForPermissions(user.adminPermissions ?? []);
+  const user = res.locals.authUser as { id: string; adminDepartment?: import("../../generated/prisma/client.js").AdminDepartment | null; adminPermissions?: import("../../generated/prisma/client.js").AdminPermission[] };
+  const data = await adminOverviewForPermissions(user.adminPermissions ?? [], user.adminDepartment ?? null, user.id);
   res.status(200).json(apiSuccessResponse("Administrator overview retrieved", data));
 };
 

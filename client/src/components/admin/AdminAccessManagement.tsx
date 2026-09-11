@@ -82,7 +82,8 @@ export function AdminAccessManagement() {
   }, []);
 
   const loadAccounts = useCallback(async (soft = false) => {
-    soft ? setRefreshing(true) : setLoading(true);
+    if (soft) setRefreshing(true);
+    else setLoading(true);
     try {
       const response = await listAdminAccounts({
         query: query || undefined,
@@ -100,17 +101,22 @@ export function AdminAccessManagement() {
 
   useEffect(() => {
     let active = true;
-    void loadConfig()
-      .then(cfg => {
-        if (!active) return;
-        const hr = cfg.departments.find(item => item.value === "HR") ?? cfg.departments[0];
-        if (hr) {
-          setFormDepartment(hr.value);
-          setFormPermissions(hr.defaultPermissions);
-        }
-      })
-      .catch(error => { if (active) setNotice({ tone: "error", text: error instanceof ApiError ? error.message : "Unable to load administrator policy." }); });
-    return () => { active = false; };
+    const timer = window.setTimeout(() => {
+      void loadConfig()
+        .then(cfg => {
+          if (!active) return;
+          const hr = cfg.departments.find(item => item.value === "HR") ?? cfg.departments[0];
+          if (hr) {
+            setFormDepartment(hr.value);
+            setFormPermissions(hr.defaultPermissions);
+          }
+        })
+        .catch(error => { if (active) setNotice({ tone: "error", text: error instanceof ApiError ? error.message : "Unable to load administrator policy." }); });
+    }, 0);
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
   }, [loadConfig]);
 
   useEffect(() => {

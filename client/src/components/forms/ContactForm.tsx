@@ -17,6 +17,8 @@ import { enquirySchema } from "@/schemas/enquiry.schema";
 import { submitEnquiry } from "@/services/enquiries.service";
 import type { EnquiryInput } from "@/types/enquiry.types";
 
+const contactServiceOptions = [...solutions.map((solution) => ({ value: solution.slug, label: solution.label })), { value: "legal-privacy-compliance", label: "Legal, privacy & compliance" }];
+
 const emptyValues = {
   name: "",
   companyName: "",
@@ -135,10 +137,7 @@ export function ContactForm({
                   onBlur={field.onBlur}
                   inputRef={field.ref}
                   disabled={busy}
-                  options={solutions.map((solution) => ({
-                    value: solution.slug,
-                    label: solution.label,
-                  }))}
+                  options={contactServiceOptions}
                   error={errors.serviceRequired?.message}
                 />
               )}

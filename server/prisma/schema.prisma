@@ -46,6 +46,27 @@ enum AdminPermission {
   ADMIN_USERS_MANAGE
 }
 
+
+enum IntakeCaseStatus {
+  SUBMITTED
+  IN_REVIEW
+  CONTACTED
+  RESOLVED
+  REJECTED
+  ARCHIVED
+}
+
+enum IntakeSourceType {
+  CONTACT_ENQUIRY
+  WORKFORCE_REQUIREMENT
+  PARTNER_APPLICATION
+  VENDOR_APPLICATION
+  CAREER_APPLICATION
+  PLACEMENT_CELL_APPLICATION
+  EMPLOYEE_JOINING
+  JOB_APPLICATION
+}
+
 enum RequirementStatus {
   NEW
   CONTACTED
@@ -207,10 +228,58 @@ model User {
   attendanceApprovals   AttendanceApprovalEvent[]
   workerAttendanceRequests WorkerAttendanceRequest[] @relation("WorkerAttendanceOwner")
   workerAttendanceReviews WorkerAttendanceRequest[] @relation("WorkerAttendanceReviewer")
+  assignedIntakeCases    IntakeCase[] @relation("IntakeCaseAssignee")
+  intakeNotesAuthored    IntakeNote[] @relation("IntakeNoteAuthor")
 
   @@index([role, isActive])
   @@index([role, adminDepartment, isActive])
   @@index([createdAt])
+}
+
+model IntakeCase {
+  id                  String           @id @default(cuid())
+  sourceType          IntakeSourceType
+  sourceId            String
+  department          AdminDepartment
+  status              IntakeCaseStatus @default(SUBMITTED)
+  sourceStatus        String?
+  subject             String
+  contactName         String
+  contactEmail        String?
+  contactPhone        String?
+  organizationName    String?
+  city                String?
+  summary             String?
+  details             Json?
+  assignedAdminId     String?
+  revision            Int              @default(0)
+  submittedAt         DateTime
+  sourceUpdatedAt     DateTime?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  assignedAdmin User?        @relation("IntakeCaseAssignee", fields: [assignedAdminId], references: [id], onDelete: SetNull)
+  notes         IntakeNote[]
+
+  @@unique([sourceType, sourceId])
+  @@index([department, status, submittedAt])
+  @@index([assignedAdminId, status, submittedAt])
+  @@index([sourceType, submittedAt])
+  @@index([contactEmail])
+}
+
+model IntakeNote {
+  id           String   @id @default(cuid())
+  caseId       String
+  authorUserId String
+  body         String
+  createdAt    DateTime @default(now())
+
+  case   IntakeCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  author User       @relation("IntakeNoteAuthor", fields: [authorUserId], references: [id], onDelete: Restrict)
+
+  @@index([caseId, createdAt])
+  @@index([authorUserId, createdAt])
 }
 
 model BusinessProfile {

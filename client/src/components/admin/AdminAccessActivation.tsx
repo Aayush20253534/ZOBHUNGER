@@ -39,19 +39,29 @@ export function AdminAccessActivation() {
   const passwordReady = rules.every(rule => rule.valid) && password === confirmPassword;
 
   useEffect(() => {
-    const fragment = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : window.location.hash;
-    const value = new URLSearchParams(fragment).get("token")?.trim() ?? "";
-    if (!value) {
-      setChecking(false);
-      setError("This activation link is incomplete. Request a fresh administrator invitation from Main Administration.");
-      return;
-    }
-    setToken(value);
-    window.history.replaceState(null, "", window.location.pathname);
-    void inspectAdminInvitation(value)
-      .then(response => setInvitation(response.data))
-      .catch(caught => setError(caught instanceof ApiError ? caught.message : "This administrator invitation could not be verified."))
-      .finally(() => setChecking(false));
+    let active = true;
+    const timer = window.setTimeout(() => {
+      const fragment = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : window.location.hash;
+      const value = new URLSearchParams(fragment).get("token")?.trim() ?? "";
+      if (!value) {
+        if (!active) return;
+        setChecking(false);
+        setError("This activation link is incomplete. Request a fresh administrator invitation from Main Administration.");
+        return;
+      }
+
+      setToken(value);
+      window.history.replaceState(null, "", window.location.pathname);
+      void inspectAdminInvitation(value)
+        .then(response => { if (active) setInvitation(response.data); })
+        .catch(caught => { if (active) setError(caught instanceof ApiError ? caught.message : "This administrator invitation could not be verified."); })
+        .finally(() => { if (active) setChecking(false); });
+    }, 0);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
   }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {

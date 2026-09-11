@@ -102,6 +102,14 @@ interface PlacementCellApplication {
   createdAt: string;
 }
 
+interface IntakeOverview {
+  total: number;
+  submitted: number;
+  unassigned: number;
+  mine: number;
+  recent: Array<{ id: string; subject: string; sourceType: string; status: string; department: string; submittedAt: string; assignedAdminId?: string | null }>;
+}
+
 interface DashboardData {
   enquiries: Paginated<Enquiry> | null;
   requirements: Paginated<Requirement> | null;
@@ -109,6 +117,7 @@ interface DashboardData {
   applications: Paginated<Application> | null;
   partnerApplications: Paginated<PartnerApplication> | null;
   placementCellApplications: Paginated<PlacementCellApplication> | null;
+  intake: IntakeOverview;
 }
 
 export function AdminDashboard() {
@@ -162,7 +171,7 @@ export function AdminDashboard() {
     if (!data) return [];
     const permissions = new Set(user?.adminPermissions ?? []);
     return [
-      data.enquiries ? { label: "Enquiries", value: data.enquiries.total, href: permissions.has("REPORTS_VIEW") ? "/admin/reports" : "/admin#recent-enquiries", icon: Inbox } : null,
+      data.intake ? { label: "Requests & intake", value: data.intake.total, href: "/admin/intake", icon: Inbox } : null,
       data.requirements ? { label: "Requirements", value: data.requirements.total, href: "/admin/requirement-jobs", icon: ClipboardList } : null,
       data.jobs ? { label: "Jobs", value: data.jobs.total, href: permissions.has("REQUIREMENTS_MANAGE") ? "/admin/requirement-jobs" : "/admin#latest-jobs", icon: BriefcaseBusiness } : null,
       data.applications ? { label: "Applications", value: data.applications.total, href: permissions.has("CANDIDATES_MANAGE") ? "/admin/candidate-management" : "/admin#recent-applications", icon: UsersRound } : null,
@@ -266,6 +275,7 @@ export function AdminDashboard() {
             <Inbox aria-hidden="true" />
           </header>
           <div className="zbo-dashboard-queue">
+            {data.intake && data.intake.submitted > 0 && <QueueItem icon={Inbox} title="New operational intake" copy={`${data.intake.submitted} new · ${data.intake.unassigned} unassigned`} href="/admin/intake" label="Triage" />}
             {data.enquiries && data.enquiries.total > 0 && <QueueItem icon={Inbox} title="Incoming enquiries" copy={`${data.enquiries.total} total enquiries in the system`} href={granted.has("REPORTS_VIEW") ? "/admin/reports" : undefined} label="Review" />}
             {data.partnerApplications && data.partnerApplications.total > 0 && <QueueItem icon={Handshake} title="Partner access" copy={`${data.partnerApplications.total} partner applications received`} href="/admin/partners" label="Open" />}
             {data.applications && data.applications.total > 0 && <QueueItem icon={UsersRound} title="Job applications" copy={`${data.applications.total} applications available`} href={granted.has("CANDIDATES_MANAGE") ? "/admin/candidate-management" : undefined} label="Review" />}
