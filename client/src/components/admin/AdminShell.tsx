@@ -20,17 +20,12 @@ import {
   findAdminNavigationItem,
   isAdminNavigationItemActive,
 } from "@/data/admin-navigation";
+import { adminDepartmentLabel, adminDepartmentProfile } from "@/data/admin-experience";
 import { site } from "@/data/site";
 import { getCurrentUser } from "@/services/auth.service";
-import type { AdminDepartment, AuthUser } from "@/types/auth.types";
+import type { AuthUser } from "@/types/auth.types";
 
-const departmentLabels: Record<AdminDepartment, string> = {
-  MAIN_ADMIN: "Main Administration",
-  HR: "Career & HR",
-  TECHNICAL: "Technical",
-  PLACEMENT_CELL: "Placement Cell",
-  LEGAL: "Legal",
-};
+const SIDEBAR_STORAGE_KEY = "zobhunger:admin-sidebar-collapsed";
 
 function initials(email?: string) {
   if (!email) return "AO";
@@ -44,11 +39,24 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [collapsePreferenceReady, setCollapsePreferenceReady] = useState(false);
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const isSecurityRoute = pathname.startsWith(adminSecurityNavigationItem.href);
-  const currentItem = isSecurityRoute ? adminSecurityNavigationItem : findAdminNavigationItem(pathname);
-  const currentGroup = isSecurityRoute ? { label: "Account" } : findAdminNavigationGroup(pathname);
+  const matchedItem = isSecurityRoute ? adminSecurityNavigationItem : findAdminNavigationItem(pathname);
+  const matchedGroup = isSecurityRoute ? { label: "Account" } : findAdminNavigationGroup(pathname);
+  const currentItem = matchedItem ?? { ...adminNavigation[0].items[0], label: "Workspace", description: "Restricted admin route" };
+  const currentGroup = matchedGroup ?? { label: "Operations" };
+
+  useEffect(() => {
+    try {
+      setSidebarCollapsed(window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "true");
+    } catch {
+      setSidebarCollapsed(false);
+    } finally {
+      setCollapsePreferenceReady(true);
+    }
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -85,27 +93,42 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const visibleNavigation = useMemo(() => adminNavigation
     .map(group => ({ ...group, items: group.items.filter(item => !item.permission || granted.has(item.permission)) }))
     .filter(group => group.items.length > 0), [granted]);
-  const hasCurrentAccess = isSecurityRoute || !currentItem.permission || granted.has(currentItem.permission);
-  const department = authUser?.adminDepartment ? departmentLabels[authUser.adminDepartment] : "Administrator";
+  const routeRegistered = isSecurityRoute || Boolean(matchedItem);
+  const isMainAdministration = authUser?.adminDepartment === "MAIN_ADMIN";
+  const hasCurrentAccess = isSecurityRoute || (routeRegistered && (!matchedItem?.permission || granted.has(matchedItem.permission))) || (!routeRegistered && isMainAdministration);
+  const department = adminDepartmentLabel(authUser?.adminDepartment);
+  const departmentProfile = adminDepartmentProfile(authUser?.adminDepartment);
+
+  function toggleSidebar() {
+    setSidebarCollapsed(value => {
+      const next = !value;
+      try { window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next)); } catch { /* non-critical preference */ }
+      return next;
+    });
+  }
 
   return (
-    <div className={`zbo-admin-shell${sidebarCollapsed ? " is-sidebar-collapsed" : ""}`}>
+    <div
+      className={`zbo-admin-shell${sidebarCollapsed ? " is-sidebar-collapsed" : ""}${collapsePreferenceReady ? " is-preference-ready" : ""}`}
+      data-department={authUser?.adminDepartment ?? "ADMIN"}
+    >
       <aside
         className={`zbo-admin-sidebar${navigationOpen ? " is-open" : ""}${sidebarCollapsed ? " is-collapsed" : ""}`}
         aria-label="Operations navigation"
       >
         <div className="zbo-admin-sidebar-brand">
-          <Link href="/admin" className="zbo-admin-wordmark" aria-label={`${site.name} operations overview`}>
-            <strong>ZOB<span>HUNGER</span></strong>
+          <Link href="/admin" className="zbo-admin-wordmark" aria-label={`${site.name} ${department} overview`}>
+            <strong aria-hidden="true"><span>ZOB</span><span>HUNGER</span></strong>
             <span>{department}</span>
           </Link>
+          <Link href="/admin" className="zbo-admin-monogram" aria-label={`${site.name} ${department} overview`}>Z</Link>
           <button
             className="zbo-admin-collapse"
             type="button"
             aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             aria-pressed={sidebarCollapsed}
             title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            onClick={() => setSidebarCollapsed(value => !value)}
+            onClick={toggleSidebar}
           >
             {sidebarCollapsed ? <PanelLeftOpen aria-hidden="true" /> : <PanelLeftClose aria-hidden="true" />}
           </button>
@@ -128,7 +151,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                       className={`zbo-admin-nav-item${active ? " is-active" : ""}`}
                       aria-current={active ? "page" : undefined}
                       key={item.href}
-                      title={item.description}
+                      title={sidebarCollapsed ? `${item.label} · ${item.description}` : item.description}
                     >
                       <span className="zbo-admin-nav-icon"><Icon aria-hidden="true" /></span>
                       <span className="zbo-admin-nav-copy"><strong>{item.label}</strong><small>{item.description}</small></span>
@@ -145,14 +168,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
             href={adminSecurityNavigationItem.href}
             className={`zbo-admin-security-link${pathname.startsWith(adminSecurityNavigationItem.href) ? " is-active" : ""}`}
             aria-current={pathname.startsWith(adminSecurityNavigationItem.href) ? "page" : undefined}
+            title={sidebarCollapsed ? "Security · MFA and access protection" : undefined}
           >
             <ShieldCheck aria-hidden="true" />
             <span><strong>{adminSecurityNavigationItem.label}</strong><small>{adminSecurityNavigationItem.description}</small></span>
           </Link>
-          <a className="zbo-admin-site-link" href="/" target="_blank" rel="noreferrer">
+          <a className="zbo-admin-site-link" href="/" target="_blank" rel="noreferrer" title={sidebarCollapsed ? "Open public website" : undefined}>
             <span>Open public website</span><ArrowUpRight aria-hidden="true" />
           </a>
-          <div className="zbo-admin-security-status">
+          <div className="zbo-admin-security-status" title={sidebarCollapsed ? (authUser?.adminMfaEnabled ? "MFA protected access" : "Security setup required") : undefined}>
             <span className="zbo-admin-status-dot" aria-hidden="true" />
             <span>{authUser?.adminMfaEnabled ? "MFA protected access" : "Security setup required"}</span>
           </div>
@@ -168,9 +192,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </button>
           <div className="zbo-admin-context"><span>{currentGroup.label}</span><strong>{currentItem.label}</strong></div>
           <div className="zbo-admin-topbar-meta">
-            <span className="zbo-admin-department-chip">{department}</span>
+            <span className="zbo-admin-department-chip" title={`${departmentProfile.label} workspace`}>{departmentProfile.shortLabel}</span>
             <span className="zbo-admin-live-indicator"><i aria-hidden="true" />Live workspace</span>
-            <span className="zbo-admin-avatar" aria-label={authUser?.email ?? "Administrator account"}>{initials(authUser?.email)}</span>
+            <span className="zbo-admin-avatar" title={authUser?.email ?? "Administrator account"} aria-label={authUser?.email ?? "Administrator account"}>{initials(authUser?.email)}</span>
           </div>
         </header>
         <main className="zbo-admin-content">
@@ -182,7 +206,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 <span className="zbo-admin-access-denied-icon"><ShieldAlert aria-hidden="true" /></span>
                 <p className="zbo-eyebrow">Department access</p>
                 <h1 id="access-denied-title">This workspace is outside your access.</h1>
-                <p>Your {department} administrator account only sees the operational areas assigned to your department.</p>
+                <p>Your {department} account only sees operational areas assigned to this department. The restriction applies to both the interface and the underlying API.</p>
                 <Link href="/admin">Return to your overview</Link>
               </section>
             ) : authUser ? children : null}

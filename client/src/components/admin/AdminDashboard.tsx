@@ -6,12 +6,13 @@ import { useRouter } from "next/navigation";
 import {
   BriefcaseBusiness,
   Building2,
-  CalendarCheck2,
   ClipboardList,
   Inbox,
   Handshake,
   LogOut,
   RefreshCw,
+  ShieldCheck,
+  TriangleAlert,
   UsersRound,
   MapPin,
   FileText,
@@ -20,6 +21,7 @@ import {
 } from "lucide-react";
 import { apiFetch, ApiError, type ApiSuccessEnvelope } from "@/lib/api";
 import { adminNavigation, adminSecurityNavigationItem } from "@/data/admin-navigation";
+import { adminDepartmentProfile } from "@/data/admin-experience";
 import { getCurrentUser, logout } from "@/services/auth.service";
 import type { AuthUser } from "@/types/auth.types";
 
@@ -83,12 +85,6 @@ interface PartnerApplication {
   resumeFileName?: string | null;
   status: string;
   createdAt: string;
-}
-
-function departmentName(value?: string | null) {
-  if (!value) return "Administrator";
-  const labels: Record<string, string> = { MAIN_ADMIN: "Main Administration", HR: "Career & HR", TECHNICAL: "Technical", PLACEMENT_CELL: "Placement Cell", LEGAL: "Legal" };
-  return labels[value] ?? value.replaceAll("_", " ");
 }
 
 interface PlacementCellApplication {
@@ -164,15 +160,16 @@ export function AdminDashboard() {
 
   const stats = useMemo(() => {
     if (!data) return [];
+    const permissions = new Set(user?.adminPermissions ?? []);
     return [
-      data.enquiries ? { label: "Enquiries", value: data.enquiries.total, href: "/admin/reports", icon: Inbox } : null,
+      data.enquiries ? { label: "Enquiries", value: data.enquiries.total, href: permissions.has("REPORTS_VIEW") ? "/admin/reports" : "/admin#recent-enquiries", icon: Inbox } : null,
       data.requirements ? { label: "Requirements", value: data.requirements.total, href: "/admin/requirement-jobs", icon: ClipboardList } : null,
-      data.jobs ? { label: "Jobs", value: data.jobs.total, href: "/admin/requirement-jobs", icon: BriefcaseBusiness } : null,
-      data.applications ? { label: "Applications", value: data.applications.total, href: "/admin/candidate-management", icon: UsersRound } : null,
+      data.jobs ? { label: "Jobs", value: data.jobs.total, href: permissions.has("REQUIREMENTS_MANAGE") ? "/admin/requirement-jobs" : "/admin#latest-jobs", icon: BriefcaseBusiness } : null,
+      data.applications ? { label: "Applications", value: data.applications.total, href: permissions.has("CANDIDATES_MANAGE") ? "/admin/candidate-management" : "/admin#recent-applications", icon: UsersRound } : null,
       data.partnerApplications ? { label: "Partner leads", value: data.partnerApplications.total, href: "/admin/partners", icon: Handshake } : null,
       data.placementCellApplications ? { label: "Institution partners", value: data.placementCellApplications.total, href: "/admin#institution-onboarding", icon: Building2 } : null,
     ].filter((item): item is NonNullable<typeof item> => Boolean(item));
-  }, [data]);
+  }, [data, user]);
 
   async function updatePlacementCellStatus(
     id: string,
@@ -200,16 +197,15 @@ export function AdminDashboard() {
   }
 
   if (loading && !data) {
-    return <div className="zb-admin-state">Loading admin data...</div>;
+    return <div className="zbo-admin-dashboard-state" role="status"><RefreshCw className="zbo-admin-spin" aria-hidden="true" /><div><strong>Loading operations overview</strong><span>Retrieving only the records assigned to this administrator.</span></div></div>;
   }
 
   if (error && !data) {
     return (
-      <div className="zb-admin-state" role="alert">
-        <p>{error}</p>
-        <button type="button" onClick={() => void load()}>
-          Try again
-        </button>
+      <div className="zbo-admin-dashboard-state is-error" role="alert">
+        <TriangleAlert aria-hidden="true" />
+        <div><strong>Overview could not be loaded</strong><span>{error}</span></div>
+        <button type="button" onClick={() => void load()}><RefreshCw aria-hidden="true" />Try again</button>
       </div>
     );
   }
@@ -217,23 +213,20 @@ export function AdminDashboard() {
   if (!data) return null;
 
   const granted = new Set(user?.adminPermissions ?? []);
-  const quickLinks = [
-    ...adminNavigation
-      .flatMap((group) => group.items)
-      .filter((item) => item.href !== "/admin" && (!item.permission || granted.has(item.permission))),
-    adminSecurityNavigationItem,
-  ].slice(0, 7);
+  const profile = adminDepartmentProfile(user?.adminDepartment);
+  const workspaceLinks = adminNavigation
+    .flatMap((group) => group.items)
+    .filter((item) => item.href !== "/admin" && (!item.permission || granted.has(item.permission)));
+  const quickLinks = [...workspaceLinks.slice(0, 6), adminSecurityNavigationItem];
 
   return (
     <div className="zbo-dashboard">
       <section className="zbo-dashboard-hero" aria-labelledby="admin-dashboard-title">
         <div className="zbo-dashboard-hero-copy">
-          <p className="zbo-eyebrow">Operations overview</p>
-          <h1 id="admin-dashboard-title">Keep the operation moving.</h1>
-          <p>
-            Review incoming work, move people through the pipeline and keep every active assignment accountable.
-          </p>
-          {user?.email && <span className="zbo-dashboard-user">{departmentName(user.adminDepartment)} · {user.email}</span>}
+          <p className="zbo-eyebrow">{profile.eyebrow}</p>
+          <h1 id="admin-dashboard-title">{profile.headline}</h1>
+          <p>{profile.description}</p>
+          {user?.email && <span className="zbo-dashboard-user">{profile.label} · {user.email}</span>}
         </div>
         <div className="zbo-dashboard-hero-actions" aria-label="Dashboard actions">
           <button type="button" onClick={() => void load()} disabled={loading}>
@@ -245,9 +238,15 @@ export function AdminDashboard() {
         </div>
       </section>
 
+      <section className="zbo-dashboard-scope" aria-label="Current administrator scope">
+        <div><span>Department</span><strong>{profile.label}</strong></div>
+        <div><span>Visible workspaces</span><strong>{workspaceLinks.length + 1}</strong></div>
+        <div><span>Security</span><strong>{user?.adminMfaEnabled ? "MFA protected" : "Setup required"}</strong></div>
+      </section>
+
       {error && <p className="zb-login-error" role="alert">{error}</p>}
 
-      {stats.length > 0 && <section className="zbo-dashboard-kpis" aria-label="Operational totals">
+      {stats.length > 0 && <section className={`zbo-dashboard-kpis is-count-${Math.min(stats.length, 6)}`} aria-label="Operational totals">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -263,15 +262,17 @@ export function AdminDashboard() {
       <section className="zbo-dashboard-layout">
         <article className="zbo-dashboard-card">
           <header className="zbo-dashboard-card-header">
-            <div><h2>Review queue</h2><p>The latest records that may need an operations decision.</p></div>
+            <div><h2>{profile.queueTitle}</h2><p>{profile.queueDescription}</p></div>
             <Inbox aria-hidden="true" />
           </header>
           <div className="zbo-dashboard-queue">
-            {data.enquiries && <QueueItem icon={Inbox} title="Incoming enquiries" copy={`${data.enquiries.total} total enquiries in the system`} href="/admin/reports" label="Review" />}
-            {data.partnerApplications && <QueueItem icon={Handshake} title="Partner access" copy={`${data.partnerApplications.total} partner applications received`} href="/admin/partners" label="Open" />}
-            {data.applications && <QueueItem icon={UsersRound} title="Job applications" copy={`${data.applications.total} applications available`} href="/admin/candidate-management" label="Review" />}
-            {granted.has("ATTENDANCE_MANAGE") && <QueueItem icon={CalendarCheck2} title="Attendance requests" copy="Check worker submissions before records are approved" href="/admin/worker-attendance" label="Open" />}
-            {!data.enquiries && !data.partnerApplications && !data.applications && !granted.has("ATTENDANCE_MANAGE") && <p className="zbo-dashboard-empty">Your department has no pending shared review queues.</p>}
+            {data.enquiries && data.enquiries.total > 0 && <QueueItem icon={Inbox} title="Incoming enquiries" copy={`${data.enquiries.total} total enquiries in the system`} href={granted.has("REPORTS_VIEW") ? "/admin/reports" : undefined} label="Review" />}
+            {data.partnerApplications && data.partnerApplications.total > 0 && <QueueItem icon={Handshake} title="Partner access" copy={`${data.partnerApplications.total} partner applications received`} href="/admin/partners" label="Open" />}
+            {data.applications && data.applications.total > 0 && <QueueItem icon={UsersRound} title="Job applications" copy={`${data.applications.total} applications available`} href={granted.has("CANDIDATES_MANAGE") ? "/admin/candidate-management" : undefined} label="Review" />}
+            {data.placementCellApplications && data.placementCellApplications.total > 0 && <QueueItem icon={Building2} title="Institution onboarding" copy={`${data.placementCellApplications.total} institution partnership submissions`} href="/admin#institution-onboarding" label="Review" />}
+            {!(data.enquiries?.total) && !(data.partnerApplications?.total) && !(data.applications?.total) && !(data.placementCellApplications?.total) && (
+              <div className="zbo-dashboard-empty-state"><ShieldCheck aria-hidden="true" /><div><strong>{profile.emptyQueueTitle}</strong><span>{profile.emptyQueueDescription}</span></div></div>
+            )}
           </div>
         </article>
 
@@ -292,15 +293,16 @@ export function AdminDashboard() {
               );
             })}
           </nav>
+          {quickLinks.length <= 2 && <div className="zbo-dashboard-access-note"><ShieldCheck aria-hidden="true" /><span><strong>Least-privilege workspace</strong><small>Only desks assigned to this department are visible. Access changes are reflected automatically.</small></span></div>}
         </aside>
       </section>
 
       <section className="zbo-dashboard-panels" aria-label="Latest records">
-        {data.enquiries && <AdminPanel title="Recent enquiries" icon={Inbox}>
+        {data.enquiries && <div id="recent-enquiries" className="zbo-dashboard-anchor"><AdminPanel title="Recent enquiries" icon={Inbox}>
           {data.enquiries.items.length === 0 ? <EmptyRow /> : data.enquiries.items.map((item) => (
             <AdminRow key={item.id} title={item.name} meta={`${item.companyName || item.email} · ${item.serviceRequired || "General enquiry"}`} tag={new Date(item.createdAt).toLocaleDateString()} />
           ))}
-        </AdminPanel>}
+        </AdminPanel></div>}
 
         {data.requirements && <AdminPanel title="Workforce requirements" icon={ClipboardList}>
           {data.requirements.items.length === 0 ? <EmptyRow /> : data.requirements.items.map((item) => (
@@ -308,17 +310,17 @@ export function AdminDashboard() {
           ))}
         </AdminPanel>}
 
-        {data.jobs && <AdminPanel title="Published roles" icon={BriefcaseBusiness}>
+        {data.jobs && <div id="latest-jobs" className="zbo-dashboard-anchor"><AdminPanel title="Published roles" icon={BriefcaseBusiness}>
           {data.jobs.items.length === 0 ? <EmptyRow /> : data.jobs.items.map((item) => (
             <AdminRow key={item.id} title={item.title} meta={`${item.location} · ${item._count.applications} applications`} tag={item.status} />
           ))}
-        </AdminPanel>}
+        </AdminPanel></div>}
 
-        {data.applications && <AdminPanel title="Recent applications" icon={UsersRound}>
+        {data.applications && <div id="recent-applications" className="zbo-dashboard-anchor"><AdminPanel title="Recent applications" icon={UsersRound}>
           {data.applications.items.length === 0 ? <EmptyRow /> : data.applications.items.map((item) => (
             <AdminRow key={item.id} title={item.name} meta={`${item.job.title} · ${item.email}`} tag={item.status} />
           ))}
-        </AdminPanel>}
+        </AdminPanel></div>}
 
         {data.partnerApplications && <AdminPanel title="Partner access applications" icon={Handshake}>
           <div className="zb-admin-panel-action">
@@ -338,8 +340,8 @@ export function AdminDashboard() {
   );
 }
 
-function QueueItem({ icon: Icon, title, copy, href, label }: { icon: LucideIcon; title: string; copy: string; href: string; label: string }) {
-  return <div className="zbo-dashboard-queue-item"><span className="zbo-dashboard-queue-icon"><Icon aria-hidden="true" /></span><span className="zbo-dashboard-queue-copy"><strong>{title}</strong><span>{copy}</span></span><Link href={href}>{label}</Link></div>;
+function QueueItem({ icon: Icon, title, copy, href, label }: { icon: LucideIcon; title: string; copy: string; href?: string; label: string }) {
+  return <div className="zbo-dashboard-queue-item"><span className="zbo-dashboard-queue-icon"><Icon aria-hidden="true" /></span><span className="zbo-dashboard-queue-copy"><strong>{title}</strong><span>{copy}</span></span>{href ? <Link href={href}>{label}</Link> : <span className="zbo-dashboard-queue-readonly">Overview</span>}</div>;
 }
 
 function AdminPanel({ title, icon: Icon, children }: { title: string; icon: LucideIcon; children: ReactNode }) {

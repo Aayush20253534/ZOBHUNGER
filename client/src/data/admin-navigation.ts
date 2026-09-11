@@ -180,11 +180,11 @@ export function isAdminNavigationItemActive(pathname: string, href: string) {
 
 export function findAdminNavigationItem(pathname: string) {
   const items = adminNavigation.flatMap((group) => group.items);
-  return items.find((item) => isAdminNavigationItemActive(pathname, item.href)) ?? items[0];
+  return items.find((item) => isAdminNavigationItemActive(pathname, item.href));
 }
 
 export function findAdminNavigationGroup(pathname: string) {
   return adminNavigation.find((group) =>
     group.items.some((item) => isAdminNavigationItemActive(pathname, item.href)),
-  ) ?? adminNavigation[0];
+  );
 }

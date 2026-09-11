@@ -2309,3 +2309,383 @@
 .zbo-dashboard-anchor {
   scroll-margin-top: 6.5rem;
 }
+
+/* Phase 3 · Part 3 — department-aware admin experience and production polish. */
+
+/* Brand lockup: the old descendant selector shrank HUNGER because it also matched
+   the department caption rule. Keep the full wordmark on one baseline and give it
+   enough flex room beside the collapse control. */
+.zbo-admin-sidebar-brand {
+  gap: .72rem;
+  overflow: visible;
+}
+
+.zbo-admin-wordmark {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: visible;
+}
+
+.zbo-admin-wordmark strong {
+  display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+  align-items: baseline;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.zbo-admin-wordmark strong span {
+  display: inline;
+  color: inherit;
+  font: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+}
+
+.zbo-admin-wordmark strong span:last-child {
+  color: #ffd3da;
+}
+
+.zbo-admin-wordmark > span {
+  display: block;
+  overflow: hidden;
+  color: rgba(255, 238, 242, .76);
+  font-size: .68rem;
+  font-weight: 650;
+  letter-spacing: .025em;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zbo-admin-monogram {
+  display: none;
+  place-items: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  flex: 0 0 2.15rem;
+  border: 1px solid rgba(255, 255, 255, .24);
+  border-radius: .6rem;
+  background: rgba(255, 255, 255, .10);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .10);
+}
+
+.zbo-admin-sidebar.is-collapsed .zbo-admin-wordmark { display: none; }
+.zbo-admin-sidebar.is-collapsed .zbo-admin-monogram { display: grid; }
+.zbo-admin-sidebar.is-collapsed .zbo-admin-sidebar-brand { gap: .35rem; }
+
+/* Match the public footer's top highlight as well as its background recipe. */
+.zbo-admin-sidebar::before {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .82), rgba(255, 211, 219, .95), rgba(255, 255, 255, .58), transparent);
+  box-shadow: 0 1px 18px rgba(255, 255, 255, .18);
+}
+
+/* Route-level production states. These sit inside the shared shell, so failed,
+   loading and not-found routes never collapse into unstyled framework output. */
+.zbo-admin-route-state,
+.zbo-admin-route-loading,
+.zbo-admin-dashboard-state {
+  width: min(100%, 52rem);
+  margin: .35rem auto 0;
+  border: 1px solid var(--zbo-border);
+  border-top: 3px solid var(--zbo-red);
+  border-radius: .9rem;
+  background: #fff;
+  box-shadow: 0 .55rem 1.8rem rgba(31, 20, 24, .05);
+}
+
+.zbo-admin-route-state {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .9rem;
+  overflow: hidden;
+  padding: 1.15rem;
+}
+
+.zbo-admin-route-state::after {
+  position: absolute;
+  right: -4rem;
+  top: -5rem;
+  width: 11rem;
+  height: 11rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217, 39, 59, .08), transparent 70%);
+  content: "";
+  pointer-events: none;
+}
+
+.zbo-admin-route-state-icon,
+.zbo-admin-route-loading-icon {
+  display: grid;
+  place-items: center;
+  width: 2.55rem;
+  height: 2.55rem;
+  flex: 0 0 auto;
+  border: 1px solid #f0d5da;
+  border-radius: .7rem;
+  background: #fff3f5;
+  color: var(--zbo-red-dark);
+}
+
+.zbo-admin-route-state-icon svg,
+.zbo-admin-route-loading-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.zbo-admin-route-state-copy { min-width: 0; }
+.zbo-admin-route-state .zbo-eyebrow { margin: 0 0 .25rem; color: var(--zbo-red-dark); font-size: .62rem; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
+.zbo-admin-route-state h1 { margin: 0; color: var(--zbo-ink); font-size: clamp(1.25rem, 2.4vw, 1.65rem); line-height: 1.08; letter-spacing: -.035em; }
+.zbo-admin-route-state-copy > p:last-child { max-width: 52ch; margin: .38rem 0 0; color: var(--zbo-muted); font-size: .75rem; line-height: 1.55; }
+
+.zbo-admin-route-state > a,
+.zbo-admin-route-state > button,
+.zbo-admin-dashboard-state > button {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  min-height: 2.35rem;
+  align-items: center;
+  justify-content: center;
+  gap: .38rem;
+  padding: .52rem .72rem;
+  border: 1px solid #e9c7cd;
+  border-radius: .56rem;
+  background: #fff;
+  color: var(--zbo-red-dark);
+  font: inherit;
+  font-size: .7rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.zbo-admin-route-state > :is(a, button):hover,
+.zbo-admin-dashboard-state > button:hover {
+  border-color: #dd8e9a;
+  background: #fff7f8;
+}
+
+.zbo-admin-route-state > :is(a, button) svg,
+.zbo-admin-dashboard-state > button svg { width: .9rem; height: .9rem; }
+
+.zbo-admin-route-loading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: .3rem .8rem;
+  padding: 1rem 1.1rem;
+}
+
+.zbo-admin-route-loading > div:not(.zbo-admin-route-loading-bars) { display: grid; gap: .12rem; }
+.zbo-admin-route-loading strong { color: var(--zbo-ink); font-size: .82rem; }
+.zbo-admin-route-loading span { color: var(--zbo-muted); font-size: .7rem; }
+.zbo-admin-route-loading-bars { grid-column: 1 / -1; display: grid; grid-template-columns: 1.2fr .8fr 1fr; gap: .45rem; margin-top: .55rem; }
+.zbo-admin-route-loading-bars i { height: .42rem; border-radius: 999px; background: linear-gradient(90deg, #f2e5e8, #faf6f7, #f2e5e8); background-size: 200% 100%; animation: zbo-admin-shimmer 1.2s linear infinite; }
+@keyframes zbo-admin-shimmer { to { background-position: -200% 0; } }
+
+.zbo-admin-dashboard-state {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .75rem;
+  padding: 1rem 1.1rem;
+}
+.zbo-admin-dashboard-state > svg { width: 1.25rem; height: 1.25rem; color: var(--zbo-red); }
+.zbo-admin-dashboard-state > div { display: grid; gap: .15rem; }
+.zbo-admin-dashboard-state strong { font-size: .82rem; }
+.zbo-admin-dashboard-state span { color: var(--zbo-muted); font-size: .7rem; line-height: 1.45; }
+.zbo-admin-dashboard-state.is-error > svg { color: #b42338; }
+
+/* Department-aware overview. The same dashboard component adapts its hierarchy
+   instead of spawning separate admin applications. */
+.zbo-dashboard-scope {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(9rem, .7fr));
+  overflow: hidden;
+  border: 1px solid var(--zbo-border);
+  border-radius: .78rem;
+  background: #fff;
+  box-shadow: 0 .2rem .8rem rgba(24, 28, 36, .025);
+}
+
+.zbo-dashboard-scope > div {
+  display: grid;
+  min-width: 0;
+  gap: .18rem;
+  padding: .75rem .9rem;
+}
+
+.zbo-dashboard-scope > div + div { border-left: 1px solid #eceef1; }
+.zbo-dashboard-scope span { color: #858b94; font-size: .61rem; font-weight: 750; letter-spacing: .055em; text-transform: uppercase; }
+.zbo-dashboard-scope strong { overflow: hidden; color: var(--zbo-ink); font-size: .78rem; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+
+.zbo-dashboard-empty-state {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: .7rem;
+  min-height: 4.7rem;
+  padding: .85rem;
+  border: 1px dashed #e7dadd;
+  border-radius: .65rem;
+  background: linear-gradient(135deg, #fff, #fff9fa);
+}
+
+.zbo-dashboard-empty-state > svg {
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: .52rem;
+  border: 1px solid #efd5da;
+  border-radius: .58rem;
+  background: #fff;
+  color: var(--zbo-red-dark);
+}
+
+.zbo-dashboard-empty-state > div { display: grid; min-width: 0; gap: .16rem; }
+.zbo-dashboard-empty-state strong { color: var(--zbo-ink); font-size: .78rem; }
+.zbo-dashboard-empty-state span { color: var(--zbo-muted); font-size: .68rem; line-height: 1.45; }
+
+.zbo-dashboard-queue-readonly {
+  color: #9a7780;
+  font-size: .64rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.zbo-dashboard-access-note {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: .55rem;
+  margin: 0 .85rem .85rem;
+  padding: .7rem;
+  border: 1px solid #eee4e6;
+  border-radius: .62rem;
+  background: #fbfafb;
+}
+.zbo-dashboard-access-note > svg { width: 1rem; height: 1rem; margin-top: .08rem; color: var(--zbo-red-dark); }
+.zbo-dashboard-access-note > span { display: grid; gap: .12rem; }
+.zbo-dashboard-access-note strong { color: var(--zbo-ink); font-size: .7rem; }
+.zbo-dashboard-access-note small { color: var(--zbo-muted); font-size: .63rem; line-height: 1.45; }
+
+.zbo-dashboard-panels > .zbo-dashboard-anchor { min-width: 0; }
+.zbo-dashboard-panels > .zbo-dashboard-anchor > .zbo-dashboard-card { height: 100%; }
+
+/* Consistent operational empty/loading/error states inherited by older admin desks. */
+.zbo-admin-content-inner :is(.zb-review-empty, .zb-vendor-empty, .zb-att-empty) {
+  border-radius: .72rem;
+  border-color: #e7e8eb;
+  background: linear-gradient(135deg, #fff, #fcfbfc);
+}
+
+.zbo-admin-content-inner :is(.zb-review-error, .zb-biz-error, .zb-att-notice)[role="alert"] {
+  border-radius: .62rem;
+  box-shadow: none;
+}
+
+.zbo-admin-content-inner .zb-vendor-loading {
+  min-height: 4rem;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--zbo-border);
+  border-radius: .68rem;
+  background: #fff;
+  color: var(--zbo-muted);
+  font-size: .73rem;
+}
+
+/* Compact, stable topbar behavior at intermediate widths. */
+.zbo-admin-topbar { min-width: 0; }
+.zbo-admin-context { max-width: min(36vw, 26rem); }
+.zbo-admin-department-chip { max-width: 15rem; overflow: hidden; text-overflow: ellipsis; }
+
+@media (max-width: 980px) {
+  .zbo-admin-collapse { display: none; }
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-monogram { display: none; }
+  .zbo-admin-sidebar.is-collapsed .zbo-admin-wordmark { display: grid; }
+  .zbo-admin-wordmark { max-width: calc(100% - 3rem); }
+  .zbo-admin-context { max-width: 45vw; }
+}
+
+@media (max-width: 760px) {
+  .zbo-dashboard-scope { grid-template-columns: minmax(0, 1fr); }
+  .zbo-dashboard-scope > div + div { border-top: 1px solid #eceef1; border-left: 0; }
+  .zbo-dashboard-scope > div { padding: .68rem .8rem; }
+  .zbo-dashboard-scope strong { white-space: normal; }
+  .zbo-admin-route-state { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+  .zbo-admin-route-state > :is(a, button) { grid-column: 1 / -1; width: 100%; }
+  .zbo-admin-dashboard-state { grid-template-columns: auto minmax(0, 1fr); }
+  .zbo-admin-dashboard-state > button { grid-column: 1 / -1; width: 100%; }
+  .zbo-dashboard-queue-copy span { white-space: normal; }
+}
+
+@media (max-width: 520px) {
+  .zbo-admin-wordmark strong { font-size: 1.08rem; }
+  .zbo-admin-topbar-meta { gap: .45rem; }
+  .zbo-admin-avatar { width: 2rem; height: 2rem; }
+  .zbo-admin-context { max-width: calc(100vw - 8.5rem); }
+  .zbo-admin-context span { font-size: .58rem; }
+  .zbo-admin-context strong { max-width: 100%; font-size: .8rem; }
+  .zbo-admin-route-loading { grid-template-columns: auto minmax(0, 1fr); }
+}
+
+/* KPI density follows the actual department scope instead of leaving one tiny card
+   stranded in a six-column Main Admin grid. */
+.zbo-dashboard-kpis.is-count-1 { grid-template-columns: minmax(0, 22rem); }
+.zbo-dashboard-kpis.is-count-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.zbo-dashboard-kpis.is-count-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.zbo-dashboard-kpis.is-count-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.zbo-dashboard-kpis.is-count-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.zbo-admin-shell:not(.is-preference-ready) { transition: none; }
+
+@media (max-width: 1240px) {
+  .zbo-dashboard-kpis:is(.is-count-4, .is-count-5, .is-count-6) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  .zbo-dashboard-kpis:is(.is-count-2, .is-count-3, .is-count-4, .is-count-5, .is-count-6) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 480px) {
+  .zbo-dashboard-kpis[class*="is-count-"] { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Final brand-lockup guard: reserve enough inline space for the full company name
+   beside the collapse control so ZOBHUNGER can never be clipped or visually split. */
+.zbo-admin-sidebar:not(.is-collapsed) .zbo-admin-sidebar-brand {
+  padding-right: .85rem;
+}
+
+.zbo-admin-sidebar:not(.is-collapsed) .zbo-admin-wordmark {
+  min-width: 8.75rem;
+}
+
+.zbo-admin-sidebar:not(.is-collapsed) .zbo-admin-wordmark strong {
+  max-width: none;
+  flex: 0 0 auto;
+  font-size: 1.12rem;
+  letter-spacing: -.038em;
+}
+
+.zbo-admin-sidebar:not(.is-collapsed) .zbo-admin-collapse {
+  flex: 0 0 2.15rem;
+  margin-left: auto;
+}
+
+@media (max-width: 980px) {
+  .zbo-admin-sidebar:not(.is-collapsed) .zbo-admin-sidebar-brand { padding-right: 1rem; }
+  .zbo-admin-sidebar:not(.is-collapsed) .zbo-admin-wordmark { min-width: 0; max-width: none; }
+}
