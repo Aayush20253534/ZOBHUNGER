@@ -145,6 +145,15 @@ test("Groq client calls Chat Completions with server-only auth and extracts assi
     requestedInit = init;
     return new Response(JSON.stringify({
       id: "chatcmpl_test_123",
+      model: "llama-3.3-70b-versatile",
+      usage: {
+        prompt_tokens: 120,
+        completion_tokens: 30,
+        total_tokens: 150,
+        queue_time: 0.01,
+        total_time: 0.08,
+        prompt_tokens_details: { cached_tokens: 64 },
+      },
       choices: [
         {
           index: 0,
@@ -168,6 +177,7 @@ test("Groq client calls Chat Completions with server-only auth and extracts assi
       { role: "system", content: "Use only supplied knowledge." },
       { role: "user", content: "Hello" },
     ],
+    user: "hashed-client-id",
   });
 
   assert.equal(requestedUrl, "https://api.groq.com/openai/v1/chat/completions");
@@ -177,6 +187,7 @@ test("Groq client calls Chat Completions with server-only auth and extracts assi
   assert.equal(body.max_completion_tokens, 700);
   assert.equal(body.temperature, 0.2);
   assert.equal(body.stream, false);
+  assert.equal(body.user, "hashed-client-id");
   assert.deepEqual(body.messages, [
     { role: "system", content: "Use only supplied knowledge." },
     { role: "user", content: "Hello" },
@@ -184,6 +195,13 @@ test("Groq client calls Chat Completions with server-only auth and extracts assi
   assert.equal("store" in body, false);
   assert.equal(response.text, "Grounded test response");
   assert.equal(response.responseId, "chatcmpl_test_123");
+  assert.equal(response.model, "llama-3.3-70b-versatile");
+  assert.equal(response.usage?.promptTokens, 120);
+  assert.equal(response.usage?.completionTokens, 30);
+  assert.equal(response.usage?.totalTokens, 150);
+  assert.equal(response.usage?.cachedPromptTokens, 64);
+  assert.equal(response.usage?.queueDurationMs, 10);
+  assert.equal(response.usage?.providerDurationMs, 80);
 });
 
 test("Groq client sends reasoning_effort only when configured", async () => {

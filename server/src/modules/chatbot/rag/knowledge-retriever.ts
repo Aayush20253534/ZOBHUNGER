@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { loadKnowledgeBase } from "../knowledge/index.js";
 import { buildKnowledgeIndex } from "./knowledge-index.js";
 import { searchKnowledgeIndex } from "./knowledge-search.js";
@@ -9,6 +10,26 @@ import type {
 } from "./rag.types.js";
 
 let defaultRetrieverPromise: Promise<KnowledgeRetriever> | null = null;
+
+function knowledgeFingerprint(documents: NonNullable<CreateKnowledgeRetrieverOptions["documents"]>): string {
+  const hash = createHash("sha256");
+  const ordered = [...documents].sort((a, b) => a.metadata.id.localeCompare(b.metadata.id));
+  for (const document of ordered) {
+    hash.update(JSON.stringify({
+      id: document.metadata.id,
+      title: document.metadata.title,
+      category: document.metadata.category,
+      url: document.metadata.url,
+      keywords: document.metadata.keywords,
+      aliases: document.metadata.aliases,
+      description: document.metadata.description,
+      updatedAt: document.metadata.updatedAt,
+      body: document.body,
+    }));
+    hash.update("\n");
+  }
+  return hash.digest("hex");
+}
 
 export async function createKnowledgeRetriever(
   options: CreateKnowledgeRetrieverOptions = {},
@@ -25,9 +46,11 @@ export async function createKnowledgeRetriever(
   }
 
   const index = buildKnowledgeIndex(documents, options);
+  const fingerprint = knowledgeFingerprint(documents);
 
   return {
     index,
+    fingerprint,
     search(query: string, searchOptions: KnowledgeSearchOptions = {}) {
       return searchKnowledgeIndex(index, query, searchOptions);
     },

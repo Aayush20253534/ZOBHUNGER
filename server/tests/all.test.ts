@@ -16,3 +16,4 @@ import "./employee-joining.schema.test.js";
 import "./chatbot-knowledge.test.js";
 import "./chatbot-rag.test.js";
 import "./chatbot-api.test.js";
+import "./chatbot-production.test.js";

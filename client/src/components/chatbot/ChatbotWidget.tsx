@@ -118,13 +118,17 @@ export function ChatbotWidget() {
   useEffect(() => { openRef.current = open; }, [open]);
 
   useEffect(() => {
-    const restored = loadStoredChatbotConversation();
-    if (restored) {
-      setConversationId(restored.id);
-      setConversationCreatedAt(restored.createdAt);
-      if (restored.messages.length) setMessages([welcomeMessage, ...restored.messages]);
-    }
-    setHydrated(true);
+    const restoreTimer = window.setTimeout(() => {
+      const restored = loadStoredChatbotConversation();
+      if (restored) {
+        setConversationId(restored.id);
+        setConversationCreatedAt(restored.createdAt);
+        if (restored.messages.length) setMessages([welcomeMessage, ...restored.messages]);
+      }
+      setHydrated(true);
+    }, 0);
+
+    return () => window.clearTimeout(restoreTimer);
   }, []);
 
   useEffect(() => {

@@ -86,6 +86,7 @@ export interface KnowledgeSearchResponse {
 
 export interface KnowledgeRetriever {
   readonly index: KnowledgeIndex;
+  readonly fingerprint: string;
   search(query: string, options?: KnowledgeSearchOptions): KnowledgeSearchResponse;
 }
 

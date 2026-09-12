@@ -3,12 +3,17 @@ import { connectDatabase, disconnectDatabase } from "./config/db.js";
 import { env } from "./config/env.js";
 import { startRedis, stopRedis } from "./config/redis.js";
 import { logger } from "./utils/logger.js";
+import { chatbotOperationalStatus, getChatbotService } from "./modules/chatbot/chatbot.runtime.js";
 
 const SHUTDOWN_GRACE_MS = 12_000;
 
 async function startServer(): Promise<void> {
   await connectDatabase();
   startRedis();
+  if (env.CHATBOT_ENABLED) {
+    await getChatbotService();
+    logger.info("chatbot.ready", chatbotOperationalStatus());
+  }
 
   const server = app.listen(env.PORT, () => {
     logger.info("server.started", { port: env.PORT, environment: env.NODE_ENV });

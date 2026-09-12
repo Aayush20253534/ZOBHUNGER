@@ -31,6 +31,22 @@ export interface ChatbotServiceConfig {
   maxHistoryMessages: number;
   ragTopK: number;
   contextMaxCharacters: number;
+  cacheEnabled?: boolean;
+  modelSignature?: string;
+}
+
+export interface ChatbotRequestContext {
+  requestId?: string;
+  clientFingerprint?: string;
+}
+
+export interface ChatbotModelUsage {
+  promptTokens?: number;
+  completionTokens?: number;
+  totalTokens?: number;
+  cachedPromptTokens?: number;
+  providerDurationMs?: number;
+  queueDurationMs?: number;
 }
 
 export interface ChatbotModelInputMessage {
@@ -40,11 +56,14 @@ export interface ChatbotModelInputMessage {
 
 export interface ChatbotModelRequest {
   input: ChatbotModelInputMessage[];
+  user?: string;
 }
 
 export interface ChatbotModelResponse {
   text: string;
   responseId?: string;
+  model?: string;
+  usage?: ChatbotModelUsage;
 }
 
 export interface ChatbotModelClient {
@@ -52,6 +71,7 @@ export interface ChatbotModelClient {
 }
 
 export interface ChatbotRetriever {
+  readonly fingerprint: string;
   search(
     query: string,
     options?: {

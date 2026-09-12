@@ -5,6 +5,7 @@ import { env } from "../config/env.js";
 import { redisStatus } from "../config/redis.js";
 import { privateFileStorageConfigured } from "../services/private-file-storage.js";
 import { missingResendSettings } from "../services/resend.client.js";
+import { chatbotOperationalStatus } from "../modules/chatbot/chatbot.runtime.js";
 
 function releaseRevision() {
   const revision = process.env.RELEASE_SHA || process.env.RENDER_GIT_COMMIT || process.env.GITHUB_SHA || "";
@@ -44,7 +45,9 @@ export const getHealth: RequestHandler = (_req, res) => {
         workerDashboard: true,
         workerPhase3Complete: true,
         productionFoundation: true,
+        chatbot: env.CHATBOT_ENABLED,
       },
+      chatbot: chatbotOperationalStatus(),
       cache: cache.ready ? "ready" : cache.enabled ? "postgresql_fallback" : "disabled",
       uptimeSeconds: Math.floor(process.uptime()),
       timestamp: new Date().toISOString(),

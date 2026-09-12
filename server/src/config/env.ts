@@ -59,6 +59,11 @@ const envSchema = z.object({
   CHATBOT_MAX_HISTORY_MESSAGES: z.coerce.number().int().min(0).max(10).default(10),
   CHATBOT_RAG_TOP_K: z.coerce.number().int().min(1).max(10).default(6),
   CHATBOT_CONTEXT_MAX_CHARACTERS: z.coerce.number().int().min(2_000).max(30_000).default(14_000),
+  CHATBOT_CACHE_ENABLED: z.enum(["true", "false"]).default("true")
+    .transform((value) => value === "true"),
+  CHATBOT_CACHE_TTL_SECONDS: z.coerce.number().int().min(30).max(3_600).default(300),
+  CHATBOT_DUPLICATE_WINDOW_MS: z.coerce.number().int().min(10_000).max(600_000).default(60_000),
+  CHATBOT_DUPLICATE_MAX: z.coerce.number().int().min(1).max(20).default(4),
   GROQ_API_KEY: optionalSetting(z.string().trim().min(8).max(512)),
   GROQ_API_BASE_URL: httpUrl.default("https://api.groq.com/openai/v1"),
   GROQ_MODEL: z.string().trim().regex(/^[a-zA-Z0-9._/-]{2,160}$/).default("llama-3.3-70b-versatile"),
@@ -177,6 +182,7 @@ function productionProblems() {
   if (parsedData.CHATBOT_ENABLED) {
     const groqUrl = new URL(parsedData.GROQ_API_BASE_URL);
     if (groqUrl.protocol !== "https:") problems.push("GROQ_API_BASE_URL must use HTTPS when the chatbot is enabled in production");
+    if (parsedData.CHATBOT_CACHE_ENABLED && !parsedData.REDIS_ENABLED) problems.push("REDIS_ENABLED=true is required when CHATBOT_CACHE_ENABLED=true in production");
   }
   return problems;
 }

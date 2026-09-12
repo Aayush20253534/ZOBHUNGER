@@ -6,7 +6,10 @@ import type { ChatbotMessageRequest } from "./chatbot.schema.js";
 export const sendChatbotMessageController: RequestHandler = async (_req, res) => {
   const input = res.locals.validated.body as ChatbotMessageRequest;
   const service = await getChatbotService();
-  const result = await service.reply(input);
+  const result = await service.reply(input, {
+    requestId: res.locals.requestId,
+    clientFingerprint: res.locals.chatbotClientFingerprint,
+  });
 
   res.status(200).json(apiSuccessResponse("Chatbot response generated.", result));
 };

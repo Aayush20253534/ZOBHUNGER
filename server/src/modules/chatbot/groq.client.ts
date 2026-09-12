@@ -38,6 +38,7 @@ type FetchLike = typeof fetch;
 
 type GroqChatCompletionPayload = {
   id?: string;
+  model?: string;
   choices?: Array<{
     index?: number;
     message?: {
@@ -50,6 +51,14 @@ type GroqChatCompletionPayload = {
     type?: string;
     code?: string;
   } | null;
+  usage?: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+    queue_time?: number;
+    total_time?: number;
+    prompt_tokens_details?: { cached_tokens?: number };
+  };
 };
 
 function extractAssistantText(payload: GroqChatCompletionPayload): string {
@@ -80,6 +89,7 @@ export function createGroqClient(config: GroqClientConfig, fetchImpl: FetchLike 
           stream: false,
         };
         if (config.reasoningEffort) body.reasoning_effort = config.reasoningEffort;
+        if (request.user) body.user = request.user;
 
         const response = await fetchImpl(endpoint, {
           method: "POST",
@@ -114,6 +124,18 @@ export function createGroqClient(config: GroqClientConfig, fetchImpl: FetchLike 
         return {
           text,
           ...(payload.id ? { responseId: payload.id } : {}),
+          ...(payload.model ? { model: payload.model } : {}),
+          ...(payload.usage ? {
+            usage: {
+              ...(typeof payload.usage.prompt_tokens === "number" ? { promptTokens: payload.usage.prompt_tokens } : {}),
+              ...(typeof payload.usage.completion_tokens === "number" ? { completionTokens: payload.usage.completion_tokens } : {}),
+              ...(typeof payload.usage.total_tokens === "number" ? { totalTokens: payload.usage.total_tokens } : {}),
+              ...(typeof payload.usage.prompt_tokens_details?.cached_tokens === "number"
+                ? { cachedPromptTokens: payload.usage.prompt_tokens_details.cached_tokens } : {}),
+              ...(typeof payload.usage.total_time === "number" ? { providerDurationMs: payload.usage.total_time * 1000 } : {}),
+              ...(typeof payload.usage.queue_time === "number" ? { queueDurationMs: payload.usage.queue_time * 1000 } : {}),
+            },
+          } : {}),
         };
       } catch (error) {
         if (error instanceof GroqApiError) throw error;
