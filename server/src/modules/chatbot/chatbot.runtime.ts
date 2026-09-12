@@ -13,6 +13,7 @@ let runtimeKnowledge: { fingerprint: string; documents: number; chunks: number }
 function modelSignature(): string {
   return JSON.stringify({
     model: env.GROQ_MODEL,
+    fallbackModel: env.GROQ_FALLBACK_MODEL ?? null,
     maxCompletionTokens: env.GROQ_MAX_COMPLETION_TOKENS,
     temperature: env.GROQ_TEMPERATURE,
     reasoningEffort: env.GROQ_REASONING_EFFORT ?? null,
@@ -34,6 +35,7 @@ export function getChatbotService(): Promise<ChatbotService> {
       apiKey: env.GROQ_API_KEY ?? "",
       baseUrl: env.GROQ_API_BASE_URL,
       model: env.GROQ_MODEL,
+      ...(env.GROQ_FALLBACK_MODEL ? { fallbackModel: env.GROQ_FALLBACK_MODEL } : {}),
       timeoutMs: env.GROQ_API_TIMEOUT_MS,
       maxCompletionTokens: env.GROQ_MAX_COMPLETION_TOKENS,
       temperature: env.GROQ_TEMPERATURE,
@@ -75,6 +77,7 @@ export function chatbotOperationalStatus() {
     initialized: Boolean(servicePromise),
     provider: "groq",
     model: env.GROQ_MODEL,
+    fallbackModel: env.GROQ_FALLBACK_MODEL ?? null,
     cache: !env.CHATBOT_CACHE_ENABLED ? "disabled" : redis.ready ? "ready" : "bypass",
     knowledge: runtimeKnowledge
       ? { loaded: true, documents: runtimeKnowledge.documents, chunks: runtimeKnowledge.chunks, fingerprint: runtimeKnowledge.fingerprint.slice(0, 12) }

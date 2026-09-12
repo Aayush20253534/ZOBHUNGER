@@ -29,10 +29,6 @@ function PartnerMark({ brand }: { brand: string }) {
             loading={artwork ? "eager" : "lazy"}
             decoding="async"
             draggable={false}
-            ref={(image) => {
-              // Also handle a failed request that completed before hydration.
-              if (image?.complete && image.naturalWidth === 0) setFailed(true);
-            }}
             onError={() => setFailed(true)}
           />
         )}

@@ -8,6 +8,7 @@ export interface GroqClientConfig {
   apiKey: string;
   baseUrl: string;
   model: string;
+  fallbackModel?: string;
   timeoutMs: number;
   maxCompletionTokens: number;
   temperature: number;
@@ -72,79 +73,98 @@ function parseRetryAfter(value: string | null): number | undefined {
   return Number.isFinite(seconds) && seconds >= 0 ? seconds : undefined;
 }
 
+function shouldRetryWithFallback(error: GroqApiError, primaryModel: string, fallbackModel?: string): boolean {
+  if (!fallbackModel || fallbackModel === primaryModel) return false;
+  const status = error.status ?? 0;
+  if (![400, 403, 404, 410, 422].includes(status)) return false;
+  const signal = `${error.code ?? ""} ${error.message}`.toLowerCase();
+  return /(model|deprecat|decommission|retir|permission|not found|does not exist|unsupported)/.test(signal);
+}
+
 export function createGroqClient(config: GroqClientConfig, fetchImpl: FetchLike = fetch): ChatbotModelClient {
   const endpoint = `${config.baseUrl.replace(/\/$/, "")}/chat/completions`;
 
+  async function requestModel(request: ChatbotModelRequest, model: string): Promise<ChatbotModelResponse> {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), config.timeoutMs);
+
+    try {
+      const body: Record<string, unknown> = {
+        model,
+        messages: request.input,
+        max_completion_tokens: config.maxCompletionTokens,
+        temperature: config.temperature,
+        stream: false,
+      };
+      if (config.reasoningEffort) body.reasoning_effort = config.reasoningEffort;
+      if (request.user) body.user = request.user;
+
+      const response = await fetchImpl(endpoint, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${config.apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+
+      let payload: GroqChatCompletionPayload = {};
+      try {
+        payload = await response.json() as GroqChatCompletionPayload;
+      } catch {
+        // Keep the upstream status available even when a proxy returns non-JSON.
+      }
+
+      if (!response.ok) {
+        throw new GroqApiError(payload.error?.message || `Groq request failed with status ${response.status}`, {
+          status: response.status,
+          code: payload.error?.code || payload.error?.type,
+          retryAfterSeconds: parseRetryAfter(response.headers.get("retry-after")),
+        });
+      }
+
+      const text = extractAssistantText(payload);
+      if (!text) {
+        throw new GroqApiError("Groq returned no assistant text", { status: response.status });
+      }
+
+      return {
+        text,
+        ...(payload.id ? { responseId: payload.id } : {}),
+        ...(payload.model ? { model: payload.model } : {}),
+        ...(payload.usage ? {
+          usage: {
+            ...(typeof payload.usage.prompt_tokens === "number" ? { promptTokens: payload.usage.prompt_tokens } : {}),
+            ...(typeof payload.usage.completion_tokens === "number" ? { completionTokens: payload.usage.completion_tokens } : {}),
+            ...(typeof payload.usage.total_tokens === "number" ? { totalTokens: payload.usage.total_tokens } : {}),
+            ...(typeof payload.usage.prompt_tokens_details?.cached_tokens === "number"
+              ? { cachedPromptTokens: payload.usage.prompt_tokens_details.cached_tokens } : {}),
+            ...(typeof payload.usage.total_time === "number" ? { providerDurationMs: payload.usage.total_time * 1000 } : {}),
+            ...(typeof payload.usage.queue_time === "number" ? { queueDurationMs: payload.usage.queue_time * 1000 } : {}),
+          },
+        } : {}),
+      };
+    } catch (error) {
+      if (error instanceof GroqApiError) throw error;
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new GroqApiError("Groq request timed out", { code: "GROQ_TIMEOUT" });
+      }
+      throw new GroqApiError("Unable to reach Groq", { code: "GROQ_UNAVAILABLE" });
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   return {
     async generate(request: ChatbotModelRequest): Promise<ChatbotModelResponse> {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), config.timeoutMs);
-
       try {
-        const body: Record<string, unknown> = {
-          model: config.model,
-          messages: request.input,
-          max_completion_tokens: config.maxCompletionTokens,
-          temperature: config.temperature,
-          stream: false,
-        };
-        if (config.reasoningEffort) body.reasoning_effort = config.reasoningEffort;
-        if (request.user) body.user = request.user;
-
-        const response = await fetchImpl(endpoint, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${config.apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-          signal: controller.signal,
-        });
-
-        let payload: GroqChatCompletionPayload = {};
-        try {
-          payload = await response.json() as GroqChatCompletionPayload;
-        } catch {
-          // Keep the upstream status available even when a proxy returns non-JSON.
-        }
-
-        if (!response.ok) {
-          throw new GroqApiError(payload.error?.message || `Groq request failed with status ${response.status}`, {
-            status: response.status,
-            code: payload.error?.code || payload.error?.type,
-            retryAfterSeconds: parseRetryAfter(response.headers.get("retry-after")),
-          });
-        }
-
-        const text = extractAssistantText(payload);
-        if (!text) {
-          throw new GroqApiError("Groq returned no assistant text", { status: response.status });
-        }
-
-        return {
-          text,
-          ...(payload.id ? { responseId: payload.id } : {}),
-          ...(payload.model ? { model: payload.model } : {}),
-          ...(payload.usage ? {
-            usage: {
-              ...(typeof payload.usage.prompt_tokens === "number" ? { promptTokens: payload.usage.prompt_tokens } : {}),
-              ...(typeof payload.usage.completion_tokens === "number" ? { completionTokens: payload.usage.completion_tokens } : {}),
-              ...(typeof payload.usage.total_tokens === "number" ? { totalTokens: payload.usage.total_tokens } : {}),
-              ...(typeof payload.usage.prompt_tokens_details?.cached_tokens === "number"
-                ? { cachedPromptTokens: payload.usage.prompt_tokens_details.cached_tokens } : {}),
-              ...(typeof payload.usage.total_time === "number" ? { providerDurationMs: payload.usage.total_time * 1000 } : {}),
-              ...(typeof payload.usage.queue_time === "number" ? { queueDurationMs: payload.usage.queue_time * 1000 } : {}),
-            },
-          } : {}),
-        };
+        return await requestModel(request, config.model);
       } catch (error) {
-        if (error instanceof GroqApiError) throw error;
-        if (error instanceof Error && error.name === "AbortError") {
-          throw new GroqApiError("Groq request timed out", { code: "GROQ_TIMEOUT" });
+        if (error instanceof GroqApiError && shouldRetryWithFallback(error, config.model, config.fallbackModel)) {
+          return requestModel(request, config.fallbackModel as string);
         }
-        throw new GroqApiError("Unable to reach Groq", { code: "GROQ_UNAVAILABLE" });
-      } finally {
-        clearTimeout(timer);
+        throw error;
       }
     },
   };

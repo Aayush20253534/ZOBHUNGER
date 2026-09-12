@@ -40,6 +40,13 @@ function uniqueSources(results: ReturnType<ChatbotRetriever["search"]>["results"
 }
 
 function mapGroqError(error: GroqApiError): HttpError {
+  const providerSignal = `${error.code ?? ""} ${error.message}`.toLowerCase();
+  if ([400, 403, 404, 410, 422].includes(error.status ?? 0)
+    && /(model|deprecat|decommission|retir|permission|not found|does not exist|unsupported)/.test(providerSignal)) {
+    return new HttpError(503, "The chatbot model is temporarily unavailable. Please try again shortly.", {
+      code: "CHATBOT_MODEL_UNAVAILABLE",
+    });
+  }
   if (error.status === 429) {
     return new HttpError(503, "The chatbot is temporarily busy. Please try again shortly.", {
       code: "CHATBOT_UPSTREAM_RATE_LIMITED",
@@ -190,6 +197,11 @@ export function createChatbotService(options: CreateChatbotServiceOptions) {
           cacheStatus,
           errorCode: mapped instanceof HttpError ? mapped.code : "CHATBOT_INTERNAL_ERROR",
           statusCode: mapped instanceof HttpError ? mapped.statusCode : 500,
+          ...(error instanceof GroqApiError ? {
+            providerStatus: error.status ?? null,
+            providerCode: error.code ?? null,
+            providerMessage: error.message.slice(0, 240),
+          } : {}),
         }));
         throw mapped;
       }

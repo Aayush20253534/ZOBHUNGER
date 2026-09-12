@@ -14,7 +14,7 @@
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "test": "node --import tsx --test tests/all.test.ts tests/business-deployment.test.mjs",
+    "test": "node --import tsx --import ./tests/test-env.mjs --test tests/all.test.ts tests/business-deployment.test.mjs",
     "check:business": "node scripts/check-business-api.mjs",
     "check:email": "node --import tsx scripts/check-email.mjs",
     "test:submissions": "npm run build && node --import tsx --experimental-test-module-mocks --test tests/resend.test.mjs tests/public-requirement-contract.test.mjs",

@@ -228,6 +228,41 @@ test("Groq client sends reasoning_effort only when configured", async () => {
   assert.equal(body.reasoning_effort, "low");
 });
 
+test("Groq client retries a current fallback model when the configured model is retired", async () => {
+  const seenModels: string[] = [];
+  const fakeFetch: typeof fetch = async (_input, init) => {
+    const body = JSON.parse(String(init?.body)) as { model?: string };
+    seenModels.push(body.model ?? "");
+    if (seenModels.length === 1) {
+      return new Response(JSON.stringify({
+        error: {
+          message: "The configured model has been decommissioned",
+          code: "model_decommissioned",
+        },
+      }), { status: 400, headers: { "content-type": "application/json" } });
+    }
+    return new Response(JSON.stringify({
+      model: "openai/gpt-oss-20b",
+      choices: [{ message: { role: "assistant", content: "Fallback response" } }],
+    }), { status: 200, headers: { "content-type": "application/json" } });
+  };
+
+  const client = createGroqClient({
+    apiKey: "gsk_test_secret",
+    baseUrl: "https://api.groq.com/openai/v1",
+    model: "retired/example-model",
+    fallbackModel: "openai/gpt-oss-20b",
+    timeoutMs: 5000,
+    maxCompletionTokens: 700,
+    temperature: 0.2,
+  }, fakeFetch);
+
+  const response = await client.generate({ input: [{ role: "user", content: "Hello" }] });
+  assert.deepEqual(seenModels, ["retired/example-model", "openai/gpt-oss-20b"]);
+  assert.equal(response.text, "Fallback response");
+  assert.equal(response.model, "openai/gpt-oss-20b");
+});
+
 test("Groq client preserves upstream 429 metadata without leaking credentials", async () => {
   const fakeFetch: typeof fetch = async () => new Response(JSON.stringify({
     error: { message: "rate limited", code: "rate_limit_exceeded" },

@@ -27,7 +27,7 @@ export const partnerArtwork: Partial<Record<string, PartnerArtwork>> = {
   Siply: { file: "siply.png" },
   Paytm: { file: "paytm.svg" },
   "Google Pay": { file: "google-pay.webp" },
-  "Amazon QR": { file: "amazon-qr.png" },
+  "Amazon QR": { file: "Amazon-qr.png" },
   Airtel: { file: "airtel.png" },
   "Pine Labs": { file: "pine-labs.svg" },
   Tide: { file: "tide.png" },

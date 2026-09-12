@@ -43,7 +43,7 @@ interface FailedRequest {
 
 function publicErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
-    if (error.code === "CHATBOT_DISABLED" || error.code === "CHATBOT_CONFIGURATION_ERROR") {
+    if (error.code === "CHATBOT_DISABLED" || error.code === "CHATBOT_CONFIGURATION_ERROR" || error.code === "CHATBOT_MODEL_UNAVAILABLE") {
       return "The assistant is temporarily unavailable. Please use the website navigation or contact ZOBHUNGER directly.";
     }
     if (error.code === "CHATBOT_UPSTREAM_RATE_LIMITED" || error.status === 429) {

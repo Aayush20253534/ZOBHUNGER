@@ -1,10 +1,15 @@
 "use client";
 
 import type { ReactNode } from "react";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { ChatbotWidget } from "@/components/chatbot";
 import { Footer } from "./Footer";
 import { Navbar } from "./Navbar";
+
+const ChatbotWidget = dynamic(
+  () => import("@/components/chatbot").then((module) => module.ChatbotWidget),
+  { ssr: false },
+);
 
 export function SiteFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();

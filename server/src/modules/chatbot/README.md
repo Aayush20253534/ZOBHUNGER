@@ -53,7 +53,8 @@ The feature remains off by default. To enable it:
 ```env
 CHATBOT_ENABLED=true
 GROQ_API_KEY=gsk_...
-GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_MODEL=openai/gpt-oss-120b
+GROQ_FALLBACK_MODEL=openai/gpt-oss-20b
 CHATBOT_CACHE_ENABLED=true
 ```
 
