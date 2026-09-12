@@ -78,10 +78,28 @@ async function seed(): Promise<void> {
       publishedAt: article.isPublished ? new Date() : null,
     };
 
-    await prisma.article.upsert({
+    const storedArticle = await prisma.article.upsert({
       where: { slug: article.slug },
-      update: data,
+      // CMS-managed editorial content must never be overwritten by rerunning seed.
+      update: {},
       create: { slug: article.slug, ...data },
+      select: { id: true },
+    });
+    await prisma.articleDraft.upsert({
+      where: { articleId: storedArticle.id },
+      update: {},
+      create: {
+        articleId: storedArticle.id,
+        slug: article.slug,
+        title: article.title,
+        excerpt: article.excerpt,
+        category: article.category,
+        readingMinutes: article.readingMinutes,
+        takeaway: article.takeaway,
+        sections: article.sections as unknown as Prisma.InputJsonValue,
+        tags: [],
+        isDirty: false,
+      },
     });
   }
 

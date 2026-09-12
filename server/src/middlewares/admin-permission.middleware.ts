@@ -22,6 +22,7 @@ export function requireAdminPermission(...permissions: AdminPermission[]): Reque
 const routePermissions: Array<{ pattern: RegExp; permission: AdminPermission }> = [
   { pattern: /^\/overview(?:\/|$)/, permission: AdminPermission.DASHBOARD_VIEW },
   { pattern: /^\/intake(?:\/|$)/, permission: AdminPermission.DASHBOARD_VIEW },
+  { pattern: /^\/articles(?:\/|$)/, permission: AdminPermission.BLOGS_MANAGE },
   { pattern: /^\/access(?:\/|$)/, permission: AdminPermission.ADMIN_USERS_MANAGE },
   { pattern: /^\/enquiries(?:\/|$)/, permission: AdminPermission.ENQUIRIES_MANAGE },
   { pattern: /^\/partners(?:\/|$)/, permission: AdminPermission.PARTNERS_MANAGE },

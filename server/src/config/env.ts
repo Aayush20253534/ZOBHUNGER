@@ -52,6 +52,20 @@ const envSchema = z.object({
   AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(10),
   SUBMISSION_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(3_600_000),
   SUBMISSION_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(30),
+  CHATBOT_ENABLED: z.enum(["true", "false"]).default("false")
+    .transform((value) => value === "true"),
+  CHATBOT_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().min(10_000).max(3_600_000).default(60_000),
+  CHATBOT_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(500).default(20),
+  CHATBOT_MAX_HISTORY_MESSAGES: z.coerce.number().int().min(0).max(10).default(10),
+  CHATBOT_RAG_TOP_K: z.coerce.number().int().min(1).max(10).default(6),
+  CHATBOT_CONTEXT_MAX_CHARACTERS: z.coerce.number().int().min(2_000).max(30_000).default(14_000),
+  GROQ_API_KEY: optionalSetting(z.string().trim().min(8).max(512)),
+  GROQ_API_BASE_URL: httpUrl.default("https://api.groq.com/openai/v1"),
+  GROQ_MODEL: z.string().trim().regex(/^[a-zA-Z0-9._/-]{2,160}$/).default("llama-3.3-70b-versatile"),
+  GROQ_API_TIMEOUT_MS: z.coerce.number().int().min(5_000).max(120_000).default(25_000),
+  GROQ_MAX_COMPLETION_TOKENS: z.coerce.number().int().min(128).max(4_096).default(700),
+  GROQ_TEMPERATURE: z.coerce.number().min(0).max(2).default(0.2),
+  GROQ_REASONING_EFFORT: optionalSetting(z.enum(["none", "default", "minimal", "low", "medium", "high", "xhigh", "max"])),
   TRUST_PROXY: z
     .enum(["true", "false"])
     .default(process.env.NODE_ENV === "production" ? "true" : "false")
@@ -95,6 +109,9 @@ if (!parsedEnv.success) {
 const parsedData = parsedEnv.data;
 if (!parsedData) {
   throw new Error("Invalid environment configuration: parsed environment data is unavailable");
+}
+if (parsedData.CHATBOT_ENABLED && !parsedData.GROQ_API_KEY) {
+  throw new Error("Invalid environment configuration:\nGROQ_API_KEY is required when CHATBOT_ENABLED=true");
 }
 
 function parseClientOrigins(value: string) {
@@ -151,6 +168,11 @@ function productionProblems() {
   if (!parsedData.CLOUDINARY_API_SECRET) problems.push("CLOUDINARY_API_SECRET is required in production");
 
   if (parsedData.REDIS_ENABLED && !parsedData.REDIS_URL) problems.push("REDIS_URL is required when REDIS_ENABLED=true in production");
+
+  if (parsedData.CHATBOT_ENABLED) {
+    const groqUrl = new URL(parsedData.GROQ_API_BASE_URL);
+    if (groqUrl.protocol !== "https:") problems.push("GROQ_API_BASE_URL must use HTTPS when the chatbot is enabled in production");
+  }
   return problems;
 }
 

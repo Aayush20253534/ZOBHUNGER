@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
@@ -16,6 +17,7 @@ import {
   articleWorkflowAnchor,
 } from "@/components/blog/ArticleVisuals";
 import { ActionLink } from "@/components/common/ActionLink";
+import { ArticleInlineText } from "@/components/blog/ArticleInlineText";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
@@ -43,19 +45,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       robots: { index: false, follow: false },
     };
   const metadata = getPageMetadata(
-    article.title,
-    article.excerpt,
+    article.seoTitle || article.title,
+    article.seoDescription || article.excerpt,
     `/blog/${encodeURIComponent(article.slug)}`,
   );
   const story = getArticleVisualStory(article.slug);
-  if (!story) return metadata;
-  const cover = executionVisuals[story.cover];
-  const image = { url: `${site.url}${cover.src}`, width: cover.width, height: cover.height, alt: cover.alt };
+  const storyCover = story ? executionVisuals[story.cover] : null;
+  const imageUrl = article.ogImageUrl || article.coverImageUrl || (storyCover ? `${site.url}${storyCover.src}` : null);
+  const canonical = article.canonicalUrl || `${site.url}/blog/${encodeURIComponent(article.slug)}`;
+  const image = imageUrl ? [{ url: imageUrl, ...(storyCover && imageUrl.endsWith(storyCover.src) ? { width: storyCover.width, height: storyCover.height, alt: storyCover.alt } : {}) }] : undefined;
 
   return {
     ...metadata,
-    openGraph: { ...metadata.openGraph, type: "article", images: [image] },
-    twitter: { ...metadata.twitter, card: "summary_large_image", images: [image] },
+    alternates: { canonical },
+    authors: article.authorName ? [{ name: article.authorName }] : undefined,
+    openGraph: {
+      ...metadata.openGraph,
+      type: "article",
+      url: canonical,
+      publishedTime: article.publishedAt || undefined,
+      modifiedTime: article.updatedAt || undefined,
+      authors: article.authorName ? [article.authorName] : undefined,
+      images: image,
+    },
+    twitter: { ...metadata.twitter, card: "summary_large_image", images: imageUrl ? [imageUrl] : undefined },
   };
 }
 
@@ -64,14 +77,20 @@ export default async function ArticlePage({ params }: Props) {
   if (!article?.isPublished) notFound();
   const visualStory = getArticleVisualStory(article.slug);
 
+  const canonicalUrl = article.canonicalUrl || `${site.url}/blog/${encodeURIComponent(article.slug)}`;
+  const articleImage = article.ogImageUrl || article.coverImageUrl || (visualStory ? `${site.url}${executionVisuals[visualStory.cover].src}` : undefined);
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: article.title,
-    description: article.excerpt,
+    description: article.seoDescription || article.excerpt,
     articleSection: article.category,
-    image: visualStory ? `${site.url}${executionVisuals[visualStory.cover].src}` : undefined,
-    mainEntityOfPage: `${site.url}/blog/${encodeURIComponent(article.slug)}`,
+    keywords: article.tags?.length ? article.tags.join(", ") : undefined,
+    image: articleImage,
+    datePublished: article.publishedAt || undefined,
+    dateModified: article.updatedAt || article.publishedAt || undefined,
+    author: article.authorName ? { "@type": "Person", name: article.authorName } : { "@type": "Organization", name: site.name },
+    mainEntityOfPage: canonicalUrl,
     publisher: {
       "@type": "Organization",
       name: site.name,
@@ -120,8 +139,18 @@ export default async function ArticlePage({ params }: Props) {
               <strong>{article.sections.length} sections</strong>
             </div>
           </div>
+          {(article.authorName || article.publishedAt) && (
+            <div className="zb-article-author-line">
+              {article.authorName && <span>By {article.authorName}</span>}
+              {article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "long", year: "numeric" }).format(new Date(article.publishedAt))}</time>}
             </div>
-            {visualStory && <ArticleCover story={visualStory} />}
+          )}
+            </div>
+            {visualStory ? <ArticleCover story={visualStory} /> : article.coverImageUrl ? (
+              <figure className="zb-cms-article-cover">
+                <img src={article.coverImageUrl} alt={article.title} decoding="async" />
+              </figure>
+            ) : null}
           </div>
         </div>
 
@@ -144,16 +173,27 @@ export default async function ArticlePage({ params }: Props) {
                 </div>
 
                 {section.paragraphs.map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
+                  <p key={index}><ArticleInlineText text={paragraph} /></p>
                 ))}
 
                 {section.points?.length ? (
                   <ul>
-                    {section.points.map((point) => (
-                      <li key={point}>{point}</li>
+                    {section.points.map((point, index) => (
+                      <li key={`${section.id}-point-${index}`}><ArticleInlineText text={point} /></li>
                     ))}
                   </ul>
                 ) : null}
+
+                {section.quotes?.map((quote, index) => (
+                  <blockquote className="zb-cms-quote" key={`${section.id}-quote-${index}`}><ArticleInlineText text={quote} /></blockquote>
+                ))}
+
+                {section.images?.map((image, index) => (
+                  <figure className="zb-cms-content-image" key={`${section.id}-image-${index}`}>
+                    <img src={image.url} alt={image.alt} loading="lazy" decoding="async" />
+                    {image.caption && <figcaption><ArticleInlineText text={image.caption} /></figcaption>}
+                  </figure>
+                ))}
 
                 {visualStory?.example.sectionId === section.id && (
                   <ArticleFieldExample example={visualStory.example} />

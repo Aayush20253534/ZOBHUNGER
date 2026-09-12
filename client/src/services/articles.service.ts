@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { mockArticles } from "@/mocks/articles";
 import { getArticleVisualText } from "@/data/article-visual-stories";
+import { getDataAdapter, getEditorialDataMode } from "@/services/adapters";
 import type {
   Article,
   ArticleFilters,
@@ -30,15 +31,24 @@ function toSummary(article: Article): ArticleSummary {
     excerpt: article.excerpt,
     category: article.category,
     readingMinutes: article.readingMinutes,
+    authorName: article.authorName,
+    tags: article.tags,
+    coverImageUrl: article.coverImageUrl,
+    seoTitle: article.seoTitle,
+    seoDescription: article.seoDescription,
+    canonicalUrl: article.canonicalUrl,
+    ogImageUrl: article.ogImageUrl,
+    publishedAt: article.publishedAt,
+    updatedAt: article.updatedAt,
     isPublished: article.isPublished,
     isSample: article.isSample,
   };
 }
 
 /**
- * Public editorial content is intentionally local/static.
- * This keeps article navigation instant and avoids coupling marketing pages to
- * API cold starts. Jobs/forms continue to use the configured data adapter.
+ * Production editorial content comes from the configured API so articles
+ * created in Admin → Blog & content are visible without a code release.
+ * Mock mode intentionally keeps the local fixtures for previews/tests.
  */
 export async function getArticles(
   filters: ArticleFilters = {},
@@ -46,6 +56,9 @@ export async function getArticles(
 ): Promise<ArticleList> {
   if (options?.scenario === "empty") {
     return { items: [], total: 0, page: 1, pageSize: 6, totalPages: 0 };
+  }
+  if (getEditorialDataMode() === "api") {
+    return getDataAdapter().listArticles(filters, options);
   }
 
   const query = normalise(filters.query);
@@ -85,6 +98,9 @@ export async function getArticleBySlug(
   options?: DataRequestOptions,
 ): Promise<Article | null> {
   if (options?.scenario === "empty") return null;
+  if (getEditorialDataMode() === "api") {
+    return getDataAdapter().getArticle(slug, options);
+  }
   return mockArticles.find((item) => item.slug === slug && item.isPublished) ?? null;
 }
 

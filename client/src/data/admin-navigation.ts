@@ -10,6 +10,7 @@ import {
   ClipboardCheck,
   ClipboardList,
   FileCheck2,
+  Newspaper,
   Handshake,
   IdCard,
   Inbox,
@@ -137,6 +138,18 @@ export const adminNavigation: readonly AdminNavigationGroup[] = [
         label: "Approval history",
         description: "Business decisions",
         icon: FileCheck2,
+      },
+    ],
+  },
+  {
+    label: "Content",
+    items: [
+      {
+        href: "/admin/blogs",
+        permission: "BLOGS_MANAGE",
+        label: "Blog & content",
+        description: "Draft, schedule and publish",
+        icon: Newspaper,
       },
     ],
   },

@@ -1,4 +1,4 @@
-import type { KnowledgeCategory, KnowledgeDocument } from "../knowledge/index.js";
+import type { KnowledgeCategory, KnowledgeDocument } from "../knowledge/knowledge.types.js";
 
 export interface KnowledgeChunk {
   id: string;

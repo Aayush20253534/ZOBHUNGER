@@ -81,3 +81,11 @@ export const publicSubmissionRateLimiter = limiter(
   "SUBMISSION_RATE_LIMIT_EXCEEDED",
   "Too many submissions. Please wait before trying again.",
 );
+
+export const chatbotRateLimiter = limiter(
+  "chatbot",
+  env.CHATBOT_RATE_LIMIT_WINDOW_MS,
+  env.CHATBOT_RATE_LIMIT_MAX,
+  "CHATBOT_RATE_LIMIT_EXCEEDED",
+  "Too many chatbot messages. Please wait a moment before trying again.",
+);

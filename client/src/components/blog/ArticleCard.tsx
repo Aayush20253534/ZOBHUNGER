@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -50,6 +51,10 @@ export function ArticleCard({
               visual={executionVisuals[visualStory.cover]}
               sizes="(min-width: 1280px) 390px, (min-width: 1000px) 30vw, (min-width: 640px) 45vw, calc(100vw - 40px)"
             />
+          </div>
+        ) : article.coverImageUrl ? (
+          <div className="zb-article-card-visual zb-blog-card-cover zb-blog-card-cover--cms">
+            <img src={article.coverImageUrl} alt="" loading="lazy" decoding="async" />
           </div>
         ) : (
           <div className="zb-article-card-visual" aria-hidden="true">

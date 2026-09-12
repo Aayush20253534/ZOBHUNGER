@@ -12,6 +12,7 @@ import { partnersRouter } from "../modules/partners/partners.routes.js";
 import { placementCellsRouter } from "../modules/placement-cells/placement-cells.routes.js";
 import { careersRouter } from "../modules/careers/careers.routes.js";
 import { employeeJoiningRouter } from "../modules/employee-joining/employee-joining.routes.js";
+import { chatbotRouter } from "../modules/chatbot/chatbot.routes.js";
 
 export const apiRouter = Router();
 
@@ -19,6 +20,7 @@ apiRouter.use("/auth", authRouter);
 apiRouter.use("/business", businessRouter);
 apiRouter.use("/workers", workersRouter);
 apiRouter.use("/articles", articlesRouter);
+apiRouter.use("/chatbot", chatbotRouter);
 apiRouter.use("/admin", adminRouter);
 apiRouter.use("/jobs", jobsRouter);
 apiRouter.use("/contact", enquiriesRouter);
