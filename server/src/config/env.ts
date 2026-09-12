@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { z } from "zod";
+import { validateGroqModelPair } from "../modules/chatbot/groq-model-policy.js";
 
 function optionalSetting<T extends z.ZodType>(schema: T) {
   return z.preprocess(value => typeof value === "string" && !value.trim() ? undefined : value, schema.optional());
@@ -123,6 +124,12 @@ if (!parsedData) {
 }
 if (parsedData.CHATBOT_ENABLED && !parsedData.GROQ_API_KEY) {
   throw new Error("Invalid environment configuration:\nGROQ_API_KEY is required when CHATBOT_ENABLED=true");
+}
+if (parsedData.CHATBOT_ENABLED) {
+  const groqModelProblems = validateGroqModelPair(parsedData.GROQ_MODEL, parsedData.GROQ_FALLBACK_MODEL);
+  if (groqModelProblems.length) {
+    throw new Error(`Invalid environment configuration:\n${groqModelProblems.join("\n")}`);
+  }
 }
 
 function parseClientOrigins(value: string) {

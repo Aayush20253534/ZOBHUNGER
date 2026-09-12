@@ -63,3 +63,17 @@ CHATBOT_CACHE_ENABLED=true
 ## Safety boundaries
 
 The public chatbot has no private database/tool access. It cannot use `/admin`, `/business`, `/worker` or employee-joining routes as page context. Retrieved Markdown is reference material rather than executable instructions, and ZOBHUNGER-specific factual claims must be grounded in retrieved public knowledge.
+
+## Phase 8 release gates
+
+The chatbot release path has deterministic offline quality gates and an optional live deployment smoke probe.
+
+```bash
+npm run chatbot:evaluate
+npm run chatbot:release-check
+npm run chatbot:smoke -- https://your-backend.example [expected-git-revision]
+```
+
+`chatbot:evaluate` runs the version-controlled retrieval benchmark and writes `.release-artifacts/chatbot-rag-evaluation.json`. `chatbot:release-check` performs no paid provider calls: it validates the knowledge corpus, enforces RAG quality thresholds, scans published knowledge for private-route/secret material, verifies prompt-injection guardrails and rejects known retired Groq model IDs. It writes `.release-artifacts/chatbot-release-check.json` and is part of the repository-level `npm run verify` gate.
+
+`chatbot:smoke` is intentionally separate because it calls the deployed backend and therefore uses the configured Groq provider. It checks `/api/v1/health`, a grounded service question and a prompt-injection request without mutating production data. Run it after a backend deployment, not as an ordinary unit test.

@@ -1,4 +1,4 @@
-import type { KnowledgeDocument } from "../knowledge/index.js";
+import type { KnowledgeDocument } from "../knowledge/knowledge.types.js";
 import type { ChunkKnowledgeOptions, KnowledgeChunk } from "./rag.types.js";
 
 const DEFAULT_TARGET_CHARS = 2200;

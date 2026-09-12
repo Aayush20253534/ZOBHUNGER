@@ -1,4 +1,4 @@
-import type { KnowledgeCategory } from "../knowledge/index.js";
+import type { KnowledgeCategory } from "../knowledge/knowledge.types.js";
 import {
   buildQueryPhrases,
   expandQueryTerms,
@@ -186,13 +186,49 @@ export function searchKnowledgeIndex(
   const minScore = Math.max(0, options.minScore ?? 2.5);
   const maxChunksPerDocument = Math.max(1, Math.min(options.maxChunksPerDocument ?? 2, 5));
 
-  if (!normalizedQuery || originalTerms.length === 0) {
+  if (!normalizedQuery) {
     return { query, normalizedQuery, results: [], searchedChunks: index.chunkCount };
   }
 
+  if (originalTerms.length === 0) {
+    const currentPage = normalizedPath(options.currentPage);
+    if (!currentPage) return { query, normalizedQuery, results: [], searchedChunks: index.chunkCount };
+    const pageChunks = index.chunks.filter((chunk) => normalizedPath(chunk.url) === currentPage);
+    const results: KnowledgeSearchResult[] = pageChunks.slice(0, topK).map((chunk, index) => ({
+      chunk: {
+        id: chunk.id,
+        documentId: chunk.documentId,
+        title: chunk.title,
+        category: chunk.category,
+        url: chunk.url,
+        description: chunk.description,
+        keywords: [...chunk.keywords],
+        aliases: [...chunk.aliases],
+        section: chunk.section,
+        sectionPath: [...chunk.sectionPath],
+        content: chunk.content,
+        sourcePath: chunk.sourcePath,
+        estimatedTokens: chunk.estimatedTokens,
+        ordinal: chunk.ordinal,
+      },
+      score: Number((10 - index * 0.1).toFixed(4)),
+      debug: options.includeDebug ? {
+        matchedTerms: [], expandedTerms: [], reasons: ["current page fallback"],
+        lexicalScore: 0, coverageScore: 0, phraseScore: 0, contextScore: 10,
+      } : undefined,
+    }));
+    return { query, normalizedQuery, results, searchedChunks: index.chunkCount };
+  }
+
+  const uniqueOriginalTerms = new Set(originalTerms).size;
   const rawScored = index.chunks
     .map((chunk) => ({ chunk, ...scoreChunk(index, chunk, originalTerms, phrases, options) }))
-    .filter((entry) => Number.isFinite(entry.score) && entry.score >= minScore)
+    .filter((entry) => {
+      if (!Number.isFinite(entry.score) || entry.score < minScore) return false;
+      if (uniqueOriginalTerms < 4) return true;
+      const matched = entry.debug.matchedTerms.length;
+      return matched >= 2 && matched / uniqueOriginalTerms >= 0.3;
+    })
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       if (a.chunk.documentId !== b.chunk.documentId) return a.chunk.documentId.localeCompare(b.chunk.documentId);

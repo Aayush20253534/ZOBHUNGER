@@ -1,4 +1,4 @@
-import type { KnowledgeDocument } from "../knowledge/index.js";
+import type { KnowledgeDocument } from "../knowledge/knowledge.types.js";
 import { chunkKnowledgeBase } from "./knowledge-chunker.js";
 import { termFrequency, tokenize } from "./text-normalizer.js";
 import type {
