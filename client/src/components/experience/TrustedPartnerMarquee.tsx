@@ -4,81 +4,39 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { featuredBrandExperience } from "@/data/brand-experience";
 import { brandLogoUrl } from "@/data/brand-logos";
+import { partnerArtwork, partnerArtworkSrc, partnerLogoToken } from "@/data/partner-artwork";
 import "@/styles/trusted-partners.css";
 
-// Local brand artwork avoids third-party favicon failures and blurry app icons.
-const partnerArtwork: Partial<Record<string, string>> = {
-  Amazon: "amazon.png",
-  Flipkart: "flipkart.svg",
-  Zepto: "zepto.svg",
-  Zomato: "zomato.png",
-  Swiggy: "swiggy.png",
-  Meesho: "meesho.png",
-  Delhivery: "delhivery.png",
-  Shadowfax: "shadowfax.webp",
-  Rapido: "rapido.png",
-  Ola: "ola.png",
-  Uber: "uber.jpg",
-  InDrive: "indrive.png",
-  "Oye Rickshaw": "oyerickshaw.jpg",
-  Bikayi: "bikayi.jpg",
-  Freecharge: "freecharge.png",
-  MobiKwik: "mobikwik.png",
-  Paytm: "paytm.svg",
-  "Google Pay": "google-pay.webp",
-  Airtel: "airtel.png",
-  "Pine Labs": "pine-labs.svg",
-  Tide: "tide.png",
-  PagarBook: "pagarbook.webp",
-  BharatPe: "Bharatpe.png",
-  "Airtel Payments Bank": "airtel_payments_bank.png",
-  "Axis Bank": "axis-bank.svg",
-  "YES BANK": "yesbank.png",
-  Upstox: "upstox.svg",
-  "Axis Securities": "Axis_securities.avif",
-  "ICICI Securities": "icici securities.png",
-  Edelweiss: "edelweiss.jpg",
-  "5paisa": "5paisa.png",
-  "Motilal Oswal": "motilal-oswal.png",
-  PwC: "pwc.png",
-  "WhiteHat Jr.": "whitehat jr.png",
-  Subway: "subway-logo-png_seeklogo-287348.png",
-  "McDonald's": "mcdonalds.svg",
-  ASUS: "asus.svg",
-  Marlboro: "marlboro.jpeg",
-  "Brown-Forman": "brown-forman logo.png",
-  "Jim Beam": "Jim-Beam.png",
-  "Tilaknagar Industries": "tilaknagar.png",
-  Usha: "usha.png",
-  "iD Fresh Food": "id fresh food.webp",
-};
-
+// Local partner artwork is centralized in @/data/partner-artwork.
 function PartnerMark({ brand }: { brand: string }) {
   const [failed, setFailed] = useState(false);
   const artwork = partnerArtwork[brand];
-  const source = artwork ? `/images/partners/${artwork}` : brandLogoUrl(brand);
+  const source = partnerArtworkSrc(brand) ?? brandLogoUrl(brand);
+  const brandToken = partnerLogoToken(brand);
 
   return (
-    <span className="zb-partner-mark">
-      {failed || !source ? (
-        <span className="zb-partner-mark-fallback">{brand}</span>
-      ) : (
-        <img
-          src={source}
-          className={brand === "Zomato" ? "zb-partner-mark-dark" : undefined}
-          alt={brand}
-          width={128}
-          height={48}
-          loading={artwork ? "eager" : "lazy"}
-          decoding="async"
-          draggable={false}
-          ref={(image) => {
-            // Also handle a failed request that completed before hydration.
-            if (image?.complete && image.naturalWidth === 0) setFailed(true);
-          }}
-          onError={() => setFailed(true)}
-        />
-      )}
+    <span className="zb-partner-mark" data-brand={brandToken}>
+      <span className="zb-partner-mark-surface">
+        {failed || !source ? (
+          <span className="zb-partner-mark-fallback">{brand}</span>
+        ) : (
+          <img
+            src={source}
+            className={artwork?.invertOnLight ? "zb-partner-mark-dark" : undefined}
+            alt={brand}
+            width={160}
+            height={64}
+            loading={artwork ? "eager" : "lazy"}
+            decoding="async"
+            draggable={false}
+            ref={(image) => {
+              // Also handle a failed request that completed before hydration.
+              if (image?.complete && image.naturalWidth === 0) setFailed(true);
+            }}
+            onError={() => setFailed(true)}
+          />
+        )}
+      </span>
     </span>
   );
 }

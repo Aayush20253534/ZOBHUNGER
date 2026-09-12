@@ -280,29 +280,59 @@
 }
 
 .zb-experience-brand-logo {
+  --zb-mini-logo-scale: 1;
   display: grid;
-  flex: 0 0 2rem;
-  width: 2rem;
-  height: 2rem;
+  flex: 0 0 3.35rem;
+  width: 3.35rem;
+  height: 2.15rem;
   place-items: center;
+  padding: 0.25rem 0.35rem;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--zb-border) 82%, transparent);
-  border-radius: 0.48rem;
-  background: #fff;
+  border-radius: 0.58rem;
+  background: linear-gradient(180deg, rgb(255 255 255 / 97%), rgb(255 255 255 / 92%));
   box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
 }
 
 .zb-experience-brand-logo img {
   display: block;
-  width: 1.45rem;
-  height: 1.45rem;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
+  transform: scale(var(--zb-mini-logo-scale));
+  transform-origin: center center;
+}
+
+.zb-experience-brand-logo .zb-partner-mark-dark {
+  filter: brightness(0);
 }
 
 .zb-experience-brand-logo > span {
   color: var(--zb-action);
   font-size: 0.78rem;
   font-weight: 800;
+}
+
+
+.zb-experience-brand-logo[data-brand="delhivery"],
+.zb-experience-brand-logo[data-brand="shadowfax"],
+.zb-experience-brand-logo[data-brand="rapido"],
+.zb-experience-brand-logo[data-brand="ola"],
+.zb-experience-brand-logo[data-brand="uber"],
+.zb-experience-brand-logo[data-brand="freecharge"],
+.zb-experience-brand-logo[data-brand="mobikwik"],
+.zb-experience-brand-logo[data-brand="pagarbook"],
+.zb-experience-brand-logo[data-brand="whitehat-jr"],
+.zb-experience-brand-logo[data-brand="yes-bank"],
+.zb-experience-brand-logo[data-brand="pwc"] {
+  --zb-mini-logo-scale: 1.16;
+}
+
+.zb-experience-brand-logo[data-brand="delhivery"],
+.zb-experience-brand-logo[data-brand="shadowfax"],
+.zb-experience-brand-logo[data-brand="rapido"],
+.zb-experience-brand-logo[data-brand="ola"] {
+  --zb-mini-logo-scale: 1.24;
 }
 
 .zb-experience-brand-name {

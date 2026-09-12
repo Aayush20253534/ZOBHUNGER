@@ -37,7 +37,8 @@
     "check:storage": "tsx scripts/check-storage.ts",
     "check:env": "tsx scripts/check-env.ts",
     "chatbot:knowledge:validate": "tsx scripts/chatbot/validate-knowledge.ts",
-    "chatbot:knowledge:list": "tsx scripts/chatbot/list-knowledge.ts"
+    "chatbot:knowledge:list": "tsx scripts/chatbot/list-knowledge.ts",
+    "chatbot:rag:search": "tsx scripts/chatbot/search-knowledge.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

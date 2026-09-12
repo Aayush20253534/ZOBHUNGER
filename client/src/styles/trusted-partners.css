@@ -1,6 +1,7 @@
 .zb-partner-marquee {
-  --zb-partner-width: 9rem;
-  --zb-partner-gap: clamp(1.75rem, 3.5vw, 3rem);
+  --zb-partner-width: clamp(9.75rem, 11.25vw, 11.5rem);
+  --zb-partner-height: 5.7rem;
+  --zb-partner-gap: clamp(1.25rem, 2.6vw, 2.35rem);
   width: 100%;
   min-width: 0;
 }
@@ -10,6 +11,7 @@
   min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
+  padding: 0.35rem 0;
   scrollbar-width: none;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
@@ -48,7 +50,6 @@
 .zb-partner-track {
   display: flex;
   width: max-content;
-  /* One shared transform keeps auto-play, dragging and wheel input in sync. */
   will-change: transform;
 }
 
@@ -68,32 +69,57 @@
   justify-content: center;
   flex: 0 0 var(--zb-partner-width);
   width: var(--zb-partner-width);
-  height: 5rem;
+  height: var(--zb-partner-height);
   margin: 0;
   padding: 0;
 }
 
 .zb-partner-mark {
+  --zb-logo-scale: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: none;
-  width: 8rem;
-  height: 3rem;
+  width: 100%;
+  height: 100%;
   min-width: 0;
   min-height: 0;
 }
 
-.zb-partner-mark > img {
+/*
+ * Keep the strip clean rather than putting every logo inside a card. The
+ * surface exists only as a consistent optical canvas, so wide wordmarks and
+ * square app marks can share the same row without looking randomly sized.
+ */
+.zb-partner-mark-surface {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 4.2rem;
+  padding: 0.3rem 0.25rem;
+  overflow: visible;
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.zb-partner-item:hover .zb-partner-mark-surface {
+  transform: translateY(-1px);
+}
+
+.zb-partner-mark > .zb-partner-mark-surface > img {
   display: block;
-  flex: none;
-  /* Explicit dimensions avoid percentage-height expansion inside a grid. */
-  width: 8rem;
-  height: 3rem;
+  width: 100%;
+  height: 100%;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
   object-position: center;
+  transform: scale(var(--zb-logo-scale));
+  transform-origin: center;
+  transition: filter 180ms ease;
+}
+
+.zb-partner-item:hover .zb-partner-mark-surface > img {
+  filter: saturate(1.04) contrast(1.02);
 }
 
 .zb-partner-mark-fallback {
@@ -105,25 +131,79 @@
   overflow-wrap: anywhere;
 }
 
-/* This supplied wordmark is white; retain its shape on the white section. */
-.zb-partner-mark > .zb-partner-mark-dark {
+/* The supplied Zomato artwork is white. Make it readable on the white strip. */
+.zb-partner-mark > .zb-partner-mark-surface > .zb-partner-mark-dark,
+.zb-partner-item:hover .zb-partner-mark-surface > .zb-partner-mark-dark {
   filter: brightness(0);
+}
+
+/*
+ * Several supplied files have large built-in whitespace. These optical scale
+ * corrections make the visible marks feel consistent without stretching or
+ * cropping the artwork itself.
+ */
+.zb-partner-mark[data-brand="5paisa"],
+.zb-partner-mark[data-brand="axis-securities"],
+.zb-partner-mark[data-brand="shadowfax"],
+.zb-partner-mark[data-brand="yes-bank"],
+.zb-partner-mark[data-brand="whitehat-jr"],
+.zb-partner-mark[data-brand="brown-forman"],
+.zb-partner-mark[data-brand="usha"] {
+  --zb-logo-scale: 1.18;
+}
+
+.zb-partner-mark[data-brand="rapido"],
+.zb-partner-mark[data-brand="ola"],
+.zb-partner-mark[data-brand="indrive"],
+.zb-partner-mark[data-brand="bharatpe"],
+.zb-partner-mark[data-brand="motilal-oswal"],
+.zb-partner-mark[data-brand="airtel-payments-bank"],
+.zb-partner-mark[data-brand="mobikwik"] {
+  --zb-logo-scale: 1.34;
+}
+
+.zb-partner-mark[data-brand="delhivery"],
+.zb-partner-mark[data-brand="airtel-payments-bank"],
+.zb-partner-mark[data-brand="mobikwik"] {
+  --zb-logo-scale: 1.48;
+}
+
+.zb-partner-mark[data-brand="pagarbook"],
+.zb-partner-mark[data-brand="subway"],
+.zb-partner-mark[data-brand="id-fresh-food"] {
+  --zb-logo-scale: 1.12;
+}
+
+/* Generated/replaced horizontal wordmarks already use their canvas well. */
+.zb-partner-mark[data-brand="kirankart"],
+.zb-partner-mark[data-brand="locooff"],
+.zb-partner-mark[data-brand="siply"],
+.zb-partner-mark[data-brand="amazon-qr"],
+.zb-partner-mark[data-brand="cheq"],
+.zb-partner-mark[data-brand="tonetag"],
+.zb-partner-mark[data-brand="vacobinary"],
+.zb-partner-mark[data-brand="kotak-811"],
+.zb-partner-mark[data-brand="angel-one"] {
+  --zb-logo-scale: 1.06;
 }
 
 @media (max-width: 600px) {
   .zb-partner-marquee {
-    --zb-partner-width: 7.5rem;
-    --zb-partner-gap: 1.5rem;
+    --zb-partner-width: 8.4rem;
+    --zb-partner-height: 4.8rem;
+    --zb-partner-gap: 1.05rem;
   }
 
-  .zb-partner-item {
-    height: 4.5rem;
+  .zb-partner-mark-surface {
+    height: 3.55rem;
+    padding: 0.3rem 0.2rem;
   }
 
-  .zb-partner-mark,
-  .zb-partner-mark > img {
-    width: 6.75rem;
-    height: 2.5rem;
+  /* Keep the strongest desktop boosts from becoming crowded on small screens. */
+  .zb-partner-mark[data-brand="delhivery"],
+  .zb-partner-mark[data-brand="airtel-payments-bank"],
+  .zb-partner-mark[data-brand="mobikwik"] {
+    --zb-logo-scale: 1.36;
   }
 }
 
@@ -135,5 +215,10 @@
 
   .zb-partner-track {
     will-change: auto;
+  }
+
+  .zb-partner-mark-surface,
+  .zb-partner-mark > .zb-partner-mark-surface > img {
+    transition: none;
   }
 }

@@ -20,6 +20,7 @@
     "test:intake": "node --test scripts/tests/operations-intake.test.mjs",
     "test:hiring": "node --test scripts/tests/hiring-workflow-completion.test.mjs",
     "chatbot:knowledge:validate": "npm --prefix server run chatbot:knowledge:validate",
-    "chatbot:knowledge:list": "npm --prefix server run chatbot:knowledge:list"
+    "chatbot:knowledge:list": "npm --prefix server run chatbot:knowledge:list",
+    "chatbot:rag:search": "npm --prefix server run chatbot:rag:search --"
   }
 }

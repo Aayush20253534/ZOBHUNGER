@@ -14,3 +14,4 @@ import "./business-attendance.schema.test.js";
 import "./business-deployments.schema.test.js";
 import "./employee-joining.schema.test.js";
 import "./chatbot-knowledge.test.js";
+import "./chatbot-rag.test.js";
