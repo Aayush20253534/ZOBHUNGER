@@ -11,7 +11,7 @@ import {
 import { usePathname } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import {
-  sendChatbotMessage,
+  streamChatbotMessage,
   type ChatbotHistoryMessage,
   type ChatbotUiMessage,
 } from "@/lib/chatbot";
@@ -93,6 +93,7 @@ export function ChatbotWidget() {
   const [draft, setDraft] = useState("");
   const [messages, setMessages] = useState<ChatbotUiMessage[]>([welcomeMessage]);
   const [loading, setLoading] = useState(false);
+  const [streamingStarted, setStreamingStarted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [failedRequest, setFailedRequest] = useState<FailedRequest | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -106,6 +107,7 @@ export function ChatbotWidget() {
   const activeRequestSequence = useRef(0);
   const requestInFlightRef = useRef(false);
   const copyResetTimer = useRef<number | null>(null);
+  const activeAbortRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -143,6 +145,7 @@ export function ChatbotWidget() {
 
   useEffect(() => () => {
     if (copyResetTimer.current) window.clearTimeout(copyResetTimer.current);
+    activeAbortRef.current?.abort();
   }, []);
 
   const nextId = useCallback((prefix: string) => {
@@ -173,6 +176,8 @@ export function ChatbotWidget() {
 
   const resetConversation = useCallback((clearStorage: boolean) => {
     activeRequestSequence.current += 1;
+    activeAbortRef.current?.abort();
+    activeAbortRef.current = null;
     requestInFlightRef.current = false;
     if (clearStorage) clearStoredChatbotConversation();
     const createdAt = new Date().toISOString();
@@ -184,6 +189,7 @@ export function ChatbotWidget() {
     setFailedRequest(null);
     setUnreadCount(0);
     setLoading(false);
+    setStreamingStarted(false);
     setCopiedMessageId(null);
     autoScrollRef.current = true;
     setShowJumpToLatest(false);
@@ -264,38 +270,72 @@ export function ChatbotWidget() {
       setMessages((current) => [...current, userMessage]);
     }
 
+    const assistantMessageId = nextId("assistant");
+    const abortController = new AbortController();
+    activeAbortRef.current?.abort();
+    activeAbortRef.current = abortController;
+    setStreamingStarted(false);
+
     try {
-      const reply = await sendChatbotMessage({
+      const reply = await streamChatbotMessage({
         message,
         history,
         ...(pathname ? { currentPage: pathname } : {}),
+      }, {
+        signal: abortController.signal,
+        onDelta: (delta) => {
+          if (requestSequence !== activeRequestSequence.current || abortController.signal.aborted) return;
+          setStreamingStarted(true);
+          setMessages((current) => {
+            const existing = current.find((entry) => entry.id === assistantMessageId);
+            if (existing) {
+              return current.map((entry) => entry.id === assistantMessageId
+                ? { ...entry, content: `${entry.content}${delta}` }
+                : entry);
+            }
+            return [...current, {
+              id: assistantMessageId,
+              role: "assistant",
+              content: delta,
+              includeInHistory: false,
+            }];
+          });
+        },
       });
       if (requestSequence !== activeRequestSequence.current) return;
 
-      setMessages((current) => [
-        ...current.map((entry) => entry.id === userMessageId
+      setMessages((current) => {
+        const withUserHistory = current.map((entry) => entry.id === userMessageId
           ? { ...entry, includeInHistory: true }
-          : entry),
-        {
-          id: nextId("assistant"),
-          role: "assistant",
-          content: reply.answer,
-          sources: reply.sources,
-          includeInHistory: true,
-        },
-      ]);
+          : entry);
+        const hasAssistant = withUserHistory.some((entry) => entry.id === assistantMessageId);
+        if (!hasAssistant) {
+          return [...withUserHistory, {
+            id: assistantMessageId,
+            role: "assistant",
+            content: reply.answer,
+            sources: reply.sources,
+            includeInHistory: true,
+          }];
+        }
+        return withUserHistory.map((entry) => entry.id === assistantMessageId
+          ? { ...entry, content: reply.answer, sources: reply.sources, includeInHistory: true }
+          : entry);
+      });
       if (!openRef.current) setUnreadCount((current) => Math.min(current + 1, 9));
     } catch (requestError) {
-      if (requestSequence !== activeRequestSequence.current) return;
-      setMessages((current) => current.map((entry) =>
-        entry.id === userMessageId ? { ...entry, includeInHistory: false } : entry,
-      ));
+      if (abortController.signal.aborted || requestSequence !== activeRequestSequence.current) return;
+      setMessages((current) => current
+        .filter((entry) => entry.id !== assistantMessageId)
+        .map((entry) => entry.id === userMessageId ? { ...entry, includeInHistory: false } : entry));
       setFailedRequest({ message, userMessageId });
       setError(publicErrorMessage(requestError));
     } finally {
       if (requestSequence === activeRequestSequence.current) {
+        if (activeAbortRef.current === abortController) activeAbortRef.current = null;
         requestInFlightRef.current = false;
         setLoading(false);
+        setStreamingStarted(false);
       }
     }
   }, [draft, loading, nextId, pathname]);
@@ -331,6 +371,7 @@ export function ChatbotWidget() {
           messages={messages}
           draft={draft}
           loading={loading}
+          showTyping={loading && !streamingStarted}
           error={error}
           retryAvailable={Boolean(failedRequest)}
           starterSuggestions={starterSuggestions}

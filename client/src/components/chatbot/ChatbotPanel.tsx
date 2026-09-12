@@ -29,6 +29,7 @@ interface ChatbotPanelProps {
   messages: ChatbotUiMessage[];
   draft: string;
   loading: boolean;
+  showTyping: boolean;
   error: string | null;
   retryAvailable: boolean;
   starterSuggestions: ChatbotSuggestion[];
@@ -56,6 +57,7 @@ export function ChatbotPanel({
   messages,
   draft,
   loading,
+  showTyping,
   error,
   retryAvailable,
   starterSuggestions,
@@ -218,7 +220,7 @@ export function ChatbotPanel({
           />
         ) : null}
 
-        {loading ? (
+        {showTyping ? (
           <div className="zb-chatbot-message zb-chatbot-message--assistant" aria-label="ZOBHUNGER Assistant is responding">
             <span className="zb-chatbot-message-avatar" aria-hidden="true"><Bot /></span>
             <div className="zb-chatbot-bubble zb-chatbot-typing" role="status">

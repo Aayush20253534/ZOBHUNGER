@@ -8,6 +8,7 @@ import { chatbotMessageSchema } from "../src/modules/chatbot/chatbot.schema.js";
 import { createChatbotService } from "../src/modules/chatbot/chatbot.service.js";
 import type { ChatbotModelClient } from "../src/modules/chatbot/chatbot.types.js";
 import { createGroqClient, GroqApiError } from "../src/modules/chatbot/groq.client.js";
+import { extractSiteRelativePaths, isPrivateChatbotRoute } from "../src/modules/chatbot/public-route-policy.js";
 
 const PROMOTER_DOCUMENT = parseKnowledgeMarkdown(`---
 id: test-promoter-service
@@ -308,4 +309,97 @@ test("chatbot service maps Groq rate limiting to a stable public API error", asy
       && error.code === "CHATBOT_UPSTREAM_RATE_LIMITED"
       && (error.details as { retryAfterSeconds?: number })?.retryAfterSeconds === 9,
   );
+});
+
+test("public route policy allows business-operations but blocks private/auth surfaces", () => {
+  assert.equal(chatbotMessageSchema.safeParse({ message: "Explain this", currentPage: "/business-operations" }).success, true);
+  for (const currentPage of [
+    "/business/dashboard",
+    "/admin-access/activate",
+    "/placement-portal/applications",
+    "/placement-cell-login",
+    "/worker/jobs",
+  ]) {
+    assert.equal(
+      chatbotMessageSchema.safeParse({ message: "Explain this", currentPage }).success,
+      false,
+      `${currentPage} must not be accepted as public chatbot context`,
+    );
+  }
+});
+
+
+
+test("route extraction distinguishes public hyphenated routes from prose and private portal paths", () => {
+  const routes = extractSiteRelativePaths(
+    "company/business support, website/application delivery, /business-operations and `/business/dashboard`",
+  );
+  assert.deepEqual(routes, ["/business-operations", "/business/dashboard"]);
+  assert.equal(isPrivateChatbotRoute("/business-operations"), false);
+  assert.equal(isPrivateChatbotRoute("/business/dashboard"), true);
+});
+
+test("Groq client streams SSE deltas and requests stream mode", async () => {
+  let requestedBody: Record<string, unknown> | undefined;
+  const encoder = new TextEncoder();
+  const fakeFetch: typeof fetch = async (_input, init) => {
+    requestedBody = JSON.parse(String(init?.body)) as Record<string, unknown>;
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(encoder.encode('data: {"id":"stream-1","model":"openai/gpt-oss-120b","choices":[{"delta":{"content":"Hello "}}]}\n\n'));
+        controller.enqueue(encoder.encode('data: {"choices":[{"delta":{"content":"world"}}]}\n\n'));
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+        controller.close();
+      },
+    });
+    return new Response(stream, { status: 200, headers: { "content-type": "text/event-stream" } });
+  };
+
+  const client = createGroqClient({
+    apiKey: "gsk_test_secret",
+    baseUrl: "https://api.groq.com/openai/v1",
+    model: "openai/gpt-oss-120b",
+    timeoutMs: 5000,
+    maxCompletionTokens: 700,
+    temperature: 0.2,
+  }, fakeFetch);
+
+  const deltas: string[] = [];
+  const response = await client.stream?.(
+    { input: [{ role: "user", content: "Hello" }] },
+    (delta) => { deltas.push(delta); },
+  );
+  assert.equal(requestedBody?.stream, true);
+  assert.deepEqual(deltas, ["Hello ", "world"]);
+  assert.equal(response?.text, "Hello world");
+  assert.equal(response?.responseId, "stream-1");
+});
+
+test("chatbot service exposes progressive stream output while preserving grounded result metadata", async () => {
+  const retriever = await createKnowledgeRetriever({ documents: [PROMOTER_DOCUMENT] });
+  const modelClient: ChatbotModelClient = {
+    async generate() {
+      throw new Error("non-streaming provider path should not be used");
+    },
+    async stream(_request, onDelta) {
+      await onDelta("Promoter ");
+      await onDelta("support is available.");
+      return { text: "Promoter support is available.", model: "test-stream-model" };
+    },
+  };
+  const service = createChatbotService({
+    config: { enabled: true, maxHistoryMessages: 10, ragTopK: 3, contextMaxCharacters: 5000 },
+    retriever,
+    modelClient,
+  });
+  const deltas: string[] = [];
+  const result = await service.streamReply(
+    { message: "Do you provide promoter services?", history: [] },
+    {},
+    (delta) => { deltas.push(delta); },
+  );
+  assert.deepEqual(deltas, ["Promoter ", "support is available."]);
+  assert.equal(result.answer, "Promoter support is available.");
+  assert.equal(result.grounded, true);
+  assert.equal(result.sources[0]?.url, "/promoter-solutions");
 });

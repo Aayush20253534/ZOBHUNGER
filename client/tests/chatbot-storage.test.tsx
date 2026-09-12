@@ -37,6 +37,7 @@ describe("chatbot local persistence", () => {
         sources: [
           { title: "Public", url: "/promoter-solutions", category: "services" },
           { title: "Private", url: "/admin/security", category: "admin" },
+          { title: "Placement private", url: "/placement-portal/applications", category: "other" },
           { title: "External", url: "https://example.com", category: "other" },
         ],
       }],

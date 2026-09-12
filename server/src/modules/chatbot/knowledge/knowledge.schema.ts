@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isPublicChatbotRoute } from "../public-route-policy.js";
 import { KNOWLEDGE_CATEGORIES } from "./knowledge.types.js";
 
 const knowledgePathSchema = z
@@ -10,10 +11,7 @@ const knowledgePathSchema = z
   .refine((value: string) => !value.startsWith("//"), "url must be a site-relative path")
   .refine((value: string) => !/\s/.test(value), "url must not contain whitespace")
   .refine((value: string) => !/[?#]/.test(value), "url must be a canonical path without query strings or fragments")
-  .refine((value: string) => value !== "/admin" && !value.startsWith("/admin/"), "admin routes cannot be indexed")
-  .refine((value: string) => value !== "/business" && !value.startsWith("/business/"), "private business routes cannot be indexed")
-  .refine((value: string) => value !== "/worker" && !value.startsWith("/worker/"), "private worker routes cannot be indexed")
-  .refine((value: string) => value !== "/employee-joining" && !value.startsWith("/employee-joining/"), "employee joining routes cannot be indexed");
+  .refine(isPublicChatbotRoute, "private or authentication routes cannot be indexed");
 
 const keywordSchema = z.string().trim().min(2).max(80);
 

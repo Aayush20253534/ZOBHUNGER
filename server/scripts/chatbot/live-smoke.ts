@@ -33,7 +33,9 @@ function assertPublicSources(sources: unknown) {
     if (!source || typeof source !== "object") throw new Error("Invalid chatbot source payload");
     const url = (source as { url?: unknown }).url;
     if (typeof url !== "string" || !url.startsWith("/") || url.startsWith("//")) throw new Error("Chatbot returned a non-public source URL");
-    if (/^\/(?:admin|business|worker|employee-joining)(?:\/|$)/i.test(url)) throw new Error(`Chatbot returned a private source URL: ${url}`);
+    if (/^\/(?:admin|admin-access|business|worker|employee-joining|placement-portal)(?:\/|$)/i.test(url) || url === "/placement-cell-login") {
+      throw new Error(`Chatbot returned a private source URL: ${url}`);
+    }
   }
 }
 
@@ -70,6 +72,22 @@ await check("Grounded public question returns sources", async () => {
   if (!payload?.success || !payload.data?.answer?.trim()) throw new Error("Chatbot returned no answer");
   if (payload.data.grounded !== true) throw new Error("Expected a grounded answer for a known service query");
   assertPublicSources(payload.data.sources);
+});
+
+await check("Streaming chatbot endpoint emits deltas and a grounded final result", async () => {
+  const response = await request("/api/v1/chatbot/stream", {
+    method: "POST",
+    headers: { "Accept": "text/event-stream" },
+    body: JSON.stringify({ message: "What verification services do you provide?", history: [], currentPage: "/verification-services" }),
+  });
+  if (!response.ok) throw new Error(`Chatbot stream returned HTTP ${response.status}`);
+  const source = await response.text();
+  if (!/event:\s*delta/.test(source)) throw new Error("Chatbot stream returned no delta events");
+  const doneMatch = source.match(/event:\s*done\s*\ndata:\s*(\{[^\n]+\})/);
+  if (!doneMatch?.[1]) throw new Error("Chatbot stream returned no final result event");
+  const result = JSON.parse(doneMatch[1]) as { answer?: string; grounded?: boolean; sources?: unknown };
+  if (!result.answer?.trim() || result.grounded !== true) throw new Error("Streaming chatbot final result was not grounded");
+  assertPublicSources(result.sources);
 });
 
 await check("Prompt injection does not expose secrets", async () => {

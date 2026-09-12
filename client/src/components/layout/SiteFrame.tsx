@@ -31,6 +31,12 @@ export function SiteFrame({ children }: { children: ReactNode }) {
   if (pathname === "/worker" || pathname.startsWith("/worker/")) {
     return <div className="zb-worker-root">{children}</div>;
   }
+  if (pathname === "/placement-portal" || pathname.startsWith("/placement-portal/")) {
+    return <div className="zb-placement-portal-root">{children}</div>;
+  }
+  if (pathname === "/placement-cell-login") {
+    return <main className="zb-placement-access-root">{children}</main>;
+  }
   return (
     <>
       <Navbar />

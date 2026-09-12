@@ -32,6 +32,7 @@
     "chatbot:rag:search": "npm --prefix server run chatbot:rag:search --",
     "chatbot:evaluate": "npm --prefix server run chatbot:evaluate",
     "chatbot:release-check": "npm --prefix server run chatbot:release-check",
-    "chatbot:smoke": "npm --prefix server run chatbot:smoke --"
+    "chatbot:smoke": "npm --prefix server run chatbot:smoke --",
+    "chatbot:knowledge:coverage": "npm --prefix server run chatbot:knowledge:coverage"
   }
 }

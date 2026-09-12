@@ -11,3 +11,4 @@ export type {
   KnowledgeValidationIssue,
   KnowledgeValidationResult,
 } from "./knowledge.types.js";
+export * from "./knowledge-coverage.js";

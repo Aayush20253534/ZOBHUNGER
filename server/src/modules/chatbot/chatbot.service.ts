@@ -8,6 +8,7 @@ import type {
   ChatbotMessageInput,
   ChatbotMessageResult,
   ChatbotModelClient,
+  ChatbotModelResponse,
   ChatbotRequestContext,
   ChatbotRetriever,
   ChatbotServiceConfig,
@@ -85,6 +86,7 @@ export function createChatbotService(options: CreateChatbotServiceOptions) {
     input: ChatbotMessageInput,
     history: ChatbotMessageInput["history"],
     request: ChatbotRequestContext,
+    onDelta?: (text: string) => void | Promise<void>,
   ): Promise<{ result: ChatbotMessageResult; provider: Record<string, number | string | undefined> }> {
     const retrievalQuery = buildRetrievalQuery(input.message, history);
     const search = options.retriever.search(retrievalQuery, {
@@ -97,15 +99,24 @@ export function createChatbotService(options: CreateChatbotServiceOptions) {
       options.config.contextMaxCharacters,
     );
 
-    const providerStarted = performance.now();
-    const response = await options.modelClient.generate({
+    const modelRequest = {
       input: [
-        { role: "system", content: systemPrompt },
+        { role: "system" as const, content: systemPrompt },
         ...history,
-        { role: "user", content: input.message },
+        { role: "user" as const, content: input.message },
       ],
       ...(request.clientFingerprint ? { user: request.clientFingerprint } : {}),
-    });
+      ...(request.signal ? { signal: request.signal } : {}),
+    };
+
+    const providerStarted = performance.now();
+    let response: ChatbotModelResponse;
+    if (onDelta && options.modelClient.stream) {
+      response = await options.modelClient.stream(modelRequest, onDelta);
+    } else {
+      response = await options.modelClient.generate(modelRequest);
+      if (onDelta) await onDelta(response.text);
+    }
     const providerDurationMs = response.usage?.providerDurationMs ?? (performance.now() - providerStarted);
 
     return {
@@ -128,83 +139,120 @@ export function createChatbotService(options: CreateChatbotServiceOptions) {
     };
   }
 
-  return {
-    async reply(input: ChatbotMessageInput, request: ChatbotRequestContext = {}): Promise<ChatbotMessageResult> {
-      if (!options.config.enabled) {
-        throw new HttpError(503, "The chatbot is currently unavailable.", {
-          code: "CHATBOT_DISABLED",
-        });
-      }
+  async function execute(
+    input: ChatbotMessageInput,
+    request: ChatbotRequestContext,
+    onDelta?: (text: string) => void | Promise<void>,
+  ): Promise<ChatbotMessageResult> {
+    if (!options.config.enabled) {
+      throw new HttpError(503, "The chatbot is currently unavailable.", {
+        code: "CHATBOT_DISABLED",
+      });
+    }
 
-      const started = performance.now();
-      const history = options.config.maxHistoryMessages === 0
-        ? []
-        : input.history.slice(-options.config.maxHistoryMessages);
-      let cacheStatus: ChatbotCacheStatus = "bypass";
-      let provider: Record<string, number | string | undefined> = {};
-
-      try {
-        let result: ChatbotMessageResult;
-        const cacheEligible = options.config.cacheEnabled
-          && history.length === 0
-          && Boolean(options.responseCache?.enabled);
-
-        if (cacheEligible && options.responseCache) {
-          const cached = await options.responseCache.remember({
-            message: input.message,
-            ...(input.currentPage ? { currentPage: input.currentPage } : {}),
-            knowledgeFingerprint: options.retriever.fingerprint,
-            modelSignature: options.config.modelSignature ?? "default",
-          }, async () => {
-            const generated = await generate(input, history, request);
-            provider = generated.provider;
-            return generated.result;
-          });
-          result = cached.value;
-          cacheStatus = cached.status;
-        } else {
-          const generated = await generate(input, history, request);
-          result = generated.result;
-          provider = generated.provider;
+    const started = performance.now();
+    const history = options.config.maxHistoryMessages === 0
+      ? []
+      : input.history.slice(-options.config.maxHistoryMessages);
+    let cacheStatus: ChatbotCacheStatus = "bypass";
+    let provider: Record<string, number | string | undefined> = {};
+    let emittedDelta = false;
+    const emit = onDelta
+      ? async (text: string) => {
+          if (!text) return;
+          emittedDelta = true;
+          await onDelta(text);
         }
+      : undefined;
 
-        const durationMs = performance.now() - started;
-        metrics.record({
-          ok: true,
-          grounded: result.grounded,
-          cacheStatus,
-          durationMs,
-          providerDurationMs: typeof provider.providerDurationMs === "number" ? provider.providerDurationMs : undefined,
-          promptTokens: typeof provider.promptTokens === "number" ? provider.promptTokens : undefined,
-          completionTokens: typeof provider.completionTokens === "number" ? provider.completionTokens : undefined,
-          totalTokens: typeof provider.totalTokens === "number" ? provider.totalTokens : undefined,
-          cachedPromptTokens: typeof provider.cachedPromptTokens === "number" ? provider.cachedPromptTokens : undefined,
+    try {
+      let result: ChatbotMessageResult;
+      const cacheEligible = options.config.cacheEnabled
+        && history.length === 0
+        && Boolean(options.responseCache?.enabled);
+
+      if (cacheEligible && options.responseCache) {
+        const cached = await options.responseCache.remember({
+          message: input.message,
+          ...(input.currentPage ? { currentPage: input.currentPage } : {}),
+          knowledgeFingerprint: options.retriever.fingerprint,
+          modelSignature: options.config.modelSignature ?? "default",
+        }, async () => {
+          const generated = await generate(input, history, request, emit);
+          provider = generated.provider;
+          return generated.result;
         });
-        logger.info("chatbot.request.completed", logContext(input, request, {
-          durationMs: Math.round(durationMs * 100) / 100,
-          cacheStatus,
-          grounded: result.grounded,
-          sourceCount: result.sources.length,
-          ...provider,
-        }));
-        return result;
-      } catch (error) {
-        const mapped = error instanceof GroqApiError ? mapGroqError(error) : error;
-        const durationMs = performance.now() - started;
-        metrics.record({ ok: false, cacheStatus, durationMs });
-        logger.warn("chatbot.request.failed", logContext(input, request, {
-          durationMs: Math.round(durationMs * 100) / 100,
-          cacheStatus,
-          errorCode: mapped instanceof HttpError ? mapped.code : "CHATBOT_INTERNAL_ERROR",
-          statusCode: mapped instanceof HttpError ? mapped.statusCode : 500,
-          ...(error instanceof GroqApiError ? {
-            providerStatus: error.status ?? null,
-            providerCode: error.code ?? null,
-            providerMessage: error.message.slice(0, 240),
-          } : {}),
-        }));
-        throw mapped;
+        result = cached.value;
+        cacheStatus = cached.status;
+      } else {
+        const generated = await generate(input, history, request, emit);
+        result = generated.result;
+        provider = generated.provider;
       }
+
+      // Cache hits and coalesced identical requests have no provider delta stream
+      // for this caller. Emit the complete cached/coalesced answer once so the
+      // streaming transport still has a single, stable contract.
+      if (emit && !emittedDelta) await emit(result.answer);
+
+      const durationMs = performance.now() - started;
+      metrics.record({
+        ok: true,
+        grounded: result.grounded,
+        cacheStatus,
+        durationMs,
+        providerDurationMs: typeof provider.providerDurationMs === "number" ? provider.providerDurationMs : undefined,
+        promptTokens: typeof provider.promptTokens === "number" ? provider.promptTokens : undefined,
+        completionTokens: typeof provider.completionTokens === "number" ? provider.completionTokens : undefined,
+        totalTokens: typeof provider.totalTokens === "number" ? provider.totalTokens : undefined,
+        cachedPromptTokens: typeof provider.cachedPromptTokens === "number" ? provider.cachedPromptTokens : undefined,
+      });
+      logger.info("chatbot.request.completed", logContext(input, request, {
+        durationMs: Math.round(durationMs * 100) / 100,
+        cacheStatus,
+        transport: onDelta ? "stream" : "json",
+        grounded: result.grounded,
+        sourceCount: result.sources.length,
+        ...provider,
+      }));
+      return result;
+    } catch (error) {
+      if (error instanceof GroqApiError && error.code === "GROQ_ABORTED" && request.signal?.aborted) {
+        logger.info("chatbot.request.cancelled", logContext(input, request, {
+          durationMs: Math.round((performance.now() - started) * 100) / 100,
+          transport: onDelta ? "stream" : "json",
+        }));
+        throw error;
+      }
+      const mapped = error instanceof GroqApiError ? mapGroqError(error) : error;
+      const durationMs = performance.now() - started;
+      metrics.record({ ok: false, cacheStatus, durationMs });
+      logger.warn("chatbot.request.failed", logContext(input, request, {
+        durationMs: Math.round(durationMs * 100) / 100,
+        cacheStatus,
+        transport: onDelta ? "stream" : "json",
+        errorCode: mapped instanceof HttpError ? mapped.code : "CHATBOT_INTERNAL_ERROR",
+        statusCode: mapped instanceof HttpError ? mapped.statusCode : 500,
+        ...(error instanceof GroqApiError ? {
+          providerStatus: error.status ?? null,
+          providerCode: error.code ?? null,
+          providerMessage: error.message.slice(0, 240),
+        } : {}),
+      }));
+      throw mapped;
+    }
+  }
+
+  return {
+    reply(input: ChatbotMessageInput, request: ChatbotRequestContext = {}) {
+      return execute(input, request);
+    },
+    streamReply(
+      input: ChatbotMessageInput,
+      request: ChatbotRequestContext,
+      onDelta: (text: string) => void | Promise<void>,
+    ) {
+      return execute(input, request, onDelta);
     },
     metrics() {
       return metrics.snapshot();

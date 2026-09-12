@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { evaluateKnowledgeCoverage } from "../src/modules/chatbot/knowledge/knowledge-coverage.js";
 import {
   loadKnowledgeBase,
   parseKnowledgeMarkdown,
@@ -49,7 +50,7 @@ test("knowledge parser rejects protected private website routes", () => {
 
   assert.throws(
     () => parseKnowledgeMarkdown(privateDocument),
-    /private worker routes cannot be indexed/,
+    /private or authentication routes cannot be indexed/,
   );
 });
 
@@ -141,7 +142,7 @@ test("repository knowledge corpus covers the current public website surface", as
     assert.ok(ids.has(expectedId), `expected published knowledge document: ${expectedId}`);
   }
 
-  const protectedPrefixes = ["/admin", "/business", "/worker", "/employee-joining"];
+  const protectedPrefixes = ["/admin", "/admin-access", "/business", "/worker", "/employee-joining", "/placement-portal", "/placement-cell-login"];
   for (const document of result.documents) {
     assert.equal(
       protectedPrefixes.some(
@@ -152,4 +153,14 @@ test("repository knowledge corpus covers the current public website surface", as
       `published knowledge must not target a protected route: ${document.metadata.id}`,
     );
   }
+});
+
+
+test("published chatbot knowledge covers every sitemap catalog route", async () => {
+  const result = await loadKnowledgeBase();
+  assert.equal(result.issues.length, 0);
+  const coverage = await evaluateKnowledgeCoverage(result.documents);
+  assert.deepEqual(coverage.missingRoutes, []);
+  assert.deepEqual(coverage.aggregateRoutes.sort(), ["/case-studies", "/industries", "/solutions"]);
+  assert.equal(coverage.coveredRoutes.length, coverage.expectedRoutes.length);
 });

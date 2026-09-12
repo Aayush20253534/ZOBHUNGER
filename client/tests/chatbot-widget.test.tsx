@@ -4,12 +4,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatbotWidget } from "@/components/chatbot/ChatbotWidget";
 import { chatbotStorageInternals } from "@/lib/chatbot-storage";
 
-const { sendMessage } = vi.hoisted(() => ({ sendMessage: vi.fn() }));
+const { streamMessage } = vi.hoisted(() => ({ streamMessage: vi.fn() }));
 vi.mock("next/navigation", () => ({ usePathname: () => "/promoter-solutions" }));
 vi.mock("next/link", () => ({ default: (props: ComponentProps<"a">) => createElement("a", props) }));
 vi.mock("@/lib/chatbot", async () => {
   const actual = await vi.importActual<typeof import("@/lib/chatbot")>("@/lib/chatbot");
-  return { ...actual, sendChatbotMessage: sendMessage };
+  return { ...actual, streamChatbotMessage: streamMessage };
 });
 
 let root: Root;
@@ -35,10 +35,14 @@ beforeEach(() => {
     configurable: true,
     value: { writeText: vi.fn().mockResolvedValue(undefined) },
   });
-  sendMessage.mockReset().mockResolvedValue({
-    answer: "ZOBHUNGER provides promoter solutions for eligible retail requirements.",
-    grounded: true,
-    sources: [{ title: "Promoters Services", url: "/promoter-solutions", category: "services" }],
+  streamMessage.mockReset().mockImplementation(async (_input, options) => {
+    const answer = "ZOBHUNGER provides promoter solutions for eligible retail requirements.";
+    options.onDelta(answer);
+    return {
+      answer,
+      grounded: true,
+      sources: [{ title: "Promoters Services", url: "/promoter-solutions", category: "services" }],
+    };
   });
   container = document.createElement("div");
   document.body.append(container);
@@ -78,11 +82,11 @@ describe("advanced public chatbot widget", () => {
     await openWidget();
     await sendTypedMessage("Do you provide promoters for retail stores?");
 
-    expect(sendMessage).toHaveBeenCalledWith({
+    expect(streamMessage).toHaveBeenCalledWith({
       message: "Do you provide promoters for retail stores?",
       history: [],
       currentPage: "/promoter-solutions",
-    });
+    }, expect.objectContaining({ onDelta: expect.any(Function), signal: expect.any(AbortSignal) }));
     expect(container.textContent).toContain("ZOBHUNGER provides promoter solutions");
     expect(container.textContent).toContain("Sources (1)");
     expect(container.querySelector("a[href='/promoter-solutions']")?.textContent).toContain("Promoters Services");
@@ -92,7 +96,7 @@ describe("advanced public chatbot widget", () => {
 
 
   it("renders assistant Markdown emphasis as real formatting", async () => {
-    sendMessage.mockResolvedValueOnce({
+    streamMessage.mockResolvedValueOnce({
       answer: "**Steps**\n\n1. **Go to the form** – Visit `/hire-workforce`.\n2. **Submit the form** – Send the requirement.",
       grounded: true,
       sources: [],
@@ -115,6 +119,25 @@ describe("advanced public chatbot widget", () => {
     expect(clearHistory).not.toBeNull();
     expect(clearHistory.textContent).toContain("Clear history");
     expect(clearHistory.textContent).toContain("Remove saved conversation");
+  });
+
+  it("renders response deltas progressively before the stream completes", async () => {
+    let finish: (() => void) | undefined;
+    streamMessage.mockImplementationOnce(async (_input, options) => {
+      options.onDelta("First ");
+      await new Promise<void>((resolve) => { finish = resolve; });
+      options.onDelta("second");
+      return { answer: "First second", grounded: true, sources: [] };
+    });
+
+    await openWidget();
+    const sendPromise = sendTypedMessage("Stream this answer");
+    await flush();
+    expect(container.textContent).toContain("First ");
+    expect(container.textContent).not.toContain("First second");
+    await flush(() => finish?.());
+    await sendPromise;
+    expect(container.textContent).toContain("First second");
   });
 
   it("persists successful conversation history locally", async () => {
@@ -150,7 +173,7 @@ describe("advanced public chatbot widget", () => {
   });
 
   it("retries a failed request without duplicating the user message", async () => {
-    sendMessage
+    streamMessage
       .mockRejectedValueOnce(new TypeError("Failed to fetch"))
       .mockResolvedValueOnce({
         answer: "Recovered answer",
@@ -163,7 +186,7 @@ describe("advanced public chatbot widget", () => {
     const retry = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("Retry")) as HTMLButtonElement;
     await flush(() => retry.click());
 
-    expect(sendMessage).toHaveBeenCalledTimes(2);
+    expect(streamMessage).toHaveBeenCalledTimes(2);
     expect(container.textContent).toContain("Recovered answer");
     expect(container.textContent?.match(/Tell me about ZOBHUNGER/g)?.length).toBe(1);
   });
@@ -192,7 +215,7 @@ describe("advanced public chatbot widget", () => {
 
   it("shows an unread badge when a minimized request finishes", async () => {
     let resolveReply: ((value: unknown) => void) | undefined;
-    sendMessage.mockReturnValueOnce(new Promise((resolve) => { resolveReply = resolve; }));
+    streamMessage.mockReturnValueOnce(new Promise((resolve) => { resolveReply = resolve; }));
     await openWidget();
 
     const textarea = container.querySelector("textarea") as HTMLTextAreaElement;

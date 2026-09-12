@@ -26,6 +26,8 @@ function isSafePublicSourceUrl(value: string): boolean {
     "/business",
     "/worker",
     "/employee-joining",
+    "/placement-portal",
+    "/placement-cell-login",
   ].some((prefix) => value === prefix || value.startsWith(`${prefix}/`));
 }
 

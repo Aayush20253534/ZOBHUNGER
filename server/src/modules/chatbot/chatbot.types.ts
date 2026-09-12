@@ -38,6 +38,7 @@ export interface ChatbotServiceConfig {
 export interface ChatbotRequestContext {
   requestId?: string;
   clientFingerprint?: string;
+  signal?: AbortSignal;
 }
 
 export interface ChatbotModelUsage {
@@ -57,6 +58,7 @@ export interface ChatbotModelInputMessage {
 export interface ChatbotModelRequest {
   input: ChatbotModelInputMessage[];
   user?: string;
+  signal?: AbortSignal;
 }
 
 export interface ChatbotModelResponse {
@@ -68,6 +70,10 @@ export interface ChatbotModelResponse {
 
 export interface ChatbotModelClient {
   generate(request: ChatbotModelRequest): Promise<ChatbotModelResponse>;
+  stream?(
+    request: ChatbotModelRequest,
+    onDelta: (text: string) => void | Promise<void>,
+  ): Promise<ChatbotModelResponse>;
 }
 
 export interface ChatbotRetriever {

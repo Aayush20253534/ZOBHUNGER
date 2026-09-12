@@ -1,9 +1,10 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { evaluateRagRetriever } from "../../src/modules/chatbot/evaluation/index.js";
 import { validateGroqModelPair } from "../../src/modules/chatbot/groq-model-policy.js";
-import { loadKnowledgeBase, validateKnowledgeBase } from "../../src/modules/chatbot/knowledge/index.js";
+import { evaluateKnowledgeCoverage, loadKnowledgeBase, validateKnowledgeBase } from "../../src/modules/chatbot/knowledge/index.js";
 import { buildChatbotSystemPrompt } from "../../src/modules/chatbot/chatbot.prompt.js";
 import { createKnowledgeRetriever } from "../../src/modules/chatbot/rag/index.js";
+import { extractSiteRelativePaths, isPrivateChatbotRoute } from "../../src/modules/chatbot/public-route-policy.js";
 
 interface ReleaseStep {
   name: string;
@@ -31,6 +32,21 @@ await step("Knowledge schema and metadata validation", async () => {
   return { documents: result.documents.length, warnings: result.warningCount };
 });
 
+await step("Public website knowledge coverage", async () => {
+  const loaded = await loadKnowledgeBase();
+  if (loaded.issues.length) throw new Error(loaded.issues.map((issue) => issue.message).join("; "));
+  const coverage = await evaluateKnowledgeCoverage(loaded.documents);
+  if (coverage.missingRoutes.length) {
+    throw new Error(`Public pages missing chatbot knowledge: ${coverage.missingRoutes.join(", ")}`);
+  }
+  return {
+    expectedRoutes: coverage.expectedRoutes.length,
+    coveredRoutes: coverage.coveredRoutes.length,
+    aggregateRoutes: coverage.aggregateRoutes,
+    orphanKnowledgeRoutes: coverage.orphanKnowledgeRoutes,
+  };
+});
+
 let retriever: Awaited<ReturnType<typeof createKnowledgeRetriever>> | null = null;
 await step("Deterministic RAG evaluation", async () => {
   retriever = await createKnowledgeRetriever();
@@ -50,26 +66,28 @@ await step("Deterministic RAG evaluation", async () => {
 await step("Published knowledge privacy and secret scan", async () => {
   const loaded = await loadKnowledgeBase();
   if (loaded.issues.length) throw new Error(loaded.issues.map((issue) => issue.message).join("; "));
-  const forbidden = [
+
+  const secretPatterns = [
     { label: "Groq API key variable", pattern: /\bGROQ_API_KEY\b/i },
     { label: "JWT secret variable", pattern: /\bJWT_SECRET\b/i },
     { label: "database connection URL", pattern: /\bpostgres(?:ql)?:\/\//i },
     { label: "Redis connection URL", pattern: /\brediss?:\/\//i },
     { label: "Groq-style secret", pattern: /\bgsk_[a-z0-9_-]{12,}/i },
-    { label: "private admin route", pattern: /(?:^|[\s`(])\/admin(?:\/|\b)/i },
-    { label: "private business route", pattern: /(?:^|[\s`(])\/business(?:\/|\b)/i },
-    { label: "private worker route", pattern: /(?:^|[\s`(])\/worker(?:\/|\b)/i },
-    { label: "employee joining route", pattern: /(?:^|[\s`(])\/employee-joining(?:\/|\b)/i },
   ];
+
   const violations: string[] = [];
   for (const document of loaded.documents) {
-    const source = `${document.metadata.title}\n${document.metadata.description ?? ""}\n${document.body}`;
-    for (const rule of forbidden) {
+    const source = `${document.metadata.url}\n${document.metadata.title}\n${document.metadata.description ?? ""}\n${document.body}`;
+    for (const rule of secretPatterns) {
       if (rule.pattern.test(source)) violations.push(`${document.metadata.id}: ${rule.label}`);
     }
+    for (const route of extractSiteRelativePaths(source)) {
+      if (isPrivateChatbotRoute(route)) violations.push(`${document.metadata.id}: private route ${route}`);
+    }
   }
-  if (violations.length) throw new Error(`Unsafe published knowledge: ${violations.join("; ")}`);
-  return { scannedDocuments: loaded.documents.length, forbiddenPatterns: forbidden.length };
+
+  if (violations.length) throw new Error(`Unsafe published knowledge: ${[...new Set(violations)].join("; ")}`);
+  return { scannedDocuments: loaded.documents.length, secretPatterns: secretPatterns.length };
 });
 
 await step("Prompt-injection and privacy guard invariants", async () => {
