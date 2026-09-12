@@ -1,6 +1,7 @@
 import { AdminDepartment, IntakeCaseStatus, type Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../../config/db.js";
 import { HttpError } from "../../utils/http-error.js";
+import { notifyIntakeAssignment } from "../../services/notification.service.js";
 import type { AddIntakeNoteInput, IntakeListQuery, UpdateIntakeCaseInput } from "./intake.schema.js";
 
 export interface IntakeActor {
@@ -157,6 +158,10 @@ export async function updateIntakeCase(actor: IntakeActor, id: string, input: Up
     } });
     return updated;
   });
+  if (changed.assignedAdminId && changed.assignedAdminId !== current.assignedAdminId) {
+    const assignee = await prisma.user.findUnique({ where: { id: changed.assignedAdminId }, select: { email: true } });
+    if (assignee) void notifyIntakeAssignment({ caseId: changed.id, subject: changed.subject, department: changed.department, assignedEmail: assignee.email, revision: changed.revision });
+  }
   return { item: changed, assignees: await availableAssignees(actor, changed.department) };
 }
 

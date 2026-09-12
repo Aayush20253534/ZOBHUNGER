@@ -108,12 +108,13 @@ export async function submitVendorApplication(id: string, uploadToken?: string) 
   return prisma.$transaction(async tx => {
     await lock(tx, id);
     const application = await receiptOwner(tx, id, tokenHash);
-    if (application.submittedAt) return { id, submitted: true, submittedAt: application.submittedAt };
+    const summary = { companyName: application.companyName, contactName: application.contactName, email: application.email, serviceCategories: application.serviceCategories };
+    if (application.submittedAt) return { id, submitted: true, submittedAt: application.submittedAt, created: false, ...summary };
     const profile = await tx.vendorDocument.findUnique({ where: { applicationId_kind: { applicationId: id, kind: "COMPANY_PROFILE" } }, select: { id: true } });
     if (!profile) fail(400, "Attach your company profile before submitting the application", "VENDOR_PROFILE_REQUIRED");
     const updated = await tx.vendorApplication.update({ where: { id }, data: { status: "SUBMITTED", submittedAt: new Date(), revision: { increment: 1 } } });
     await tx.auditLog.create({ data: { action: "vendor.submitted", entityType: "VendorApplication", entityId: id } });
-    return { id, submitted: true, submittedAt: updated.submittedAt };
+    return { id, submitted: true, submittedAt: updated.submittedAt, created: true, ...summary };
   });
 }
 export async function listVendors(input: VendorQuery) {

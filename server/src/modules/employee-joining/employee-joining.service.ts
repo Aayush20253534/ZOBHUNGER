@@ -4,6 +4,8 @@ import { env } from "../../config/env.js";
 import type { EmployeeJoiningDocumentKind, EmployeeJoiningStatus, EmployeeOfferStatus, Prisma } from "../../generated/prisma/client.js";
 import { deletePrivateFile, downloadPrivateFile, uploadPrivateFile } from "../../services/private-file-storage.js";
 import { missingResendSettings, postResendMessage } from "../../services/resend.client.js";
+import { corporateEmail } from "../../services/email-template.js";
+import { notifyEmployeeJoiningStatus, notifyEmployeeJoiningSubmitted } from "../../services/notification.service.js";
 import { HttpError } from "../../utils/http-error.js";
 import { decryptHrPii, encryptHrPii, maskSensitive } from "./hr-pii.js";
 import { createEmployeeOfferPdf } from "./offer-letter-pdf.js";
@@ -186,10 +188,11 @@ function employeeSequenceKey(projectCode: string, now = new Date()) {
 
 export async function submitEmployeeJoining(id: string, uploadToken?: string) {
   const tokenHash = validateToken(uploadToken);
-  return prisma.$transaction(async tx => {
+  const result = await prisma.$transaction(async tx => {
     await lockJoining(tx, id);
     const joining = await receiptOwner(tx, id, tokenHash);
-    if (joining.submittedAt && joining.employeeNumber) return { id, employeeNumber: joining.employeeNumber, submitted: true, submittedAt: joining.submittedAt };
+    const summary = { fullName: joining.fullName, personalEmail: joining.personalEmail, projectAssignment: joining.projectAssignment };
+    if (joining.submittedAt && joining.employeeNumber) return { id, employeeNumber: joining.employeeNumber, submitted: true, submittedAt: joining.submittedAt, created: false, ...summary };
     const documents = await tx.employeeJoiningDocument.findMany({ where: { joiningId: id }, select: { kind: true } });
     const present = new Set(documents.map(document => document.kind));
     const missing = requiredEmployeeDocumentKinds.filter(kind => !present.has(kind));
@@ -201,8 +204,10 @@ export async function submitEmployeeJoining(id: string, uploadToken?: string) {
       employeeNumber, status: "SUBMITTED", submittedAt: new Date(), uploadTokenHash: null, uploadExpiresAt: null, revision: { increment: 1 },
     } });
     await tx.auditLog.create({ data: { action: "employee_joining.submitted", entityType: "EmployeeJoining", entityId: id, metadata: { employeeNumber, projectCode: joining.projectCode, documents: [...present].sort() } } });
-    return { id, employeeNumber, submitted: true, submittedAt: updated.submittedAt };
+    return { id, employeeNumber, submitted: true, submittedAt: updated.submittedAt, created: true, ...summary };
   });
+  if (result.created) void notifyEmployeeJoiningSubmitted(result);
+  return result;
 }
 
 export async function listEmployeeJoinings(input: EmployeeJoiningQuery) {
@@ -242,18 +247,22 @@ const reviewTransitions: Record<Exclude<EmployeeJoiningStatus, "DRAFT">, Employe
 };
 
 export async function reviewEmployeeJoining(id: string, actorUserId: string, input: EmployeeJoiningReview) {
-  await prisma.$transaction(async tx => {
+  const review = await prisma.$transaction(async tx => {
     await lockJoining(tx, id);
     const current = await tx.employeeJoining.findUnique({ where: { id }, select: { status: true, revision: true, submittedAt: true } });
     if (!current || current.status === "DRAFT" || !current.submittedAt) fail(404, "Submitted employee joining record not found", "EMPLOYEE_JOINING_NOT_FOUND");
     if (current.revision !== input.expectedRevision) fail(409, "This joining record changed. Refresh before saving the HR review.", "EMPLOYEE_JOINING_CHANGED");
     if (!reviewTransitions[current.status as Exclude<EmployeeJoiningStatus, "DRAFT">].includes(input.status)) fail(409, "This HR decision is not available from the current status", "EMPLOYEE_JOINING_STATUS_TRANSITION");
-    await tx.employeeJoining.update({ where: { id }, data: {
+    const updated = await tx.employeeJoining.update({ where: { id }, data: {
       status: input.status, reviewNotes: input.notes || null, reviewedAt: new Date(), reviewedByUserId: actorUserId,
       ...(input.status === "APPROVED" ? { approvedAt: new Date() } : {}), revision: { increment: 1 },
-    } });
+    }, select: { id: true, employeeNumber: true, fullName: true, personalEmail: true, projectAssignment: true, status: true, revision: true } });
     await tx.auditLog.create({ data: { actorUserId, action: "employee_joining.reviewed", entityType: "EmployeeJoining", entityId: id, metadata: { from: current.status, to: input.status, notes: input.notes } } });
+    return { changed: current.status !== input.status, updated };
   });
+  if (review.changed && review.updated.employeeNumber && review.updated.status !== "SUBMITTED" && review.updated.status !== "DRAFT") {
+    void notifyEmployeeJoiningStatus({ ...review.updated, employeeNumber: review.updated.employeeNumber, status: review.updated.status as "UNDER_REVIEW" | "APPROVED" | "REJECTED" });
+  }
   return { joining: await getEmployeeJoining(id) };
 }
 
@@ -411,11 +420,20 @@ export async function issueEmployeeOffer(id: string, actorUserId: string, input:
     const signature = await signatureBytes(issuing);
     const issuedAt = new Date();
     const pdf = createEmployeeOfferPdf(joining, { ...issuing, status: "ISSUED", issuedAt }, signature);
+    const rendered = corporateEmail({
+      eyebrow: "Official employment communication",
+      title: "Your ZOBHUNGER offer letter",
+      intro: `Dear ${joining.fullName}, your approved offer letter from Zobhungr Solutions Private Limited is attached to this email.`,
+      details: [{ label: "Employee ID", value: joining.employeeNumber || "Pending" }, { label: "Designation", value: issuing.designation }, { label: "Work location", value: issuing.workLocation }],
+      paragraphs: ["Please review the attached PDF carefully and keep a copy for your records."],
+      note: "This email contains an official employment document. Do not forward the attachment to anyone who does not need access to it.",
+      signoff: "Regards,\nZOBHUNGER HR",
+    });
     const delivery = await postResendMessage({
       to: [joining.personalEmail],
       subject: `Offer letter - ${joining.employeeNumber} - ZOBHUNGER`,
-      text: `Dear ${joining.fullName},\n\nYour approved offer letter from Zobhungr Solutions Private Limited is attached. Employee ID: ${joining.employeeNumber}.\n\nRegards,\nZOBHUNGER HR`,
-      html: `<p>Dear ${escapeHtml(joining.fullName)},</p><p>Your approved offer letter from <strong>Zobhungr Solutions Private Limited</strong> is attached.</p><p>Employee ID: <strong>${escapeHtml(joining.employeeNumber || "")}</strong></p><p>Regards,<br>ZOBHUNGER HR</p>`,
+      ...rendered,
+      replyTo: env.HR_TEAM_EMAIL,
       attachments: [{ filename: `${joining.employeeNumber}-offer-letter.pdf`, content: pdf.toString("base64") }],
       idempotencyKey: `employee-offer-${offer.id}-r${input.expectedRevision}`,
     });
@@ -428,8 +446,4 @@ export async function issueEmployeeOffer(id: string, actorUserId: string, input:
     await prisma.employeeOfferLetter.updateMany({ where: { id: offer.id, status: "ISSUING", revision: input.expectedRevision }, data: { status: "APPROVED" } }).catch(() => undefined);
     throw error;
   }
-}
-
-function escapeHtml(value: string) {
-  return value.replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]!));
 }

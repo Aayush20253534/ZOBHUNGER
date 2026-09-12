@@ -1,6 +1,7 @@
 import { Prisma } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
 import { jobCache } from "../../services/job-cache.service.js";
+import { notifyNewApplication } from "../../services/notification.service.js";
 import { findOwnedPlacementCandidate } from "./placement-candidates.repository.js";
 import { findPlacementCellPortalProfile } from "./placement-cells.repository.js";
 import {
@@ -39,7 +40,7 @@ export async function submitPlacementCandidateToOpportunity(userId: string, jobR
   }
 
   try {
-    return await createPlacementOpportunityApplication({
+    const application = await createPlacementOpportunityApplication({
       jobId: job.id,
       placementCellApplicationId: placementCell.id,
       placementCandidateId: candidate.id,
@@ -50,6 +51,8 @@ export async function submitPlacementCandidateToOpportunity(userId: string, jobR
       experience: candidate.experience,
       message: input.message,
     });
+    void notifyNewApplication({ id: application.id, name: application.name, email: application.email, job: { title: application.job.title, slug: application.job.slug }, source: "PLACEMENT_CELL" });
+    return application;
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       throw new HttpError(409, "An application already exists for this candidate email and opportunity", { code: "DUPLICATE_APPLICATION" });

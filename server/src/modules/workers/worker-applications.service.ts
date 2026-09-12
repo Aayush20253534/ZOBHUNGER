@@ -1,6 +1,7 @@
 import { prisma } from "../../config/db.js";
 import { Prisma } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
+import { notifyJobApplicationStatus, notifyNewApplication } from "../../services/notification.service.js";
 import { lockAvailableJob } from "../jobs/job-availability.js";
 import { liveWorkerJobWhere } from "./worker-jobs.service.js";
 import { applicationEvent, lockApplication } from "./worker-workflow.guards.js";
@@ -65,7 +66,7 @@ function dto(row: Application) {
 }
 export async function submitWorkerApplication(userId: string, jobId: string, input: ApplyForJobInput) {
   try {
-    return await prisma.$transaction(async tx => {
+    const result = await prisma.$transaction(async tx => {
       await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
       const user = await tx.user.findUnique({ where: { id: userId }, select: { email: true, isActive: true, role: true, emailVerifiedAt: true } });
       if (!user?.isActive || user.role !== "WORKER" || !user.emailVerifiedAt) throw new HttpError(403, "Verify your worker email to apply.", { code: "EMAIL_VERIFICATION_REQUIRED" });
@@ -97,6 +98,14 @@ export async function submitWorkerApplication(userId: string, jobId: string, inp
       await tx.auditLog.create({ data: { actorUserId: userId, action: "WORKER_APPLICATION_SUBMITTED", entityType: "JobApplication", entityId: application.id } });
       return { id: application.id, created: true };
     });
+    if (result.created) {
+      const application = await prisma.jobApplication.findUnique({
+        where: { id: result.id },
+        select: { id: true, name: true, email: true, job: { select: { title: true, slug: true } } },
+      });
+      if (application) void notifyNewApplication({ ...application, source: "WORKER_PORTAL" });
+    }
+    return result;
   } catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === "P2002") throw new HttpError(409, "An application already exists for this job. Refresh your applications before trying again.", { code: "DUPLICATE_APPLICATION" });
     throw error;
@@ -158,7 +167,7 @@ export async function withdrawWorkerApplication(userId: string, id: string, inpu
   return workerApplicationDetail(userId, id);
 }
 export async function reviewWorkerApplication(userId: string, id: string, input: { revision: number; status: "SUBMITTED" | "REVIEWED" | "SHORTLISTED" | "REJECTED"; workerMessage: string }) {
-  await prisma.$transaction(async tx => {
+  const shouldNotify = await prisma.$transaction(async tx => {
     await lockApplication(tx, id);
     const row = await tx.jobApplication.findFirst({ where: { id }, select: applicationSelect });
     if (!row) throw missing();
@@ -168,7 +177,15 @@ export async function reviewWorkerApplication(userId: string, id: string, input:
     await tx.jobApplication.update({ where: { id }, data: { status: input.status, revision: { increment: 1 } } });
     await applicationEvent(tx, id, { kind: "ADMIN_REVIEW", stage: input.status, title: ({ SUBMITTED: "Application review reopened", REVIEWED: "Application reviewed", SHORTLISTED: "Shortlisted by the hiring team", REJECTED: "Application not selected" })[input.status], message: input.workerMessage || null });
     await tx.auditLog.create({ data: { actorUserId: userId, entityType: "JobApplication", entityId: id, action: "WORKER_APPLICATION_REVIEWED", metadata: { from: row.status, to: input.status } } });
+    return row.status !== input.status;
   });
+  if (shouldNotify) {
+    const application = await prisma.jobApplication.findUnique({
+      where: { id },
+      select: { id: true, name: true, email: true, status: true, revision: true, job: { select: { title: true } } },
+    });
+    if (application) void notifyJobApplicationStatus({ id: application.id, name: application.name, email: application.email, status: application.status, jobTitle: application.job.title, revision: application.revision });
+  }
   return workerApplicationDetail(userId, id, 1, true);
 }
 export async function applicationResume(userId: string, id: string, admin = false) {

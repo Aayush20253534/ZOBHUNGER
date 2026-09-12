@@ -10,6 +10,7 @@ Object.assign(process.env, {
   RESEND_TIMEOUT_MS: "15000",
   MAIL_FROM_EMAIL: "mail@zobhungr.com",
   MAIL_FROM_NAME: "ZOBHUNGER",
+  MAIL_REPLY_TO_EMAIL: "help@example.test",
   SALES_TEAM_EMAIL: "sales@example.test",
   LOG_LEVEL: "info",
 });
@@ -72,6 +73,7 @@ test("Resend forwards offer attachments and an idempotency key", async (t) => {
   });
   assert.equal(request.headers["Idempotency-Key"], "employee-offer-test-r4");
   assert.deepEqual(request.body.attachments, [{ filename: "offer.pdf", content: "JVBERi0xLjQ=" }]);
+  assert.equal(request.body.reply_to, "help@example.test");
 });
 
 test("recovery and operational mail use Resend with protected logs", async (t) => {
@@ -104,6 +106,7 @@ test("recovery and operational mail use Resend with protected logs", async (t) =
   assert.equal(calls[0].init.headers.Authorization, "Bearer re_test-secret-key");
   assert.equal(calls[0].body.from, "ZOBHUNGER <mail@zobhungr.com>");
   assert.deepEqual(calls[0].body.to, ["recipient@example.test"]);
+  assert.equal(calls[0].body.reply_to, "help@example.test");
   assert.ok(calls[0].body.text.includes(resetLink));
   assert.ok(calls[0].body.html.includes(resetLink));
   assert.equal("TrackClicks" in calls[0].body, false);

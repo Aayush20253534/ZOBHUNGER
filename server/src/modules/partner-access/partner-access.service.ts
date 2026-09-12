@@ -4,7 +4,8 @@ import { env } from "../../config/env.js";
 import type { Prisma } from "../../generated/prisma/client.js";
 import { hashPassword } from "../../utils/password.js";
 import { HttpError } from "../../utils/http-error.js";
-import { sendOperationalEmail } from "../../services/email.service.js";
+import { sendCorporateEmail } from "../../services/email.service.js";
+import { notifyPartnerApplicationStatus } from "../../services/notification.service.js";
 import type { PartnerReviewInput, PartnerReviewQuery } from "./partner-access.schema.js";
 
 const partnerSelect = {
@@ -48,9 +49,25 @@ function newCredentials() {
 async function issueEmail(id: string, email: string, partnerCode: string, temporaryPassword: string, issuedAt: Date) {
   const loginUrl = new URL("/business/login", env.PUBLIC_APP_URL ?? env.CLIENT_ORIGIN.split(",")[0].trim()).toString();
   const expiresAt = new Date(issuedAt.getTime() + 72 * 60 * 60_000);
-  const emailAccepted = await sendOperationalEmail({
-    to: email, subject: "Your approved ZOBHUNGER business account",
-    text: `Your partnership application has been approved.\n\nPartner ID: ${partnerCode}\nTemporary password: ${temporaryPassword}\nBusiness login: ${loginUrl}\n\nThis temporary password expires at ${expiresAt.toISOString()} (UTC). You must change it immediately after signing in, before opening the business workspace. Keep these credentials private. If you need help, contact ZOBHUNGER through the website.`,
+  const emailAccepted = await sendCorporateEmail({
+    to: email,
+    subject: "Your approved ZOBHUNGER business account",
+    replyTo: env.SALES_TEAM_EMAIL,
+    idempotencyKey: `partner-${id}-credentials-${issuedAt.getTime()}`,
+    content: {
+      eyebrow: "Business access approved",
+      title: "Your ZOBHUNGER business workspace is ready",
+      intro: "Your partnership application has been approved and temporary business credentials have been issued.",
+      details: [
+        { label: "Partner ID", value: partnerCode },
+        { label: "Temporary password", value: temporaryPassword },
+        { label: "Password expires", value: expiresAt.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }) },
+      ],
+      action: { label: "Open business login", url: loginUrl },
+      paragraphs: ["Sign in with the temporary password and change it immediately before opening the business workspace."],
+      note: "Keep these credentials private. ZOBHUNGER staff will never ask you to send this temporary password back by email.",
+      signoff: "ZOBHUNGER Business Operations",
+    },
   });
   await prisma.partnerApplication.updateMany({ where: { id, credentialsIssuedAt: issuedAt }, data: { credentialsEmailStatus: emailAccepted ? "ACCEPTED" : "FAILED" } });
   // The secret exists only in this response and the requested email, never in logs or plaintext database fields.
@@ -107,7 +124,9 @@ export async function reviewPartner(id: string, actorUserId: string, input: Part
   }
   const access = result.created && credentials && result.partnerCode
     ? await issueEmail(id, result.email, result.partnerCode, credentials.temporaryPassword, issuedAt) : null;
-  return { application: await getPartnerReview(id), credentials: access };
+  const application = await getPartnerReview(id);
+  if (!access && input.status !== "APPROVED") void notifyPartnerApplicationStatus({ id: application.id, fullName: application.fullName, email: application.email, status: application.status, updatedAt: application.updatedAt });
+  return { application, credentials: access };
 }
 
 export async function reissuePartnerCredentials(id: string, actorUserId: string, expectedUpdatedAt: string) {

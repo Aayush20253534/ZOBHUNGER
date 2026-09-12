@@ -10,7 +10,8 @@ import {
 } from "../../generated/prisma/client.js";
 import { env } from "../../config/env.js";
 import { prisma } from "../../config/db.js";
-import { sendOperationalEmail } from "../../services/email.service.js";
+import { sendCorporateEmail } from "../../services/email.service.js";
+import { notifyJobApplicationStatus, notifyPartnerApplicationStatus, notifyPlacementCellStatus, notifyRequirementStatus } from "../../services/notification.service.js";
 import { hashPassword } from "../../utils/password.js";
 import { HttpError } from "../../utils/http-error.js";
 import { downloadPrivateFile } from "../../services/private-file-storage.js";
@@ -134,10 +135,26 @@ export async function changePlacementCellApplicationStatus(
   if (result.kind === "updated" && status === PlacementCellApplicationStatus.APPROVED && rawActivationToken) {
     const frontendOrigin = (env.PUBLIC_APP_URL ?? env.CLIENT_ORIGIN.split(",")[0].trim()).replace(/\/$/, "");
     const activationUrl = `${frontendOrigin}/placement-cell-login#activation=${encodeURIComponent(rawActivationToken)}`;
-    await sendOperationalEmail({
+    await sendCorporateEmail({
       to: result.entity.officialEmail,
       subject: "ZOBHUNGER Placement Cell & Institution Partnership approved",
-      text: `Your Placement Cell & Institution Partnership request for ${result.entity.institutionName} has been approved. Activate your approved institution partner account and set your password using this secure link (valid for 72 hours): ${activationUrl}`,
+      replyTo: env.PLACEMENT_TEAM_EMAIL,
+      idempotencyKey: `placement-${result.entity.id}-activation-${result.entity.updatedAt.getTime()}`,
+      content: {
+        eyebrow: "Institution partnership approved",
+        title: "Activate your Placement Cell workspace",
+        intro: `The partnership request for ${result.entity.institutionName} has been approved.`,
+        paragraphs: ["Create your password using the secure one-time activation link below. After activation, your institution can access approved opportunities and candidate workflows."],
+        details: [{ label: "Institution", value: result.entity.institutionName }, { label: "Activation validity", value: "72 hours" }],
+        action: { label: "Activate institution access", url: activationUrl },
+        note: "Do not forward this activation link. If it expires, contact the Placement Cell team for a new invitation.",
+        signoff: "ZOBHUNGER Placement Cell",
+      },
+    });
+  } else if (result.kind === "updated") {
+    void notifyPlacementCellStatus({
+      id: result.entity.id, institutionName: result.entity.institutionName, contactPersonName: result.entity.contactPersonName,
+      officialEmail: result.entity.officialEmail, status: result.entity.status, updatedAt: result.entity.updatedAt,
     });
   }
 
@@ -180,6 +197,7 @@ export async function changeRequirementStatus(
     });
   }
   await jobCache.invalidate();
+  if (result.changed) void notifyRequirementStatus(result.entity);
   return result;
 }
 
@@ -220,6 +238,13 @@ export async function changeApplicationStatus(
       code: "APPLICATION_NOT_FOUND",
     });
   }
+  if (result.changed) {
+    const application = await prisma.jobApplication.findUnique({
+      where: { id },
+      select: { id: true, name: true, email: true, status: true, revision: true, job: { select: { title: true } } },
+    });
+    if (application) void notifyJobApplicationStatus({ id: application.id, name: application.name, email: application.email, status: application.status, jobTitle: application.job.title, revision: application.revision });
+  }
 
   return result;
 }
@@ -241,6 +266,7 @@ export async function changePartnerApplicationStatus(
       code: "PARTNER_APPLICATION_NOT_FOUND",
     });
   }
+  if (result.changed) void notifyPartnerApplicationStatus(result.entity);
 
   return result;
 }

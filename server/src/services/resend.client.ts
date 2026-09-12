@@ -10,6 +10,7 @@ export interface ResendMessage {
   text: string;
   html?: string;
   attachments?: Array<{ filename: string; content: string }>;
+  replyTo?: string | string[];
   idempotencyKey?: string;
 }
 
@@ -39,6 +40,7 @@ export async function postResendMessage(message: ResendMessage): Promise<{ id: s
         text: message.text,
         ...(message.html ? { html: message.html } : {}),
         ...(message.attachments?.length ? { attachments: message.attachments } : {}),
+        ...((message.replyTo ?? env.MAIL_REPLY_TO_EMAIL) ? { reply_to: message.replyTo ?? env.MAIL_REPLY_TO_EMAIL } : {}),
       }),
       signal: AbortSignal.timeout(env.RESEND_TIMEOUT_MS),
     });
@@ -78,6 +80,13 @@ export async function checkResendConfiguration() {
       provider: "resend",
       messageId: result.id,
       salesNotificationsConfigured: Boolean(env.SALES_TEAM_EMAIL),
+      replyToConfigured: Boolean(env.MAIL_REPLY_TO_EMAIL),
+      departmentNotifications: {
+        hr: Boolean(env.HR_TEAM_EMAIL),
+        technical: Boolean(env.TECH_TEAM_EMAIL),
+        placementCell: Boolean(env.PLACEMENT_TEAM_EMAIL),
+        legal: Boolean(env.LEGAL_TEAM_EMAIL),
+      },
       message: "Resend accepted the test message. This validates provider acceptance, not delivery to a customer inbox.",
     };
   } catch (error) {

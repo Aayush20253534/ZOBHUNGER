@@ -30,10 +30,12 @@ export async function submitCareerProfile(input: CareerSubmission) {
     submissionKey: requestKey, submissionHash, resumeUploadTokenHash: sha256(token),
     resumeUploadExpiresAt: new Date(Date.now() + 30 * 60_000) };
   let application: Receipt | null;
+  let created = true;
   try {
     application = await prisma.careerApplication.create({ data: create, select: receiptSelect });
   } catch (error) {
     if (!uniqueConflict(error)) throw error;
+    created = false;
     application = await prisma.careerApplication.findUnique({ where: { submissionKey: requestKey }, select: receiptSelect });
     if (!application) throw error;
   }
@@ -43,6 +45,7 @@ export async function submitCareerProfile(input: CareerSubmission) {
     resumeUploaded: Boolean(application.resumeFileName),
     resumeUploadToken: application.resumeFileName ? null : resumeToken(application.id, requestKey),
     resumeUploadExpiresAt: application.resumeFileName ? null : application.resumeUploadExpiresAt,
+    created,
   };
 }
 
