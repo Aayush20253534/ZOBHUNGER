@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { ChatbotWidget } from "@/components/chatbot";
 import { Footer } from "./Footer";
 import { Navbar } from "./Navbar";
 
@@ -25,5 +26,12 @@ export function SiteFrame({ children }: { children: ReactNode }) {
   if (pathname === "/worker" || pathname.startsWith("/worker/")) {
     return <div className="zb-worker-root">{children}</div>;
   }
-  return <><Navbar /><main className="mx-auto min-h-[70vh] max-w-6xl px-6 py-12">{children}</main><Footer /></>;
+  return (
+    <>
+      <Navbar />
+      <main className="mx-auto min-h-[70vh] max-w-6xl px-6 py-12">{children}</main>
+      <Footer />
+      <ChatbotWidget />
+    </>
+  );
 }
