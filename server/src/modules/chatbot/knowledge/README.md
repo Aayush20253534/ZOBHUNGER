@@ -81,3 +81,12 @@ npm run chatbot:knowledge:validate
 The command fails with a non-zero exit code on invalid metadata, malformed frontmatter,
 duplicate IDs, category/folder mismatches, protected URLs, or published files with almost no body content.
 Warnings identify quality issues such as missing headings or duplicate keywords.
+
+
+## Phase 2 public knowledge corpus
+
+The repository now contains a curated public website corpus generated from the current frontend/data sources. The published set covers the homepage/company facts, services, industry pages, business and worker journeys, careers, partnerships, brand experience, case studies and contact details. A draft policy document records chatbot-only grounding boundaries and is excluded from the normal runtime loader.
+
+Primary maintenance sources include `client/src/data/solutions.ts`, `solution-details.ts`, `industry-details.ts`, `company.ts`, `market.ts`, `workers.ts`, `brand-experience.ts`, `case-studies.ts`, `partner-program.ts`, `placement-partnership.ts`, `vendors.ts`, `site.ts`, and the corresponding public page/form components.
+
+When public website copy changes materially, update the matching knowledge document in the same commit and run `npm run chatbot:knowledge:validate`.

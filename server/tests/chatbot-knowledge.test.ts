@@ -103,3 +103,53 @@ test("knowledge validator catches duplicate ids and category path mismatches", a
     await rm(root, { recursive: true, force: true });
   }
 });
+
+
+test("repository knowledge corpus covers the current public website surface", async () => {
+  const result = await loadKnowledgeBase();
+  assert.equal(result.issues.length, 0);
+  assert.equal(result.documents.length, 46);
+
+  const categoryCounts = result.documents.reduce<Record<string, number>>((counts, document) => {
+    counts[document.metadata.category] = (counts[document.metadata.category] ?? 0) + 1;
+    return counts;
+  }, {});
+
+  assert.equal(categoryCounts.services, 10);
+  assert.equal(categoryCounts.industries, 11);
+  assert.equal(categoryCounts["case-studies"], 8);
+  assert.equal(categoryCounts.company, 7);
+  assert.equal(categoryCounts.partnerships, 3);
+  assert.equal(categoryCounts.jobs, 3);
+  assert.equal(categoryCounts.businesses, 2);
+  assert.equal(categoryCounts.workers, 1);
+  assert.equal(categoryCounts.contact, 1);
+
+  const ids = new Set(result.documents.map((document) => document.metadata.id));
+  for (const expectedId of [
+    "website-overview",
+    "workforce-solutions",
+    "telecaller-telesales-services",
+    "industry-retail",
+    "for-business",
+    "for-workers",
+    "vendor-empanelment",
+    "placement-cell-partnership",
+    "jobs-overview",
+    "contact-zobhunger",
+  ]) {
+    assert.ok(ids.has(expectedId), `expected published knowledge document: ${expectedId}`);
+  }
+
+  const protectedPrefixes = ["/admin", "/business", "/worker", "/employee-joining"];
+  for (const document of result.documents) {
+    assert.equal(
+      protectedPrefixes.some(
+        (prefix) =>
+          document.metadata.url === prefix || document.metadata.url.startsWith(`${prefix}/`),
+      ),
+      false,
+      `published knowledge must not target a protected route: ${document.metadata.id}`,
+    );
+  }
+});
