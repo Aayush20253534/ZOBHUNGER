@@ -1,55 +1,66 @@
-import { Briefcase, Handshake, Search, ShieldCheck, type LucideIcon } from "lucide-react";
+import {
+  Briefcase,
+  Building2,
+  FileText,
+  Handshake,
+  Mail,
+  MapPin,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
+import type { ChatbotSuggestion, ChatbotSuggestionIcon } from "@/lib/chatbot-suggestions";
 
-interface Suggestion {
-  label: string;
-  prompt: string;
-  icon: LucideIcon;
-}
-
-const suggestions: Suggestion[] = [
-  {
-    label: "Hire workforce",
-    prompt: "How can I hire workforce through ZOBHUNGER?",
-    icon: Briefcase,
-  },
-  {
-    label: "Find work",
-    prompt: "How can I find and apply for jobs through ZOBHUNGER?",
-    icon: Search,
-  },
-  {
-    label: "Become a vendor",
-    prompt: "How can my company become an empanelled ZOBHUNGER vendor?",
-    icon: Handshake,
-  },
-  {
-    label: "Verification services",
-    prompt: "What verification services does ZOBHUNGER provide?",
-    icon: ShieldCheck,
-  },
-];
+const suggestionIcons: Record<ChatbotSuggestionIcon, LucideIcon> = {
+  briefcase: Briefcase,
+  search: Search,
+  handshake: Handshake,
+  shield: ShieldCheck,
+  building: Building2,
+  file: FileText,
+  users: Users,
+  map: MapPin,
+  mail: Mail,
+  sparkles: Sparkles,
+};
 
 interface ChatSuggestionsProps {
+  title?: string;
+  suggestions: ChatbotSuggestion[];
   disabled: boolean;
+  compact?: boolean;
   onSelect: (prompt: string) => void;
 }
 
-export function ChatSuggestions({ disabled, onSelect }: ChatSuggestionsProps) {
+export function ChatSuggestions({
+  title = "Popular questions",
+  suggestions,
+  disabled,
+  compact = false,
+  onSelect,
+}: ChatSuggestionsProps) {
+  if (!suggestions.length) return null;
+
   return (
-    <div className="zb-chatbot-suggestions" aria-label="Suggested questions">
-      <p>Popular questions</p>
+    <div className={`zb-chatbot-suggestions${compact ? " zb-chatbot-suggestions--compact" : ""}`} aria-label={title}>
+      <p>{title}</p>
       <div className="zb-chatbot-suggestion-grid">
-        {suggestions.map(({ label, prompt, icon: Icon }) => (
-          <button
-            type="button"
-            key={label}
-            disabled={disabled}
-            onClick={() => onSelect(prompt)}
-          >
-            <Icon aria-hidden="true" />
-            <span>{label}</span>
-          </button>
-        ))}
+        {suggestions.map(({ label, prompt, icon }) => {
+          const Icon = suggestionIcons[icon];
+          return (
+            <button
+              type="button"
+              key={`${label}:${prompt}`}
+              disabled={disabled}
+              onClick={() => onSelect(prompt)}
+            >
+              <Icon aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

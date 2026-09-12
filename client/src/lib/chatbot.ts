@@ -13,6 +13,14 @@ export interface ChatbotSource {
   category: string;
 }
 
+export interface ChatbotUiMessage {
+  id: string;
+  role: ChatbotMessageRole;
+  content: string;
+  sources?: ChatbotSource[];
+  includeInHistory: boolean;
+}
+
 export interface ChatbotReply {
   answer: string;
   sources: ChatbotSource[];

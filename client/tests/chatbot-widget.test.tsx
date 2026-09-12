@@ -2,6 +2,7 @@ import { act, createElement, type ComponentProps } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatbotWidget } from "@/components/chatbot/ChatbotWidget";
+import { chatbotStorageInternals } from "@/lib/chatbot-storage";
 
 const { sendMessage } = vi.hoisted(() => ({ sendMessage: vi.fn() }));
 vi.mock("next/navigation", () => ({ usePathname: () => "/promoter-solutions" }));
@@ -20,9 +21,20 @@ const flush = async (action?: () => void) => {
   });
 };
 
+function setTextareaValue(textarea: HTMLTextAreaElement, value: string) {
+  const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
+  setter?.call(textarea, value);
+  textarea.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
 beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
+  window.localStorage.clear();
   Element.prototype.scrollIntoView = vi.fn();
+  Object.defineProperty(navigator, "clipboard", {
+    configurable: true,
+    value: { writeText: vi.fn().mockResolvedValue(undefined) },
+  });
   sendMessage.mockReset().mockResolvedValue({
     answer: "ZOBHUNGER provides promoter solutions for eligible retail requirements.",
     grounded: true,
@@ -44,30 +56,27 @@ async function renderWidget() {
 
 async function openWidget() {
   await renderWidget();
-  await flush(() => (container.querySelector("button[aria-label='Open ZOBHUNGER Assistant']") as HTMLButtonElement).click());
+  await flush(() => (container.querySelector("button[aria-label^='Open ZOBHUNGER Assistant']") as HTMLButtonElement).click());
 }
 
-describe("public chatbot widget", () => {
-  it("starts as a circular launcher and opens an accessible assistant dialog", async () => {
-    await renderWidget();
-    expect(container.querySelector("[role='dialog']")).toBeNull();
-    const launcher = container.querySelector("button[aria-label='Open ZOBHUNGER Assistant']") as HTMLButtonElement;
-    expect(launcher).not.toBeNull();
-    await flush(() => launcher.click());
+async function sendTypedMessage(message: string) {
+  const textarea = container.querySelector("textarea") as HTMLTextAreaElement;
+  await flush(() => setTextareaValue(textarea, message));
+  await flush(() => (container.querySelector("button[aria-label='Send message']") as HTMLButtonElement).click());
+}
+
+describe("advanced public chatbot widget", () => {
+  it("opens with page-aware service suggestions", async () => {
+    await openWidget();
     expect(container.querySelector("[role='dialog']")).not.toBeNull();
-    expect(container.textContent).toContain("ZOBHUNGER Assistant");
-    expect(container.textContent).toContain("Popular questions");
+    expect(container.textContent).toContain("How it works");
+    expect(container.textContent).toContain("Request this service");
+    expect(container.textContent).toContain("chat saved on this device");
   });
 
-  it("sends current-page context and renders grounded answer sources", async () => {
+  it("sends current-page context, renders sources, and offers contextual follow-ups", async () => {
     await openWidget();
-    const textarea = container.querySelector("textarea") as HTMLTextAreaElement;
-    await flush(() => {
-      const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
-      setter?.call(textarea, "Do you provide promoters for retail stores?");
-      textarea.dispatchEvent(new Event("input", { bubbles: true }));
-    });
-    await flush(() => (container.querySelector("button[aria-label='Send message']") as HTMLButtonElement).click());
+    await sendTypedMessage("Do you provide promoters for retail stores?");
 
     expect(sendMessage).toHaveBeenCalledWith({
       message: "Do you provide promoters for retail stores?",
@@ -75,45 +84,99 @@ describe("public chatbot widget", () => {
       currentPage: "/promoter-solutions",
     });
     expect(container.textContent).toContain("ZOBHUNGER provides promoter solutions");
-    const source = container.querySelector("a[href='/promoter-solutions']");
-    expect(source?.textContent).toContain("Promoters Services");
+    expect(container.textContent).toContain("Sources (1)");
+    expect(container.querySelector("a[href='/promoter-solutions']")?.textContent).toContain("Promoters Services");
+    expect(container.textContent).toContain("Continue with");
+    expect(container.textContent).toContain("Request this service");
   });
 
-  it("uses suggested prompts and keeps the static welcome message out of model history", async () => {
+  it("persists successful conversation history locally", async () => {
     await openWidget();
-    const suggestion = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("Hire workforce")) as HTMLButtonElement;
-    await flush(() => suggestion.click());
-    expect(sendMessage).toHaveBeenCalledWith({
-      message: "How can I hire workforce through ZOBHUNGER?",
-      history: [],
-      currentPage: "/promoter-solutions",
-    });
+    await sendTypedMessage("Do you provide promoters?");
+    await flush();
+
+    const raw = window.localStorage.getItem(chatbotStorageInternals.key);
+    expect(raw).not.toBeNull();
+    const stored = JSON.parse(raw ?? "{}") as { messages?: Array<{ content: string }> };
+    expect(stored.messages?.map((message) => message.content)).toEqual([
+      "Do you provide promoters?",
+      "ZOBHUNGER provides promoter solutions for eligible retail requirements.",
+    ]);
+  });
+
+  it("restores saved successful history after remounting", async () => {
+    window.localStorage.setItem(chatbotStorageInternals.key, JSON.stringify({
+      version: 1,
+      id: "chat_saved",
+      createdAt: "2026-09-12T00:00:00.000Z",
+      updatedAt: "2026-09-12T00:01:00.000Z",
+      messages: [
+        { id: "u1", role: "user", content: "Saved user question", includeInHistory: true },
+        { id: "a1", role: "assistant", content: "Saved assistant answer", includeInHistory: true },
+      ],
+    }));
+
+    await openWidget();
+    expect(container.textContent).toContain("Saved user question");
+    expect(container.textContent).toContain("Saved assistant answer");
     expect(container.textContent).not.toContain("Popular questions");
   });
 
-  it("shows a safe error without deleting the user's question", async () => {
-    sendMessage.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  it("retries a failed request without duplicating the user message", async () => {
+    sendMessage
+      .mockRejectedValueOnce(new TypeError("Failed to fetch"))
+      .mockResolvedValueOnce({
+        answer: "Recovered answer",
+        grounded: true,
+        sources: [],
+      });
     await openWidget();
-    const textarea = container.querySelector("textarea") as HTMLTextAreaElement;
-    await flush(() => {
-      const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
-      setter?.call(textarea, "Tell me about ZOBHUNGER");
-      textarea.dispatchEvent(new Event("input", { bubbles: true }));
-    });
-    await flush(() => (container.querySelector("button[aria-label='Send message']") as HTMLButtonElement).click());
-    expect(container.textContent).toContain("Tell me about ZOBHUNGER");
+    await sendTypedMessage("Tell me about ZOBHUNGER");
     expect(container.textContent).toContain("could not reach the server");
+    const retry = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("Retry")) as HTMLButtonElement;
+    await flush(() => retry.click());
 
-    await flush(() => {
-      const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
-      setter?.call(textarea, "What services do you offer?");
-      textarea.dispatchEvent(new Event("input", { bubbles: true }));
-    });
+    expect(sendMessage).toHaveBeenCalledTimes(2);
+    expect(container.textContent).toContain("Recovered answer");
+    expect(container.textContent?.match(/Tell me about ZOBHUNGER/g)?.length).toBe(1);
+  });
+
+  it("copies assistant responses", async () => {
+    await openWidget();
+    await sendTypedMessage("Do you provide promoters?");
+    const copy = container.querySelector("button[aria-label='Copy assistant response']") as HTMLButtonElement;
+    await flush(() => copy.click());
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      "ZOBHUNGER provides promoter solutions for eligible retail requirements.",
+    );
+    expect(container.textContent).toContain("Copied");
+  });
+
+  it("can start a new chat from the header menu", async () => {
+    await openWidget();
+    await sendTypedMessage("Do you provide promoters?");
+    await flush(() => (container.querySelector("button[aria-label='Chat options']") as HTMLButtonElement).click());
+    const newChat = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("New chat")) as HTMLButtonElement;
+    await flush(() => newChat.click());
+
+    expect(container.textContent).not.toContain("Do you provide promoters?");
+    expect(container.textContent).toContain("How it works");
+  });
+
+  it("shows an unread badge when a minimized request finishes", async () => {
+    let resolveReply: ((value: unknown) => void) | undefined;
+    sendMessage.mockReturnValueOnce(new Promise((resolve) => { resolveReply = resolve; }));
+    await openWidget();
+
+    const textarea = container.querySelector("textarea") as HTMLTextAreaElement;
+    await flush(() => setTextareaValue(textarea, "Tell me about promoter services"));
     await flush(() => (container.querySelector("button[aria-label='Send message']") as HTMLButtonElement).click());
-    expect(sendMessage.mock.calls[1]?.[0]).toMatchObject({
-      message: "What services do you offer?",
-      history: [],
-    });
+    await flush(() => (container.querySelector("button[aria-label='Minimize chatbot']") as HTMLButtonElement).click());
+
+    await flush(() => resolveReply?.({ answer: "Finished while minimized", grounded: true, sources: [] }));
+    const launcher = container.querySelector("button[aria-label*='unread response']") as HTMLButtonElement;
+    expect(launcher).not.toBeNull();
+    expect(launcher.textContent).toContain("1");
   });
 
   it("closes with Escape", async () => {
