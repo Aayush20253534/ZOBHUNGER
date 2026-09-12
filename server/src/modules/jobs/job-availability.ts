@@ -2,7 +2,7 @@ import { Prisma } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
 
 // Legacy openings remain available; linked openings require a qualified, active owner.
-export const availableJobWhere: Prisma.JobWhereInput = { status: "OPEN", OR: [
+export const availableJobWhere: Prisma.JobWhereInput = { status: "OPEN", archivedAt: null, OR: [
   { requirementId: null },
   { requirement: { is: { status: "QUALIFIED", OR: [
     { businessProfile: { is: { user: { is: { role: "BUSINESS", isActive: true, businessAccessApproved: true } } } } },

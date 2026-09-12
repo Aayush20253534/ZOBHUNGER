@@ -89,16 +89,18 @@ export async function candidateLookups(kind: "requirements" | "applications", qu
       const items = await tx.workforceRequirement.findMany({ where, select: requirementSelect, orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: (page - 1) * 10, take: 10 });
       return { items, total, page, totalPages: Math.ceil(total / 10) };
     }
-    const where: Prisma.JobApplicationWhereInput = { withdrawnAt: null, job: { is: { isDemo: false, ...(query.requirementId ? { OR: [{ requirementId: null }, { requirementId: query.requirementId }] } : {}) } }, status: { not: "REJECTED" },
+    const where: Prisma.JobApplicationWhereInput = { withdrawnAt: null, job: { is: { isDemo: false, ...(query.requirementId ? { OR: [{ requirementId: null }, { requirementId: query.requirementId }] } : {}) } }, status: { in: ["REVIEWED", "SHORTLISTED"] },
       ...(query.query ? { OR: [{ name: search }, { city: search }, { job: { is: { title: search } } }] } : {}) };
     const total = await tx.jobApplication.count({ where });
     const page = Math.min(query.page, Math.max(1, Math.ceil(total / 10)));
     const applications = await tx.jobApplication.findMany({ where, select: {
-      id: true, name: true, city: true, experience: true, resumeUrl: true, availableFrom: true, job: { select: { title: true, requirementId: true } },
+      id: true, name: true, city: true, experience: true, resumeUrl: true, availableFrom: true,
+      workerUserId: true, placementCandidateId: true, placementCellApplicationId: true,
+      job: { select: { title: true, requirementId: true } },
       profileSnapshot: true, submittedResume: { select: { id: true } }, placementCandidate: { select: { skills: true } },
     }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: (page - 1) * 10, take: 10 });
-    const items = applications.map(({ profileSnapshot, submittedResume, placementCandidate, resumeUrl, ...application }) => ({
-      ...application, resumeUrl: safeResumeUrl(resumeUrl), hasPrivateResume: Boolean(submittedResume), skills: (profileSnapshot && typeof profileSnapshot === "object" && !Array.isArray(profileSnapshot) && Array.isArray(profileSnapshot.skills) ? profileSnapshot.skills.filter((item): item is string => typeof item === "string") : placementCandidate?.skills ?? []).slice(0, 12),
+    const items = applications.map(({ profileSnapshot, submittedResume, placementCandidate, resumeUrl, workerUserId, placementCandidateId, placementCellApplicationId, ...application }) => ({
+      ...application, source: workerUserId ? "WORKER_PORTAL" as const : placementCandidateId || placementCellApplicationId ? "PLACEMENT_CELL" as const : "PUBLIC_FORM" as const, resumeUrl: safeResumeUrl(resumeUrl), hasPrivateResume: Boolean(submittedResume), skills: (profileSnapshot && typeof profileSnapshot === "object" && !Array.isArray(profileSnapshot) && Array.isArray(profileSnapshot.skills) ? profileSnapshot.skills.filter((item): item is string => typeof item === "string") : placementCandidate?.skills ?? []).slice(0, 12),
     }));
     return { items, total, page, totalPages: Math.ceil(total / 10) };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
@@ -124,9 +126,9 @@ export async function shareCandidate(userId: string, input: ShareCandidateInput)
       if (existing.revokedAt) throw new HttpError(409, "Access to this submission was revoked. Choose another application or contact the account team.", { code: "CANDIDATE_REVOKED" });
       return { id: existing.id, created: false };
     }
-    const application = await tx.jobApplication.findFirst({ where: { id: input.applicationId, status: { not: "REJECTED" }, job: { is: { isDemo: false } } },
+    const application = await tx.jobApplication.findFirst({ where: { id: input.applicationId, status: { in: ["REVIEWED", "SHORTLISTED"] }, withdrawnAt: null, job: { is: { isDemo: false } } },
       select: { id: true, name: true, city: true, experience: true, resumeUrl: true, availableFrom: true, job: { select: { title: true, requirementId: true } } } });
-    if (!application) throw new HttpError(404, "Choose an available application from a real job opening.", { code: "APPLICATION_NOT_FOUND" });
+    if (!application) throw new HttpError(404, "Review or shortlist the application before sharing it with a business requirement.", { code: "APPLICATION_NOT_FOUND" });
     if (application.job.requirementId && application.job.requirementId !== input.requirementId) throw new HttpError(409, "This application belongs to another requirement. Select its linked hiring brief.", { code: "APPLICATION_REQUIREMENT_MISMATCH" });
     const candidate = await tx.businessCandidate.create({ data: {
       requirementId: input.requirementId, applicationId: application.id, name: application.name, city: application.city,

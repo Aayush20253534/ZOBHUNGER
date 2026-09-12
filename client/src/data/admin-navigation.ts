@@ -87,8 +87,8 @@ export const adminNavigation: readonly AdminNavigationGroup[] = [
       {
         href: "/admin/worker-applications",
         permission: "WORKERS_MANAGE",
-        label: "Worker applications",
-        description: "Worker profile pipeline",
+        label: "Applications",
+        description: "Hiring review desk",
         icon: UsersRound,
       },
       {

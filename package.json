@@ -9,7 +9,7 @@
     "build:server": "npm --prefix server run build",
     "test:server": "npm --prefix server run test",
     "smoke:server": "npm --prefix server run test:smoke",
-    "verify": "npm run audit:foundation && npm run test:release && npm run test:rbac && npm run test:admin-experience && npm run test:intake && npm run test:server && npm run build:server && npm --prefix client run lint && npm run build:client",
+    "verify": "npm run audit:foundation && npm run test:release && npm run test:rbac && npm run test:admin-experience && npm run test:intake && npm run test:hiring && npm run test:server && npm run build:server && npm --prefix client run lint && npm run build:client",
     "verify:phase2": "node scripts/verify-phase2.mjs",
     "check:release": "node scripts/check-release.mjs",
     "verify:workers": "node scripts/verify-phase2.mjs --workers",
@@ -18,6 +18,7 @@
     "test:rbac": "node --test scripts/tests/department-admin-rbac.test.mjs",
     "test:admin-experience": "node --test scripts/tests/admin-department-experience.test.mjs",
     "test:intake": "node --test scripts/tests/operations-intake.test.mjs",
+    "test:hiring": "node --test scripts/tests/hiring-workflow-completion.test.mjs",
     "chatbot:knowledge:validate": "npm --prefix server run chatbot:knowledge:validate",
     "chatbot:knowledge:list": "npm --prefix server run chatbot:knowledge:list"
   }

@@ -12,6 +12,5 @@ export async function assertApplicationActive(tx: Prisma.TransactionClient, id: 
   if (row.withdrawnAt) throw new HttpError(409, "This application has been withdrawn and cannot be progressed.", { code: "APPLICATION_WITHDRAWN" });
 }
 export async function applicationEvent(tx: Prisma.TransactionClient, applicationId: string, event: { kind: string; stage: string; title: string; message?: string | null; interviewAt?: Date | null; interviewMode?: string | null }) {
-  const application = await tx.jobApplication.findUnique({ where: { id: applicationId }, select: { workerUserId: true } });
-  if (application?.workerUserId) await tx.workerApplicationEvent.create({ data: { applicationId, ...event } });
+  await tx.workerApplicationEvent.create({ data: { applicationId, ...event } });
 }

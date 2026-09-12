@@ -10,7 +10,7 @@ import type { createLinkedJobSchema, editLinkedJobSchema, linkedJobStatusSchema 
 const missing = () => new HttpError(404, "Requirement or linked job not available.", { code: "REQUIREMENT_NOT_FOUND" });
 const conflict = () => new HttpError(409, "This brief or job changed. Reload it before continuing.", { code: "JOB_CHANGED" });
 export const businessOwned = { OR: [{ businessProfile: { is: { user: { is: { role: "BUSINESS" as const, isActive: true } } } } }, { businessProfileId: null, submittedBy: { is: { role: "BUSINESS" as const, isActive: true } } }] };
-export const linkedJobSelect = { id: true, slug: true, title: true, city: true, location: true, state: true, category: true, engagementType: true, description: true, compensation: true, responsibilities: true, requirements: true, status: true, revision: true, createdAt: true, publishedAt: true } satisfies Prisma.JobSelect;
+export const linkedJobSelect = { id: true, slug: true, title: true, city: true, location: true, state: true, category: true, engagementType: true, description: true, compensation: true, responsibilities: true, requirements: true, status: true, revision: true, createdAt: true, publishedAt: true, archivedAt: true } satisfies Prisma.JobSelect;
 export async function pauseRequirementJobs(tx: Prisma.TransactionClient, id: string) {
   return tx.job.updateMany({ where: { requirementId: id, status: "OPEN" }, data: { status: "CLOSED", revision: { increment: 1 } } });
 }
@@ -37,8 +37,19 @@ export async function requirementJobs(access: AttendanceAccess, id: string, page
     const requirement = await tx.workforceRequirement.findFirst({ where: { id, ...(access.admin ? businessOwned : ownedRequirements(access.userId)) }, select: { id: true, companyName: true, serviceRequired: true, workforceCount: true, jobLocation: true, locations: true, projectDuration: true, details: true, status: true, revision: true } });
     if (!requirement) throw missing();
     const total = await tx.job.count({ where: { requirementId: id } }), totalPages = Math.max(1, Math.ceil(total / 9)); page = Math.min(page, totalPages);
-    const items = await tx.job.findMany({ where: { requirementId: id }, select: { ...linkedJobSelect, _count: { select: { applications: true } } }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 9, skip: (page - 1) * 9 });
-    return { requirement, items, total, totalPages, page };
+    const [items, allJobs] = await Promise.all([
+      tx.job.findMany({ where: { requirementId: id }, select: { ...linkedJobSelect, _count: { select: { applications: true } } }, orderBy: [{ archivedAt: "asc" }, { createdAt: "desc" }, { id: "desc" }], take: 9, skip: (page - 1) * 9 }),
+      tx.job.findMany({ where: { requirementId: id }, select: { status: true, archivedAt: true, _count: { select: { applications: true } } } }),
+    ]);
+    const summary = {
+      totalOpenings: allJobs.length,
+      open: allJobs.filter(job => !job.archivedAt && job.status === "OPEN").length,
+      draft: allJobs.filter(job => !job.archivedAt && job.status === "DRAFT").length,
+      closed: allJobs.filter(job => !job.archivedAt && job.status === "CLOSED").length,
+      archived: allJobs.filter(job => Boolean(job.archivedAt)).length,
+      applications: allJobs.reduce((sum, job) => sum + job._count.applications, 0),
+    };
+    return { requirement, items, total, totalPages, page, summary };
   }, { isolationLevel: "RepeatableRead" });
 }
 export async function createLinkedJob(userId: string, id: string, input: z.infer<typeof createLinkedJobSchema>) {
@@ -64,6 +75,7 @@ export async function changeLinkedJob(userId: string, id: string, input: z.infer
     await tx.$queryRaw(Prisma.sql`SELECT id FROM "Job" WHERE id = ${id} FOR UPDATE`);
     const job = await tx.job.findUniqueOrThrow({ where: { id } });
     if (job.revision !== input.revision) throw conflict();
+    if (job.archivedAt) throw new HttpError(409, "Restore this archived opening before editing or publishing it.", { code: "JOB_ARCHIVED" });
     if (!("status" in input) || input.status === "OPEN") await eligibleRequirement(tx, ref.requirementId);
     const { revision, ...fields } = input;
     const data = "status" in fields ? { status: fields.status, publishedAt: fields.status === "OPEN" ? job.publishedAt ?? new Date() : job.publishedAt } : { ...fields, status: "DRAFT" as const };
@@ -72,4 +84,27 @@ export async function changeLinkedJob(userId: string, id: string, input: z.infer
     return updated;
   });
   await jobCache.invalidate(); return result;
+}
+
+export async function archiveLinkedJob(userId: string, id: string, input: { revision: number; archived: boolean }) {
+  const result = await prisma.$transaction(async tx => {
+    const ref = await tx.job.findUnique({ where: { id }, select: { requirementId: true } });
+    if (!ref?.requirementId) throw missing();
+    await tx.$queryRaw(Prisma.sql`SELECT id FROM "WorkforceRequirement" WHERE id = ${ref.requirementId} FOR UPDATE`);
+    await tx.$queryRaw(Prisma.sql`SELECT id FROM "Job" WHERE id = ${id} FOR UPDATE`);
+    const job = await tx.job.findUniqueOrThrow({ where: { id } });
+    if (job.revision !== input.revision) throw conflict();
+    if (input.archived === Boolean(job.archivedAt)) return tx.job.findUniqueOrThrow({ where: { id }, select: linkedJobSelect });
+    const updated = await tx.job.update({
+      where: { id },
+      data: input.archived
+        ? { archivedAt: new Date(), status: "CLOSED", revision: { increment: 1 } }
+        : { archivedAt: null, status: "DRAFT", revision: { increment: 1 } },
+      select: linkedJobSelect,
+    });
+    await tx.auditLog.create({ data: { actorUserId: userId, entityType: "Job", entityId: id, action: input.archived ? "JOB_ARCHIVED" : "JOB_RESTORED", metadata: { requirementId: ref.requirementId } } });
+    return updated;
+  });
+  await jobCache.invalidate();
+  return result;
 }

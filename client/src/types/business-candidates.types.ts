@@ -31,7 +31,7 @@ export type CandidateReview = { revision: number; note: string; workerMessage?: 
   | { action: "INTERVIEW"; interviewAt: string; interviewMode: "PHONE" | "VIDEO" | "IN_PERSON"; interviewDetails: string }
 );
 export interface ApplicationOption {
-  id: string; name: string; city: string | null; experience: string | null; resumeUrl: string | null; hasPrivateResume?: boolean;
+  id: string; name: string; city: string | null; experience: string | null; resumeUrl: string | null; hasPrivateResume?: boolean; source: "WORKER_PORTAL" | "PUBLIC_FORM" | "PLACEMENT_CELL"; status: "REVIEWED" | "SHORTLISTED";
   availableFrom: string | null; job: { title: string; requirementId: string | null }; skills: string[];
 }
 export interface CandidateOptions<T> { items: T[]; total: number; page: number; totalPages: number }

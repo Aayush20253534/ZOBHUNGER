@@ -1,9 +1,9 @@
 import type { WorkerProfile } from "./worker.types";
 export interface PageResult<T> { items: T[]; page: number; totalPages: number; total: number }
 export interface WorkerApplication {
-  id: string; revision: number; stage: string; status: string; name: string; email: string; phone: string; city: string | null;
-  experience: string | null; availableFrom: string | null; message: string | null; createdAt: string; withdrawnAt: string | null; withdrawalReason: string | null; canWithdraw: boolean;
-  job: { title: string; location: string; category: string; engagementType: string; slug: string | null };
+  id: string; revision: number; stage: string; status: string; source: "WORKER_PORTAL" | "PUBLIC_FORM" | "PLACEMENT_CELL"; isPortalApplicant: boolean; name: string; email: string; phone: string; city: string | null;
+  experience: string | null; availableFrom: string | null; message: string | null; resumeUrl: string | null; createdAt: string; withdrawnAt: string | null; withdrawalReason: string | null; canWithdraw: boolean;
+  job: { id: string; requirementId: string | null; status: string; title: string; location: string; category: string; engagementType: string; slug: string | null };
   submittedResume: { fileName: string; size: number } | null;
   hiringReviews: { company: string; status: string; assignmentId: string | null }[];
 }

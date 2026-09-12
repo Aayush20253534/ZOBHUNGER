@@ -247,3 +247,20 @@
   .zw .zw-card, .zw .zwf-banner { box-shadow:none !important; break-inside:avoid; }
   .zw .zwe-detail-grid { grid-template-columns:1fr 1fr; }
 }
+
+/* Phase 5 unified application desk. */
+.zw .zwf-banner--hiring { padding-block:18px; }
+.zw .zwf-admin-filters { display:grid; grid-template-columns:minmax(190px,.55fr) minmax(0,1fr); gap:10px; align-items:end; margin:-3px 0 15px; padding:12px 14px; border:1px solid var(--zw-line); border-top:0; border-radius:0 0 14px 14px; background:#faf8f9; }
+.zw .zwf-filter-context { display:flex; flex-wrap:wrap; align-items:center; gap:7px; min-height:40px; }
+.zw .zwf-filter-context > span { display:inline-flex; align-items:center; gap:7px; padding:7px 9px; border:1px solid #e4d7dc; border-radius:999px; background:#fff; color:var(--zw-muted); font-size:10px; }
+.zw .zwf-filter-context button { border:0; padding:0; background:transparent; color:var(--zw-red); font-size:10px; font-weight:750; cursor:pointer; }
+.zw .zwf-application-card { position:relative; gap:9px; }
+.zw .zwf-source { display:inline-flex; width:max-content; align-items:center; min-height:24px; padding:4px 8px; border:1px solid #ddcfd5; border-radius:999px; background:#f8f4f6; color:#725d67; font-size:9px; font-weight:800; letter-spacing:.035em; text-transform:uppercase; }
+.zw .zwf-source--worker-portal { border-color:#bed9c9; background:#eff8f3; color:#286346; }
+.zw .zwf-source--placement-cell { border-color:#cbd4ea; background:#f2f5fb; color:#405a8a; }
+.zw .zwf-source--public-form { border-color:#ead1b5; background:#fff8ed; color:#7b571f; }
+.zw .zwf-inline-status { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+@media(max-width:760px) {
+  .zw .zwf-admin-filters { grid-template-columns:minmax(0,1fr); }
+  .zw .zwf-filter-context { min-height:0; }
+}

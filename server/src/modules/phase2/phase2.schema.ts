@@ -23,6 +23,7 @@ const jobFields = { title: z.string().trim().min(3).max(160), city: z.string().t
 export const createLinkedJobSchema = z.object({ ...jobFields, requestKey: z.string().uuid(), requirementRevision: revision }).strict();
 export const editLinkedJobSchema = z.object({ ...jobFields, revision }).strict();
 export const linkedJobStatusSchema = z.object({ revision, status: z.enum(["DRAFT", "OPEN", "CLOSED"]) }).strict();
+export const linkedJobArchiveSchema = z.object({ revision, archived: z.boolean() }).strict();
 export const rangeFields = { from: calendarDate.default(() => addDays(istToday(), -29)), to: calendarDate.default(() => istToday()), location: queryText, requirementId: idParams.shape.id.optional() };
 export function validRange(value: { from: string; to: string }) { return value.from <= value.to && value.to <= istToday() && (Date.parse(value.to) - Date.parse(value.from)) / 86400000 <= 365; }
 export const approvalQuerySchema = z.object({ ...rangeFields, page, query: queryText, status: z.enum(["ALL", "PENDING", "APPROVED", "CHANGES_REQUESTED"]).default("PENDING") }).strict().refine(validRange, "Choose up to 366 dates ending today or earlier.");

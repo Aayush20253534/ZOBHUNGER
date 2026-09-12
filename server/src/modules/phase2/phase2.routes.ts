@@ -11,7 +11,7 @@ import { notifyNewRequirement } from "../../services/notification.service.js";
 import { createBusinessRequirementSchema } from "../business/business-requirements.schema.js";
 import * as schema from "./phase2.schema.js";
 import { getDraft, listDrafts, removeDraft, saveDraft, submitDraft } from "./drafts.service.js";
-import { businessOwned, changeLinkedJob, createLinkedJob, qualifyRequirement, requirementJobs } from "./linked-jobs.service.js";
+import { archiveLinkedJob, businessOwned, changeLinkedJob, createLinkedJob, qualifyRequirement, requirementJobs } from "./linked-jobs.service.js";
 import { approvalDetail, approvalQueue, decideApproval } from "./approvals.service.js";
 import { getReport, operationsSummary, reportCsv } from "./reports.service.js";
 function router(admin: boolean) {
@@ -36,8 +36,10 @@ function router(admin: boolean) {
       const { query, page } = res.locals.validated.query; const search = query.replace(/[\\%_]/g, "\\$&");
       const where = { AND: [businessOwned, ...(search ? [{ OR: [{ companyName: { contains: search, mode: "insensitive" as const } }, { serviceRequired: { contains: search, mode: "insensitive" as const } }, { id: { contains: search, mode: "insensitive" as const } }] }] : [])] };
       const total = await prisma.workforceRequirement.count({ where }), totalPages = Math.max(1, Math.ceil(total / 9)), current = Math.min(page, totalPages);
-      const items = await prisma.workforceRequirement.findMany({ where, select: { id: true, companyName: true, serviceRequired: true, jobLocation: true, workforceCount: true, status: true, revision: true, _count: { select: { jobs: true } } }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 9, skip: (current - 1) * 9 });
-      res.json(apiSuccessResponse("Hiring briefs retrieved", { items, total, totalPages, page: current }));
+      const rows = await prisma.workforceRequirement.findMany({ where, select: { id: true, companyName: true, serviceRequired: true, jobLocation: true, workforceCount: true, status: true, revision: true, jobs: { select: { status: true, archivedAt: true, _count: { select: { applications: true } } } } }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 9, skip: (current - 1) * 9 });
+      const items = rows.map(({ jobs, ...item }) => ({ ...item, _count: { jobs: jobs.length }, hiring: { open: jobs.filter(job => !job.archivedAt && job.status === "OPEN").length, draft: jobs.filter(job => !job.archivedAt && job.status === "DRAFT").length, archived: jobs.filter(job => Boolean(job.archivedAt)).length, applications: jobs.reduce((sum, job) => sum + job._count.applications, 0) } }));
+      const summary = { briefs: items.length, open: items.reduce((sum, item) => sum + item.hiring.open, 0), drafts: items.reduce((sum, item) => sum + item.hiring.draft, 0), applications: items.reduce((sum, item) => sum + item.hiring.applications, 0) };
+      res.json(apiSuccessResponse("Hiring briefs retrieved", { items, total, totalPages, page: current, summary }));
     });
     result.get("/requirement-jobs/:id", ...access, validate({ params: schema.idParams, query: pageQuery }), async (_req, res) => res.json(apiSuccessResponse("Linked openings retrieved", await requirementJobs({ userId: res.locals.authUser.id, admin }, res.locals.validated.params.id, res.locals.validated.query.page))));
     result.post("/requirement-jobs/:id/qualify", ...access, portalWrite, validate({ params: schema.idParams, body: schema.revisionSchema }), async (_req, res) => res.json(apiSuccessResponse("Requirement qualified", await qualifyRequirement(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.body.revision))));
@@ -47,6 +49,7 @@ function router(admin: boolean) {
     });
     result.put("/requirement-jobs/jobs/:id", ...access, portalWrite, validate({ params: schema.idParams, body: schema.editLinkedJobSchema }), async (_req, res) => res.json(apiSuccessResponse("Job saved as draft", await changeLinkedJob(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.body))));
     result.post("/requirement-jobs/jobs/:id/status", ...access, portalWrite, validate({ params: schema.idParams, body: schema.linkedJobStatusSchema }), async (_req, res) => res.json(apiSuccessResponse("Job status saved", await changeLinkedJob(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.body))));
+    result.post("/requirement-jobs/jobs/:id/archive", ...access, portalWrite, validate({ params: schema.idParams, body: schema.linkedJobArchiveSchema }), async (_req, res) => res.json(apiSuccessResponse(res.locals.validated.body.archived ? "Job archived" : "Job restored as draft", await archiveLinkedJob(res.locals.authUser.id, res.locals.validated.params.id, res.locals.validated.body))));
   }
   result.get("/attendance-approvals", ...access, validate({ query: schema.approvalQuerySchema }), async (_req, res) => res.json(apiSuccessResponse("Attendance approvals retrieved", await approvalQueue({ userId: res.locals.authUser.id, admin }, res.locals.validated.query))));
   result.get("/attendance-approvals/:id", ...access, validate({ params: schema.idParams, query: schema.historyQuerySchema }), async (_req, res) => res.json(apiSuccessResponse("Attendance decision history retrieved", await approvalDetail({ userId: res.locals.authUser.id, admin }, res.locals.validated.params.id, res.locals.validated.query.page))));

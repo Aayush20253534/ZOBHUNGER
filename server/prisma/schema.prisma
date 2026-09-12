@@ -492,6 +492,7 @@ model Job {
   requirementId    String?
   creationKey      String? @unique
   revision         Int @default(0)
+  archivedAt       DateTime?
 
   requirement WorkforceRequirement? @relation(fields: [requirementId], references: [id], onDelete: Restrict)
 
@@ -503,6 +504,7 @@ model Job {
   @@index([city, category, engagementType])
   @@index([createdByUserId])
   @@index([requirementId, status])
+  @@index([archivedAt, status])
 }
 
 model JobApplication {

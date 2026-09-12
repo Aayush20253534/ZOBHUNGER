@@ -11,9 +11,11 @@ const changed = () => new HttpError(409, "This application changed. Refresh it b
 const pageSize = 9;
 const candidateSelect = { id: true, status: true, revokedAt: true, requirement: { select: { companyName: true } }, assignment: { select: { id: true, cancelledAt: true, startDate: true, endDate: true } } } satisfies Prisma.BusinessCandidateSelect;
 const applicationSelect = {
-  id: true, jobId: true, name: true, email: true, phone: true, city: true, experience: true, availableFrom: true,
+  id: true, jobId: true, workerUserId: true, placementCandidateId: true, placementCellApplicationId: true,
+  name: true, email: true, phone: true, city: true, experience: true, availableFrom: true, resumeUrl: true,
   message: true, status: true, revision: true, withdrawnAt: true, withdrawalReason: true, consentAt: true,
   jobSnapshot: true, createdAt: true, updatedAt: true, businessCandidates: { select: candidateSelect },
+  job: { select: { id: true, title: true, location: true, category: true, engagementType: true, slug: true, requirementId: true, status: true } },
   submittedResume: { select: { fileName: true, size: true } },
 } satisfies Prisma.JobApplicationSelect;
 type Application = Prisma.JobApplicationGetPayload<{ select: typeof applicationSelect }>;
@@ -45,10 +47,20 @@ export function applicationStage(row: Application): Stage {
 }
 function snapshotObject(value: Prisma.JsonValue | null) { return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
 function dto(row: Application) {
-  const { businessCandidates, jobSnapshot, ...data } = row;
+  const { businessCandidates, jobSnapshot, job: liveJob, workerUserId, placementCandidateId, placementCellApplicationId, ...data } = row;
   const snapshot = snapshotObject(jobSnapshot);
-  const job = { title: typeof snapshot.title === "string" ? snapshot.title : "Previously submitted role", location: typeof snapshot.location === "string" ? snapshot.location : row.city || "Location to confirm", category: typeof snapshot.category === "string" ? snapshot.category : "Work opportunity", engagementType: typeof snapshot.engagementType === "string" ? snapshot.engagementType : "To be confirmed", slug: typeof snapshot.slug === "string" ? snapshot.slug : null };
-  return { ...data, job, stage: applicationStage(row), canWithdraw: !row.withdrawnAt && row.status !== "REJECTED" && !businessCandidates.some(candidate => candidate.assignment && !candidate.assignment.cancelledAt),
+  const job = {
+    id: liveJob.id,
+    requirementId: liveJob.requirementId,
+    status: liveJob.status,
+    title: typeof snapshot.title === "string" ? snapshot.title : liveJob.title,
+    location: typeof snapshot.location === "string" ? snapshot.location : liveJob.location || row.city || "Location to confirm",
+    category: typeof snapshot.category === "string" ? snapshot.category : liveJob.category || "Work opportunity",
+    engagementType: typeof snapshot.engagementType === "string" ? snapshot.engagementType : liveJob.engagementType || "To be confirmed",
+    slug: typeof snapshot.slug === "string" ? snapshot.slug : liveJob.slug,
+  };
+  const source = workerUserId ? "WORKER_PORTAL" as const : placementCandidateId || placementCellApplicationId ? "PLACEMENT_CELL" as const : "PUBLIC_FORM" as const;
+  return { ...data, source, isPortalApplicant: Boolean(workerUserId), job, stage: applicationStage(row), canWithdraw: Boolean(workerUserId) && !row.withdrawnAt && row.status !== "REJECTED" && !businessCandidates.some(candidate => candidate.assignment && !candidate.assignment.cancelledAt),
     hiringReviews: businessCandidates.filter(candidate => !candidate.revokedAt).map(candidate => ({ company: candidate.requirement.companyName, status: candidate.status, assignmentId: candidate.assignment?.id ?? null })) };
 }
 export async function submitWorkerApplication(userId: string, jobId: string, input: ApplyForJobInput) {
@@ -91,25 +103,38 @@ export async function submitWorkerApplication(userId: string, jobId: string, inp
   }
 }
 export async function workerApplications(userId: string, query: WorkerApplicationQuery, admin = false) {
-  const where: Prisma.JobApplicationWhereInput = { ...(admin ? { workerUserId: { not: null } } : { workerUserId: userId }),
-    ...(query.query ? { OR: [{ jobSnapshot: { path: ["searchText"], string_contains: query.query.toLowerCase() } }, ...(admin ? [{ name: { contains: query.query, mode: "insensitive" as const } }, { email: { contains: query.query, mode: "insensitive" as const } }] : [])] } : {}) };
+  const sourceWhere: Prisma.JobApplicationWhereInput = !admin || query.source === "WORKER_PORTAL" ? { workerUserId: admin ? { not: null } : userId }
+    : query.source === "PLACEMENT_CELL" ? { OR: [{ placementCandidateId: { not: null } }, { placementCellApplicationId: { not: null } }] }
+    : query.source === "PUBLIC_FORM" ? { workerUserId: null, placementCandidateId: null, placementCellApplicationId: null }
+    : {};
+  const constraints: Prisma.JobApplicationWhereInput[] = [sourceWhere];
+  if (admin && query.jobId) constraints.push({ jobId: query.jobId });
+  if (admin && query.requirementId) constraints.push({ job: { is: { requirementId: query.requirementId } } });
+  if (query.query) constraints.push({ OR: [
+    { jobSnapshot: { path: ["searchText"], string_contains: query.query.toLowerCase() } },
+    { job: { is: { title: { contains: query.query, mode: "insensitive" as const } } } },
+    ...(admin ? [{ name: { contains: query.query, mode: "insensitive" as const } }, { email: { contains: query.query, mode: "insensitive" as const } }] : []),
+  ] });
+  const where: Prisma.JobApplicationWhereInput = { AND: constraints };
   return prisma.$transaction(async tx => {
     const values = await Promise.all(applicationStages.map(status => tx.jobApplication.count({ where: { AND: [where, stageWhere(status)] } })));
     const counts = Object.fromEntries(applicationStages.map((status, index) => [status, values[index]]));
     const total = query.status === "ALL" ? values.reduce((sum, value) => sum + value, 0) : counts[query.status];
     const totalPages = Math.max(1, Math.ceil(total / pageSize)), page = Math.min(query.page, totalPages);
     const items = await tx.jobApplication.findMany({ where: { AND: [where, ...(query.status === "ALL" ? [] : [stageWhere(query.status)])] }, select: applicationSelect, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: pageSize, skip: (page - 1) * pageSize });
-    return { items: items.map(dto), total, counts, page, pageSize, totalPages };
+    return { items: items.map(dto), total, counts, page, pageSize, totalPages, filters: { source: query.source, jobId: query.jobId ?? null, requirementId: query.requirementId ?? null } };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
 }
 export async function workerApplicationDetail(userId: string, id: string, historyPage = 1, admin = false) {
   return prisma.$transaction(async tx => {
-    const row = await tx.jobApplication.findFirst({ where: { id, ...(admin ? { workerUserId: { not: null } } : { workerUserId: userId }) }, select: { ...applicationSelect, profileSnapshot: true } });
+    const row = await tx.jobApplication.findFirst({ where: { id, ...(admin ? {} : { workerUserId: userId }) }, select: { ...applicationSelect, profileSnapshot: true } });
     if (!row) throw missing();
     const total = await tx.workerApplicationEvent.count({ where: { applicationId: id } }); const totalPages = Math.max(1, Math.ceil(total / 15)), page = Math.min(historyPage, totalPages);
     const history = await tx.workerApplicationEvent.findMany({ where: { applicationId: id }, select: { id: true, kind: true, stage: true, title: true, message: true, interviewAt: true, interviewMode: true, createdAt: true }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 15, skip: (page - 1) * 15 });
     const { profileSnapshot, ...application } = row;
-    return { application: dto(application), profile: snapshotObject(profileSnapshot), history: { items: history, total, totalPages, page } };
+    const snapshot = snapshotObject(profileSnapshot);
+    const profile = Object.keys(snapshot).length ? snapshot : { fullName: row.name, headline: row.experience || "Public job application", about: row.message || "", city: row.city || "", skills: [], education: [], workExperience: [], languages: [], preferredLocations: [], preferredCategories: [], preferredEngagements: [] };
+    return { application: dto(application), profile, history: { items: history, total, totalPages, page } };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
 }
 export async function withdrawWorkerApplication(userId: string, id: string, input: { revision: number; reason: string }) {
@@ -135,7 +160,7 @@ export async function withdrawWorkerApplication(userId: string, id: string, inpu
 export async function reviewWorkerApplication(userId: string, id: string, input: { revision: number; status: "SUBMITTED" | "REVIEWED" | "SHORTLISTED" | "REJECTED"; workerMessage: string }) {
   await prisma.$transaction(async tx => {
     await lockApplication(tx, id);
-    const row = await tx.jobApplication.findFirst({ where: { id, workerUserId: { not: null } }, select: applicationSelect });
+    const row = await tx.jobApplication.findFirst({ where: { id }, select: applicationSelect });
     if (!row) throw missing();
     if (row.withdrawnAt) throw new HttpError(409, "A withdrawn application cannot be reopened or reviewed.", { code: "APPLICATION_WITHDRAWN" });
     if (row.revision !== input.revision) throw changed();
@@ -147,7 +172,7 @@ export async function reviewWorkerApplication(userId: string, id: string, input:
   return workerApplicationDetail(userId, id, 1, true);
 }
 export async function applicationResume(userId: string, id: string, admin = false) {
-  const application = await prisma.jobApplication.findFirst({ where: { id, ...(admin ? { workerUserId: { not: null } } : { workerUserId: userId }) }, select: { id: true, submittedResume: { select: { fileName: true, mimeType: true, data: true, storagePublicId: true, storageResourceType: true, storageDeliveryType: true, storageFormat: true } } } });
+  const application = await prisma.jobApplication.findFirst({ where: { id, ...(admin ? {} : { workerUserId: userId }) }, select: { id: true, submittedResume: { select: { fileName: true, mimeType: true, data: true, storagePublicId: true, storageResourceType: true, storageDeliveryType: true, storageFormat: true } } } });
   if (!application) throw missing();
   if (!application.submittedResume) throw new HttpError(404, "No CV was included with this application.", { code: "RESUME_NOT_FOUND" });
   const file = application.submittedResume;
