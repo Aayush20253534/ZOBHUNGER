@@ -33,6 +33,19 @@ test("live SEO gate verifies crawl controls, canonical URLs, sitemap and rich-re
   assert.equal(report.structuredData.blogPosting, `${canonical}/blog/live-guide`);
 });
 
+test("SEO gate treats an origin canonical with or without the explicit root slash as equivalent", async () => {
+  const report = await checkSeoIndexing(canonical, {
+    fetcher: async (url) => {
+      const parsed = new URL(url);
+      if (parsed.pathname === "/" && !parsed.search) {
+        return new Response(html({ canonicalUrl: canonical, types: ["Organization", "WebSite"] }), { status: 200 });
+      }
+      return fetcher(url);
+    },
+  });
+  assert.equal(report.status, "passed");
+});
+
 test("SEO gate rejects private URLs in the sitemap", async () => {
   await assert.rejects(
     checkSeoIndexing(canonical, {

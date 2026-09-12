@@ -55,9 +55,20 @@ function hasJsonLdType(html, type) {
   return new RegExp(`\\"@type\\"\\s*:\\s*\\"${escaped}\\"`, "i").test(html);
 }
 
+function normalizedAbsoluteUrl(value) {
+  if (!value) return null;
+  try {
+    return new URL(value).href;
+  } catch {
+    return null;
+  }
+}
+
 function assertCanonical(html, expected, label) {
   const canonical = canonicalFromHtml(html);
-  if (canonical !== expected) {
+  const actualNormalized = normalizedAbsoluteUrl(canonical);
+  const expectedNormalized = normalizedAbsoluteUrl(expected);
+  if (!actualNormalized || !expectedNormalized || actualNormalized !== expectedNormalized) {
     throw new Error(`${label} canonical is ${canonical ?? "missing"}; expected ${expected}.`);
   }
   return canonical;
