@@ -271,7 +271,7 @@ export function AdminAccessManagement() {
       <section className="zba-directory">
         <header className="zba-directory-head">
           <div><span className="zba-section-kicker">Administrator directory</span><h2>Accounts & access policy</h2><p>Search, review and change department access without exposing unrelated operational desks.</p></div>
-          <span className="zba-directory-security"><ShieldCheck aria-hidden="true" /> MFA required after activation</span>
+          <span className="zba-directory-security"><ShieldCheck aria-hidden="true" /> MFA optional after activation</span>
         </header>
 
         <div className="zba-filters">
@@ -314,7 +314,7 @@ export function AdminAccessManagement() {
         <div className="zba-drawer-layer" role="presentation">
           <button className="zba-drawer-backdrop" type="button" aria-label="Close access editor" onClick={() => !saving && setDrawerOpen(false)} />
           <aside className="zba-drawer" role="dialog" aria-modal="true" aria-labelledby="access-editor-title">
-            <header className="zba-drawer-head"><div><span className="zba-section-kicker">{editing ? "Edit policy" : "Secure invitation"}</span><h2 id="access-editor-title">{editing ? "Update department access" : "Add department administrator"}</h2><p>{editing ? "Changing permissions closes existing sessions so the new policy takes effect immediately." : "The administrator creates their own password from a one-time email link, then enrolls MFA on first sign-in."}</p></div><button type="button" aria-label="Close" onClick={() => !saving && setDrawerOpen(false)}><X aria-hidden="true" /></button></header>
+            <header className="zba-drawer-head"><div><span className="zba-section-kicker">{editing ? "Edit policy" : "Secure invitation"}</span><h2 id="access-editor-title">{editing ? "Update department access" : "Add department administrator"}</h2><p>{editing ? "Changing permissions closes existing sessions so the new policy takes effect immediately." : "The administrator creates their own password from a one-time email link, then can optionally add MFA from the Security page."}</p></div><button type="button" aria-label="Close" onClick={() => !saving && setDrawerOpen(false)}><X aria-hidden="true" /></button></header>
 
             <div className="zba-drawer-body">
               <label className="zba-field"><span>Email address</span><div className="zba-field-control"><Mail aria-hidden="true" /><input type="email" value={formEmail} onChange={event => setFormEmail(event.target.value)} disabled={Boolean(editing)} placeholder="department@zobhungr.com" autoComplete="off" /></div>{!editing && <button className="zba-suggestion" type="button" onClick={() => setFormEmail(suggestedEmails[formDepartment])}>Use {suggestedEmails[formDepartment]}</button>}</label>

@@ -91,3 +91,18 @@ export async function changeBusinessPassword(id: string, currentPassword: string
     return safeUser((await tx.user.findUniqueOrThrow({ where: { id } })));
   });
 }
+
+
+export async function changeAdminPassword(id: string, currentPassword: string, password: string) {
+  const user = await findUserById(id);
+  if (!user || !user.isActive || user.role !== "ADMIN") throw new HttpError(401, "Please sign in to your administrator account", { code: "UNAUTHENTICATED" });
+  if (!(await verifyPassword(user.passwordHash, currentPassword))) throw new HttpError(400, "The current password is incorrect", { code: "CURRENT_PASSWORD_INVALID" });
+  if (await verifyPassword(user.passwordHash, password)) throw new HttpError(400, "Choose a different password from your current password", { code: "PASSWORD_REUSED" });
+  const passwordHash = await hashPassword(password);
+  return prisma.$transaction(async tx => {
+    const updated = await tx.user.update({ where: { id }, data: { passwordHash, sessionVersion: { increment: 1 } } });
+    await tx.passwordResetToken.deleteMany({ where: { userId: id } });
+    await tx.auditLog.create({ data: { actorUserId: id, action: "admin.password_changed", entityType: "User", entityId: id } });
+    return safeUser(updated);
+  });
+}

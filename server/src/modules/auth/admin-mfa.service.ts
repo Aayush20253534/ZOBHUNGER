@@ -2,6 +2,7 @@ import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes, 
 import { prisma } from "../../config/db.js";
 import { env } from "../../config/env.js";
 import { HttpError } from "../../utils/http-error.js";
+import { verifyPassword } from "../../utils/password.js";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 const digits = 6;
@@ -147,4 +148,42 @@ export async function verifyAdminMfaForLogin(userId: string, code?: string) {
     await tx.auditLog.create({ data: { actorUserId: userId, action: "admin.mfa_recovery_used", entityType: "User", entityId: userId } });
   });
   return { enabled: true, recoveryCodeUsed: true };
+}
+
+
+async function verifyAdminSecurityChallenge(userId: string, password: string, code: string) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user || !user.isActive || user.role !== "ADMIN") throw new HttpError(403, "Administrator access is required", { code: "ADMIN_REQUIRED" });
+  if (!(await verifyPassword(user.passwordHash, password))) throw new HttpError(400, "The current password is incorrect", { code: "CURRENT_PASSWORD_INVALID" });
+  if (!user.adminMfaEnabledAt || !user.adminMfaSecretEncrypted) throw new HttpError(409, "MFA is not enabled on this account", { code: "MFA_NOT_ENABLED" });
+  if (!verifyTotp(decrypt(user.adminMfaSecretEncrypted), code)) throw new HttpError(400, "The authenticator code is invalid or expired", { code: "MFA_CODE_INVALID" });
+  return user;
+}
+
+export async function disableAdminMfa(userId: string, password: string, code: string) {
+  const user = await verifyAdminSecurityChallenge(userId, password, code);
+  return prisma.$transaction(async tx => {
+    const updated = await tx.user.update({
+      where: { id: userId },
+      data: { adminMfaSecretEncrypted: null, adminMfaEnabledAt: null, adminMfaRecoveryCodes: [], sessionVersion: { increment: 1 } },
+    });
+    await tx.auditLog.create({ data: { actorUserId: userId, action: "admin.mfa_disabled", entityType: "User", entityId: userId } });
+    return { user: updated, previousSessionVersion: user.sessionVersion };
+  });
+}
+
+export async function rotateAdminMfa(userId: string, password: string, code: string) {
+  await verifyAdminSecurityChallenge(userId, password, code);
+  const secret = base32Encode(randomBytes(20));
+  const user = await prisma.$transaction(async tx => {
+    const updated = await tx.user.update({
+      where: { id: userId },
+      data: { adminMfaSecretEncrypted: encrypt(secret), adminMfaEnabledAt: null, adminMfaRecoveryCodes: [], sessionVersion: { increment: 1 } },
+    });
+    await tx.auditLog.create({ data: { actorUserId: userId, action: "admin.mfa_device_change_started", entityType: "User", entityId: userId } });
+    return updated;
+  });
+  const label = encodeURIComponent(`ZOBHUNGER:${user.email}`);
+  const issuer = encodeURIComponent("ZOBHUNGER");
+  return { user, setup: { secret, otpauthUri: `otpauth://totp/${label}?secret=${secret}&issuer=${issuer}&algorithm=SHA1&digits=6&period=30` } };
 }

@@ -623,7 +623,7 @@ export function notifyIntakeAssignment(input: {
       intro: input.subject,
       details: [{ label: "Case reference", value: reference(input.caseId) }, { label: "Department", value: statusWords(input.department) }],
       action: { label: "Open assigned case", url: publicApp(`/admin/intake?assignment=MINE&case=${encodeURIComponent(input.caseId)}`) },
-      note: "Sign in with your administrator account and complete MFA before opening protected case details.",
+      note: "Sign in with your administrator account before opening protected case details.",
       signoff: "ZOBHUNGER Operations",
     },
   });

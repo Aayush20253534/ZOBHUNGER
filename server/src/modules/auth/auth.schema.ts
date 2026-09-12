@@ -32,3 +32,11 @@ export const changeBusinessPasswordSchema = z.object({
 
 
 export const adminMfaConfirmSchema = z.object({ code: z.string().trim().min(6).max(32) }).strict();
+export const adminMfaManageSchema = z.object({
+  password: z.string().min(1).max(128),
+  code: z.string().trim().min(6).max(32),
+}).strict();
+export const adminPasswordChangeSchema = z.object({
+  currentPassword: z.string().min(1).max(128),
+  password: passwordSchema,
+}).strict();

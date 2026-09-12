@@ -136,10 +136,6 @@ export function AdminDashboard() {
         router.replace("/login");
         return;
       }
-      if (!current.data.user.adminMfaEnabled) {
-        router.replace("/admin/security");
-        return;
-      }
       setUser(current.data.user);
 
       const overview = await apiFetch<ApiSuccessEnvelope<DashboardData>>("/admin/overview");
@@ -250,7 +246,7 @@ export function AdminDashboard() {
       <section className="zbo-dashboard-scope" aria-label="Current administrator scope">
         <div><span>Department</span><strong>{profile.label}</strong></div>
         <div><span>Visible workspaces</span><strong>{workspaceLinks.length + 1}</strong></div>
-        <div><span>Security</span><strong>{user?.adminMfaEnabled ? "MFA protected" : "Setup required"}</strong></div>
+        <div><span>Security</span><strong>{user?.adminMfaEnabled ? "MFA protected" : "Password only"}</strong></div>
       </section>
 
       {error && <p className="zb-login-error" role="alert">{error}</p>}

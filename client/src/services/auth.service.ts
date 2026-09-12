@@ -37,3 +37,20 @@ export function beginAdminMfa() {
 export function confirmAdminMfa(code: string) {
   return apiFetch<ApiSuccessEnvelope<{ user: AuthUser; recoveryCodes: string[] }>>("/auth/admin-mfa/confirm", { method: "POST", body: JSON.stringify({ code }) });
 }
+
+
+export function disableAdminMfa(password: string, code: string) {
+  return apiFetch<ApiSuccessEnvelope<{ user: AuthUser }>>("/auth/admin-mfa/disable", { method: "POST", body: JSON.stringify({ password, code }) });
+}
+export function rotateAdminMfa(password: string, code: string) {
+  return apiFetch<ApiSuccessEnvelope<{ user: AuthUser; secret: string; otpauthUri: string }>>("/auth/admin-mfa/rotate", { method: "POST", body: JSON.stringify({ password, code }) });
+}
+export function changeAdminPassword(currentPassword: string, password: string) {
+  return apiFetch<ApiSuccessEnvelope<{ user: AuthUser }>>("/auth/admin/change-password", { method: "POST", body: JSON.stringify({ currentPassword, password }) });
+}
+export function requestAdminPasswordReset(email: string) {
+  return apiFetch<ApiSuccessEnvelope<{ accepted: boolean }>>("/auth/admin/forgot-password", { method: "POST", body: JSON.stringify({ email }) });
+}
+export function resetAdminPassword(token: string, password: string) {
+  return apiFetch<ApiSuccessEnvelope<{ reset: boolean }>>("/auth/admin/reset-password", { method: "POST", body: JSON.stringify({ token, password }) });
+}

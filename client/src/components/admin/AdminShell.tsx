@@ -72,7 +72,6 @@ export function AdminShell({ children }: { children: ReactNode }) {
           return;
         }
         setAuthUser(user);
-        if (!user.adminMfaEnabled && !isSecurityRoute) router.replace("/admin/security");
       })
       .catch(() => { if (active) router.replace("/login"); })
       .finally(() => { if (active) setAuthReady(true); });
@@ -180,9 +179,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <a className="zbo-admin-site-link" href="/" target="_blank" rel="noreferrer" title={sidebarCollapsed ? "Open public website" : undefined}>
             <span>Open public website</span><ArrowUpRight aria-hidden="true" />
           </a>
-          <div className="zbo-admin-security-status" title={sidebarCollapsed ? (authUser?.adminMfaEnabled ? "MFA protected access" : "Security setup required") : undefined}>
+          <div className="zbo-admin-security-status" title={sidebarCollapsed ? (authUser?.adminMfaEnabled ? "MFA protected access" : "Password-only access") : undefined}>
             <span className="zbo-admin-status-dot" aria-hidden="true" />
-            <span>{authUser?.adminMfaEnabled ? "MFA protected access" : "Security setup required"}</span>
+            <span>{authUser?.adminMfaEnabled ? "MFA protected access" : "Password-only access"}</span>
           </div>
         </div>
       </aside>

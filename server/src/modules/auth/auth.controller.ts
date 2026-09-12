@@ -3,8 +3,8 @@ import { env } from "../../config/env.js";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import { signAccessToken } from "../../utils/jwt.js";
 import type { BusinessLoginInput, LoginInput, RegisterInput } from "./auth.schema.js";
-import { changeBusinessPassword, loginBusinessUser, loginPlacementCellUser, loginUser, registerUser, safeUser } from "./auth.service.js";
-import { beginAdminMfa, confirmAdminMfa } from "./admin-mfa.service.js";
+import { changeAdminPassword, changeBusinessPassword, loginBusinessUser, loginPlacementCellUser, loginUser, registerUser, safeUser } from "./auth.service.js";
+import { beginAdminMfa, confirmAdminMfa, disableAdminMfa, rotateAdminMfa } from "./admin-mfa.service.js";
 
 function authCookieOptions() {
   const production = env.NODE_ENV === "production";
@@ -76,4 +76,28 @@ export const adminMfaConfirmController: RequestHandler = async (_req, res) => {
   const user = safeUser(result.user);
   setAuthCookie(res, user);
   res.status(200).json(apiSuccessResponse("Administrator MFA enabled", { user, recoveryCodes: result.recoveryCodes }));
+};
+
+
+export const adminMfaDisableController: RequestHandler = async (_req, res) => {
+  const { password, code } = res.locals.validated.body;
+  const result = await disableAdminMfa(res.locals.authUser.id, password, code);
+  const user = safeUser(result.user);
+  setAuthCookie(res, user);
+  res.json(apiSuccessResponse("Multi-factor authentication disabled", { user }));
+};
+
+export const adminMfaRotateController: RequestHandler = async (_req, res) => {
+  const { password, code } = res.locals.validated.body;
+  const result = await rotateAdminMfa(res.locals.authUser.id, password, code);
+  const user = safeUser(result.user);
+  setAuthCookie(res, user);
+  res.json(apiSuccessResponse("New authenticator setup created", { user, ...result.setup }));
+};
+
+export const changeAdminPasswordController: RequestHandler = async (_req, res) => {
+  const { currentPassword, password } = res.locals.validated.body;
+  const user = await changeAdminPassword(res.locals.authUser.id, currentPassword, password);
+  setAuthCookie(res, user);
+  res.json(apiSuccessResponse("Administrator password updated", { user }));
 };

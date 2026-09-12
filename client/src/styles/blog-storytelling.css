@@ -578,3 +578,6 @@
   color: var(--zb-muted);
   font-size: .82rem;
 }
+
+/* Public blog cards: prevent titles/excerpts from looking cropped or over-clamped. */
+.zb-article-card,.zb-article-card-link{min-width:0}.zb-article-card-link{height:100%;display:flex;flex-direction:column}.zb-article-card h3{overflow-wrap:anywhere;text-wrap:balance}.zb-article-excerpt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;line-height:1.55;min-height:4.65em}.zb-article-card-footer{margin-top:auto}.zb-blog-card-cover,.zb-blog-card-cover--cms{overflow:hidden;aspect-ratio:16/9}.zb-blog-card-cover img,.zb-blog-card-cover--cms img{width:100%;height:100%;object-fit:cover;display:block}@media(max-width:640px){.zb-article-excerpt{-webkit-line-clamp:4;min-height:0}.zb-article-card h3{font-size:1.08rem;line-height:1.3}}

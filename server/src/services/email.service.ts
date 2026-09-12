@@ -98,6 +98,26 @@ export async function sendBusinessRecoveryEmail(email: string, link: string, req
   }
 }
 
+export async function sendAdminRecoveryEmail(email: string, link: string, requestId?: string): Promise<boolean> {
+  if (!recoveryEmailConfigured()) return false;
+  const rendered = corporateEmail({
+    eyebrow: "Administrator security",
+    title: "Reset your administrator password",
+    intro: "A password reset was requested for your ZOBHUNGER administrator account.",
+    paragraphs: ["Use the secure one-time action below to choose a new password."],
+    action: { label: "Reset administrator password", url: link },
+    note: "This link expires in 30 minutes and can be used once. If you did not request this change, ignore this email.",
+  });
+  try {
+    await postResendMessage({ to: [email], subject: "Reset your ZOBHUNGER administrator password", ...rendered, idempotencyKey: `admin-recovery-${requestId ?? "request"}` });
+    logger.info("admin.recovery_email_accepted", { requestId, provider: "resend" });
+    return true;
+  } catch (error) {
+    logger.warn("admin.recovery_delivery_failed", { requestId, ...resendDiagnostic(error) });
+    return false;
+  }
+}
+
 interface AdminInvitationEmailInput {
   email: string;
   department: string;
@@ -116,7 +136,7 @@ export async function sendAdminInvitationEmail(input: AdminInvitationEmailInput)
       eyebrow: "Secure administration",
       title: `Activate ${input.department} administrator access`,
       intro: "Your ZOBHUNGER department workspace is ready.",
-      paragraphs: ["Create your password using the secure one-time link below. After activation, sign in and complete multi-factor authentication before opening the admin workspace."],
+      paragraphs: ["Create your password using the secure one-time link below. After activation, sign in to your admin workspace. You can optionally enable multi-factor authentication from Security."],
       details: [{ label: "Department", value: input.department }, { label: "Invitation expires", value: expires }],
       action: { label: "Activate secure access", url: input.activationLink },
       note: "If you were not expecting this invitation, do not use the link or forward this email.",

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, KeyRound, LockKeyhole, LogIn, Mail, ShieldCheck } from "lucide-react";
@@ -31,7 +32,7 @@ export function LoginForm() {
     try {
       const response = await login(email.trim(), password, mfaRequired ? mfaCode : undefined);
       const user = response.data.user;
-      router.push(user.role === "ADMIN" && !user.adminMfaEnabled ? "/admin/security" : user.mustChangePassword ? "/business/change-password" : destinationForRole(user.role));
+      router.push(user.mustChangePassword ? "/business/change-password" : destinationForRole(user.role));
       router.refresh();
     } catch (caught) {
       if (caught instanceof ApiError && caught.code === "MFA_REQUIRED") {
@@ -96,6 +97,8 @@ export function LoginForm() {
           </button>
         </span>
       </label>
+
+      <div className="zb-login-form-links"><Link href="/forgot-password">Forgot admin password?</Link></div>
 
       {mfaRequired && (
         <label>
