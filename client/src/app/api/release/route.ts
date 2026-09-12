@@ -12,6 +12,7 @@ export function GET() {
     phase2ReleaseChecks: true,
     phase8ProductionDeployment: true,
     phase9SeoIndexing: true,
+    phase10ProductionAcceptance: true,
     canonicalOrigin: canonicalOrigin(),
     revision: process.env.NEXT_PUBLIC_BUILD_REVISION || null,
   }, { headers: { "Cache-Control": "no-store" } });
