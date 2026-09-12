@@ -4,9 +4,9 @@ import { checkRelease, pages, protectedRoutes, siteOrigin } from "../release-rou
 
 const revision = "a".repeat(40);
 function response(path) {
-  if (path === "/api/release") return Response.json({ service: "zobhunger-web", phase2ReleaseChecks: true, revision });
+  if (path === "/api/release") return Response.json({ service: "zobhunger-web", phase2ReleaseChecks: true, phase8ProductionDeployment: true, canonicalOrigin: "https://example.test", revision });
   if (path === "/api/backend/health/ready") return Response.json({ status: "ready", service: "zobhunger-api", revision, checks: { database: true, privateFileStorage: true, email: true, publicApp: true, cache: "ready" } });
-  if (path === "/api/backend/health") return Response.json({ success: true, data: { service: "zobhunger-api", revision, features: Object.fromEntries(["businessPortal", "businessDashboard", "businessRequirements", "businessCandidates", "businessDeployments", "businessAttendance", "businessPhase2Complete", "productionFoundation"].map(key => [key, true])) } });
+  if (path === "/api/backend/health") return Response.json({ success: true, data: { service: "zobhunger-api", revision, features: Object.fromEntries(["businessPortal", "businessDashboard", "businessRequirements", "businessCandidates", "businessDeployments", "businessAttendance", "businessPhase2Complete", "productionFoundation", "productionDeployment"].map(key => [key, true])) } });
   if (path.startsWith("/api/backend/")) return Response.json({ success: false, error: { code: "UNAUTHENTICATED" } }, { status: 401 });
   return new Response('<html><head><meta name="robots" content="noindex, nofollow"></head><body>ZOBHUNGER</body></html>', { headers: { "Content-Type": "text/html" } });
 }
@@ -33,7 +33,7 @@ test("unknown revisions are never reported as a matched deployment", async () =>
   await assert.rejects(checkRelease("https://example.test", { fetcher: missing, expectedRevision: revision }), /expected revision/);
 });
 test("mismatched frontend and API commits fail", async () => {
-  await assert.rejects(checkRelease("https://example.test", { fetcher: async url => url.endsWith("/api/release") ? Response.json({ service: "zobhunger-web", phase2ReleaseChecks: true, revision: "b".repeat(40) }) : fetcher(url) }), /revisions differ/);
+  await assert.rejects(checkRelease("https://example.test", { fetcher: async url => url.endsWith("/api/release") ? Response.json({ service: "zobhunger-web", phase2ReleaseChecks: true, phase8ProductionDeployment: true, canonicalOrigin: "https://example.test", revision: "b".repeat(40) }) : fetcher(url) }), /revisions differ/);
 });
 test("HTML error pages and missing backend modules cannot pass as a healthy API", async () => {
   for (const bad of [new Response("Gateway failure", { status: 502 }), new Response("<html>404</html>", { headers: { "Content-Type": "text/html" } }), Response.json({ success: true, data: { service: "zobhunger-api", features: {} } })]) {

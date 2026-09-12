@@ -36,8 +36,8 @@ Production startup now validates the complete operational configuration and fail
 ```env
 NODE_ENV=production
 PORT=5000
-CLIENT_ORIGIN=https://www.example.com
-PUBLIC_APP_URL=https://www.example.com
+CLIENT_ORIGIN=https://zobhungr.com
+PUBLIC_APP_URL=https://zobhungr.com
 DATABASE_URL=postgresql://...
 JWT_SECRET=<long-random-secret>
 MFA_ENCRYPTION_KEY=<different-long-random-secret>
@@ -82,8 +82,8 @@ Production resume/vendor/private-document storage requires the Cloudinary variab
 
 ```env
 NEXT_PUBLIC_DATA_MODE=api
-NEXT_PUBLIC_API_URL=https://api.example.com/api/v1
-NEXT_PUBLIC_SITE_URL=https://www.example.com
+NEXT_PUBLIC_API_URL=https://YOUR-RENDER-SERVICE.onrender.com/api/v1
+NEXT_PUBLIC_SITE_URL=https://zobhungr.com
 NEXT_PUBLIC_GOOGLE_PLAY_URL=
 NEXT_PUBLIC_APP_STORE_URL=
 ```
@@ -134,12 +134,22 @@ npm run smoke:server
 For the business route deployment probe against a deployed website proxy:
 
 ```powershell
-$env:SMOKE_API_URL="https://www.example.com/api/backend"
+$env:SMOKE_API_URL="https://zobhungr.com/api/backend"
 npm --prefix server run check:business
 Remove-Item Env:SMOKE_API_URL
 ```
 
 Protected endpoints should normally return authorization responses when called without a session; `404` is the deployment failure signal the route probe is designed to catch.
+
+## Phase 8 canonical-domain release gate
+
+After Vercel, Render, DNS and SSL are live, run from the repository root:
+
+```bash
+npm run check:production -- https://zobhungr.com
+```
+
+Optionally append the full intended Git commit SHA to require both deployed services to report that exact revision. The check also verifies the `www` permanent redirect, HSTS/security headers, private-route cache/index guards and canonical origin alignment. See `docs/PHASE3_PART8_PRODUCTION_DEPLOYMENT.md`.
 
 ## Final release checks
 

@@ -21,7 +21,7 @@ const noIndexPages = new Set([
   "/employee-joining", "/login", "/admin", "/worker/login", "/placement-portal",
   ...pages.filter(path => path.startsWith("/business/")),
 ]);
-const features = ["businessPortal", "businessDashboard", "businessRequirements", "businessCandidates", "businessDeployments", "businessAttendance", "businessPhase2Complete", "productionFoundation"];
+const features = ["businessPortal", "businessDashboard", "businessRequirements", "businessCandidates", "businessDeployments", "businessAttendance", "businessPhase2Complete", "productionFoundation", "productionDeployment"];
 
 export function siteOrigin(value) {
   let url;
@@ -59,7 +59,9 @@ export async function checkRelease(origin, { fetcher = fetch, expectedRevision }
     throw new Error("The API readiness probe is not ready. Check database and required production configuration.");
   }
   const frontend = await read("/api/release", 200, "application/json");
-  if (frontend.service !== "zobhunger-web" || frontend.phase2ReleaseChecks !== true) throw new Error("The frontend is missing the P2.8 release patch.");
+  if (frontend.service !== "zobhunger-web" || frontend.phase2ReleaseChecks !== true || frontend.phase8ProductionDeployment !== true) {
+    throw new Error("The frontend is missing the current production release markers.");
+  }
   const webRevision = frontend.revision;
   const apiRevision = health.data.revision;
   if (webRevision && apiRevision && webRevision !== apiRevision) throw new Error("Frontend and backend revisions differ. Deploy the same commit to both services.");

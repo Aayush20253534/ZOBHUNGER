@@ -9,7 +9,7 @@
     "build:server": "npm --prefix server run build",
     "test:server": "npm --prefix server run test",
     "smoke:server": "npm --prefix server run test:smoke",
-    "verify": "npm run audit:foundation && npm run test:release && npm run test:rbac && npm run test:admin-experience && npm run test:intake && npm run test:hiring && npm run test:blog-cms && npm run test:email-production && npm run test:server && npm run build:server && npm --prefix client run lint && npm run build:client",
+    "verify": "npm run audit:foundation && npm run test:release && npm run test:rbac && npm run test:admin-experience && npm run test:intake && npm run test:hiring && npm run test:blog-cms && npm run test:email-production && npm run test:production-deployment && npm run test:server && npm run build:server && npm --prefix client run lint && npm run build:client",
     "verify:phase2": "node scripts/verify-phase2.mjs",
     "check:release": "node scripts/check-release.mjs",
     "verify:workers": "node scripts/verify-phase2.mjs --workers",
@@ -21,6 +21,8 @@
     "test:hiring": "node --test scripts/tests/hiring-workflow-completion.test.mjs",
     "test:blog-cms": "node --test scripts/tests/blog-cms.test.mjs",
     "test:email-production": "node --test scripts/tests/email-production.test.mjs",
+    "test:production-deployment": "node --test scripts/tests/production-deployment.test.mjs",
+    "check:production": "node scripts/check-production-deployment.mjs",
     "chatbot:knowledge:validate": "npm --prefix server run chatbot:knowledge:validate",
     "chatbot:knowledge:list": "npm --prefix server run chatbot:knowledge:list",
     "chatbot:rag:search": "npm --prefix server run chatbot:rag:search --"

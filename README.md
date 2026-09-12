@@ -144,14 +144,22 @@ From the repository root after dependencies are installed:
 npm run verify
 ```
 
-The release gate now runs the production-foundation inventory audit and read-only release-check tests first, followed by server tests/build and client lint/build. Production environment contracts are checked separately with:
+The release gate now runs the production-foundation inventory audit, read-only release checks and Phase 8 deployment-contract tests before server tests/build and client lint/build. Production environment contracts are checked separately with:
 
 ```bash
 npm --prefix client run check:env
 npm --prefix server run check:env
 ```
 
-See `docs/PHASE3_PART1_PRODUCTION_FOUNDATION.md` for the Part 1 production-readiness contract.
+See `docs/PHASE3_PART1_PRODUCTION_FOUNDATION.md` for the Part 1 production-readiness contract and `docs/PHASE3_PART8_PRODUCTION_DEPLOYMENT.md` for the canonical-domain/HTTPS go-live procedure.
+
+After Vercel, Render, DNS and SSL are live, run the read-only production gate:
+
+```bash
+npm run check:production -- https://zobhungr.com
+```
+
+Append a full Git commit SHA to require the frontend and backend to report that exact deployment revision.
 
 Useful focused checks are also available from `server/package.json`, including business, worker, attendance, deployment, candidate, vendor and cache integration suites.
 

@@ -18,6 +18,9 @@ if (env.TRUST_PROXY) app.set("trust proxy", 1);
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "same-site" },
+    strictTransportSecurity: env.NODE_ENV === "production"
+      ? { maxAge: 31_536_000 }
+      : false,
   }),
 );
 app.use(requestContext);

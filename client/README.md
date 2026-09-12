@@ -22,6 +22,8 @@ NEXT_PUBLIC_APP_STORE_URL=
 
 `NEXT_PUBLIC_DATA_MODE=mock` remains available for isolated local/frontend previews only. Production runtime rejects mock mode. Vercel production builds also reject localhost/non-HTTPS production URLs automatically; other hosts can enable the same strict gate with `ZOBHUNGER_STRICT_PRODUCTION_CONFIG=true`.
 
+For production, keep `NEXT_PUBLIC_SITE_URL=https://zobhungr.com`. The Phase 8 Next.js configuration permanently redirects the alternate `www.zobhungr.com` hostname to the canonical apex domain and applies no-store/no-index response headers to private portal routes. Custom-domain DNS and certificate issuance are still configured in Vercel.
+
 ## App-store configuration
 
 Keep `NEXT_PUBLIC_GOOGLE_PLAY_URL` and `NEXT_PUBLIC_APP_STORE_URL` blank until each application is published. The footer shows the corresponding store as coming soon while the value is blank and turns it into an external download link after a valid URL is supplied and the client is rebuilt.
