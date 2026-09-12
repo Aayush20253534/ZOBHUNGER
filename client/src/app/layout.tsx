@@ -17,6 +17,7 @@ export const viewport: Viewport = {
 };
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
+const canonicalHomeUrl = new URL("/", `${site.url}/`).toString();
 const defaultSocialImage = {
   url: "/opengraph-image",
   width: 1200,
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
   category: "business",
   creator: site.name,
   publisher: site.name,
-  alternates: { canonical: site.url },
+  alternates: { canonical: canonicalHomeUrl },
   formatDetection: { telephone: false, email: false, address: false },
   icons: {
     icon: [{ url: "/Logo/Logo.png", type: "image/png" }],
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: market.primaryMarket.locale,
     siteName: site.name,
-    url: site.url,
+    url: canonicalHomeUrl,
     title: site.name,
     description: site.description,
     images: [defaultSocialImage],
