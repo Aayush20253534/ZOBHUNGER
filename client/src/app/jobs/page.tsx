@@ -17,7 +17,20 @@ import { getJobs } from "@/services/jobs.service";
 // catalogue on every request.
 export const dynamic = "force-dynamic";
 
-export function generateMetadata() {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<JobSearchParams>;
+}) {
+  const filters = parseJobFilters(await searchParams);
+  const filtered = Boolean(
+    filters.query ||
+      filters.location ||
+      filters.category ||
+      filters.jobType ||
+      (filters.page ?? 1) > 1,
+  );
+
   return {
     ...getPageMetadata(
       "Explore Jobs",
@@ -26,7 +39,9 @@ export function generateMetadata() {
     ),
     ...(getDataMode() === "mock"
       ? { robots: { index: false, follow: false } }
-      : {}),
+      : filtered
+        ? { robots: { index: false, follow: true } }
+        : {}),
   };
 }
 

@@ -6,7 +6,14 @@ import { CareerImage } from "@/components/careers/CareerImage";
 import { getPageMetadata } from "@/lib/page-metadata";
 import "@/styles/intake.css";
 
-export const metadata = getPageMetadata("Submit Your Career Profile", "Submit your education, experience, skills and resume for ZOBHUNGER review, verification and project-fit assessment.", "/careers/apply");
+export const metadata = {
+  ...getPageMetadata(
+    "Submit Your Career Profile",
+    "Submit your education, experience, skills and resume for ZOBHUNGER review, verification and project-fit assessment.",
+    "/careers/apply",
+  ),
+  robots: { index: false, follow: true },
+};
 export default function Page() {
   return <div className="zb-intake-page">
     <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Careers", href: "/careers" }, { label: "Submit your profile" }]} />

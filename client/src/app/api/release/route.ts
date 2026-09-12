@@ -11,6 +11,7 @@ export function GET() {
     service: "zobhunger-web",
     phase2ReleaseChecks: true,
     phase8ProductionDeployment: true,
+    phase9SeoIndexing: true,
     canonicalOrigin: canonicalOrigin(),
     revision: process.env.NEXT_PUBLIC_BUILD_REVISION || null,
   }, { headers: { "Cache-Control": "no-store" } });

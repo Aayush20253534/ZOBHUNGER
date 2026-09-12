@@ -22,6 +22,7 @@ import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { CTASection } from "@/components/common/CTASection";
 import { PageShell } from "@/components/common/PageShell";
 import { getPageMetadata } from "@/lib/page-metadata";
+import { blogPostingJsonLd, breadcrumbJsonLd, serializeJsonLd } from "@/lib/seo";
 import { site } from "@/data/site";
 import { getArticleVisualStory } from "@/data/article-visual-stories";
 import { executionVisuals } from "@/data/execution-visuals";
@@ -66,9 +67,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: article.publishedAt || undefined,
       modifiedTime: article.updatedAt || undefined,
       authors: article.authorName ? [article.authorName] : undefined,
-      images: image,
+      ...(image ? { images: image } : {}),
     },
-    twitter: { ...metadata.twitter, card: "summary_large_image", images: imageUrl ? [imageUrl] : undefined },
+    twitter: {
+      ...metadata.twitter,
+      card: "summary_large_image",
+      ...(imageUrl ? { images: [imageUrl] } : {}),
+    },
   };
 }
 
@@ -77,33 +82,25 @@ export default async function ArticlePage({ params }: Props) {
   if (!article?.isPublished) notFound();
   const visualStory = getArticleVisualStory(article.slug);
 
-  const canonicalUrl = article.canonicalUrl || `${site.url}/blog/${encodeURIComponent(article.slug)}`;
   const articleImage = article.ogImageUrl || article.coverImageUrl || (visualStory ? `${site.url}${executionVisuals[visualStory.cover].src}` : undefined);
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: article.title,
-    description: article.seoDescription || article.excerpt,
-    articleSection: article.category,
-    keywords: article.tags?.length ? article.tags.join(", ") : undefined,
-    image: articleImage,
-    datePublished: article.publishedAt || undefined,
-    dateModified: article.updatedAt || article.publishedAt || undefined,
-    author: article.authorName ? { "@type": "Person", name: article.authorName } : { "@type": "Organization", name: site.name },
-    mainEntityOfPage: canonicalUrl,
-    publisher: {
-      "@type": "Organization",
-      name: site.name,
-      url: site.url,
-    },
-  };
+  const schemas = [
+    breadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Blog", path: "/blogs" },
+      { name: article.title, path: `/blog/${encodeURIComponent(article.slug)}` },
+    ]),
+    blogPostingJsonLd(article, articleImage),
+  ];
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema).replace(/</g, "\\u003c") }}
-      />
+      {schemas.map((schema) => (
+        <script
+          key={schema["@type"]}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
+        />
+      ))}
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },

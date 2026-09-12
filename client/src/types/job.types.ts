@@ -3,12 +3,15 @@ export interface Job {
   slug: string;
   title: string;
   location: string;
+  city?: string | null;
+  state?: string | null;
   category: string;
   jobType: string;
   description: string;
   isPublished: boolean;
   createdAt: string;
   updatedAt: string;
+  publishedAt?: string | null;
   isDemo?: boolean;
   responsibilities?: readonly string[];
   requirements?: readonly string[];

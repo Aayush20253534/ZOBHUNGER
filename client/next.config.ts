@@ -38,6 +38,10 @@ const privateRouteHeaders = [
   { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
 ];
 
+const noIndexRouteHeaders = [
+  { key: "X-Robots-Tag", value: "noindex, follow" },
+];
+
 function canonicalAliasHost() {
   const canonical = new URL(runtimeConfig.siteUrl);
   if (!production || ["localhost", "127.0.0.1", "[::1]"].includes(canonical.hostname)) return null;
@@ -69,11 +73,16 @@ const nextConfig: NextConfig = {
       { source: "/:path*", headers: securityHeaders },
       { source: "/api/backend/:path*", headers: [{ key: "Cache-Control", value: "no-store" }] },
       { source: "/admin/:path*", headers: privateRouteHeaders },
+      { source: "/admin-access/:path*", headers: privateRouteHeaders },
       { source: "/business/:path*", headers: privateRouteHeaders },
       { source: "/worker/:path*", headers: privateRouteHeaders },
       { source: "/placement-portal/:path*", headers: privateRouteHeaders },
       { source: "/employee-joining", headers: privateRouteHeaders },
       { source: "/login", headers: privateRouteHeaders },
+      { source: "/placement-cell-login", headers: privateRouteHeaders },
+      { source: "/placement-cell-partnership/apply", headers: noIndexRouteHeaders },
+      { source: "/design-system", headers: noIndexRouteHeaders },
+      { source: "/careers/apply", headers: noIndexRouteHeaders },
     ];
   },
 };

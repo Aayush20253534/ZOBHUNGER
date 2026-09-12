@@ -3,13 +3,25 @@ import type { ReactNode } from "react";
 import { SiteFrame } from "@/components/layout/SiteFrame";
 import { market } from "@/data/market";
 import { site } from "@/data/site";
-import { solutions } from "@/data/solutions";
+import {
+  organizationJsonLd,
+  serializeJsonLd,
+  websiteJsonLd,
+} from "@/lib/seo";
 import "./globals.css";
 import "@/styles/mobile.css";
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: "#8d0d18",
   colorScheme: "light",
+};
+
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
+const defaultSocialImage = {
+  url: "/opengraph-image",
+  width: 1200,
+  height: 630,
+  alt: "ZOBHUNGER workforce, sales and business execution platform",
 };
 
 export const metadata: Metadata = {
@@ -18,6 +30,15 @@ export const metadata: Metadata = {
   description: site.description,
   applicationName: site.name,
   category: "business",
+  creator: site.name,
+  publisher: site.name,
+  alternates: { canonical: site.url },
+  formatDetection: { telephone: false, email: false, address: false },
+  icons: {
+    icon: [{ url: "/Logo/Logo.png", type: "image/png" }],
+    apple: [{ url: "/Logo/Logo.png", type: "image/png" }],
+  },
+  verification: googleVerification ? { google: googleVerification } : undefined,
   robots: {
     index: true,
     follow: true,
@@ -36,57 +57,29 @@ export const metadata: Metadata = {
     url: site.url,
     title: site.name,
     description: site.description,
+    images: [defaultSocialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: site.name,
     description: site.description,
+    images: [defaultSocialImage.url],
   },
-};
-
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: site.name,
-  url: site.url,
-  logo: `${site.url}/Logo/Logo.png`,
-  description: site.description,
-  slogan: site.tagline,
-  email: site.publicContact.email,
-  telephone: site.publicContact.phoneLabel,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: site.publicContact.streetAddress,
-    addressLocality: site.publicContact.addressLocality,
-    addressRegion: site.publicContact.addressRegion,
-    postalCode: site.publicContact.postalCode,
-    addressCountry: site.publicContact.addressCountry,
-  },
-  contactPoint: {
-    "@type": "ContactPoint",
-    contactType: "customer support",
-    email: site.publicContact.email,
-    telephone: site.publicContact.phoneLabel,
-    areaServed: market.operatingCountries.map((country) => country.name),
-  },
-  knowsAbout: Array.from(
-    new Set(
-      solutions.flatMap((solution) => [
-        solution.title,
-        ...solution.services,
-      ]),
-    ),
-  ),
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const structuredData = [organizationJsonLd(), websiteJsonLd()];
+
   return (
-    <html lang="en">
+    <html lang="en-IN">
       <body className="zb-site min-h-screen bg-background text-foreground antialiased">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c") }}
-        />
+        {structuredData.map((schema) => (
+          <script
+            key={schema["@type"]}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
+          />
+        ))}
         <SiteFrame>{children}</SiteFrame>
       </body>
     </html>

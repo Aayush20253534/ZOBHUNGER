@@ -3,19 +3,30 @@ import { site } from "@/data/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: [
-        "/admin",
-        "/employee-joining",
-        "/design-system",
-        "/login",
-        "/placement-cell-login",
-        "/placement-cell-partnership/apply",
-        "/placement-portal",
-      ],
-    },
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: [
+          "/api/",
+          "/admin",
+          "/admin/",
+          "/admin-access",
+          "/admin-access/",
+          "/business",
+          "/business/",
+          "/worker",
+          "/worker/",
+          "/placement-portal",
+          "/placement-portal/",
+          "/employee-joining",
+          "/design-system",
+          "/login",
+          "/placement-cell-login",
+          "/vendor-onboarding",
+        ],
+      },
+    ],
     sitemap: `${site.url}/sitemap.xml`,
     host: site.url,
   };

@@ -44,12 +44,21 @@ const editorialLanes = [
   },
 ] as const;
 
-export function generateMetadata() {
-  return getPageMetadata(
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<ArticleSearchParams>;
+}) {
+  const filters = parseArticleFilters(await searchParams);
+  const filtered = Boolean(filters.query || filters.category || (filters.page ?? 1) > 1);
+  const metadata = getPageMetadata(
     "Blog",
     "Practical, detailed insights on hiring, workforce management, sales, retail execution and business operations.",
     "/blogs",
   );
+  return filtered
+    ? { ...metadata, robots: { index: false, follow: true } }
+    : metadata;
 }
 
 export default async function BlogPage({
