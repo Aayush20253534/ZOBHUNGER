@@ -27,7 +27,7 @@ export function chatbotClientFingerprint(req: Pick<Request, "ip" | "socket">): s
   return createHmac("sha256", clientFingerprintKey).update(source).digest("hex").slice(0, 32);
 }
 
-export function chatbotDuplicateDigest(input: Pick<ChatbotMessageRequest, "message" | "currentPage">): string {
+export function chatbotDuplicateDigest(input: { message: string; currentPage?: string }): string {
   const normalized = `${input.message.trim().replace(/\s+/g, " ").toLocaleLowerCase("en-US")}|${input.currentPage ?? ""}`;
   return createHash("sha256").update(normalized).digest("hex").slice(0, 32);
 }
