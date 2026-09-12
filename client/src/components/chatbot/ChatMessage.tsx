@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Bot, Check, Copy } from "lucide-react";
 import type { ChatbotUiMessage } from "@/lib/chatbot";
+import { ChatbotRichText } from "./ChatbotRichText";
 
 export type { ChatbotUiMessage } from "@/lib/chatbot";
 
@@ -25,7 +26,7 @@ export function ChatMessage({ message, copied = false, onCopy }: ChatMessageProp
         </span>
       ) : null}
       <div className="zb-chatbot-message-content">
-        <div className="zb-chatbot-bubble">{message.content}</div>
+        <div className="zb-chatbot-bubble"><ChatbotRichText content={message.content} /></div>
 
         {isAssistant && message.id !== "welcome" ? (
           <div className="zb-chatbot-message-actions">

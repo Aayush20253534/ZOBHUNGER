@@ -126,7 +126,7 @@ export function ChatbotPanel({
             <h2 id="zb-chatbot-title">ZOBHUNGER Assistant</h2>
             <span><i aria-hidden="true" />Public info</span>
           </div>
-          <p id="zb-chatbot-subtitle">Website-grounded assistance · chat saved on this device</p>
+          <p id="zb-chatbot-subtitle">Official website guidance · saved on this device</p>
         </div>
 
         <div className="zb-chatbot-header-actions">
@@ -146,6 +146,8 @@ export function ChatbotPanel({
                 <button
                   type="button"
                   role="menuitem"
+                  className="zb-chatbot-menu-item"
+                  aria-label="Start a new chatbot conversation"
                   onClick={() => {
                     setMenuOpen(false);
                     onNewChat();
@@ -157,6 +159,8 @@ export function ChatbotPanel({
                 <button
                   type="button"
                   role="menuitem"
+                  className="zb-chatbot-menu-item zb-chatbot-menu-item--danger"
+                  aria-label="Clear saved chatbot history"
                   onClick={() => {
                     setMenuOpen(false);
                     onClearHistory();

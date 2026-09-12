@@ -71,7 +71,7 @@ describe("advanced public chatbot widget", () => {
     expect(container.querySelector("[role='dialog']")).not.toBeNull();
     expect(container.textContent).toContain("How it works");
     expect(container.textContent).toContain("Request this service");
-    expect(container.textContent).toContain("chat saved on this device");
+    expect(container.textContent).toContain("saved on this device");
   });
 
   it("sends current-page context, renders sources, and offers contextual follow-ups", async () => {
@@ -88,6 +88,33 @@ describe("advanced public chatbot widget", () => {
     expect(container.querySelector("a[href='/promoter-solutions']")?.textContent).toContain("Promoters Services");
     expect(container.textContent).toContain("Continue with");
     expect(container.textContent).toContain("Request this service");
+  });
+
+
+  it("renders assistant Markdown emphasis as real formatting", async () => {
+    sendMessage.mockResolvedValueOnce({
+      answer: "**Steps**\n\n1. **Go to the form** – Visit `/hire-workforce`.\n2. **Submit the form** – Send the requirement.",
+      grounded: true,
+      sources: [],
+    });
+    await openWidget();
+    await sendTypedMessage("How do I hire workforce?");
+
+    const bubble = Array.from(container.querySelectorAll(".zb-chatbot-message--assistant .zb-chatbot-bubble")).at(-1) as HTMLElement;
+    expect(bubble.querySelector("strong")?.textContent).toBe("Steps");
+    expect(bubble.querySelector("ol li[value='1'] strong")?.textContent).toBe("Go to the form");
+    expect(bubble.querySelector("code")?.textContent).toBe("/hire-workforce");
+    expect(bubble.textContent).not.toContain("**");
+  });
+
+  it("shows a visible clear-history menu action", async () => {
+    await openWidget();
+    await flush(() => (container.querySelector("button[aria-label='Chat options']") as HTMLButtonElement).click());
+
+    const clearHistory = container.querySelector("button[aria-label='Clear saved chatbot history']") as HTMLButtonElement;
+    expect(clearHistory).not.toBeNull();
+    expect(clearHistory.textContent).toContain("Clear history");
+    expect(clearHistory.textContent).toContain("Remove saved conversation");
   });
 
   it("persists successful conversation history locally", async () => {
