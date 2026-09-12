@@ -35,7 +35,7 @@ export async function workerDashboard(userId: string) {
   const [earnings, profileData, applications] = await Promise.all([
     workerEarnings(userId, { page: 1 }),
     getWorkerProfile(userId),
-    workerApplications(userId, { page: 1, query: "", status: "ALL" }),
+    workerApplications(userId, { page: 1, query: "", status: "ALL", source: "ALL" }),
   ]);
   return prisma.$transaction(async tx => {
     const [currentTotal, upcomingTotal, assignments, attendancePending, attendanceRecent, applicationEvents, attendanceEvents, approvedStatements, recentPayments] = await Promise.all([

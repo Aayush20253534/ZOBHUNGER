@@ -2,12 +2,12 @@ import { formatKnowledgeContext } from "./rag/context-formatter.js";
 import type { ChatbotHistoryMessage } from "./chatbot.types.js";
 import type { KnowledgeSearchResult } from "./rag/rag.types.js";
 
-const REFERENTIAL_QUERY = /\b(this|that|these|those|it|they|them|there|which one|what about|how do i|how can i)\b/i;
+const REFERENTIAL_QUERY = /\b(this|that|these|those|it|they|them|there|which one|what about|tell me more|more details|go on|continue)\b/i;
+const SHORT_AMBIGUOUS_QUERY = /^(?:why|how|when|where|who|which|what else|and then)[?.!]*$/i;
 
 export function buildRetrievalQuery(message: string, history: ChatbotHistoryMessage[]): string {
   const trimmed = message.trim();
-  const words = trimmed.split(/\s+/).filter(Boolean);
-  const shouldUseHistory = words.length <= 10 || REFERENTIAL_QUERY.test(trimmed);
+  const shouldUseHistory = REFERENTIAL_QUERY.test(trimmed) || SHORT_AMBIGUOUS_QUERY.test(trimmed);
   if (!shouldUseHistory) return trimmed;
 
   const previousUserMessage = [...history].reverse().find((item) => item.role === "user")?.content.trim();
