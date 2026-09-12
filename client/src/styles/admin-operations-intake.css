@@ -2,3 +2,477 @@
 @media(max-width:1320px){.zbo-intake-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.zbo-intake-filters{grid-template-columns:minmax(260px,2fr) repeat(2,minmax(145px,1fr))}.zbo-intake-workspace{grid-template-columns:minmax(380px,.9fr) minmax(460px,1.1fr)}.zbo-intake-controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:1080px){.zbo-intake-hero{align-items:flex-start}.zbo-intake-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.zbo-intake-search{grid-column:1/-1}.zbo-intake-workspace{grid-template-columns:1fr}.zbo-intake-detail{position:static;max-height:none}.zbo-intake-case-list{max-height:560px}}
 @media(max-width:720px){.zbo-intake{gap:12px}.zbo-intake-hero{display:grid;padding:20px;border-radius:16px}.zbo-intake-hero h1{font-size:2rem}.zbo-intake-hero-actions{width:100%}.zbo-intake-hero-actions>*{flex:1}.zbo-intake-summary{grid-template-columns:1fr 1fr;gap:8px}.zbo-intake-summary article{min-height:78px;padding:12px}.zbo-intake-summary article>span{width:36px;height:36px}.zbo-intake-summary strong{font-size:1.15rem}.zbo-intake-filters{grid-template-columns:1fr;padding:12px}.zbo-intake-search{grid-column:auto}.zbo-intake-list,.zbo-intake-detail{border-radius:14px}.zbo-intake-case{grid-template-columns:auto minmax(0,1fr);padding:13px 12px}.zbo-intake-case-side{display:none}.zbo-intake-case-copy>span{align-items:flex-start}.zbo-intake-detail-head{grid-template-columns:auto minmax(0,1fr);padding:17px 15px}.zbo-intake-detail-head em{grid-column:2;justify-self:start}.zbo-intake-contact-grid{grid-template-columns:1fr;padding:14px}.zbo-intake-control-panel,.zbo-intake-source,.zbo-intake-notes{margin:0 14px 14px;padding:14px}.zbo-intake-controls,.zbo-intake-source dl{grid-template-columns:1fr}.zbo-intake-source header{display:grid}.zbo-intake-detail>.zbo-intake-alert{margin:0 14px 12px}.zbo-intake-note-list article header{display:grid}.zbo-intake-note-list article header small{text-align:left}.zbo-intake-terminal{margin:0 14px 14px}}
+
+/* Phase 4 refinement: compact corporate intake workspace. */
+.zbo-intake {
+  gap: 12px;
+}
+
+.zbo-intake-hero {
+  align-items: center;
+  gap: 22px;
+  padding: 17px 20px;
+  border-top-width: 3px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff 0%, #fff 72%, #fff7f8 100%);
+  box-shadow: 0 8px 24px rgba(31, 20, 24, .055);
+}
+
+.zbo-intake-hero > div:first-child {
+  max-width: 880px;
+}
+
+.zbo-intake-hero .zbo-eyebrow {
+  margin: 0 0 3px;
+  color: #b41630;
+  font-size: .67rem;
+  font-weight: 850;
+  letter-spacing: .12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.zbo-intake-hero h1 {
+  margin: 2px 0 5px;
+  font-size: clamp(1.55rem, 2.15vw, 2.15rem);
+  line-height: 1.08;
+  letter-spacing: -.035em;
+}
+
+.zbo-intake-hero p:not(.zbo-eyebrow) {
+  max-width: 820px;
+  font-size: .89rem;
+  line-height: 1.5;
+}
+
+.zbo-intake-hero-actions {
+  flex-wrap: nowrap;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.zbo-intake-hero-actions button,
+.zbo-intake-hero-actions a {
+  min-height: 39px;
+  padding: 0 13px;
+  border-radius: 9px;
+  font-size: .81rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.zbo-intake-hero-actions svg {
+  width: 16px;
+}
+
+.zbo-intake-summary {
+  gap: 9px;
+}
+
+.zbo-intake-summary article {
+  gap: 11px;
+  min-height: 70px;
+  padding: 11px 13px;
+  border-radius: 14px;
+  box-shadow: 0 5px 16px rgba(31, 20, 24, .035);
+}
+
+.zbo-intake-summary article > span {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+
+.zbo-intake-summary svg {
+  width: 17px;
+}
+
+.zbo-intake-summary small {
+  margin-bottom: 3px;
+  font-size: .7rem;
+  letter-spacing: .01em;
+}
+
+.zbo-intake-summary strong {
+  font-size: 1.18rem;
+}
+
+.zbo-intake-summary article:last-child strong {
+  font-size: .92rem;
+}
+
+.zbo-intake-filters {
+  gap: 8px;
+  padding: 11px 12px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(31, 20, 24, .025);
+}
+
+.zbo-intake-filters label > span {
+  margin-bottom: 5px;
+  font-size: .69rem;
+}
+
+.zbo-intake-filters select,
+.zbo-intake-filters input,
+.zbo-intake-search > div,
+.zbo-intake-clear {
+  min-height: 39px;
+}
+
+.zbo-intake-filters select {
+  padding-left: 10px;
+  border-radius: 9px;
+  font-size: .8rem;
+}
+
+.zbo-intake-search > div {
+  gap: 6px;
+  padding-left: 10px;
+  border-radius: 9px;
+}
+
+.zbo-intake-search svg {
+  width: 16px;
+}
+
+.zbo-intake-search input {
+  font-size: .8rem;
+}
+
+.zbo-intake-search button {
+  padding: 0 12px;
+  border-radius: 0 8px 8px 0;
+  font-size: .78rem;
+}
+
+.zbo-intake-clear {
+  gap: 6px;
+  padding: 0 11px;
+  border-radius: 9px;
+  font-size: .78rem;
+}
+
+.zbo-intake-clear svg {
+  width: 15px;
+}
+
+.zbo-intake-workspace {
+  gap: 11px;
+}
+
+.zbo-intake-list,
+.zbo-intake-detail {
+  border-radius: 15px;
+  box-shadow: 0 7px 22px rgba(28, 20, 22, .04);
+}
+
+.zbo-intake-list > header {
+  gap: 12px;
+  padding: 14px 16px;
+}
+
+.zbo-intake-list > header h2 {
+  font-size: 1rem;
+}
+
+.zbo-intake-list > header p {
+  margin-top: 2px;
+  font-size: .74rem;
+}
+
+.zbo-intake-list > header > svg {
+  width: 18px;
+}
+
+.zbo-intake-case-list {
+  max-height: 680px;
+}
+
+.zbo-intake-case {
+  gap: 10px;
+  padding: 11px 13px;
+}
+
+.zbo-intake-case-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+}
+
+.zbo-intake-case-icon svg {
+  width: 16px;
+}
+
+.zbo-intake-case-copy strong {
+  font-size: .84rem;
+}
+
+.zbo-intake-case-copy em,
+.zbo-intake-detail-head em {
+  min-height: 22px;
+  padding: 0 8px;
+  font-size: .62rem;
+}
+
+.zbo-intake-case-copy small {
+  margin-top: 3px;
+  font-size: .69rem;
+}
+
+.zbo-intake-case-side {
+  font-size: .72rem;
+}
+
+.zbo-intake-pages {
+  padding: 9px 12px;
+}
+
+.zbo-intake-pages button {
+  min-height: 32px;
+  border-radius: 8px;
+  font-size: .74rem;
+}
+
+.zbo-intake-detail {
+  top: 82px;
+  max-height: calc(100vh - 98px);
+}
+
+.zbo-intake-detail-head {
+  gap: 10px;
+  padding: 15px 17px;
+}
+
+.zbo-intake-detail-head > span {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+}
+
+.zbo-intake-detail-head svg {
+  width: 18px;
+}
+
+.zbo-intake-detail-head h2 {
+  margin: 2px 0 3px;
+  font-size: 1.08rem;
+}
+
+.zbo-intake-detail-head small {
+  font-size: .69rem;
+}
+
+.zbo-intake-contact-grid {
+  gap: 8px;
+  padding: 12px 16px;
+}
+
+.zbo-intake-contact-grid > a,
+.zbo-intake-contact-grid > div {
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 10px;
+}
+
+.zbo-intake-contact-grid svg {
+  width: 16px;
+}
+
+.zbo-intake-contact-grid small {
+  font-size: .62rem;
+}
+
+.zbo-intake-contact-grid strong,
+.zbo-intake-contact-grid > div:first-child span {
+  font-size: .77rem;
+}
+
+.zbo-intake-detail > .zbo-intake-alert {
+  margin: 0 16px 10px;
+}
+
+.zbo-intake-control-panel,
+.zbo-intake-source,
+.zbo-intake-notes {
+  margin: 0 16px 12px;
+  padding: 13px 14px;
+  border-radius: 12px;
+}
+
+.zbo-intake-control-panel h3,
+.zbo-intake-source h3,
+.zbo-intake-notes h3 {
+  font-size: .9rem;
+}
+
+.zbo-intake-control-panel p,
+.zbo-intake-source header p,
+.zbo-intake-notes header p {
+  margin-top: 3px;
+  font-size: .7rem;
+}
+
+.zbo-intake-controls {
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.zbo-intake-controls label span {
+  margin-bottom: 4px;
+  font-size: .66rem;
+}
+
+.zbo-intake-controls select,
+.zbo-intake-controls button {
+  min-height: 36px;
+  border-radius: 9px;
+  font-size: .76rem;
+}
+
+.zbo-intake-source blockquote {
+  margin-top: 10px;
+  padding: 9px 11px;
+  font-size: .78rem;
+}
+
+.zbo-intake-source dl {
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.zbo-intake-source dl > div {
+  padding: 8px 9px;
+  border-radius: 9px;
+}
+
+.zbo-intake-source dt {
+  font-size: .6rem;
+}
+
+.zbo-intake-source dd {
+  font-size: .75rem;
+}
+
+.zbo-intake-notes form {
+  margin-top: 9px;
+  border-radius: 10px;
+}
+
+.zbo-intake-notes textarea {
+  min-height: 74px;
+  padding: 9px 10px;
+  font-size: .78rem;
+}
+
+.zbo-intake-notes form > div {
+  padding: 6px 7px;
+}
+
+.zbo-intake-notes form button {
+  min-height: 31px;
+  font-size: .72rem;
+}
+
+.zbo-intake-note-list {
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.zbo-intake-note-list article > span {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+}
+
+.zbo-intake-terminal {
+  margin: 0 16px 14px;
+  padding: 9px 10px;
+}
+
+@media (max-width: 1320px) {
+  .zbo-intake-summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1120px) {
+  .zbo-intake-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zbo-intake-hero {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 900px) {
+  .zbo-intake-hero {
+    display: grid;
+  }
+
+  .zbo-intake-hero-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .zbo-intake {
+    gap: 10px;
+  }
+
+  .zbo-intake-hero {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .zbo-intake-hero h1 {
+    font-size: 1.55rem;
+  }
+
+  .zbo-intake-hero-actions {
+    width: auto;
+    flex-wrap: wrap;
+  }
+
+  .zbo-intake-hero-actions > * {
+    flex: 0 1 auto;
+  }
+
+  .zbo-intake-summary article {
+    min-height: 64px;
+    padding: 10px;
+  }
+
+  .zbo-intake-summary article > span {
+    width: 32px;
+    height: 32px;
+  }
+
+  .zbo-intake-filters {
+    padding: 10px;
+  }
+
+  .zbo-intake-detail-head {
+    padding: 14px;
+  }
+
+  .zbo-intake-contact-grid {
+    padding: 11px 13px;
+  }
+
+  .zbo-intake-control-panel,
+  .zbo-intake-source,
+  .zbo-intake-notes {
+    margin: 0 13px 11px;
+    padding: 12px;
+  }
+
+  .zbo-intake-detail > .zbo-intake-alert {
+    margin: 0 13px 10px;
+  }
+
+  .zbo-intake-terminal {
+    margin: 0 13px 13px;
+  }
+}
