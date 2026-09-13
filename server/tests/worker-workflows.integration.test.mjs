@@ -8,6 +8,7 @@ mock.module(new URL('../dist/services/worker-email.service.js', import.meta.url)
 mock.module(new URL('../dist/services/email.service.js', import.meta.url).href, { namedExports: { recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false, sendCorporateEmail: async () => false, sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false } });
 const { app } = await import('../dist/app.js');
 const { prisma } = await import('../dist/config/db.js');
+const { uploadPrivateFile } = await import('../dist/services/private-file-storage.js');
 const { adminAccessForRole } = await import('./main-admin-fixture.mjs');
 const { signAccessToken } = await import('../dist/utils/jwt.js');
 const { istToday, addDays, isoWeekday } = await import('../dist/modules/attendance/attendance.utils.js');
@@ -52,7 +53,31 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
     const profile = await prisma.workerProfile.create({ data: { userId: worker.id, fullName: 'Asha Executive', phone: generateUniquePhone(), city: 'Delhi', state: 'Delhi', skills: ['Retail', 'Customer Service'], workExperience: 'Retail executive with 5+ years of experience.' } });
     await prisma.workerProfile.create({ data: { userId: other.id, fullName: 'Other Executive', phone: generateUniquePhone(), city: 'Delhi', state: 'Delhi', education: [], workExperience: 'Other retail executive.' } });
     const cv = Buffer.from('%PDF-1.4\nsubmitted-resume-original\n%%EOF');
-    await prisma.workerResume.create({ data: { profileId: profile.id, fileName: 'asha.pdf', mimeType: 'application/pdf', size: cv.length, sha256: createHash('sha256').update(cv).digest('hex'), data: cv } });
+    const cvSha256 = createHash('sha256').update(cv).digest('hex');
+    const storedCv = await uploadPrivateFile({
+      scope: 'worker-resumes',
+      ownerId: profile.id,
+      fileName: 'asha.pdf',
+      mimeType: 'application/pdf',
+      buffer: cv,
+      sha256: cvSha256,
+    });
+    await prisma.workerResume.create({
+      data: {
+        profileId: profile.id,
+        fileName: 'asha.pdf',
+        mimeType: 'application/pdf',
+        size: cv.length,
+        sha256: cvSha256,
+        data: null,
+        storagePublicId: storedCv.publicId,
+        storageResourceType: storedCv.resourceType,
+        storageDeliveryType: storedCv.deliveryType,
+        storageFormat: storedCv.format,
+        storageVersion: storedCv.version,
+        storageAssetId: storedCv.assetId,
+      },
+    });
     async function job() { const row = await prisma.job.create({ data: { slug: `${prefix}-${++serial}`, title: 'Market Executive', location: 'Delhi', city: 'Delhi', category: 'Sales', engagementType: 'FLEX', description: 'Flexible sales role in retail.', status: 'OPEN', publishedAt: new Date(), createdByUserId: business.id } }); jobs.push(row.id); return row; }
     const opening = await job();
     const input = { profileRevision: 0, resumeRevision: 0, includeResume: true, consent: true, message: 'Ready to join the field team', availableFrom: null };
