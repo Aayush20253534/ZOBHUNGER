@@ -1,6 +1,6 @@
+import Link from "next/link";
 import { Building2, ShieldCheck, UserRound } from "lucide-react";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
-import { PageShell } from "@/components/common/PageShell";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { getPageMetadata } from "@/lib/page-metadata";
 import "@/styles/portal.css";
@@ -16,19 +16,19 @@ export const metadata = {
 
 const accountTypes = [
   {
-    title: "Business account",
+    title: "Business",
     icon: Building2,
-    copy: "Access your business workspace, set up your company profile and manage your account.",
+    copy: "Requirements, company profile and workforce delivery.",
   },
   {
-    title: "Worker account",
+    title: "Worker",
     icon: UserRound,
-    copy: "Verify your email, build your profile, upload your CV and save published job opportunities.",
+    copy: "Profile, jobs, attendance and earnings in one place.",
   },
   {
-    title: "Admin account",
+    title: "Admin",
     icon: ShieldCheck,
-    copy: "Access the operations dashboard with an authorised administrator account.",
+    copy: "Authorised access to operations and management tools.",
   },
 ] as const;
 
@@ -38,37 +38,61 @@ export default function LoginPage() {
       <Breadcrumbs
         items={[{ label: "Home", href: "/" }, { label: "Portal access" }]}
       />
-      <div className="zb-portal-heading">
-        <PageShell
-          eyebrow="Portal access"
-          title="Your work starts here."
-          description="Sign in to the workspace connected to your account. Business users can manage their company details and administrators can access operations."
-        />
-      </div>
 
-      <div className="zb-login-layout">
-        <LoginForm />
-        <aside className="zb-account-access-summary" aria-label="Account access status">
-          <p className="zb-eyebrow">Account status</p>
-          <h2>What is available now</h2>
-          <div className="zb-account-type-list">
+      <section className="zb-portal-access-shell" aria-label="ZOBHUNGER portal access">
+        <div className="zb-portal-access-intro">
+          <div className="zb-portal-access-kicker">
+            <span aria-hidden="true" />
+            Portal access
+          </div>
+
+          <h1>
+            One secure sign-in.
+            <span>Everything connected.</span>
+          </h1>
+
+          <p className="zb-portal-access-copy">
+            Access the workspace assigned to your ZOBHUNGER account. Your role
+            automatically takes you to the right business, worker or operations portal.
+          </p>
+
+          <div className="zb-portal-account-grid" aria-label="Available account types">
             {accountTypes.map((account) => {
               const Icon = account.icon;
               return (
                 <article key={account.title}>
-                  <span className="zb-icon-tile" aria-hidden="true">
+                  <span className="zb-portal-account-icon" aria-hidden="true">
                     <Icon />
                   </span>
                   <div>
-                    <h3>{account.title}</h3>
+                    <h2>{account.title}</h2>
                     <p>{account.copy}</p>
                   </div>
                 </article>
               );
             })}
           </div>
-        </aside>
-      </div>
+
+          <div className="zb-portal-trust-note">
+            <ShieldCheck aria-hidden="true" />
+            <span>
+              <strong>Protected account access</strong>
+              Secure sessions and role-based permissions keep every workspace separated.
+            </span>
+          </div>
+        </div>
+
+        <div className="zb-portal-login-column">
+          <div className="zb-portal-login-status">
+            <span aria-hidden="true" />
+            Authorised access only
+          </div>
+          <LoginForm />
+          <p className="zb-portal-login-help">
+            Need help accessing your account? <Link href="/contact">Contact support</Link>
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
