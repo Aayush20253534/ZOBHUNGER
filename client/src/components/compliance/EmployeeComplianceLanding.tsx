@@ -33,7 +33,26 @@ export function EmployeeComplianceLanding() {
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    if (!complianceToken()) return;
+
+    let active = true;
+    void getEmployeeComplianceProfile()
+      .then(response => {
+        if (active) setProfile(response.data);
+      })
+      .catch(err => {
+        if (!active) return;
+        clearComplianceToken();
+        setProfile(null);
+        if (err instanceof ApiError && err.status !== 401) setError(err.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => { active = false; };
+  }, []);
 
   async function verify(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

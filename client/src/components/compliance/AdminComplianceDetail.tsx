@@ -64,7 +64,47 @@ export function AdminComplianceDetail({ area, id }: { area: "pf" | "esic"; id: s
     }
   }, [area, id]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    let active = true;
+    const request = area === "pf" ? getPfCompliance(id) : getEsicCompliance(id);
+
+    void request
+      .then(response => {
+        if (!active) return;
+        setError("");
+        setData(response.data);
+
+        if (area === "pf") {
+          const pf = (response.data as PfComplianceDetail).pf;
+          if (pf) {
+            setPfEdit({
+              appointmentDate: pf.appointmentDate || "",
+              epfWages: pf.epfWages,
+              monthlyGross: pf.monthlyGross,
+              department: pf.department || "",
+              designation: pf.designation || "",
+              bankAccountType: (pf.bankAccountType as "" | "SAVINGS" | "CURRENT") || "",
+              existingUanNumber: pf.existingUanNumber || "",
+            });
+          }
+        } else {
+          const esic = (response.data as EsicComplianceDetail).esic;
+          if (esic) {
+            setEsicEdit({ esiApplicable: Boolean(esic.esiApplicable), esiNumber: esic.esiNumber || "" });
+          }
+        }
+      })
+      .catch(err => {
+        if (active) {
+          setError(err instanceof ApiError ? err.message : "Unable to load compliance record.");
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => { active = false; };
+  }, [area, id]);
   useEffect(() => {
     let active = true;
     void getCurrentUser().then(response => { if (active) setPermissions(new Set(response.data.user.adminPermissions ?? [])); }).catch(() => { if (active) setPermissions(new Set()); });
