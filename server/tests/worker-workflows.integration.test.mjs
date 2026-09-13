@@ -16,7 +16,7 @@ const prefix = `workflow-${testId}`;
 const users = [], jobs = [], requirements = [], applications = [];
 let server, base, serial = 0;
 async function request(path, { user, method = 'GET', body, csrf = true } = {}) {
-  const response = await fetch(`${base}/api/v1${path}`, { method, headers: { ...(user ? { Cookie: `zobhunger_access=${signAccessToken({ sub: user.id, role: user.role, version: 0 })}` } : {}), ...(csrf ? { 'X-CSRF-Token': 'test-token' } : {}), 'Content-Type': 'application/json' }, ...(body ? { body: JSON.stringify(body) } : {}) });
+  const response = await fetch(`${base}/api/v1${path}`, { method, headers: { ...(user ? { Cookie: `zobhunger_access=${signAccessToken({ sub: user.id, role: user.role, version: 0 })}` } : {}), ...(csrf ? { 'X-Requested-With': 'XMLHttpRequest' } : {}), 'Content-Type': 'application/json' }, ...(body ? { body: JSON.stringify(body) } : {}) });
   const text = await response.text(); let parsed; try { parsed = JSON.parse(text); } catch { parsed = text; } return { status: response.status, body: parsed, headers: response.headers };
 }
 function ok(result, status = 200) { assert.equal(result.status, status, JSON.stringify(result.body)); return result.body.data; }
