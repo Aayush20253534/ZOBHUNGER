@@ -281,7 +281,7 @@
 
 @media (max-width: 600px) {
   .zb-partner-mark[data-fit] {
-    --zb-logo-scale: min(var(--zb-logo-optical-scale, 1), 1.72);
+    --zb-logo-scale: min(calc(var(--zb-logo-optical-scale, 1) * 0.86), 1.9);
   }
 
   .zb-partner-mark-surface {
