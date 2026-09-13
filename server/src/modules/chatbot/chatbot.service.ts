@@ -195,7 +195,7 @@ export function createChatbotService(options: CreateChatbotServiceOptions) {
     if (!options.config.enabled) throw new HttpError(503, "The chatbot is currently unavailable.", { code: "CHATBOT_DISABLED" });
 
     const started = performance.now();
-    let storedAudience = ChatbotAudience.UNKNOWN;
+    let storedAudience: ChatbotAudience = ChatbotAudience.UNKNOWN;
     let memoryHistory: ChatbotMessageInput["history"] = [];
     if (options.config.memoryEnabled && input.conversationId) {
       const memory = await loadConversationMemory(input.conversationId, options.config.memoryMaxMessages ?? options.config.maxHistoryMessages, request.clientFingerprint);

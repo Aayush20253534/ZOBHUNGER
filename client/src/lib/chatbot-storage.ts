@@ -1,4 +1,4 @@
-import type { ChatbotUiMessage } from "@/lib/chatbot";
+import type { ChatbotAction, ChatbotSource, ChatbotUiMessage } from "@/lib/chatbot";
 
 const STORAGE_KEY = "zobhunger.chatbot.conversation.v1";
 const STORAGE_VERSION = 1;
@@ -41,39 +41,46 @@ function sanitizeMessage(value: unknown): ChatbotUiMessage | null {
   if (!content) return null;
 
   const rawSources = Array.isArray(value.sources) ? value.sources : [];
-  const sources = rawSources.flatMap((source) => {
-    if (!isRecord(source)) return [];
+  const sources: ChatbotSource[] = [];
+  for (const source of rawSources) {
+    if (sources.length >= MAX_STORED_SOURCES) break;
+    if (!isRecord(source)) continue;
     if (
       typeof source.title !== "string" ||
       typeof source.url !== "string" ||
       typeof source.category !== "string" ||
       !isSafePublicSourceUrl(source.url)
-    ) return [];
-    return [{
+    ) continue;
+    sources.push({
       title: source.title.trim().slice(0, 160),
       url: source.url.slice(0, 300),
       category: source.category.trim().slice(0, 80),
-    }];
-  }).slice(0, MAX_STORED_SOURCES);
+    });
+  }
 
   const rawActions = Array.isArray(value.actions) ? value.actions : [];
-  const actions = rawActions.flatMap((action) => {
-    if (!isRecord(action) || typeof action.id !== "string" || typeof action.label !== "string" || typeof action.kind !== "string") return [];
+  const actions: ChatbotAction[] = [];
+  for (const action of rawActions) {
+    if (actions.length >= MAX_STORED_ACTIONS) break;
+    if (!isRecord(action) || typeof action.id !== "string" || typeof action.label !== "string" || typeof action.kind !== "string") continue;
     const id = action.id.trim().slice(0, 80);
     const label = action.label.trim().slice(0, 120);
-    if (!id || !label) return [];
+    if (!id || !label) continue;
+
     if (action.kind === "link") {
-      if (typeof action.href !== "string" || !isSafePublicSourceUrl(action.href)) return [];
-      return [{ id, label, kind: "link" as const, href: action.href.slice(0, 300) }];
+      if (typeof action.href !== "string" || !isSafePublicSourceUrl(action.href)) continue;
+      actions.push({ id, label, kind: "link", href: action.href.slice(0, 300) });
+      continue;
     }
+
     if (action.kind === "lead" || action.kind === "handover") {
-      const audience = ["UNKNOWN", "JOB_SEEKER", "BUSINESS", "VENDOR_PARTNER", "GENERAL"].includes(String(action.audience))
-        ? action.audience as "UNKNOWN" | "JOB_SEEKER" | "BUSINESS" | "VENDOR_PARTNER" | "GENERAL"
+      const rawAudience = String(action.audience ?? "");
+      const audience = ["UNKNOWN", "JOB_SEEKER", "BUSINESS", "VENDOR_PARTNER", "GENERAL"].includes(rawAudience)
+        ? rawAudience as "UNKNOWN" | "JOB_SEEKER" | "BUSINESS" | "VENDOR_PARTNER" | "GENERAL"
         : undefined;
-      return [{ id, label, kind: action.kind, ...(audience ? { audience } : {}) }];
+      actions.push({ id, label, kind: action.kind, ...(audience ? { audience } : {}) });
     }
-    return [];
-  }).slice(0, MAX_STORED_ACTIONS);
+  }
 
   return {
     id: typeof value.id === "string" && value.id.trim()
