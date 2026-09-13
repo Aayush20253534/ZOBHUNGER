@@ -131,12 +131,12 @@ describe("advanced public chatbot widget", () => {
     });
 
     await openWidget();
-    const sendPromise = sendTypedMessage("Stream this answer");
-    await flush();
+    await sendTypedMessage("Stream this answer");
     expect(container.textContent).toContain("First ");
     expect(container.textContent).not.toContain("First second");
+
     await flush(() => finish?.());
-    await sendPromise;
+    await flush();
     expect(container.textContent).toContain("First second");
   });
 
