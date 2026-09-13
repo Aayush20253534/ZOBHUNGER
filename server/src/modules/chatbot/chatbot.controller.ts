@@ -2,7 +2,8 @@ import type { RequestHandler, Response } from "express";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import { HttpError } from "../../utils/http-error.js";
 import { getChatbotService } from "./chatbot.runtime.js";
-import type { ChatbotMessageRequest } from "./chatbot.schema.js";
+import type { ChatbotLeadRequest, ChatbotMessageRequest } from "./chatbot.schema.js";
+import { submitChatbotLead } from "./chatbot.leads.js";
 
 function requestContext(res: Response, signal?: AbortSignal) {
   return {
@@ -59,4 +60,11 @@ export const streamChatbotMessageController: RequestHandler = async (_req, res) 
     writeSse(res, "error", publicError);
     res.end();
   }
+};
+
+
+export const submitChatbotLeadController: RequestHandler = async (_req, res) => {
+  const input = res.locals.validated.body as ChatbotLeadRequest;
+  const result = await submitChatbotLead(input, res.locals.requestId);
+  res.status(201).json(apiSuccessResponse(result.message, result));
 };

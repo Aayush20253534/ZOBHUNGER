@@ -2,7 +2,7 @@ import { env } from "../../config/env.js";
 import { redisStatus, redisTransport } from "../../config/redis.js";
 import { createChatbotResponseCache } from "./chatbot.cache.js";
 import { ChatbotMetrics } from "./chatbot.metrics.js";
-import { getDefaultKnowledgeRetriever } from "./rag/index.js";
+import { getDefaultKnowledgeRetriever, invalidateDefaultKnowledgeRetriever } from "./rag/index.js";
 import { createChatbotService, type ChatbotService } from "./chatbot.service.js";
 import { createGroqClient } from "./groq.client.js";
 
@@ -17,7 +17,8 @@ function modelSignature(): string {
     maxCompletionTokens: env.GROQ_MAX_COMPLETION_TOKENS,
     temperature: env.GROQ_TEMPERATURE,
     reasoningEffort: env.GROQ_REASONING_EFFORT ?? null,
-    promptVersion: 2,
+    promptVersion: 3,
+    rerank: env.CHATBOT_RERANK_ENABLED,
   });
 }
 
@@ -28,6 +29,11 @@ export function getChatbotService(): Promise<ChatbotService> {
       maxHistoryMessages: env.CHATBOT_MAX_HISTORY_MESSAGES,
       ragTopK: env.CHATBOT_RAG_TOP_K,
       contextMaxCharacters: env.CHATBOT_CONTEXT_MAX_CHARACTERS,
+      rerankEnabled: env.CHATBOT_RERANK_ENABLED,
+      rerankCandidates: env.CHATBOT_RERANK_CANDIDATES,
+      minGroundingScore: env.CHATBOT_MIN_GROUNDING_SCORE,
+      memoryEnabled: env.CHATBOT_MEMORY_ENABLED,
+      memoryMaxMessages: env.CHATBOT_MEMORY_MAX_MESSAGES,
       cacheEnabled: env.CHATBOT_CACHE_ENABLED,
       modelSignature: modelSignature(),
     };
@@ -79,6 +85,13 @@ export function chatbotOperationalStatus() {
     model: env.GROQ_MODEL,
     fallbackModel: env.GROQ_FALLBACK_MODEL ?? null,
     cache: !env.CHATBOT_CACHE_ENABLED ? "disabled" : redis.ready ? "ready" : "bypass",
+    retrieval: {
+      hybrid: true,
+      rerank: env.CHATBOT_RERANK_ENABLED,
+      rerankCandidates: env.CHATBOT_RERANK_CANDIDATES,
+      groundingThreshold: env.CHATBOT_MIN_GROUNDING_SCORE,
+    },
+    memory: { enabled: env.CHATBOT_MEMORY_ENABLED, maxMessages: env.CHATBOT_MEMORY_MAX_MESSAGES },
     knowledge: runtimeKnowledge
       ? { loaded: true, documents: runtimeKnowledge.documents, chunks: runtimeKnowledge.chunks, fingerprint: runtimeKnowledge.fingerprint.slice(0, 12) }
       : { loaded: false },
@@ -99,8 +112,13 @@ export function chatbotMetricsSnapshot() {
   return metrics.snapshot();
 }
 
-export function resetChatbotServiceForTests() {
+export function refreshChatbotRuntime() {
   servicePromise = null;
   runtimeKnowledge = null;
+  invalidateDefaultKnowledgeRetriever();
+}
+
+export function resetChatbotServiceForTests() {
+  refreshChatbotRuntime();
   metrics.reset();
 }

@@ -59,6 +59,11 @@ const envSchema = z.object({
   CHATBOT_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(500).default(20),
   CHATBOT_MAX_HISTORY_MESSAGES: z.coerce.number().int().min(0).max(10).default(10),
   CHATBOT_RAG_TOP_K: z.coerce.number().int().min(1).max(10).default(6),
+  CHATBOT_RERANK_ENABLED: z.enum(["true", "false"]).default("true").transform((value) => value === "true"),
+  CHATBOT_RERANK_CANDIDATES: z.coerce.number().int().min(4).max(20).default(12),
+  CHATBOT_MIN_GROUNDING_SCORE: z.coerce.number().min(0).max(100).default(4),
+  CHATBOT_MEMORY_ENABLED: z.enum(["true", "false"]).default("true").transform((value) => value === "true"),
+  CHATBOT_MEMORY_MAX_MESSAGES: z.coerce.number().int().min(2).max(30).default(12),
   CHATBOT_CONTEXT_MAX_CHARACTERS: z.coerce.number().int().min(2_000).max(30_000).default(14_000),
   CHATBOT_CACHE_ENABLED: z.enum(["true", "false"]).default("true")
     .transform((value) => value === "true"),

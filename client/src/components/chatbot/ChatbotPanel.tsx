@@ -20,10 +20,11 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import type { ChatbotUiMessage } from "@/lib/chatbot";
+import type { ChatbotAction, ChatbotAudience, ChatbotUiMessage } from "@/lib/chatbot";
 import type { ChatbotSuggestion } from "@/lib/chatbot-suggestions";
 import { ChatMessage } from "./ChatMessage";
 import { ChatSuggestions } from "./ChatSuggestions";
+import { ChatbotLeadForm } from "./ChatbotLeadForm";
 
 interface ChatbotPanelProps {
   messages: ChatbotUiMessage[];
@@ -51,6 +52,12 @@ interface ChatbotPanelProps {
   onClearHistory: () => void;
   onBodyScroll: (event: UIEvent<HTMLDivElement>) => void;
   onJumpToLatest: () => void;
+  onAction: (action: ChatbotAction) => void;
+  leadRequest: { audience: Exclude<ChatbotAudience, "UNKNOWN">; handover: boolean } | null;
+  conversationId: string;
+  currentPage?: string | null;
+  onLeadBack: () => void;
+  onLeadSubmitted: (message: string) => void;
 }
 
 export function ChatbotPanel({
@@ -79,6 +86,12 @@ export function ChatbotPanel({
   onClearHistory,
   onBodyScroll,
   onJumpToLatest,
+  onAction,
+  leadRequest,
+  conversationId,
+  currentPage,
+  onLeadBack,
+  onLeadSubmitted,
 }: ChatbotPanelProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -128,7 +141,7 @@ export function ChatbotPanel({
             <h2 id="zb-chatbot-title">ZOBHUNGER Assistant</h2>
             <span><i aria-hidden="true" />Public info</span>
           </div>
-          <p id="zb-chatbot-subtitle">Official website guidance · saved on this device</p>
+          <p id="zb-chatbot-subtitle">Verified knowledge · secure enquiry handover</p>
         </div>
 
         <div className="zb-chatbot-header-actions">
@@ -188,19 +201,36 @@ export function ChatbotPanel({
         aria-relevant="additions text"
         onScroll={onBodyScroll}
       >
-        <div className="zb-chatbot-context-note">
-          <span>Official website assistant</span>
-          <p>Answers use ZOBHUNGER&apos;s public knowledge. For final commercial or hiring decisions, use the relevant website form or team contact.</p>
-        </div>
-
-        {messages.map((message) => (
-          <ChatMessage
-            key={message.id}
-            message={message}
-            copied={copiedMessageId === message.id}
-            onCopy={onCopyMessage}
+        {leadRequest ? (
+          <ChatbotLeadForm
+            audience={leadRequest.audience}
+            handover={leadRequest.handover}
+            conversationId={conversationId}
+            sourcePath={currentPage}
+            onBack={onLeadBack}
+            onSubmitted={onLeadSubmitted}
           />
-        ))}
+        ) : (<>
+          <div className="zb-chatbot-context-note">
+            <span>Verified ZOBHUNGER assistant</span>
+            <p>Answers are grounded in approved ZOBHUNGER knowledge. If verified information is unavailable, the assistant will say so and can route you to a person.</p>
+          </div>
+          <div className="zb-chatbot-flow-row" aria-label="Choose enquiry type">
+            <button type="button" disabled={loading} onClick={() => onSuggestion("I am a job seeker. Help me with the correct ZOBHUNGER job or worker process.")}>Jobs</button>
+            <button type="button" disabled={loading} onClick={() => onSuggestion("I represent a business and need ZOBHUNGER workforce or execution support.")}>Business</button>
+            <button type="button" disabled={loading} onClick={() => onSuggestion("I am a vendor or partner. Help me with the correct ZOBHUNGER partnership process.")}>Vendor / Partner</button>
+            <button type="button" disabled={loading} onClick={() => onSuggestion("I have a general ZOBHUNGER enquiry.")}>General</button>
+          </div>
+
+          {messages.map((message) => (
+            <ChatMessage
+              key={message.id}
+              message={message}
+              copied={copiedMessageId === message.id}
+              onCopy={onCopyMessage}
+              onAction={onAction}
+            />
+          ))}
 
         {showStarterSuggestions ? (
           <ChatSuggestions
@@ -241,7 +271,8 @@ export function ChatbotPanel({
             ) : null}
           </div>
         ) : null}
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </>)}
       </div>
 
       {showJumpToLatest ? (
@@ -251,7 +282,7 @@ export function ChatbotPanel({
         </button>
       ) : null}
 
-      <form className="zb-chatbot-composer" onSubmit={submit}>
+      {!leadRequest ? <form className="zb-chatbot-composer" onSubmit={submit}>
         <label htmlFor="zb-chatbot-input" className="sr-only">Ask ZOBHUNGER</label>
         <div className="zb-chatbot-input-wrap">
           <textarea
@@ -277,7 +308,7 @@ export function ChatbotPanel({
           <span>Enter to send · Shift + Enter for a new line</span>
           <span>{draft.length}/2000</span>
         </div>
-      </form>
+      </form> : null}
     </section>
   );
 }

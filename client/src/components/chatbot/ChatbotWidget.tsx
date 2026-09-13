@@ -12,6 +12,8 @@ import { usePathname } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import {
   streamChatbotMessage,
+  type ChatbotAction,
+  type ChatbotAudience,
   type ChatbotHistoryMessage,
   type ChatbotUiMessage,
 } from "@/lib/chatbot";
@@ -102,6 +104,7 @@ export function ChatbotWidget() {
   const [hydrated, setHydrated] = useState(false);
   const [conversationId, setConversationId] = useState(() => createChatbotConversationId());
   const [conversationCreatedAt, setConversationCreatedAt] = useState(() => new Date().toISOString());
+  const [leadRequest, setLeadRequest] = useState<{ audience: Exclude<ChatbotAudience, "UNKNOWN">; handover: boolean } | null>(null);
 
   const messageSequence = useRef(0);
   const activeRequestSequence = useRef(0);
@@ -191,6 +194,7 @@ export function ChatbotWidget() {
     setLoading(false);
     setStreamingStarted(false);
     setCopiedMessageId(null);
+    setLeadRequest(null);
     autoScrollRef.current = true;
     setShowJumpToLatest(false);
     window.setTimeout(() => inputRef.current?.focus(), 0);
@@ -281,6 +285,7 @@ export function ChatbotWidget() {
         message,
         history,
         ...(pathname ? { currentPage: pathname } : {}),
+        conversationId,
       }, {
         signal: abortController.signal,
         onDelta: (delta) => {
@@ -315,11 +320,13 @@ export function ChatbotWidget() {
             role: "assistant",
             content: reply.answer,
             sources: reply.sources,
+            actions: reply.actions,
+            unanswered: reply.unanswered,
             includeInHistory: true,
           }];
         }
         return withUserHistory.map((entry) => entry.id === assistantMessageId
-          ? { ...entry, content: reply.answer, sources: reply.sources, includeInHistory: true }
+          ? { ...entry, content: reply.answer, sources: reply.sources, actions: reply.actions, unanswered: reply.unanswered, includeInHistory: true }
           : entry);
       });
       if (!openRef.current) setUnreadCount((current) => Math.min(current + 1, 9));
@@ -338,7 +345,7 @@ export function ChatbotWidget() {
         setStreamingStarted(false);
       }
     }
-  }, [draft, loading, nextId, pathname]);
+  }, [conversationId, draft, loading, nextId, pathname]);
 
   const retryLastFailedRequest = useCallback(() => {
     if (!failedRequest || loading) return;
@@ -363,6 +370,22 @@ export function ChatbotWidget() {
     autoScrollRef.current = nearBottom;
     setShowJumpToLatest(!nearBottom);
   }, []);
+
+  const handleAction = useCallback((action: ChatbotAction) => {
+    if (action.kind === "link") return;
+    const audience = action.audience && action.audience !== "UNKNOWN" ? action.audience : "GENERAL";
+    setLeadRequest({ audience, handover: action.kind === "handover" });
+    setError(null);
+  }, []);
+
+  const handleLeadSubmitted = useCallback((message: string) => {
+    setMessages((current) => [...current, {
+      id: nextId("handover"),
+      role: "assistant",
+      content: message,
+      includeInHistory: false,
+    }]);
+  }, [nextId]);
 
   return (
     <aside className="zb-chatbot-root" aria-label="ZOBHUNGER website assistant">
@@ -396,6 +419,12 @@ export function ChatbotWidget() {
           onClearHistory={() => resetConversation(true)}
           onBodyScroll={handleBodyScroll}
           onJumpToLatest={() => scrollToLatest("smooth")}
+          onAction={handleAction}
+          leadRequest={leadRequest}
+          conversationId={conversationId}
+          currentPage={pathname}
+          onLeadBack={() => setLeadRequest(null)}
+          onLeadSubmitted={handleLeadSubmitted}
         />
       ) : null}
       <ChatbotLauncher

@@ -4,7 +4,7 @@ import { HttpError } from "../src/utils/http-error.js";
 import { parseKnowledgeMarkdown } from "../src/modules/chatbot/knowledge/index.js";
 import { createKnowledgeRetriever } from "../src/modules/chatbot/rag/index.js";
 import { buildChatbotSystemPrompt, buildRetrievalQuery } from "../src/modules/chatbot/chatbot.prompt.js";
-import { chatbotMessageSchema } from "../src/modules/chatbot/chatbot.schema.js";
+import { chatbotLeadSchema, chatbotMessageSchema } from "../src/modules/chatbot/chatbot.schema.js";
 import { createChatbotService } from "../src/modules/chatbot/chatbot.service.js";
 import type { ChatbotModelClient } from "../src/modules/chatbot/chatbot.types.js";
 import { createGroqClient, GroqApiError } from "../src/modules/chatbot/groq.client.js";
@@ -44,6 +44,31 @@ test("chatbot request schema trims input, defaults history and rejects private p
     history: Array.from({ length: 11 }, (_, index) => ({ role: index % 2 ? "assistant" : "user", content: "message" })),
   });
   assert.equal(tooMuchHistory.success, false);
+});
+
+
+
+test("chatbot schema accepts bounded conversation memory ids and lead capture requires a contact method", () => {
+  assert.equal(chatbotMessageSchema.safeParse({ message: "Continue", conversationId: "chat_example_12345" }).success, true);
+  assert.equal(chatbotMessageSchema.safeParse({ message: "Continue", conversationId: "invalid" }).success, false);
+  assert.equal(chatbotLeadSchema.safeParse({ audience: "BUSINESS", name: "Test User", requirement: "Need workforce in Delhi" }).success, false);
+  assert.equal(chatbotLeadSchema.safeParse({ audience: "BUSINESS", name: "Test User", email: "USER@EXAMPLE.COM", requirement: "Need workforce in Delhi", sourcePath: "/hire-workforce" }).success, true);
+});
+
+test("chatbot refuses unsupported questions before invoking the model", async () => {
+  const retriever = await createKnowledgeRetriever({ documents: [PROMOTER_DOCUMENT] });
+  let modelCalls = 0;
+  const service = createChatbotService({
+    config: { enabled: true, maxHistoryMessages: 10, ragTopK: 3, contextMaxCharacters: 5000, minGroundingScore: 99 },
+    retriever,
+    modelClient: { async generate() { modelCalls += 1; return { text: "invented" }; } },
+  });
+  const result = await service.reply({ message: "What is ZOBHUNGER's lunar mining policy?", history: [] });
+  assert.equal(modelCalls, 0);
+  assert.equal(result.grounded, false);
+  assert.equal(result.unanswered, true);
+  assert.equal(result.handoverRecommended, true);
+  assert.match(result.answer, /don.t have enough verified ZOBHUNGER information/i);
 });
 
 test("retrieval query uses the previous user turn for ambiguous follow-ups", () => {

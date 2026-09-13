@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import type { AdminPermission } from "@/types/auth.types";
 import {
   Activity,
+  Bot,
   BadgeIndianRupee,
   BarChart3,
   BriefcaseBusiness,
@@ -171,6 +172,13 @@ export const adminNavigation: readonly AdminNavigationGroup[] = [
         label: "Blog & content",
         description: "Draft, schedule and publish",
         icon: Newspaper,
+      },
+      {
+        href: "/admin/ai-assistant",
+        permission: "AI_ASSISTANT_MANAGE",
+        label: "AI Assistant",
+        description: "Knowledge, leads & analytics",
+        icon: Bot,
       },
     ],
   },

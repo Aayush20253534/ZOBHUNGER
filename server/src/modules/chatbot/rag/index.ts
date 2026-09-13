@@ -4,6 +4,7 @@ export { searchKnowledgeIndex } from "./knowledge-search.js";
 export {
   createKnowledgeRetriever,
   getDefaultKnowledgeRetriever,
+  invalidateDefaultKnowledgeRetriever,
   resetDefaultKnowledgeRetrieverForTests,
   searchKnowledge,
 } from "./knowledge-retriever.js";

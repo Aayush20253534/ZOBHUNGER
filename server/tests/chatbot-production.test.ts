@@ -63,7 +63,7 @@ test("chatbot response cache reuses grounded answers and cache key includes know
   };
   const load = async () => {
     loads += 1;
-    return { answer: "Grounded answer", grounded: true, sources: [{ title: "Service", url: "/services", category: "services" as const }] };
+    return { answer: "Grounded answer", grounded: true, unanswered: false, confidence: 1, audience: "BUSINESS" as const, actions: [], handoverRecommended: false, sources: [{ title: "Service", url: "/services", category: "services" as const }] };
   };
 
   const first = await cache.remember(lookup, load);
@@ -82,7 +82,7 @@ test("chatbot response cache never stores ungrounded answers", async () => {
   let loads = 0;
   const load = async () => {
     loads += 1;
-    return { answer: "I do not have that information.", grounded: false, sources: [] };
+    return { answer: "I do not have that information.", grounded: false, unanswered: true, confidence: 0, audience: "GENERAL" as const, actions: [], handoverRecommended: true, sources: [] };
   };
   const lookup = { message: "quantum rockets", knowledgeFingerprint: "knowledge", modelSignature: "model" };
   await cache.remember(lookup, load);

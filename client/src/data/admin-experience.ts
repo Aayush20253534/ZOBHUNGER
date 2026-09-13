@@ -131,6 +131,7 @@ export const adminPermissionLabels: Partial<Record<AdminPermission, string>> = {
   TECHNICAL_MANAGE: "Technical requests",
   LEGAL_MANAGE: "Legal requests",
   BLOGS_MANAGE: "Website content",
+  AI_ASSISTANT_MANAGE: "AI assistant",
   ADMIN_USERS_MANAGE: "Admin access",
 };
 

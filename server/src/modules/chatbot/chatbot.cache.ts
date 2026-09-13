@@ -45,6 +45,11 @@ function isCachedResult(value: unknown): value is ChatbotMessageResult {
   const candidate = value as Partial<ChatbotMessageResult>;
   return typeof candidate.answer === "string"
     && typeof candidate.grounded === "boolean"
+    && typeof candidate.unanswered === "boolean"
+    && typeof candidate.confidence === "number"
+    && typeof candidate.audience === "string"
+    && typeof candidate.handoverRecommended === "boolean"
+    && Array.isArray(candidate.actions)
     && Array.isArray(candidate.sources)
     && candidate.sources.every((source) => source
       && typeof source === "object"
@@ -73,7 +78,7 @@ export function createChatbotResponseCache(options: ChatbotResponseCacheOptions)
       }
 
       const digest = cacheDigest(lookup);
-      const key = `${options.prefix}:chatbot:answer:v1:${digest}`;
+      const key = `${options.prefix}:chatbot:answer:v2:${digest}`;
       try {
         const raw = await options.transport.command(["GET", key]);
         if (typeof raw === "string") {

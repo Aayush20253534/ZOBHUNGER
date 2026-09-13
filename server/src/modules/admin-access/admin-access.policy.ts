@@ -52,6 +52,7 @@ export const PERMISSION_LABELS: Record<AdminPermission, { label: string; descrip
   [AdminPermission.LEGAL_MANAGE]: { label: "Legal requests", description: "Manage legal, privacy and compliance requests." },
   [AdminPermission.BLOGS_MANAGE]: { label: "Website content", description: "Manage website article and blog publishing workflows." },
   [AdminPermission.ADMIN_USERS_MANAGE]: { label: "Administrator access", description: "Create department administrators and manage access policy." },
+  [AdminPermission.AI_ASSISTANT_MANAGE]: { label: "AI assistant", description: "Manage verified chatbot knowledge, leads, handovers and analytics." },
 };
 
 export const DEPARTMENT_PERMISSION_PRESETS: Record<AdminDepartment, AdminPermission[]> = {
@@ -92,6 +93,7 @@ export const DEPARTMENT_PERMISSION_PRESETS: Record<AdminDepartment, AdminPermiss
     AdminPermission.DASHBOARD_VIEW,
     AdminPermission.TECHNICAL_MANAGE,
     AdminPermission.BLOGS_MANAGE,
+    AdminPermission.AI_ASSISTANT_MANAGE,
   ],
   [AdminDepartment.PLACEMENT_CELL]: [
     AdminPermission.DASHBOARD_VIEW,

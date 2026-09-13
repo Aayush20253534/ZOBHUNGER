@@ -89,6 +89,25 @@ function scorePhraseMatches(chunk: IndexedKnowledgeChunk, phrases: string[]) {
   return { score: Math.min(score, 16), reasons };
 }
 
+
+function scoreSemanticConcepts(chunk: IndexedKnowledgeChunk, originalTerms: string[]) {
+  const expanded = expandQueryTerms(originalTerms);
+  const totalWeight = expanded.reduce((sum, term) => sum + term.weight, 0) || 1;
+  let matchedWeight = 0;
+  for (const term of expanded) {
+    if (chunk.allTerms.has(term.term)) matchedWeight += term.weight;
+  }
+  const direct = matchedWeight / totalWeight;
+
+  const metadataText = `${chunk.normalized.title} ${chunk.normalized.section} ${chunk.normalized.keywords} ${chunk.normalized.aliases}`;
+  const phraseTokens = originalTerms.filter((term) => term.length >= 4);
+  const metadataCoverage = phraseTokens.length
+    ? phraseTokens.filter((term) => metadataText.includes(term)).length / phraseTokens.length
+    : 0;
+
+  return Math.min(12, direct * 8 + metadataCoverage * 4);
+}
+
 function scoreChunk(
   index: KnowledgeIndex,
   chunk: IndexedKnowledgeChunk,
@@ -148,12 +167,13 @@ function scoreChunk(
 
   const categoryIntent = scoreCategoryIntent(chunk, originalTerms);
   contextScore += categoryIntent.score;
+  const semanticScore = scoreSemanticConcepts(chunk, originalTerms);
   reasons.push(...categoryIntent.reasons);
 
   if (matchedOriginal.size > 0) reasons.push(`matched ${matchedOriginal.size}/${new Set(originalTerms).size} query terms`);
   if (matchedExpanded.size > 0) reasons.push(`matched ${matchedExpanded.size} synonym terms`);
 
-  let score = lexicalScore + coverageScore + phrase.score + contextScore;
+  let score = lexicalScore + coverageScore + phrase.score + contextScore + semanticScore;
   if (matchedOriginal.size === 0) {
     score *= 0.25;
   } else {
@@ -170,6 +190,7 @@ function scoreChunk(
       coverageScore,
       phraseScore: phrase.score,
       contextScore,
+      semanticScore,
     },
   };
 }
@@ -214,7 +235,7 @@ export function searchKnowledgeIndex(
       score: Number((10 - index * 0.1).toFixed(4)),
       debug: options.includeDebug ? {
         matchedTerms: [], expandedTerms: [], reasons: ["current page fallback"],
-        lexicalScore: 0, coverageScore: 0, phraseScore: 0, contextScore: 10,
+        lexicalScore: 0, coverageScore: 0, phraseScore: 0, contextScore: 10, semanticScore: 0,
       } : undefined,
     }));
     return { query, normalizedQuery, results, searchedChunks: index.chunkCount };

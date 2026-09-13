@@ -5,6 +5,8 @@ const STORAGE_VERSION = 1;
 const MAX_STORED_MESSAGES = 40;
 const MAX_STORED_CONTENT_LENGTH = 4000;
 const MAX_STORED_SOURCES = 4;
+const MAX_STORED_ACTIONS = 4;
+const CONVERSATION_ID = /^chat_[a-zA-Z0-9_-]{8,120}$/;
 
 export interface StoredChatbotConversation {
   version: 1;
@@ -54,6 +56,25 @@ function sanitizeMessage(value: unknown): ChatbotUiMessage | null {
     }];
   }).slice(0, MAX_STORED_SOURCES);
 
+  const rawActions = Array.isArray(value.actions) ? value.actions : [];
+  const actions = rawActions.flatMap((action) => {
+    if (!isRecord(action) || typeof action.id !== "string" || typeof action.label !== "string" || typeof action.kind !== "string") return [];
+    const id = action.id.trim().slice(0, 80);
+    const label = action.label.trim().slice(0, 120);
+    if (!id || !label) return [];
+    if (action.kind === "link") {
+      if (typeof action.href !== "string" || !isSafePublicSourceUrl(action.href)) return [];
+      return [{ id, label, kind: "link" as const, href: action.href.slice(0, 300) }];
+    }
+    if (action.kind === "lead" || action.kind === "handover") {
+      const audience = ["UNKNOWN", "JOB_SEEKER", "BUSINESS", "VENDOR_PARTNER", "GENERAL"].includes(String(action.audience))
+        ? action.audience as "UNKNOWN" | "JOB_SEEKER" | "BUSINESS" | "VENDOR_PARTNER" | "GENERAL"
+        : undefined;
+      return [{ id, label, kind: action.kind, ...(audience ? { audience } : {}) }];
+    }
+    return [];
+  }).slice(0, MAX_STORED_ACTIONS);
+
   return {
     id: typeof value.id === "string" && value.id.trim()
       ? value.id.slice(0, 120)
@@ -61,13 +82,15 @@ function sanitizeMessage(value: unknown): ChatbotUiMessage | null {
     role: value.role,
     content,
     ...(sources.length ? { sources } : {}),
+    ...(actions.length ? { actions } : {}),
+    ...(value.unanswered === true ? { unanswered: true } : {}),
     includeInHistory: true,
   };
 }
 
 function sanitizeConversation(value: unknown): StoredChatbotConversation | null {
   if (!isRecord(value) || value.version !== STORAGE_VERSION) return null;
-  if (typeof value.id !== "string" || !value.id.trim()) return null;
+  if (typeof value.id !== "string" || !CONVERSATION_ID.test(value.id)) return null;
   if (!Array.isArray(value.messages)) return null;
 
   const messages = value.messages

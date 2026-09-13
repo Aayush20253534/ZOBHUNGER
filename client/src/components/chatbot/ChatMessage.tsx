@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, Bot, Check, Copy } from "lucide-react";
-import type { ChatbotUiMessage } from "@/lib/chatbot";
+import type { ChatbotAction, ChatbotUiMessage } from "@/lib/chatbot";
 import { ChatbotRichText } from "./ChatbotRichText";
 
 export type { ChatbotUiMessage } from "@/lib/chatbot";
@@ -9,9 +9,10 @@ interface ChatMessageProps {
   message: ChatbotUiMessage;
   copied?: boolean;
   onCopy?: (message: ChatbotUiMessage) => void;
+  onAction?: (action: ChatbotAction) => void;
 }
 
-export function ChatMessage({ message, copied = false, onCopy }: ChatMessageProps) {
+export function ChatMessage({ message, copied = false, onCopy, onAction }: ChatMessageProps) {
   const isAssistant = message.role === "assistant";
   const sources = isAssistant ? (message.sources ?? []).slice(0, 4) : [];
 
@@ -38,6 +39,17 @@ export function ChatMessage({ message, copied = false, onCopy }: ChatMessageProp
               {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
               <span>{copied ? "Copied" : "Copy"}</span>
             </button>
+          </div>
+        ) : null}
+
+
+        {isAssistant && message.actions?.length ? (
+          <div className="zb-chatbot-answer-actions">
+            {message.actions.slice(0, 4).map((action) => action.kind === "link" ? (
+              <Link href={action.href} key={action.id} className="zb-chatbot-answer-action">{action.label}<ArrowUpRight aria-hidden="true" /></Link>
+            ) : (
+              <button type="button" key={action.id} className="zb-chatbot-answer-action" onClick={() => onAction?.(action)}>{action.label}<ArrowUpRight aria-hidden="true" /></button>
+            ))}
           </div>
         ) : null}
 

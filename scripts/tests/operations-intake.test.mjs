@@ -46,6 +46,8 @@ test("admin UI exposes one responsive intake desk instead of separate department
   assert.match(component, /Assign to me/);
   assert.match(component, /Internal notes/);
   assert.match(component, /Export CSV/);
+  assert.match(component, /CHATBOT_LEAD/);
+  assert.match(component, /AI assistant enquiry/);
   assert.match(styles, /@media\(max-width:720px\)/);
   assert.match(styles, /grid-template-columns:1fr/);
 });

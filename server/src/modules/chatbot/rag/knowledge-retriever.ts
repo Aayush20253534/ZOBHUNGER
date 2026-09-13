@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { loadKnowledgeBase } from "../knowledge/index.js";
+import { loadPublishedManagedKnowledge } from "../knowledge/managed-knowledge.js";
 import { buildKnowledgeIndex } from "./knowledge-index.js";
 import { searchKnowledgeIndex } from "./knowledge-search.js";
 import type {
@@ -58,8 +59,24 @@ export async function createKnowledgeRetriever(
 }
 
 export function getDefaultKnowledgeRetriever(): Promise<KnowledgeRetriever> {
-  if (!defaultRetrieverPromise) defaultRetrieverPromise = createKnowledgeRetriever();
+  if (!defaultRetrieverPromise) {
+    defaultRetrieverPromise = (async () => {
+      const staticKnowledge = await loadKnowledgeBase();
+      if (staticKnowledge.issues.length > 0) {
+        const details = staticKnowledge.issues.map((issue) => `${issue.file ?? "knowledge"}: ${issue.message}`).join("; ");
+        throw new Error(`Cannot build chatbot knowledge index: ${details}`);
+      }
+      const managedKnowledge = await loadPublishedManagedKnowledge();
+      const byId = new Map(staticKnowledge.documents.map((document) => [document.metadata.id, document]));
+      for (const document of managedKnowledge) byId.set(document.metadata.id, document);
+      return createKnowledgeRetriever({ documents: [...byId.values()] });
+    })();
+  }
   return defaultRetrieverPromise;
+}
+
+export function invalidateDefaultKnowledgeRetriever() {
+  defaultRetrieverPromise = null;
 }
 
 export async function searchKnowledge(
@@ -71,5 +88,5 @@ export async function searchKnowledge(
 }
 
 export function resetDefaultKnowledgeRetrieverForTests() {
-  defaultRetrieverPromise = null;
+  invalidateDefaultKnowledgeRetriever();
 }

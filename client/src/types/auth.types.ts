@@ -30,7 +30,8 @@ export type AdminPermission =
   | "TECHNICAL_MANAGE"
   | "LEGAL_MANAGE"
   | "BLOGS_MANAGE"
-  | "ADMIN_USERS_MANAGE";
+  | "ADMIN_USERS_MANAGE"
+  | "AI_ASSISTANT_MANAGE";
 
 export interface AuthUser {
   id: string;

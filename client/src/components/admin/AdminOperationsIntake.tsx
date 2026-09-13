@@ -15,7 +15,7 @@ import type { AdminDepartment, AuthUser } from "@/types/auth.types";
 import "@/styles/admin-operations-intake.css";
 
 type IntakeStatus = "SUBMITTED" | "IN_REVIEW" | "CONTACTED" | "RESOLVED" | "REJECTED" | "ARCHIVED";
-type IntakeSource = "CONTACT_ENQUIRY" | "WORKFORCE_REQUIREMENT" | "PARTNER_APPLICATION" | "VENDOR_APPLICATION" | "CAREER_APPLICATION" | "PLACEMENT_CELL_APPLICATION" | "EMPLOYEE_JOINING" | "JOB_APPLICATION";
+type IntakeSource = "CONTACT_ENQUIRY" | "WORKFORCE_REQUIREMENT" | "PARTNER_APPLICATION" | "VENDOR_APPLICATION" | "CAREER_APPLICATION" | "PLACEMENT_CELL_APPLICATION" | "EMPLOYEE_JOINING" | "JOB_APPLICATION" | "CHATBOT_LEAD";
 type AssignmentFilter = "ALL" | "MINE" | "UNASSIGNED";
 
 interface Assignee { id: string; email: string; adminDepartment: AdminDepartment | null; lastLoginAt?: string | null; isActive?: boolean }
@@ -35,7 +35,7 @@ interface IntakeListData {
 interface IntakeDetailData { item: IntakeDetail; assignees: Assignee[] }
 
 const statuses: IntakeStatus[] = ["SUBMITTED", "IN_REVIEW", "CONTACTED", "RESOLVED", "REJECTED", "ARCHIVED"];
-const sources: IntakeSource[] = ["CONTACT_ENQUIRY", "WORKFORCE_REQUIREMENT", "PARTNER_APPLICATION", "VENDOR_APPLICATION", "CAREER_APPLICATION", "PLACEMENT_CELL_APPLICATION", "EMPLOYEE_JOINING", "JOB_APPLICATION"];
+const sources: IntakeSource[] = ["CONTACT_ENQUIRY", "WORKFORCE_REQUIREMENT", "PARTNER_APPLICATION", "VENDOR_APPLICATION", "CAREER_APPLICATION", "PLACEMENT_CELL_APPLICATION", "EMPLOYEE_JOINING", "JOB_APPLICATION", "CHATBOT_LEAD"];
 const departments: AdminDepartment[] = ["MAIN_ADMIN", "HR", "TECHNICAL", "PLACEMENT_CELL", "LEGAL"];
 
 const sourceMeta: Record<IntakeSource, { label: string; icon: LucideIcon; href?: (id: string) => string }> = {
@@ -47,6 +47,7 @@ const sourceMeta: Record<IntakeSource, { label: string; icon: LucideIcon; href?:
   PLACEMENT_CELL_APPLICATION: { label: "Institution partnership", icon: Landmark },
   EMPLOYEE_JOINING: { label: "Employee joining", icon: BadgeCheck, href: id => `/admin/employee-joining/${id}` },
   JOB_APPLICATION: { label: "Job application", icon: FileText },
+  CHATBOT_LEAD: { label: "AI assistant enquiry", icon: MessageSquareText },
 };
 
 const humanize = (value: string) => value.toLowerCase().replaceAll("_", " ").replace(/(^|\s)\S/g, letter => letter.toUpperCase());
@@ -193,7 +194,7 @@ export function AdminOperationsIntake() {
       <div>
         <p className="zbo-eyebrow">Operations intake</p>
         <h1>Every request. One accountable queue.</h1>
-        <p>Route website, workforce, partner, hiring, institution and onboarding submissions into the right department, owner and next action.</p>
+        <p>Route website, workforce, partner, hiring, institution, onboarding and AI-assistant enquiries into the right department, owner and next action.</p>
       </div>
       <div className="zbo-intake-hero-actions">
         <button type="button" onClick={() => void loadList()} disabled={loading}><RefreshCw className={loading ? "zbo-intake-spin" : ""} aria-hidden="true" />Refresh</button>

@@ -631,3 +631,46 @@ export function notifyIntakeAssignment(input: {
     },
   });
 }
+
+
+export function notifyChatbotLead(lead: {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  companyName: string | null;
+  audience: string;
+  requirement: string;
+  handover: boolean;
+}, requestId?: string) {
+  const department: Department = lead.audience === "JOB_SEEKER" ? "HR" : "MAIN_ADMIN";
+  const jobs = [sendInternalCaseEmail({
+    department,
+    requestId,
+    referenceId: lead.id,
+    idempotencyKey: `chatbot-lead-${lead.id}-internal`,
+    subject: lead.handover ? "AI assistant handover request | ZOBHUNGER" : "New AI assistant lead | ZOBHUNGER",
+    title: lead.handover ? "Visitor requested human assistance" : "New lead captured by the AI assistant",
+    intro: `${lead.name} submitted details through the ZOBHUNGER AI Assistant.`,
+    details: [
+      { label: "Audience", value: statusWords(lead.audience) },
+      { label: "Company", value: lead.companyName ?? "Not provided" },
+      { label: "Email", value: lead.email ?? "Not provided" },
+      { label: "Phone", value: lead.phone ?? "Not provided" },
+      { label: "Requirement", value: lead.requirement.slice(0, 500) },
+    ],
+  })];
+  if (lead.email) jobs.push(sendReceipt({
+    to: lead.email,
+    requestId,
+    idempotencyKey: `chatbot-lead-${lead.id}-receipt`,
+    subject: "We received your ZOBHUNGER enquiry",
+    eyebrow: "AI assistant enquiry",
+    title: "Your details are with the ZOBHUNGER team",
+    intro: `Thank you, ${lead.name}. Your enquiry has been recorded for human follow-up when required.`,
+    referenceId: lead.id,
+    details: [{ label: "Requirement", value: lead.requirement.slice(0, 500) }],
+    action: { label: "Visit ZOBHUNGER", url: publicApp("/") },
+  }));
+  return Promise.allSettled(jobs);
+}

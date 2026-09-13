@@ -69,6 +69,7 @@ export interface KnowledgeSearchDebug {
   coverageScore: number;
   phraseScore: number;
   contextScore: number;
+  semanticScore: number;
 }
 
 export interface KnowledgeSearchResult {

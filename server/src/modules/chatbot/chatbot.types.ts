@@ -2,6 +2,7 @@ import type { KnowledgeCategory } from "./knowledge/knowledge.types.js";
 import type { KnowledgeSearchResult } from "./rag/rag.types.js";
 
 export type ChatbotHistoryRole = "user" | "assistant";
+export type ChatbotAudienceKey = "UNKNOWN" | "JOB_SEEKER" | "BUSINESS" | "VENDOR_PARTNER" | "GENERAL";
 
 export interface ChatbotHistoryMessage {
   role: ChatbotHistoryRole;
@@ -12,6 +13,7 @@ export interface ChatbotMessageInput {
   message: string;
   history: ChatbotHistoryMessage[];
   currentPage?: string;
+  conversationId?: string;
 }
 
 export interface ChatbotSource {
@@ -20,10 +22,20 @@ export interface ChatbotSource {
   category: KnowledgeCategory;
 }
 
+export type ChatbotAction =
+  | { id: string; label: string; kind: "link"; href: string }
+  | { id: string; label: string; kind: "lead" | "handover"; audience?: ChatbotAudienceKey };
+
 export interface ChatbotMessageResult {
   answer: string;
   sources: ChatbotSource[];
   grounded: boolean;
+  unanswered: boolean;
+  confidence: number;
+  audience: ChatbotAudienceKey;
+  actions: ChatbotAction[];
+  handoverRecommended: boolean;
+  conversationId?: string;
 }
 
 export interface ChatbotServiceConfig {
@@ -33,6 +45,11 @@ export interface ChatbotServiceConfig {
   contextMaxCharacters: number;
   cacheEnabled?: boolean;
   modelSignature?: string;
+  rerankEnabled?: boolean;
+  rerankCandidates?: number;
+  minGroundingScore?: number;
+  memoryEnabled?: boolean;
+  memoryMaxMessages?: number;
 }
 
 export interface ChatbotRequestContext {
@@ -83,6 +100,7 @@ export interface ChatbotRetriever {
     options?: {
       topK?: number;
       currentPage?: string;
+      includeDebug?: boolean;
     },
   ): {
     results: KnowledgeSearchResult[];

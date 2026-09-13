@@ -28,10 +28,11 @@ test("admin API applies MFA then deny-by-permission before every existing admin 
     "overview", "access", "enquiries", "partners", "partner-applications", "vendors", "careers",
     "employee-joining", "worker-applications", "candidate-management", "requirement-jobs", "requirements",
     "jobs", "applications", "deployments", "attendance", "worker-attendance", "attendance-approvals",
-    "earnings", "reports", "placement-cell-applications",
+    "earnings", "reports", "placement-cell-applications", "ai-assistant",
   ]) assert.match(middleware, new RegExp(route.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   assert.match(middleware, /AdminPermission\.PF_VIEW/);
   assert.match(middleware, /AdminPermission\.ESIC_VIEW/);
+  assert.match(middleware, /AdminPermission\.AI_ASSISTANT_MANAGE/);
   assert.match(middleware, /ADMIN_USERS_MANAGE/);
 });
 

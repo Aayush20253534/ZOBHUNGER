@@ -15,6 +15,7 @@ const suite = [
 const steps = [
   { name: "Release-check regression tests", cwd: root, args: ["--test", "scripts/tests/release-routes.test.mjs"] },
   { name: "Compliance management regression tests", cwd: root, args: ["--test", "scripts/tests/compliance-management.test.mjs"] },
+  { name: "AI assistant platform regression tests", cwd: root, args: ["--test", "scripts/tests/ai-assistant-platform.test.mjs"] },
   { name: "Server unit tests", folder: "server", script: "test" },
   { name: "Server build and route registration", folder: "server", script: "build" },
   { name: "Migrate dedicated test database", folder: "server", script: "db:deploy" },
