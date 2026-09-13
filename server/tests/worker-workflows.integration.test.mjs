@@ -13,7 +13,7 @@ const { signAccessToken } = await import('../dist/utils/jwt.js');
 const { istToday, addDays, isoWeekday } = await import('../dist/modules/attendance/attendance.utils.js');
 const testId = randomUUID();
 const prefix = `workflow-${testId}`;
-const users = [], jobs = [], requirements = [], applications = [], careerApps = [], vendorApps = [];
+const users = [], jobs = [], requirements = [], applications = [];
 let server, base, serial = 0;
 async function request(path, { user, method = 'GET', body, csrf = true } = {}) {
   const response = await fetch(`${base}/api/v1${path}`, { method, headers: { ...(user ? { Cookie: `zobhunger_access=${signAccessToken({ sub: user.id, role: user.role, version: 0 })}` } : {}), ...(csrf ? { 'X-CSRF-Token': 'test-token' } : {}), 'Content-Type': 'application/json' }, ...(body ? { body: JSON.stringify(body) } : {}) });
@@ -34,8 +34,17 @@ function generateUniqueSubmissionKey() {
 test('P3.4 applications and P3.5 attendance connect trusted workers to operations', async t => {
   try {
     server = app.listen(0, '127.0.0.1'); await once(server, 'listening'); base = `http://127.0.0.1:${server.address().port}`;
-    async function account(role = 'WORKER', verified = true) { 
-      const user = await prisma.user.create({ data: { email: `${prefix}-${++serial}@example.test`, passwordHash: 'unused-test-password-hash-only-for-tests-a1b2c3d4e5f6g7h8', verified } });
+    async function account(role = 'WORKER', verified = true) {
+      const user = await prisma.user.create({
+        data: {
+          email: `${prefix}-${++serial}@example.test`,
+          passwordHash: 'unused-test-password-hash-only-for-tests-a1b2c3d4e5f6g7h8',
+          role,
+          emailVerifiedAt: verified ? new Date() : null,
+          businessAccessApproved: role === 'BUSINESS',
+          ...adminAccessForRole(role),
+        },
+      });
       users.push(user);
       return user;
     }
@@ -67,7 +76,7 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       assert.equal((await apply(opening.id, { ...input, consent: false })).status, 400);
     });
     await t.test('double submit makes one account-owned immutable application and CV snapshot', async () => {
-      const responses = await Promise.all([apply(), apply()]); assert.deepEqual(responses.map(r => r.status).sort(), [200, 201]); applicationId = responses[0].body.data.id; applications.push(applicationId); careerApps.push(applicationId);
+      const responses = await Promise.all([apply(), apply()]); assert.deepEqual(responses.map(r => r.status).sort(), [200, 201]); applicationId = responses[0].body.data.id; applications.push(applicationId);
       const detail = ok(await request(`/workers/applications/${applicationId}`, { user: worker })); assert.equal(detail.application.stage, 'SUBMITTED'); assert.equal(detail.history.total, 1); assert.equal(detail.history.items[0].actor, 'WORKER');
       await prisma.workerProfile.update({ where: { id: profile.id }, data: { fullName: 'Updated name', skills: ['Changed skill'], revision: { increment: 1 } } });
       await prisma.workerResume.delete({ where: { profileId: profile.id } });
@@ -103,7 +112,7 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       assert.equal((await request(`/workers/applications/${applicationId}/withdraw`, { user: worker, method: 'POST', body: { revision: 1, reason: 'Not available', confirm: true } })).status, 409);
     });
     await t.test('withdrawal revokes business access and blocks all further progression', async () => {
-      const opening2 = await job(); const id = ok(await apply(opening2.id, { ...input, profileRevision: 1, includeResume: false }), 201).id; applications.push(id); careerApps.push(id); const shared = ok(await share(id), 201).id;
+      const opening2 = await job(); const id = ok(await apply(opening2.id, { ...input, profileRevision: 1, includeResume: false }), 201).id; applications.push(id); const shared = ok(await share(id), 201).id;
       ok(await request(`/workers/applications/${id}/withdraw`, { user: worker, method: 'POST', body: { revision: 0, reason: 'Taking another opportunity', confirm: true } }));
       assert.equal(ok(await request(`/workers/applications/${id}`, { user: worker })).application.stage, 'WITHDRAWN');
       assert.equal((await share(id)).status, 409); assert.equal((await createAssignment(shared)).status, 409);
@@ -153,7 +162,7 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       ok(await decide(second)); const result = await day(); assert.equal(result.record.workedMinutes, 515); assert.equal(result.record.approvalStatus, 'PENDING'); assert.equal(result.history.total, 3);
     });
     await t.test('scheduled-off and overnight shifts have explicit time boundaries', async () => {
-      const opening3 = await job(); const id = ok(await apply(opening3.id, { ...input, profileRevision: 1, includeResume: false }), 201).id; applications.push(id); careerApps.push(id);
+      const opening3 = await job(); const id = ok(await apply(opening3.id, { ...input, profileRevision: 1, includeResume: false }), 201).id; applications.push(id);
       const candidate = ok(await share(id), 201).id;
       ok(await request(`/business/candidates/${candidate}/reviews`, { user: business, method: 'POST', body: { action: 'STATUS', revision: 0, status: 'SELECTED', note: 'Night team selection' } }));
       const night = ok(await request('/admin/attendance/assignments', { user: admin, method: 'POST', body: { ...setup, candidateId: candidate, shiftStart: '22:00', shiftEnd: '06:00', workingDays: ['MON', 'TUE', 'WED', 'THU', 'FRI'] } }), 201).id;
@@ -175,8 +184,8 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       });
       
       // Delete attendance corrections and records for test requirements
-      await prisma.attendanceCorrection.deleteMany({ where: { ...own } });
-      await prisma.attendanceRecord.deleteMany({ where: { ...own } });
+      await prisma.attendanceCorrection.deleteMany({ where: { assignment: own } });
+      await prisma.attendanceRecord.deleteMany({ where: { assignment: own } });
       
       // Delete workforce assignments
       await prisma.workforceAssignment.deleteMany({ where: { ...own } });
@@ -184,23 +193,10 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       // Delete business candidates
       await prisma.businessCandidate.deleteMany({ where: { ...own } });
       
-      // === PHASE 2: Delete application records by ID (most reliable) ===
-      // Use explicit ID tracking to ensure complete cleanup
-      if (careerApps.length > 0) {
-        // Delete by ID first (applications we explicitly tracked)
-        await prisma.careerApplication.deleteMany({ 
-          where: { id: { in: careerApps } } 
-        });
-      }
-      
-      // Delete any remaining career applications tied to our jobs
-      // (failsafe for applications we might have missed tracking)
-      if (jobs.length > 0) {
-        await prisma.careerApplication.deleteMany({ 
-          where: { jobId: { in: jobs } } 
-        });
-      }
-      
+      // === PHASE 2: Delete worker job applications ===
+      // Worker portal applications are JobApplication rows, not CareerApplication rows.
+      // Delete them by their test job IDs before deleting the jobs themselves.
+
       // Delete job applications
       if (jobs.length > 0) {
         await prisma.jobApplication.deleteMany({ 
