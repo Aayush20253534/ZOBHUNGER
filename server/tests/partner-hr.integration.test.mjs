@@ -16,6 +16,7 @@ mock.module(new URL('../dist/services/email.service.js', import.meta.url).href, 
 } });
 const { app } = await import('../dist/app.js');
 const { prisma } = await import('../dist/config/db.js');
+const { mainAdminAccess } = await import('./main-admin-fixture.mjs');
 const { signAccessToken } = await import('../dist/utils/jwt.js');
 const { hashPassword, verifyPassword } = await import('../dist/utils/password.js');
 const prefix = `phr-${randomUUID()}`;
@@ -45,7 +46,7 @@ async function approve(id) {
 test('partner approval, first-login enforcement and HR career intake', async t => {
   let partnerId, credentials, temporaryCookie, permanentCookie, careerReceipt;
   try {
-    admin = await prisma.user.create({ data: { email: email('admin'), role: 'ADMIN', passwordHash: await hashPassword('AdminTest9!') } });
+    admin = await prisma.user.create({ data: { email: email('admin'), role: 'ADMIN', passwordHash: await hashPassword('AdminTest9!'), ...mainAdminAccess } });
     worker = await prisma.user.create({ data: { email: email('worker'), role: 'WORKER', passwordHash: await hashPassword('WorkerTest9!') } });
     server = app.listen(0, '127.0.0.1'); await once(server, 'listening'); base = `http://127.0.0.1:${server.address().port}/api/v1`;
     await t.test('public business registration is blocked; application submission creates no account', async () => {

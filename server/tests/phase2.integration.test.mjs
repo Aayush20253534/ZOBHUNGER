@@ -7,6 +7,7 @@ if (!process.env.TEST_DATABASE_URL) throw new Error("Use TEST_DATABASE_URL for a
 Object.assign(process.env, { DATABASE_URL: process.env.TEST_DATABASE_URL, NODE_ENV: "test", REDIS_ENABLED: "false", LOG_LEVEL: "error", JWT_SECRET: "phase2-integration-only-secret-at-least-32-characters", CLIENT_ORIGIN: "http://localhost:3000", PUBLIC_APP_URL: "http://localhost:3000", API_RATE_LIMIT_MAX: "10000", SUBMISSION_RATE_LIMIT_MAX: "1000" });
 mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, { namedExports: { recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false, sendCorporateEmail: async () => false, sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false } });
 const { app } = await import("../dist/app.js"), { prisma } = await import("../dist/config/db.js"), { signAccessToken } = await import("../dist/utils/jwt.js");
+const { adminAccessForRole } = await import("./main-admin-fixture.mjs");
 const { istToday, addDays } = await import("../dist/modules/attendance/attendance.utils.js");
 const { csvCell } = await import("../dist/modules/phase2/reports.service.js");
 const { createJobApplication } = await import("../dist/modules/jobs/jobs.repository.js");
@@ -22,7 +23,7 @@ async function ok(path, user, method, body) { const result = await request(path,
 test("Phase 2 complete business-to-operations workflow", async t => {
   try {
     server = app.listen(0, "127.0.0.1"); await once(server, "listening"); base = `http://127.0.0.1:${server.address().port}/api/v1`;
-    for (const role of ["BUSINESS", "BUSINESS", "ADMIN", "WORKER"]) users.push(await prisma.user.create({ data: { email: `${prefix}-${users.length}@example.test`, role, businessAccessApproved: role === "BUSINESS", passwordHash: "unused" } }));
+    for (const role of ["BUSINESS", "BUSINESS", "ADMIN", "WORKER"]) users.push(await prisma.user.create({ data: { email: `${prefix}-${users.length}@example.test`, role, businessAccessApproved: role === "BUSINESS", passwordHash: "unused", ...adminAccessForRole(role) } }));
     const [a, b, admin, worker] = users;
     const pa = await prisma.businessProfile.create({ data: { userId: a.id, companyName: "Alpha Retail", contactPerson: "Alpha Owner" } });
     const pb = await prisma.businessProfile.create({ data: { userId: b.id, companyName: "Other Private Company", contactPerson: "Other Owner" } });

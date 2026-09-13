@@ -8,6 +8,7 @@ mock.module(new URL('../dist/services/worker-email.service.js', import.meta.url)
 mock.module(new URL('../dist/services/email.service.js', import.meta.url).href, { namedExports: { recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false, sendCorporateEmail: async () => false, sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false } });
 const { app } = await import('../dist/app.js');
 const { prisma } = await import('../dist/config/db.js');
+const { adminAccessForRole } = await import('./main-admin-fixture.mjs');
 const { signAccessToken } = await import('../dist/utils/jwt.js');
 const { addDays, dateValue, istToday } = await import('../dist/modules/attendance/attendance.utils.js');
 const prefix = `worker-finance-${randomUUID()}`;
@@ -24,7 +25,7 @@ test('P3.6 earnings ledger and P3.7 dashboard preserve worker ownership and fina
   try {
     server = app.listen(0, '127.0.0.1'); await once(server, 'listening'); base = `http://127.0.0.1:${server.address().port}`;
     async function account(role = 'WORKER', verified = true) {
-      const user = await prisma.user.create({ data: { email: `${prefix}-${++serial}@example.test`, passwordHash: 'unused-test-password-hash', role, emailVerifiedAt: verified ? new Date() : null, businessAccessApproved: role === 'BUSINESS' } }); users.push(user); return user;
+      const user = await prisma.user.create({ data: { email: `${prefix}-${++serial}@example.test`, passwordHash: 'unused-test-password-hash', role, emailVerifiedAt: verified ? new Date() : null, businessAccessApproved: role === 'BUSINESS', ...adminAccessForRole(role) } }); users.push(user); return user;
     }
     const worker = await account(), other = await account(), unverified = await account('WORKER', false), admin = await account('ADMIN'), business = await account('BUSINESS');
     await prisma.workerProfile.create({ data: { userId: worker.id, fullName: 'Finance Worker', phone: `98${String(serial).padStart(8, '0')}`, city: 'Delhi', state: 'Delhi', skills: ['Retail'], preferredLocations: ['Delhi'], preferredCategories: ['Sales'], preferredEngagements: ['Contract'], availability: 'Immediate', education: [], workExperience: [], consentAt: new Date() } });

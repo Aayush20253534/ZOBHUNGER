@@ -14,6 +14,7 @@ mock.module(new URL("../dist/services/worker-email.service.js", import.meta.url)
 mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, { namedExports: { recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false, sendCorporateEmail: async () => false, sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false } });
 const { app } = await import("../dist/app.js");
 const { prisma } = await import("../dist/config/db.js");
+const { adminAccessForRole } = await import("./main-admin-fixture.mjs");
 const { signAccessToken } = await import("../dist/utils/jwt.js");
 const { hashPassword } = await import("../dist/utils/password.js");
 const { requestWorkerEmail } = await import("../dist/modules/workers/worker-access.service.js");
@@ -42,7 +43,7 @@ test("worker access, profiles, private resumes and real job discovery", async t 
     server = app.listen(0, "127.0.0.1"); await once(server, "listening"); origin = `http://127.0.0.1:${server.address().port}`;
     const passwordHash = await hashPassword(password);
     async function account(role = "WORKER", overrides = {}) {
-      const user = await prisma.user.create({ data: { email: `${prefix}-${++serial}@example.test`, phone: `980${String(serial).padStart(7, "0")}`, role, passwordHash, emailVerifiedAt: new Date(), businessAccessApproved: role === "BUSINESS", ...overrides } }); users.push(user); return user;
+      const user = await prisma.user.create({ data: { email: `${prefix}-${++serial}@example.test`, phone: `980${String(serial).padStart(7, "0")}`, role, passwordHash, emailVerifiedAt: new Date(), businessAccessApproved: role === "BUSINESS", ...adminAccessForRole(role), ...overrides } }); users.push(user); return user;
     }
     const other = await account(), business = await account("BUSINESS"), admin = await account("ADMIN"), institution = await account("PLACEMENT_CELL"), legacy = await account("WORKER", { emailVerifiedAt: null });
     let worker, cookie, verification, completeProfile;

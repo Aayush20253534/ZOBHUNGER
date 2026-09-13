@@ -10,6 +10,7 @@ mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, 
   recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false, sendCorporateEmail: async () => false, sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false,
 } });
 const { app } = await import("../dist/app.js"); const { prisma } = await import("../dist/config/db.js"); const { signAccessToken } = await import("../dist/utils/jwt.js");
+const { adminAccessForRole } = await import("./main-admin-fixture.mjs");
 const { addDays, dateValue, istToday, isoWeekday } = await import("../dist/modules/attendance/attendance.utils.js");
 const prefix = `p25-${randomUUID()}`; const users = [], requirements = []; let job, server, base;
 async function request(path, { user, method = "GET", body, csrf = true } = {}) {
@@ -20,7 +21,7 @@ async function request(path, { user, method = "GET", body, csrf = true } = {}) {
 test("assignment and attendance workflows preserve business ownership, dates and history", async t => {
   try {
     server = app.listen(0, "127.0.0.1"); await once(server, "listening"); base = `http://127.0.0.1:${server.address().port}/api/v1`;
-    for (const role of ["BUSINESS", "BUSINESS", "ADMIN", "WORKER"]) users.push(await prisma.user.create({ data: { email: `${prefix}-${users.length}@example.test`, role, businessAccessApproved: role === "BUSINESS", passwordHash: "unused" } }));
+    for (const role of ["BUSINESS", "BUSINESS", "ADMIN", "WORKER"]) users.push(await prisma.user.create({ data: { email: `${prefix}-${users.length}@example.test`, role, businessAccessApproved: role === "BUSINESS", passwordHash: "unused", ...adminAccessForRole(role) } }));
     const [a, b, admin, worker] = users;
     const profileA = await prisma.businessProfile.create({ data: { userId: a.id, companyName: "A Retail", contactPerson: "A Owner" } });
     const profileB = await prisma.businessProfile.create({ data: { userId: b.id, companyName: "B Retail", contactPerson: "B Owner" } });

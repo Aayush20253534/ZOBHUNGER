@@ -13,6 +13,7 @@ mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, 
 const { app } = await import("../dist/app.js");
 const { prisma } = await import("../dist/config/db.js");
 const { signAccessToken } = await import("../dist/utils/jwt.js");
+const { adminAccessForRole } = await import("./main-admin-fixture.mjs");
 const prefix = `p24-${randomUUID()}`;
 const users = [], requirements = [], jobs = [], candidateIds = [];
 const cookieFor = user => `zobhunger_access=${signAccessToken({ sub: user.id, role: user.role, version: 0 })}`;
@@ -28,7 +29,7 @@ test("candidate sharing and business decisions preserve ownership, history and c
   try {
     server = app.listen(0, "127.0.0.1"); await once(server, "listening"); base = `http://127.0.0.1:${server.address().port}/api/v1`;
     for (const [suffix, role] of [["a", "BUSINESS"], ["b", "BUSINESS"], ["worker", "WORKER"], ["admin", "ADMIN"], ["college", "PLACEMENT_CELL"]]) {
-      users.push(await prisma.user.create({ data: { email: `${prefix}-${suffix}@example.test`, role, businessAccessApproved: role === "BUSINESS", passwordHash: "unused" } }));
+      users.push(await prisma.user.create({ data: { email: `${prefix}-${suffix}@example.test`, role, businessAccessApproved: role === "BUSINESS", passwordHash: "unused", ...adminAccessForRole(role) } }));
     }
     const [a, b, worker, admin, college] = users;
     const profileA = await prisma.businessProfile.create({ data: { userId: a.id, companyName: "A Retail", contactPerson: "Owner A" } });
@@ -47,7 +48,7 @@ test("candidate sharing and business decisions preserve ownership, history and c
     for (const isDemo of [false, true]) jobs.push(await prisma.job.create({ data: { slug: `${prefix}-${isDemo}`, title: "Retail Executive", location: "Delhi", city: "Delhi",
       category: "Sales", engagementType: "Contract", description: "Job fixture", isDemo, status: "OPEN" } }));
     const seedApplication = (suffix, overrides = {}) => prisma.jobApplication.create({ data: { jobId: jobs[0].id, name: `Candidate ${suffix}`, email: `${prefix}-${suffix}@example.test`,
-      phone: "9876543210", city: "Delhi", experience: "Two years in retail sales", resumeUrl: "https://example.test/cv.pdf", message: "Private application message", ...overrides } });
+      phone: "9876543210", city: "Delhi", experience: "Two years in retail sales", resumeUrl: "https://example.test/cv.pdf", message: "Private application message", status: "REVIEWED", ...overrides } });
     const application = await seedApplication("one");
     const rejected = await seedApplication("rejected", { status: "REJECTED" });
     const demo = await seedApplication("demo", { jobId: jobs[1].id });
@@ -87,7 +88,7 @@ test("candidate sharing and business decisions preserve ownership, history and c
       assert.equal(detail.candidate.resumeUrl, "https://example.test/cv.pdf");
       for (const secret of ["email", "phone", "applicationId", "workerUser", "message", "submittedByUserId"]) assert.equal(Object.hasOwn(detail.candidate, secret), false);
       assert.equal(detail.history.items[0].kind, "SHARED");
-      assert.equal((await prisma.jobApplication.findUnique({ where: { id: application.id } })).status, "SUBMITTED");
+      assert.equal((await prisma.jobApplication.findUnique({ where: { id: application.id } })).status, "REVIEWED");
     });
     await t.test("lookups are bounded and unsafe CV protocols never reach the review UI", async () => {
       const options = await request("/admin/candidate-management/requirements", { user: admin });
@@ -139,7 +140,7 @@ test("candidate sharing and business decisions preserve ownership, history and c
       assert.equal((await post({ action: "STATUS", status: "REJECTED", revision: 6, note: "Availability does not match." })).status, 200);
       const final = (await request(`/business/candidates/${id}`, { user: a })).body.data;
       assert.equal(final.history.total, 8); assert.equal(final.candidate.revision, 7);
-      assert.equal((await prisma.jobApplication.findUnique({ where: { id: application.id } })).status, "SUBMITTED");
+      assert.equal((await prisma.jobApplication.findUnique({ where: { id: application.id } })).status, "REVIEWED");
       assert.equal((await request(`/business/candidates?requirementId=${reqB.id}`, { user: b })).body.data.items[0].status, "SHARED");
     });
     await t.test("optimistic revisions prevent lost updates, including two simultaneous reviews", async () => {

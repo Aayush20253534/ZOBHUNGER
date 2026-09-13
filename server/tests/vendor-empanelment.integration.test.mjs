@@ -15,6 +15,7 @@ mock.module(new URL('../dist/services/email.service.js', import.meta.url).href, 
 } });
 const { app } = await import('../dist/app.js');
 const { prisma } = await import('../dist/config/db.js');
+const { adminAccessForRole } = await import('./main-admin-fixture.mjs');
 const { signAccessToken } = await import('../dist/utils/jwt.js');
 const prefix = `vendor-${randomUUID()}`;
 const email = suffix => `${prefix}-${suffix}@example.test`;
@@ -55,7 +56,7 @@ function privateMetadataOnly(value) {
 test('vendor intake, private documents, review and vendor directory', async t => {
   let input, receipt, code, approvedAt;
   try {
-    [admin, worker, business] = await Promise.all(['ADMIN', 'WORKER', 'BUSINESS'].map(role => prisma.user.create({ data: { email: email(role.toLowerCase()), role, passwordHash: 'unused-in-cookie-auth-test', businessAccessApproved: role === 'BUSINESS' } })));
+    [admin, worker, business] = await Promise.all(['ADMIN', 'WORKER', 'BUSINESS'].map(role => prisma.user.create({ data: { email: email(role.toLowerCase()), role, passwordHash: 'unused-in-cookie-auth-test', businessAccessApproved: role === 'BUSINESS', ...adminAccessForRole(role) } })));
     server = app.listen(0, '127.0.0.1'); await once(server, 'listening'); base = `http://127.0.0.1:${server.address().port}/api/v1`;
     await t.test('intake validates company details, consent and service expertise without granting accounts', async () => {
       input = profile('main');
