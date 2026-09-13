@@ -58,7 +58,7 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
     const input = { profileRevision: 0, resumeRevision: 0, includeResume: true, consent: true, message: 'Ready to join the field team', availableFrom: null };
     const apply = (jobId = opening.id, body = input, user = worker) => request(`/workers/jobs/${jobId}/applications`, { user, method: 'POST', body });
     const bp = await prisma.businessProfile.create({ data: { userId: business.id, companyName: 'Test Retail', contactPerson: 'Test Lead' } });
-    const req = await prisma.workforceRequirement.create({ data: { businessProfileId: bp.id, submittedByUserId: business.id, companyName: 'Test Retail', contactPerson: 'Test Lead', businessEmail: 'test-retail@example.test', quantity: 5, monthlyBudgetInr: 50000 } }); requirements.push(req.id);
+    const req = await prisma.workforceRequirement.create({ data: { businessProfileId: bp.id, submittedByUserId: business.id, companyName: 'Test Retail', contactPerson: 'Test Lead', businessEmail: business.email, mobileNumber: '9876543210', industry: 'Retail', serviceRequired: 'Workforce', workforceCount: 5, jobLocation: 'Delhi', locations: ['Delhi'], projectDuration: '1 month', details: 'Worker workflow integration fixture', status: 'QUALIFIED' } }); requirements.push(req.id);
     const share = applicationId => request('/admin/candidate-management', { user: admin, method: 'POST', body: { applicationId, requirementId: req.id, summary: 'Suitable retail experience for the role.' } });
     let applicationId, candidateId, assignmentId;
     const today = istToday(), date = addDays(today, -3);
@@ -120,8 +120,8 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       assert.equal((await request(`/business/candidates/${shared}`, { user: business })).status, 404);
       assert.equal(ok(await apply(opening2.id, { ...input, profileRevision: 1, includeResume: false })).id, id);
     });
-    const entry = { requestKey: generateUniqueSubmissionKey(), date, kind: 'SUBMISSION', assignmentRevision: 0, recordRevision: null, recordApprovalRevision: null, attendanceStatus: 'PRESENT', checkInAt: `${date}T09:00:00+05:30`, checkOutAt: `${date}T18:00:00+05:30` };
-    const submit = (body = entry, user = worker, id = assignmentId) => request(`/workers/assignments/${id}/attendance`, { user, method: 'POST', body: { ...body, requestKey: generateUniqueSubmissionKey() } });
+    const entry = { date, kind: 'SUBMISSION', assignmentRevision: 0, recordRevision: null, recordApprovalRevision: null, attendanceStatus: 'PRESENT', checkInAt: `${date}T09:00:00+05:30`, checkOutAt: `${date}T18:00:00+05:30` };
+    const submit = (body = entry, user = worker, id = assignmentId) => request(`/workers/assignments/${id}/attendance`, { user, method: 'POST', body: { ...body, requestKey: body.requestKey ?? generateUniqueSubmissionKey() } });
     const day = async () => ok(await request(`/workers/assignments/${assignmentId}?date=${date}`, { user: worker }));
     const decide = (id, decision = 'APPROVE', revision = 0) => request(`/admin/worker-attendance/${id}/review`, { user: admin, method: 'POST', body: { revision, decision, reviewNote: 'Checked with supervisor.' } });
     let attendanceRequestId, recordId;
