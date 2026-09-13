@@ -81,6 +81,9 @@ test("Phase 2 complete business-to-operations workflow", async t => {
     await t.test("a public application stays linked through candidate selection and deployment", async () => {
       const applied = await ok(`/jobs/${job.id}/applications`, undefined, "POST", { fullName: "Field Executive", email: `${prefix}-candidate@example.test`, phone: "9876543210", currentLocation: "Delhi", experience: "Retail field sales" });
       const body = { requirementId: reqId, applicationId: applied.id, summary: "Reviewed field sales experience and communication skills", skills: ["Retail sales"] };
+      assert.equal(applied.status, "SUBMITTED");
+      assert.equal((await request("/admin/candidate-management", admin, "POST", body)).status, 404);
+      await ok(`/admin/applications/${applied.id}/status`, admin, "PATCH", { status: "REVIEWED" });
       assert.equal((await request("/admin/candidate-management", admin, "POST", { ...body, requirementId: foreign.id })).status, 409);
       assert.ok(!(await ok(`/admin/candidate-management/applications?requirementId=${foreign.id}`, admin)).items.some(item => item.id === applied.id));
       candidateId = (await ok("/admin/candidate-management", admin, "POST", body)).id;
