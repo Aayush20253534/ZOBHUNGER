@@ -132,12 +132,20 @@ describe("advanced public chatbot widget", () => {
 
     await openWidget();
     await sendTypedMessage("Stream this answer");
-    expect(container.textContent).toContain("First ");
-    expect(container.textContent).not.toContain("First second");
+
+    const partialBubble = Array.from(
+      container.querySelectorAll(".zb-chatbot-message--assistant .zb-chatbot-bubble"),
+    ).at(-1) as HTMLElement;
+    expect(partialBubble.textContent).toBe("First");
+    expect(partialBubble.textContent).not.toContain("second");
 
     await flush(() => finish?.());
     await flush();
-    expect(container.textContent).toContain("First second");
+
+    const finalBubble = Array.from(
+      container.querySelectorAll(".zb-chatbot-message--assistant .zb-chatbot-bubble"),
+    ).at(-1) as HTMLElement;
+    expect(finalBubble.textContent).toContain("First second");
   });
 
   it("persists successful conversation history locally", async () => {
