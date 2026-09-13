@@ -53,7 +53,7 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
     await prisma.workerProfile.create({ data: { userId: other.id, fullName: 'Other Executive', phone: generateUniquePhone(), city: 'Delhi', state: 'Delhi', education: [], workExperience: 'Other retail executive.' } });
     const cv = Buffer.from('%PDF-1.4\nsubmitted-resume-original\n%%EOF');
     await prisma.workerResume.create({ data: { profileId: profile.id, fileName: 'asha.pdf', mimeType: 'application/pdf', size: cv.length, sha256: createHash('sha256').update(cv).digest('hex'), data: cv } });
-    async function job() { const row = await prisma.job.create({ data: { slug: `${prefix}-${++serial}`, title: 'Market Executive', location: 'Delhi', city: 'Delhi', category: 'Sales', engagementType: 'FLEX', verificationLevel: 'BASIC', description: 'Flexible sales role in retail.', createdByUserId: business.id } }); jobs.push(row.id); return row; }
+    async function job() { const row = await prisma.job.create({ data: { slug: `${prefix}-${++serial}`, title: 'Market Executive', location: 'Delhi', city: 'Delhi', category: 'Sales', engagementType: 'FLEX', description: 'Flexible sales role in retail.', status: 'OPEN', publishedAt: new Date(), createdByUserId: business.id } }); jobs.push(row.id); return row; }
     const opening = await job();
     const input = { profileRevision: 0, resumeRevision: 0, includeResume: true, consent: true, message: 'Ready to join the field team', availableFrom: null };
     const apply = (jobId = opening.id, body = input, user = worker) => request(`/workers/jobs/${jobId}/applications`, { user, method: 'POST', body });
