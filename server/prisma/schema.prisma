@@ -18,6 +18,9 @@ enum UserRole {
 enum AdminDepartment {
   MAIN_ADMIN
   HR
+  PF_EPFO
+  ESIC
+  ACCOUNTS
   TECHNICAL
   PLACEMENT_CELL
   LEGAL
@@ -30,6 +33,14 @@ enum AdminPermission {
   VENDORS_MANAGE
   CAREERS_MANAGE
   EMPLOYEE_JOINING_MANAGE
+  PF_VIEW
+  PF_VERIFY
+  PF_UPDATE
+  PF_EXPORT
+  ESIC_VIEW
+  ESIC_VERIFY
+  ESIC_UPDATE
+  ESIC_EXPORT
   WORKERS_MANAGE
   CANDIDATES_MANAGE
   REQUIREMENTS_MANAGE
@@ -141,6 +152,29 @@ enum PlacementCellApplicationStatus {
   REJECTED
 }
 
+
+
+enum ComplianceStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  NEEDS_CORRECTION
+  RESUBMITTED
+  VERIFIED
+  PROCESSED
+}
+
+enum ComplianceArea {
+  PF_EPFO
+  ESIC
+}
+
+enum ComplianceDocumentKind {
+  PF_DOCUMENT
+  ESIC_DOCUMENT
+  FAMILY_MEMBER_PHOTO
+  OTHER
+}
 
 enum EmployeeJoiningStatus {
   DRAFT
@@ -1278,6 +1312,9 @@ model EmployeeJoining {
 
   documents                EmployeeJoiningDocument[]
   offer                    EmployeeOfferLetter?
+  pfCompliance             EmployeePfCompliance?
+  esicCompliance           EmployeeEsicCompliance?
+  complianceDocuments      EmployeeComplianceDocument[]
 
   @@index([status, createdAt])
   @@index([personalEmail])
@@ -1356,4 +1393,115 @@ model EmployeeOfferLetter {
   joining                 EmployeeJoining @relation(fields: [joiningId], references: [id], onDelete: Cascade)
 
   @@index([status, updatedAt])
+}
+
+model EmployeePfCompliance {
+  id                       String            @id @default(uuid())
+  joiningId                String            @unique
+  appointmentDate          DateTime?
+  epfWages                 Int?
+  monthlyGross             Int?
+  department               String?
+  designation              String?
+  husbandName              String?
+  presentDistrict          String?
+  permanentDistrict        String?
+  bankAccountType          String?
+  existingUanEncrypted     String?
+  existingUanLast4         String?
+  status                   ComplianceStatus  @default(DRAFT)
+  correctionRemarks        String?
+  submittedAt              DateTime?
+  reviewedAt               DateTime?
+  reviewedByUserId         String?
+  verifiedAt               DateTime?
+  verifiedByUserId         String?
+  processedAt              DateTime?
+  processedByUserId        String?
+  revision                 Int               @default(0)
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+
+  joining                  EmployeeJoining   @relation(fields: [joiningId], references: [id], onDelete: Cascade)
+
+  @@index([status, updatedAt])
+  @@index([department, status])
+}
+
+model EmployeeEsicCompliance {
+  id                       String            @id @default(uuid())
+  joiningId                String            @unique
+  esiApplicable            Boolean?
+  esiNumberEncrypted       String?
+  esiNumberLast4           String?
+  nomineeName              String?
+  nomineeRelationship      String?
+  nomineeAddress           String?
+  nomineeMobile            String?
+  nomineeEmail             String?
+  status                   ComplianceStatus  @default(DRAFT)
+  correctionRemarks        String?
+  submittedAt              DateTime?
+  reviewedAt               DateTime?
+  reviewedByUserId         String?
+  verifiedAt               DateTime?
+  verifiedByUserId         String?
+  processedAt              DateTime?
+  processedByUserId        String?
+  revision                 Int               @default(0)
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+
+  joining                  EmployeeJoining   @relation(fields: [joiningId], references: [id], onDelete: Cascade)
+  familyMembers            EmployeeEsicFamilyMember[]
+
+  @@index([status, updatedAt])
+  @@index([esiApplicable, status])
+}
+
+model EmployeeEsicFamilyMember {
+  id                       String                 @id @default(uuid())
+  esicComplianceId         String
+  nameAsAadhaar            String
+  relationship             String
+  dateOfBirth              DateTime
+  residesWithEmployee      Boolean
+  address                  String?
+  aadhaarEncrypted         String
+  aadhaarLast4             String
+  sortOrder                Int                    @default(0)
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
+
+  esicCompliance           EmployeeEsicCompliance @relation(fields: [esicComplianceId], references: [id], onDelete: Cascade)
+  photoDocuments           EmployeeComplianceDocument[]
+
+  @@index([esicComplianceId, sortOrder])
+}
+
+model EmployeeComplianceDocument {
+  id                  String                      @id @default(uuid())
+  joiningId           String
+  area                ComplianceArea
+  kind                ComplianceDocumentKind
+  familyMemberId      String?
+  fileName            String
+  mimeType            String
+  size                Int
+  sha256              String
+  storagePublicId     String
+  storageResourceType String
+  storageDeliveryType String
+  storageFormat       String
+  storageVersion      String?
+  storageAssetId      String?
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+
+  joining             EmployeeJoining             @relation(fields: [joiningId], references: [id], onDelete: Cascade)
+  familyMember        EmployeeEsicFamilyMember?    @relation(fields: [familyMemberId], references: [id], onDelete: Cascade)
+
+  @@index([joiningId, area, kind])
+  @@index([familyMemberId])
+  @@index([storagePublicId])
 }

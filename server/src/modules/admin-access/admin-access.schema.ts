@@ -4,6 +4,9 @@ import { passwordSchema } from "../auth/auth.schema.js";
 
 const managedDepartment = z.enum([
   AdminDepartment.HR,
+  AdminDepartment.PF_EPFO,
+  AdminDepartment.ESIC,
+  AdminDepartment.ACCOUNTS,
   AdminDepartment.TECHNICAL,
   AdminDepartment.PLACEMENT_CELL,
   AdminDepartment.LEGAL,
@@ -22,12 +25,12 @@ export const listAdminUsersQuerySchema = z.object({
 export const createAdminUserSchema = z.object({
   email: z.string().trim().email().max(254).transform(value => value.toLowerCase()),
   department: managedDepartment,
-  permissions: z.array(adminPermission).max(30).optional(),
+  permissions: z.array(adminPermission).max(50).optional(),
 }).strict();
 
 export const updateAdminAccessSchema = z.object({
   department: managedDepartment,
-  permissions: z.array(adminPermission).max(30),
+  permissions: z.array(adminPermission).max(50),
 }).strict();
 
 export const updateAdminStatusSchema = z.object({

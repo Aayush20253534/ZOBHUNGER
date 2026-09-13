@@ -1,6 +1,6 @@
 export type UserRole = "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL";
 
-export type AdminDepartment = "MAIN_ADMIN" | "HR" | "TECHNICAL" | "PLACEMENT_CELL" | "LEGAL";
+export type AdminDepartment = "MAIN_ADMIN" | "HR" | "PF_EPFO" | "ESIC" | "ACCOUNTS" | "TECHNICAL" | "PLACEMENT_CELL" | "LEGAL";
 
 export type AdminPermission =
   | "DASHBOARD_VIEW"
@@ -9,6 +9,14 @@ export type AdminPermission =
   | "VENDORS_MANAGE"
   | "CAREERS_MANAGE"
   | "EMPLOYEE_JOINING_MANAGE"
+  | "PF_VIEW"
+  | "PF_VERIFY"
+  | "PF_UPDATE"
+  | "PF_EXPORT"
+  | "ESIC_VIEW"
+  | "ESIC_VERIFY"
+  | "ESIC_UPDATE"
+  | "ESIC_EXPORT"
   | "WORKERS_MANAGE"
   | "CANDIDATES_MANAGE"
   | "REQUIREMENTS_MANAGE"

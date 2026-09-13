@@ -30,6 +30,8 @@ const routePermissions: Array<{ pattern: RegExp; permission: AdminPermission }> 
   { pattern: /^\/vendors(?:\/|$)/, permission: AdminPermission.VENDORS_MANAGE },
   { pattern: /^\/careers(?:\/|$)/, permission: AdminPermission.CAREERS_MANAGE },
   { pattern: /^\/employee-joining(?:\/|$)/, permission: AdminPermission.EMPLOYEE_JOINING_MANAGE },
+  { pattern: /^\/compliance\/pf(?:\/|$)/, permission: AdminPermission.PF_VIEW },
+  { pattern: /^\/compliance\/esic(?:\/|$)/, permission: AdminPermission.ESIC_VIEW },
   { pattern: /^\/worker-applications(?:\/|$)/, permission: AdminPermission.WORKERS_MANAGE },
   { pattern: /^\/candidate-management(?:\/|$)/, permission: AdminPermission.CANDIDATES_MANAGE },
   { pattern: /^\/requirement-jobs(?:\/|$)/, permission: AdminPermission.REQUIREMENTS_MANAGE },

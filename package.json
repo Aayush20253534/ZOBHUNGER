@@ -9,7 +9,7 @@
     "build:server": "npm --prefix server run build",
     "test:server": "npm --prefix server run test",
     "smoke:server": "npm --prefix server run test:smoke",
-    "verify": "npm run audit:foundation && npm run test:release && npm run test:rbac && npm run test:admin-experience && npm run test:intake && npm run test:hiring && npm run test:blog-cms && npm run test:email-production && npm run test:production-deployment && npm run test:seo && npm run test:acceptance && npm run chatbot:release-check && npm run test:server && npm run build:server && npm --prefix client run lint && npm run build:client",
+    "verify": "npm run audit:foundation && npm run test:release && npm run test:rbac && npm run test:admin-experience && npm run test:compliance && npm run test:intake && npm run test:hiring && npm run test:blog-cms && npm run test:email-production && npm run test:production-deployment && npm run test:seo && npm run test:acceptance && npm run chatbot:release-check && npm run test:server && npm run build:server && npm --prefix client run lint && npm run build:client",
     "verify:phase2": "node scripts/verify-phase2.mjs",
     "check:release": "node scripts/check-release.mjs",
     "verify:workers": "node scripts/verify-phase2.mjs --workers",
@@ -33,6 +33,7 @@
     "chatbot:evaluate": "npm --prefix server run chatbot:evaluate",
     "chatbot:release-check": "npm --prefix server run chatbot:release-check",
     "chatbot:smoke": "npm --prefix server run chatbot:smoke --",
-    "chatbot:knowledge:coverage": "npm --prefix server run chatbot:knowledge:coverage"
+    "chatbot:knowledge:coverage": "npm --prefix server run chatbot:knowledge:coverage",
+    "test:compliance": "node --test scripts/tests/compliance-management.test.mjs"
   }
 }

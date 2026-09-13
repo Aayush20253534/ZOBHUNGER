@@ -12,6 +12,7 @@ import { partnersRouter } from "../modules/partners/partners.routes.js";
 import { placementCellsRouter } from "../modules/placement-cells/placement-cells.routes.js";
 import { careersRouter } from "../modules/careers/careers.routes.js";
 import { employeeJoiningRouter } from "../modules/employee-joining/employee-joining.routes.js";
+import { employeeComplianceRouter } from "../modules/compliance/compliance.routes.js";
 import { chatbotRouter } from "../modules/chatbot/chatbot.routes.js";
 
 export const apiRouter = Router();
@@ -33,3 +34,4 @@ apiRouter.use("/career-applications", careersRouter);
 apiRouter.use("/vendor-applications", vendorsRouter);
 
 apiRouter.use("/employee-joining", employeeJoiningRouter);
+apiRouter.use("/employee-compliance", employeeComplianceRouter);

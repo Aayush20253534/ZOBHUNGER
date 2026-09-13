@@ -30,6 +30,8 @@ test("admin API applies MFA then deny-by-permission before every existing admin 
     "jobs", "applications", "deployments", "attendance", "worker-attendance", "attendance-approvals",
     "earnings", "reports", "placement-cell-applications",
   ]) assert.match(middleware, new RegExp(route.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.match(middleware, /AdminPermission\.PF_VIEW/);
+  assert.match(middleware, /AdminPermission\.ESIC_VIEW/);
   assert.match(middleware, /ADMIN_USERS_MANAGE/);
 });
 
@@ -37,6 +39,11 @@ test("department policy stays least-privilege and Main Administration is protect
   const policy = await text("server/src/modules/admin-access/admin-access.policy.ts");
   const service = await text("server/src/modules/admin-access/admin-access.service.ts");
   assert.match(policy, /AdminDepartment\.HR/);
+  assert.match(policy, /AdminDepartment\.PF_EPFO/);
+  assert.match(policy, /AdminDepartment\.ESIC/);
+  assert.match(policy, /AdminDepartment\.ACCOUNTS/);
+  assert.match(policy, /AdminPermission\.PF_VIEW/);
+  assert.match(policy, /AdminPermission\.ESIC_VIEW/);
   assert.match(policy, /AdminDepartment\.TECHNICAL/);
   assert.match(policy, /AdminDepartment\.PLACEMENT_CELL/);
   assert.match(policy, /AdminDepartment\.LEGAL/);
@@ -84,7 +91,7 @@ test("access-management and activation surfaces keep the secure corporate shell"
   const activationCss = await text("client/src/styles/admin-access-activation.css");
   assert.match(access, /Department admin access, without separate portals/);
   assert.match(access, /Add administrator/);
-  assert.match(access, /MFA required after activation/);
+  assert.match(access, /MFA optional after activation/);
   assert.match(siteFrame, /zb-admin-activation-root/);
   assert.match(css, /zba-access-hero/);
   assert.match(activationCss, /zb-admin-activation-root/);

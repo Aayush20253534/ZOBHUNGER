@@ -50,7 +50,7 @@ test("admin shell fails closed for department routes and persists the collapsibl
 test("department overview is genuinely adaptive instead of rendering a partially empty main-admin dashboard", async () => {
   const experience = await text("client/src/data/admin-experience.ts");
   const dashboard = await text("client/src/components/admin/AdminDashboard.tsx");
-  for (const department of ["MAIN_ADMIN", "HR", "TECHNICAL", "PLACEMENT_CELL", "LEGAL"]) assert.match(experience, new RegExp(`${department}:`));
+  for (const department of ["MAIN_ADMIN", "HR", "PF_EPFO", "ESIC", "ACCOUNTS", "TECHNICAL", "PLACEMENT_CELL", "LEGAL"]) assert.match(experience, new RegExp(`${department}:`));
   assert.match(dashboard, /adminDepartmentProfile/);
   assert.match(dashboard, /profile\.headline/);
   assert.match(dashboard, /zbo-dashboard-scope/);

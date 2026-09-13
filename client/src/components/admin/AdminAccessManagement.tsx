@@ -42,6 +42,9 @@ type Notice = { tone: "success" | "warning" | "error"; text: string } | null;
 
 const suggestedEmails: Record<ManagedDepartment, string> = {
   HR: "hr@zobhungr.com",
+  PF_EPFO: "",
+  ESIC: "",
+  ACCOUNTS: "",
   TECHNICAL: "tech@zobhungr.com",
   PLACEMENT_CELL: "placementcell@zobhungr.com",
   LEGAL: "legal@zobhungr.com",
@@ -241,7 +244,7 @@ export function AdminAccessManagement() {
         <div className="zba-access-hero-copy">
           <span className="zba-access-kicker"><ShieldEllipsis aria-hidden="true" /> Access governance</span>
           <h1 id="admin-access-title">Department admin access, without separate portals.</h1>
-          <p>Issue controlled HR, Technical, Placement Cell and Legal access from one secure operations workspace. Main Administration remains protected with full visibility.</p>
+          <p>Issue controlled HR, PF / EPFO, ESIC, Accounts, Technical, Placement Cell and Legal access from one secure operations workspace. Main Administration remains protected with full visibility.</p>
         </div>
         <div className="zba-access-hero-actions">
           <button type="button" className="zba-button zba-button-secondary" onClick={() => void loadAccounts(true)} disabled={refreshing}>
@@ -317,7 +320,7 @@ export function AdminAccessManagement() {
             <header className="zba-drawer-head"><div><span className="zba-section-kicker">{editing ? "Edit policy" : "Secure invitation"}</span><h2 id="access-editor-title">{editing ? "Update department access" : "Add department administrator"}</h2><p>{editing ? "Changing permissions closes existing sessions so the new policy takes effect immediately." : "The administrator creates their own password from a one-time email link, then can optionally add MFA from the Security page."}</p></div><button type="button" aria-label="Close" onClick={() => !saving && setDrawerOpen(false)}><X aria-hidden="true" /></button></header>
 
             <div className="zba-drawer-body">
-              <label className="zba-field"><span>Email address</span><div className="zba-field-control"><Mail aria-hidden="true" /><input type="email" value={formEmail} onChange={event => setFormEmail(event.target.value)} disabled={Boolean(editing)} placeholder="department@zobhungr.com" autoComplete="off" /></div>{!editing && <button className="zba-suggestion" type="button" onClick={() => setFormEmail(suggestedEmails[formDepartment])}>Use {suggestedEmails[formDepartment]}</button>}</label>
+              <label className="zba-field"><span>Email address</span><div className="zba-field-control"><Mail aria-hidden="true" /><input type="email" value={formEmail} onChange={event => setFormEmail(event.target.value)} disabled={Boolean(editing)} placeholder="department@company.com" autoComplete="off" /></div>{!editing && suggestedEmails[formDepartment] && <button className="zba-suggestion" type="button" onClick={() => setFormEmail(suggestedEmails[formDepartment])}>Use {suggestedEmails[formDepartment]}</button>}</label>
 
               <label className="zba-field"><span>Department</span><div className="zba-field-control is-select"><Building2 aria-hidden="true" /><select value={formDepartment} onChange={event => changeDepartment(event.target.value as ManagedDepartment)}>{config?.departments.map(item => <option value={item.value} key={item.value}>{item.label}</option>)}</select><ChevronDown aria-hidden="true" /></div></label>
 
