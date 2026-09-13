@@ -97,8 +97,15 @@ function sanitizeMessage(value: unknown): ChatbotUiMessage | null {
 
 function sanitizeConversation(value: unknown): StoredChatbotConversation | null {
   if (!isRecord(value) || value.version !== STORAGE_VERSION) return null;
-  if (typeof value.id !== "string" || !CONVERSATION_ID.test(value.id)) return null;
+  if (typeof value.id !== "string") return null;
   if (!Array.isArray(value.messages)) return null;
+
+  // Conversation IDs became stricter when server-side memory was introduced.
+  // Preserve browser history written by older builds, but rotate an old/invalid
+  // ID to a fresh server-safe ID instead of discarding the whole conversation.
+  const conversationId = CONVERSATION_ID.test(value.id)
+    ? value.id
+    : createChatbotConversationId();
 
   const messages = value.messages
     .slice(-MAX_STORED_MESSAGES)
@@ -107,7 +114,7 @@ function sanitizeConversation(value: unknown): StoredChatbotConversation | null 
 
   return {
     version: STORAGE_VERSION,
-    id: value.id.slice(0, 120),
+    id: conversationId,
     createdAt: typeof value.createdAt === "string" ? value.createdAt : new Date().toISOString(),
     updatedAt: typeof value.updatedAt === "string" ? value.updatedAt : new Date().toISOString(),
     messages,

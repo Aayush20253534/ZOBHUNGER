@@ -214,6 +214,7 @@ export function ChatbotPanel({
           <div className="zb-chatbot-context-note">
             <span>Verified ZOBHUNGER assistant</span>
             <p>Answers are grounded in approved ZOBHUNGER knowledge. If verified information is unavailable, the assistant will say so and can route you to a person.</p>
+            <small>Successful conversation history is saved on this device so you can continue where you left off.</small>
           </div>
           <div className="zb-chatbot-flow-row" aria-label="Choose enquiry type">
             <button type="button" disabled={loading} onClick={() => onSuggestion("I am a job seeker. Help me with the correct ZOBHUNGER job or worker process.")}>Jobs</button>

@@ -82,11 +82,12 @@ describe("advanced public chatbot widget", () => {
     await openWidget();
     await sendTypedMessage("Do you provide promoters for retail stores?");
 
-    expect(streamMessage).toHaveBeenCalledWith({
+    expect(streamMessage).toHaveBeenCalledWith(expect.objectContaining({
       message: "Do you provide promoters for retail stores?",
       history: [],
       currentPage: "/promoter-solutions",
-    }, expect.objectContaining({ onDelta: expect.any(Function), signal: expect.any(AbortSignal) }));
+      conversationId: expect.stringMatching(/^chat_/),
+    }), expect.objectContaining({ onDelta: expect.any(Function), signal: expect.any(AbortSignal) }));
     expect(container.textContent).toContain("ZOBHUNGER provides promoter solutions");
     expect(container.textContent).toContain("Sources (1)");
     expect(container.querySelector("a[href='/promoter-solutions']")?.textContent).toContain("Promoters Services");
