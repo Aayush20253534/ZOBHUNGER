@@ -84,10 +84,10 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
     const apply = (jobId = opening.id, body = input, user = worker) => request(`/workers/jobs/${jobId}/applications`, { user, method: 'POST', body });
     const bp = await prisma.businessProfile.create({ data: { userId: business.id, companyName: 'Test Retail', contactPerson: 'Test Lead' } });
     const req = await prisma.workforceRequirement.create({ data: { businessProfileId: bp.id, submittedByUserId: business.id, companyName: 'Test Retail', contactPerson: 'Test Lead', businessEmail: business.email, mobileNumber: '9876543210', industry: 'Retail', serviceRequired: 'Workforce', workforceCount: 5, jobLocation: 'Delhi', locations: ['Delhi'], projectDuration: '1 month', details: 'Worker workflow integration fixture', status: 'QUALIFIED' } }); requirements.push(req.id);
-    const share = applicationId => request('/admin/candidate-management', { user: admin, method: 'POST', body: { applicationId, requirementId: req.id, summary: 'Suitable retail experience for the role.' } });
+    const share = applicationId => request('/admin/candidate-management', { user: admin, method: 'POST', body: { applicationId, requirementId: req.id, summary: 'Suitable retail experience for the role.', skills: ['Retail', 'Customer Service'] } });
     let applicationId, candidateId, assignmentId;
     const today = istToday(), date = addDays(today, -3);
-    const setup = { location: 'Delhi Central', supervisor: 'Field supervisor', startDate: addDays(today, -20), endDate: addDays(today, 20), shiftStart: '09:00', shiftEnd: '18:00', graceMinutes: 10 };
+    const setup = { location: 'Delhi Central', supervisor: 'Field supervisor', startDate: addDays(today, -20), endDate: addDays(today, 20), shiftStart: '09:00', shiftEnd: '18:00', graceMinutes: 10, workingDays: [1, 2, 3, 4, 5, 6, 7] };
     const createAssignment = candidateId => request('/admin/attendance/assignments', { user: admin, method: 'POST', body: { ...setup, candidateId } });
     await t.test('all modules require correct verified account and write headers', async () => {
       for (const path of ['/workers/applications', '/workers/assignments', '/workers/attendance']) {
@@ -102,7 +102,7 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
     });
     await t.test('double submit makes one account-owned immutable application and CV snapshot', async () => {
       const responses = await Promise.all([apply(), apply()]); assert.deepEqual(responses.map(r => r.status).sort(), [200, 201]); applicationId = responses[0].body.data.id; applications.push(applicationId);
-      const detail = ok(await request(`/workers/applications/${applicationId}`, { user: worker })); assert.equal(detail.application.stage, 'SUBMITTED'); assert.equal(detail.history.total, 1); assert.equal(detail.history.items[0].actor, 'WORKER');
+      const detail = ok(await request(`/workers/applications/${applicationId}`, { user: worker })); assert.equal(detail.application.stage, 'SUBMITTED'); assert.equal(detail.history.total, 1); assert.equal(detail.history.items[0].kind, 'SUBMITTED'); assert.equal(detail.history.items[0].stage, 'SUBMITTED');
       await prisma.workerProfile.update({ where: { id: profile.id }, data: { fullName: 'Updated name', skills: ['Changed skill'], revision: { increment: 1 } } });
       await prisma.workerResume.delete({ where: { profileId: profile.id } });
       const download = await request(`/workers/applications/${applicationId}/resume`, { user: worker }); assert.equal(download.status, 200); assert.equal(download.body, cv.toString());
@@ -127,7 +127,7 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       candidateId = ok(await share(applicationId), 201).id;
       const options = ok(await request('/admin/candidate-management/applications', { user: admin })).items.find(row => row.id === applicationId); assert.deepEqual(options.skills, ['Retail', 'Customer Service']);
       assert.equal((await request(`/business/candidates/${candidateId}/resume`, { user: business })).body, cv.toString()); assert.equal((await request(`/business/candidates/${candidateId}/resume`, { user: foreignBusiness })).status, 404);
-      ok(await request(`/business/candidates/${candidateId}/reviews`, { user: business, method: 'POST', body: { action: 'INTERVIEW', revision: 0, note: 'PRIVATE business feedback', interviewAt: new Date().toISOString() } }));
+      ok(await request(`/business/candidates/${candidateId}/reviews`, { user: business, method: 'POST', body: { action: 'INTERVIEW', revision: 0, note: 'PRIVATE business feedback', interviewAt: new Date(Date.now() + 60 * 60_000).toISOString(), interviewMode: 'VIDEO', interviewDetails: 'Video interview with the hiring team.' } }));
       const detail = ok(await request(`/workers/applications/${applicationId}`, { user: worker })); assert.equal(detail.application.stage, 'INTERVIEW_REQUESTED'); assert.match(JSON.stringify(detail), /interview/i);
       ok(await request(`/business/candidates/${candidateId}/reviews`, { user: business, method: 'POST', body: { action: 'STATUS', revision: 1, status: 'SELECTED', note: 'PRIVATE selected decision' } }));
       assert.equal(ok(await request(`/workers/applications?status=SELECTED`, { user: worker })).total, 1);
@@ -137,15 +137,17 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       assert.equal((await request(`/workers/applications/${applicationId}/withdraw`, { user: worker, method: 'POST', body: { revision: 1, reason: 'Not available', confirm: true } })).status, 409);
     });
     await t.test('withdrawal revokes business access and blocks all further progression', async () => {
-      const opening2 = await job(); const id = ok(await apply(opening2.id, { ...input, profileRevision: 1, includeResume: false }), 201).id; applications.push(id); const shared = ok(await share(id), 201).id;
-      ok(await request(`/workers/applications/${id}/withdraw`, { user: worker, method: 'POST', body: { revision: 0, reason: 'Taking another opportunity', confirm: true } }));
+      const opening2 = await job(); const id = ok(await apply(opening2.id, { ...input, profileRevision: 1, includeResume: false }), 201).id; applications.push(id);
+      ok(await request(`/admin/worker-applications/${id}/review`, { user: admin, method: 'POST', body: { revision: 0, status: 'REVIEWED', workerMessage: 'Profile reviewed before sharing.' } }));
+      const shared = ok(await share(id), 201).id;
+      ok(await request(`/workers/applications/${id}/withdraw`, { user: worker, method: 'POST', body: { revision: 1, reason: 'Taking another opportunity', confirm: true } }));
       assert.equal(ok(await request(`/workers/applications/${id}`, { user: worker })).application.stage, 'WITHDRAWN');
       assert.equal((await share(id)).status, 409); assert.equal((await createAssignment(shared)).status, 409);
       assert.equal((await request(`/admin/applications/${id}/status`, { user: admin, method: 'PATCH', body: { status: 'REVIEWED' } })).status, 409);
       assert.equal((await request(`/business/candidates/${shared}`, { user: business })).status, 404);
       assert.equal(ok(await apply(opening2.id, { ...input, profileRevision: 1, includeResume: false })).id, id);
     });
-    const entry = { date, kind: 'SUBMISSION', assignmentRevision: 0, recordRevision: null, recordApprovalRevision: null, attendanceStatus: 'PRESENT', checkInAt: `${date}T09:00:00+05:30`, checkOutAt: `${date}T18:00:00+05:30` };
+    const entry = { date, kind: 'SUBMISSION', assignmentRevision: 0, recordRevision: null, recordApprovalRevision: null, attendanceStatus: 'PRESENT', checkInAt: `${date}T09:00:00+05:30`, checkOutAt: `${date}T18:00:00+05:30`, breakMinutes: 35, reason: 'Completed scheduled shift.', confirm: true };
     const submit = (body = entry, user = worker, id = assignmentId) => request(`/workers/assignments/${id}/attendance`, { user, method: 'POST', body: { ...body, requestKey: body.requestKey ?? generateUniqueSubmissionKey() } });
     const day = async () => ok(await request(`/workers/assignments/${assignmentId}?date=${date}`, { user: worker }));
     const decide = (id, decision = 'APPROVE', revision = 0) => request(`/admin/worker-attendance/${id}/review`, { user: admin, method: 'POST', body: { revision, decision, reviewNote: 'Checked with supervisor.' } });
@@ -173,14 +175,14 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       const pair = await Promise.all([decide(attendanceRequestId), decide(attendanceRequestId)]); assert.deepEqual(pair.map(r => r.status).sort(), [200, 409]);
       const result = await day(); assert.equal(result.pending, null); assert.equal(result.record.approvalStatus, 'PENDING'); assert.equal(result.record.workedMinutes, 505); recordId = result.record.id;
       const record = result.record;
-      ok(await request(`/business/attendance-approvals/${recordId}/decision`, { user: business, method: 'POST', body: { revision: record.revision, approvalRevision: record.approvalRevision, action: 'APPROVE' } }));
+      ok(await request(`/business/attendance-approvals/${recordId}/decision`, { user: business, method: 'POST', body: { revision: record.revision, approvalRevision: record.approvalRevision, action: 'APPROVED', note: 'Confirmed the completed shift.' } }));
       assert.equal((await day()).record.approvalStatus, 'APPROVED'); assert.doesNotMatch(JSON.stringify(await day()), /Confirmed the completed shift/);
     });
     await t.test('corrections preserve approved record until reviewed; stale requests cannot overwrite', async () => {
       let record = (await day()).record;
       const correction = { ...entry, requestKey: generateUniqueSubmissionKey(), kind: 'CORRECTION', recordRevision: record.revision, recordApprovalRevision: record.approvalRevision, checkOutAt: `${date}T18:10:00+05:30` };
       const first = ok(await submit(correction), 201).id; assert.equal((await day()).record.approvalStatus, 'APPROVED');
-      ok(await request(`/admin/attendance/assignments/${assignmentId}/records`, { user: admin, method: 'PUT', body: { date, revision: record.revision, status: 'PRESENT', checkInAt: entry.checkInAt, checkOutAt: entry.checkOutAt } }));
+      ok(await request(`/admin/attendance/assignments/${assignmentId}/records`, { user: admin, method: 'PUT', body: { date, revision: record.revision, status: 'PRESENT', checkInAt: entry.checkInAt, checkOutAt: entry.checkOutAt, breakMinutes: entry.breakMinutes, note: 'Supervisor adjustment.' } }));
       assert.equal((await decide(first)).status, 409); ok(await decide(first, 'REJECT'));
       record = (await day()).record;
       const second = ok(await submit({ ...correction, requestKey: generateUniqueSubmissionKey(), recordRevision: record.revision, recordApprovalRevision: record.approvalRevision }), 201).id;
@@ -188,11 +190,12 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
     });
     await t.test('scheduled-off and overnight shifts have explicit time boundaries', async () => {
       const opening3 = await job(); const id = ok(await apply(opening3.id, { ...input, profileRevision: 1, includeResume: false }), 201).id; applications.push(id);
+      ok(await request(`/admin/worker-applications/${id}/review`, { user: admin, method: 'POST', body: { revision: 0, status: 'REVIEWED', workerMessage: 'Night-shift profile reviewed.' } }));
       const candidate = ok(await share(id), 201).id;
       ok(await request(`/business/candidates/${candidate}/reviews`, { user: business, method: 'POST', body: { action: 'STATUS', revision: 0, status: 'SELECTED', note: 'Night team selection' } }));
-      const night = ok(await request('/admin/attendance/assignments', { user: admin, method: 'POST', body: { ...setup, candidateId: candidate, shiftStart: '22:00', shiftEnd: '06:00', workingDays: ['MON', 'TUE', 'WED', 'THU', 'FRI'] } }), 201).id;
+      const night = ok(await request('/admin/attendance/assignments', { user: admin, method: 'POST', body: { ...setup, candidateId: candidate, shiftStart: '22:00', shiftEnd: '06:00', workingDays: [isoWeekday(date)] } }), 201).id;
       assert.equal((await submit({ ...entry, requestKey: generateUniqueSubmissionKey(), date: addDays(date, -1) }, worker, night)).status, 400);
-      const nightRequest = ok(await submit({ ...entry, requestKey: generateUniqueSubmissionKey(), checkInAt: `${date}T22:00:00+05:30`, checkOutAt: `${addDays(date, 1)}T06:00:00+05:30` }, worker, night), 201).id;
+      const nightRequest = ok(await submit({ ...entry, requestKey: generateUniqueSubmissionKey(), checkInAt: `${date}T22:00:00+05:30`, checkOutAt: `${addDays(date, 1)}T06:00:00+05:30`, breakMinutes: 30, reason: 'Completed overnight shift.' }, worker, night), 201).id;
       ok(await decide(nightRequest)); const result = ok(await request(`/workers/assignments/${night}?date=${date}`, { user: worker })); assert.equal(result.record.workedMinutes, 450);
     });
   } finally {
