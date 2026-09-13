@@ -258,8 +258,13 @@ export async function getEmployeeCompliance(token?: string) {
   return { employee: masterProfile(joining), pf: publicPf(pf), esic: publicEsic(esic), documents };
 }
 
+const employeeEditableStatuses = new Set<ComplianceStatus>([
+  ComplianceStatus.DRAFT,
+  ComplianceStatus.NEEDS_CORRECTION,
+]);
+
 function assertEmployeeEditable(status: ComplianceStatus | undefined) {
-  if (status && ![ComplianceStatus.DRAFT, ComplianceStatus.NEEDS_CORRECTION].includes(status)) {
+  if (status && !employeeEditableStatuses.has(status)) {
     fail(409, "This compliance record is locked while the department reviews it", "COMPLIANCE_RECORD_LOCKED");
   }
 }
@@ -483,10 +488,10 @@ export async function listPfCompliance(query: ComplianceListQuery) {
     prisma.employeeJoining.findMany({ where, select: { id: true, employeeNumber: true, fullName: true, personalEmail: true, projectAssignment: true, aadhaarLast4: true, bankAccountLast4: true, pfCompliance: { select: { id: true, status: true, department: true, designation: true, existingUanLast4: true, revision: true, updatedAt: true } } }, orderBy: { createdAt: "desc" }, skip, take: query.pageSize }),
     prisma.employeeJoining.count({ where }),
     prisma.employeePfCompliance.count({ where: { status: { not: ComplianceStatus.DRAFT } } }),
-    prisma.employeePfCompliance.groupBy({ by: ["status"], _count: { _all: true } }),
+    prisma.employeePfCompliance.groupBy({ by: ["status"], _count: { _all: true }, orderBy: { status: "asc" } }),
   ]);
   const eligible = await prisma.employeeJoining.count({ where: { employeeNumber: { not: null }, status: { not: "REJECTED" } } });
-  return { items: items.map(item => ({ ...item, aadhaar: maskSensitive(item.aadhaarLast4, "XXXX XXXX"), bankAccount: maskSensitive(item.bankAccountLast4, "XXXXXXXX"), uan: maskSensitive(item.pfCompliance?.existingUanLast4, "XXXXXXXX") })), total, page: query.page, pageSize: query.pageSize, totalPages: Math.max(1, Math.ceil(total / query.pageSize)), stats: { totalEmployees: eligible, pendingSubmission: Math.max(0, eligible - complianceCount), byStatus: Object.fromEntries(grouped.map(row => [row.status, row._count._all])) } };
+  return { items: items.map(item => ({ ...item, aadhaar: maskSensitive(item.aadhaarLast4, "XXXX XXXX"), bankAccount: maskSensitive(item.bankAccountLast4, "XXXXXXXX"), uan: maskSensitive(item.pfCompliance?.existingUanLast4, "XXXXXXXX") })), total, page: query.page, pageSize: query.pageSize, totalPages: Math.max(1, Math.ceil(total / query.pageSize)), stats: { totalEmployees: eligible, pendingSubmission: Math.max(0, eligible - complianceCount), byStatus: Object.fromEntries(grouped.map(row => [row.status, typeof row._count === "object" && row._count !== null ? (row._count._all ?? 0) : 0])) } };
 }
 
 export async function listEsicCompliance(query: ComplianceListQuery) {
@@ -497,10 +502,10 @@ export async function listEsicCompliance(query: ComplianceListQuery) {
     prisma.employeeJoining.findMany({ where, select: { id: true, employeeNumber: true, fullName: true, personalEmail: true, projectAssignment: true, aadhaarLast4: true, esicCompliance: { select: { id: true, status: true, esiApplicable: true, esiNumberLast4: true, revision: true, updatedAt: true, _count: { select: { familyMembers: true } } } } }, orderBy: { createdAt: "desc" }, skip, take: query.pageSize }),
     prisma.employeeJoining.count({ where }),
     prisma.employeeEsicCompliance.count({ where: { status: { not: ComplianceStatus.DRAFT } } }),
-    prisma.employeeEsicCompliance.groupBy({ by: ["status"], _count: { _all: true } }),
+    prisma.employeeEsicCompliance.groupBy({ by: ["status"], _count: { _all: true }, orderBy: { status: "asc" } }),
   ]);
   const eligible = await prisma.employeeJoining.count({ where: { employeeNumber: { not: null }, status: { not: "REJECTED" } } });
-  return { items: items.map(item => ({ ...item, aadhaar: maskSensitive(item.aadhaarLast4, "XXXX XXXX"), esiNumber: maskSensitive(item.esicCompliance?.esiNumberLast4, "XXXXXX") })), total, page: query.page, pageSize: query.pageSize, totalPages: Math.max(1, Math.ceil(total / query.pageSize)), stats: { totalEmployees: eligible, pendingSubmission: Math.max(0, eligible - complianceCount), byStatus: Object.fromEntries(grouped.map(row => [row.status, row._count._all])) } };
+  return { items: items.map(item => ({ ...item, aadhaar: maskSensitive(item.aadhaarLast4, "XXXX XXXX"), esiNumber: maskSensitive(item.esicCompliance?.esiNumberLast4, "XXXXXX") })), total, page: query.page, pageSize: query.pageSize, totalPages: Math.max(1, Math.ceil(total / query.pageSize)), stats: { totalEmployees: eligible, pendingSubmission: Math.max(0, eligible - complianceCount), byStatus: Object.fromEntries(grouped.map(row => [row.status, typeof row._count === "object" && row._count !== null ? (row._count._all ?? 0) : 0])) } };
 }
 
 async function adminJoining(joiningId: string) {
@@ -566,8 +571,13 @@ async function reviewCompliance(area: ComplianceArea, joiningId: string, actorUs
 export const reviewPfCompliance = (joiningId: string, actorUserId: string, input: ComplianceReviewInput) => reviewCompliance(ComplianceArea.PF_EPFO, joiningId, actorUserId, input);
 export const reviewEsicCompliance = (joiningId: string, actorUserId: string, input: ComplianceReviewInput) => reviewCompliance(ComplianceArea.ESIC, joiningId, actorUserId, input);
 
+const departmentEditableStatuses = new Set<ComplianceStatus>([
+  ComplianceStatus.UNDER_REVIEW,
+  ComplianceStatus.VERIFIED,
+]);
+
 function assertDepartmentUpdateAllowed(status: ComplianceStatus) {
-  if (![ComplianceStatus.UNDER_REVIEW, ComplianceStatus.VERIFIED].includes(status)) {
+  if (!departmentEditableStatuses.has(status)) {
     fail(409, "Start department review before updating compliance-controlled fields", "COMPLIANCE_DEPARTMENT_UPDATE_NOT_ALLOWED");
   }
 }

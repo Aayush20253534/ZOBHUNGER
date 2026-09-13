@@ -1,7 +1,7 @@
 import { env } from "../config/env.js";
 import { sendCorporateEmail } from "./email.service.js";
 
-type Department = "MAIN_ADMIN" | "HR" | "TECHNICAL" | "PLACEMENT_CELL" | "LEGAL";
+type Department = "MAIN_ADMIN" | "HR" | "TECHNICAL" | "PLACEMENT_CELL" | "LEGAL" | "PF_EPFO" | "ESIC" | "ACCOUNTS";
 
 function publicApp(path = "/") {
   const origin = env.PUBLIC_APP_URL ?? env.CLIENT_ORIGIN.split(",")[0].trim();
@@ -14,6 +14,9 @@ function teamEmail(department: Department) {
     case "TECHNICAL": return env.TECH_TEAM_EMAIL;
     case "PLACEMENT_CELL": return env.PLACEMENT_TEAM_EMAIL;
     case "LEGAL": return env.LEGAL_TEAM_EMAIL;
+    case "PF_EPFO":
+    case "ESIC":
+    case "ACCOUNTS": return undefined;
     default: return env.SALES_TEAM_EMAIL;
   }
 }
