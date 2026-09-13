@@ -1,6 +1,5 @@
 import { createHash } from "node:crypto";
 import { loadKnowledgeBase } from "../knowledge/index.js";
-import { loadPublishedManagedKnowledge } from "../knowledge/managed-knowledge.js";
 import { buildKnowledgeIndex } from "./knowledge-index.js";
 import { searchKnowledgeIndex } from "./knowledge-search.js";
 import type {
@@ -66,6 +65,10 @@ export function getDefaultKnowledgeRetriever(): Promise<KnowledgeRetriever> {
         const details = staticKnowledge.issues.map((issue) => `${issue.file ?? "knowledge"}: ${issue.message}`).join("; ");
         throw new Error(`Cannot build chatbot knowledge index: ${details}`);
       }
+      // Managed knowledge is a runtime concern backed by Prisma/PostgreSQL.
+      // Load it lazily so offline/static release checks can build the repository
+      // knowledge index without requiring a generated Prisma client or DATABASE_URL.
+      const { loadPublishedManagedKnowledge } = await import("../knowledge/managed-knowledge.js");
       const managedKnowledge = await loadPublishedManagedKnowledge();
       const byId = new Map(staticKnowledge.documents.map((document) => [document.metadata.id, document]));
       for (const document of managedKnowledge) byId.set(document.metadata.id, document);

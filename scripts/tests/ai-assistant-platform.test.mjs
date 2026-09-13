@@ -80,3 +80,11 @@ test("AI assistant migration keeps new enum grant in a separate committed migrat
   assert.doesNotMatch(main, /array_append\("adminPermissions", 'AI_ASSISTANT_MANAGE'/);
   assert.match(grant, /array_append\("adminPermissions", 'AI_ASSISTANT_MANAGE'/);
 });
+
+test("offline chatbot release checks do not eagerly depend on runtime Prisma wiring", async () => {
+  const retriever = await text("server/src/modules/chatbot/rag/knowledge-retriever.ts");
+  const verifier = await text("scripts/verify-phase2.mjs");
+  assert.doesNotMatch(retriever, /^import \{ loadPublishedManagedKnowledge \} from/m);
+  assert.match(retriever, /await import\("\.\.\/knowledge\/managed-knowledge\.js"\)/);
+  assert.match(verifier, /name: "Generate Prisma client"[\s\S]*script: "db:generate"[\s\S]*name: "Server unit tests"/);
+});
