@@ -91,7 +91,7 @@ export async function createEarningsStatement(userId: string, input: CreateEarni
     const statement = await tx.earningsStatement.create({ data: { assignmentId: input.assignmentId, requestKey: input.requestKey, periodStart: dateValue(input.periodStart), periodEnd: dateValue(input.periodEnd), createdByUserId: userId, lines: { create: lineData(input.lines) } }, select: statementSelect });
     await tx.auditLog.create({ data: { actorUserId: userId, action: "EARNINGS_DRAFT_CREATED", entityType: "EarningsStatement", entityId: statement.id, metadata: { assignmentId: input.assignmentId, periodStart: input.periodStart, periodEnd: input.periodEnd } } });
     return { statement: statementDto(statement, true), created: true };
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
 }
 
 export async function updateEarningsDraft(userId: string, id: string, input: EarningsDraftInput & { revision: number }) {
@@ -105,7 +105,7 @@ export async function updateEarningsDraft(userId: string, id: string, input: Ear
     const updated = await tx.earningsStatement.update({ where: { id }, data: { periodStart: dateValue(input.periodStart), periodEnd: dateValue(input.periodEnd), revision: { increment: 1 }, lines: { create: lineData(input.lines) } }, select: statementSelect });
     await tx.auditLog.create({ data: { actorUserId: userId, action: "EARNINGS_DRAFT_REVISED", entityType: "EarningsStatement", entityId: id, metadata: { fromRevision: input.revision, toRevision: updated.revision } } });
     return statementDto(updated, true);
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
 }
 
 async function attendanceSnapshot(tx: Prisma.TransactionClient, statement: { assignmentId: string; periodStart: Date; periodEnd: Date }) {
@@ -124,7 +124,7 @@ export async function approveEarningsStatement(userId: string, id: string, input
     const updated = await tx.earningsStatement.update({ where: { id }, data: { status: "APPROVED", revision: { increment: 1 }, approvedByUserId: userId, approvedAt: new Date(), approvalNote: input.approvalNote, approvalAttendanceSnapshot: attendance }, select: statementSelect });
     await tx.auditLog.create({ data: { actorUserId: userId, action: "EARNINGS_APPROVED", entityType: "EarningsStatement", entityId: id, metadata: { revision: updated.revision, netPayablePaise: totals(updated).netPayablePaise, attendance } } });
     return statementDto(updated, true);
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
 }
 
 export async function addEarningsAdjustment(userId: string, id: string, input: { revision: number; requestKey: string; type: "CREDIT" | "DEBIT"; amountPaise: number; reason: string }) {
@@ -148,7 +148,7 @@ export async function addEarningsAdjustment(userId: string, id: string, input: {
     const updated = await tx.earningsStatement.update({ where: { id }, data: { revision: { increment: 1 } }, select: statementSelect });
     await tx.auditLog.create({ data: { actorUserId: userId, action: "EARNINGS_ADJUSTED", entityType: "EarningsStatement", entityId: id, metadata: { type: input.type, amountPaise: input.amountPaise, reason: input.reason, revision: updated.revision } } });
     return statementDto(updated, true);
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
 }
 
 export async function recordEarningsPayment(userId: string, id: string, input: RecordPaymentInput) {
@@ -176,7 +176,7 @@ export async function recordEarningsPayment(userId: string, id: string, input: R
     const updated = await tx.earningsStatement.update({ where: { id }, data: { revision: { increment: 1 } }, select: statementSelect });
     await tx.auditLog.create({ data: { actorUserId: userId, action: "EARNINGS_PAYMENT_RECORDED", entityType: "EarningsStatement", entityId: id, metadata: { amountPaise: input.amountPaise, paidAt: input.paidAt.toISOString(), method: input.method, reference: input.reference, revision: updated.revision } } });
     return statementDto(updated, true);
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
 }
 
 export async function voidEarningsPayment(userId: string, id: string, paymentId: string, input: { statementRevision: number; paymentRevision: number; reason: string }) {
@@ -190,7 +190,7 @@ export async function voidEarningsPayment(userId: string, id: string, paymentId:
     const updated = await tx.earningsStatement.update({ where: { id }, data: { revision: { increment: 1 } }, select: statementSelect });
     await tx.auditLog.create({ data: { actorUserId: userId, action: "EARNINGS_PAYMENT_VOIDED", entityType: "EarningsStatement", entityId: id, metadata: { paymentId, amountPaise: payment.amountPaise, reason: input.reason, revision: updated.revision } } });
     return statementDto(updated, true);
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
 }
 
 function safeMoneyTotal(value: bigint | number | null | undefined) {
