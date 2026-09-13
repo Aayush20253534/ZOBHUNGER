@@ -20,7 +20,7 @@ export function EmployeeComplianceLanding() {
   const [identity, setIdentity] = useState({ employeeNumber: "", personalEmail: "", dateOfBirth: "", aadhaarLast4: "" });
 
   const load = useCallback(async () => {
-    if (!complianceToken()) { setLoading(false); return; }
+    if (!complianceToken()) return;
     try {
       const response = await getEmployeeComplianceProfile();
       setProfile(response.data);

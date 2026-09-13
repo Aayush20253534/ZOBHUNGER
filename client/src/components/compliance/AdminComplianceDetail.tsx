@@ -39,8 +39,6 @@ export function AdminComplianceDetail({ area, id }: { area: "pf" | "esic"; id: s
   const [esicEdit, setEsicEdit] = useState({ esiApplicable: false, esiNumber: "" });
 
   const load = useCallback(async () => {
-    setLoading(true);
-    setError("");
     try {
       const response = area === "pf" ? await getPfCompliance(id) : await getEsicCompliance(id);
       setData(response.data);
