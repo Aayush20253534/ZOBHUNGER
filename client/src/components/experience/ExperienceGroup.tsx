@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import type { CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import type { BrandExperienceGroup } from "@/data/brand-experience";
@@ -30,7 +31,13 @@ export function ExperienceGroup({ group, index }: { group: BrandExperienceGroup;
           const logoFit = partnerLogoFit(brand);
           return (
             <li key={brand}>
-              <span className="zb-experience-brand-logo" aria-hidden="true" data-brand={brandToken} data-fit={logoFit}>
+              <span
+                className="zb-experience-brand-logo"
+                aria-hidden="true"
+                data-brand={brandToken}
+                data-fit={logoFit}
+                style={{ "--zb-mini-logo-optical-scale": artwork?.miniScale ?? artwork?.scale ?? 1 } as CSSProperties}
+              >
                 {logoUrl ? (
                   <img
                     src={logoUrl}

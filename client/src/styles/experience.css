@@ -857,7 +857,7 @@
 
 /* Keep the brand-experience grid optically aligned with the marquee. */
 .zb-experience-brand-logo[data-fit] {
-  --zb-mini-logo-scale: 1;
+  --zb-mini-logo-scale: var(--zb-mini-logo-optical-scale, 1);
   width: 3.7rem;
   height: 2.35rem;
   flex-basis: 3.7rem;
@@ -877,7 +877,7 @@
 .zb-experience-brand-logo[data-fit="badge"] img {
   width: 68%;
   height: 84%;
-  transform: scale(1.04);
+  transform: scale(calc(var(--zb-mini-logo-scale) * 1.04));
 }
 
 .zb-experience-brand-list li {

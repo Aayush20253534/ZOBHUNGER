@@ -1896,3 +1896,378 @@ body.zb-site:has(.zb-auth-page--portal) > main {
     border-radius: 0.9rem;
   }
 }
+
+/* Shared password recovery for the public portal entry. */
+.zb-recovery-page {
+  padding-bottom: .4rem;
+}
+
+.zb-recovery-shell {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(22rem, .72fr);
+  gap: clamp(1.4rem, 3vw, 2.6rem);
+  align-items: center;
+  width: min(100%, 58rem);
+  margin: .45rem auto 0;
+  padding: clamp(1.25rem, 2.6vw, 2rem);
+  border: 1px solid #ebe5e6;
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 .9rem 2.8rem rgb(54 27 31 / 6%);
+}
+
+.zb-recovery-copy {
+  min-width: 0;
+}
+
+.zb-recovery-kicker {
+  color: #b9172a;
+  font-size: .68rem;
+  font-weight: 850;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.zb-recovery-copy h1 {
+  max-width: 28rem;
+  margin: .55rem 0 0;
+  color: #211a1c;
+  font-size: clamp(2rem, 4vw, 3.15rem);
+  line-height: .98;
+  letter-spacing: -.055em;
+}
+
+.zb-recovery-copy > p {
+  max-width: 31rem;
+  margin: .75rem 0 0;
+  color: #71676a;
+  font-size: .82rem;
+  line-height: 1.55;
+}
+
+.zb-recovery-security-note {
+  display: flex;
+  gap: .65rem;
+  align-items: flex-start;
+  max-width: 31rem;
+  margin-top: 1rem;
+  padding-top: .8rem;
+  border-top: 1px solid #eee5e7;
+  color: #817679;
+  font-size: .71rem;
+  line-height: 1.45;
+}
+
+.zb-recovery-security-note svg {
+  width: 1rem;
+  height: 1rem;
+  margin-top: .08rem;
+  flex: none;
+  color: #c7192c;
+}
+
+.zb-recovery-security-note strong {
+  display: block;
+  margin-bottom: .08rem;
+  color: #493d40;
+  font-size: .73rem;
+}
+
+.zb-recovery-card {
+  min-width: 0;
+  padding: 1.15rem;
+  border: 1px solid #eadfe1;
+  border-top: 3px solid #cf1d2b;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 1rem 2.6rem rgb(52 24 29 / 9%);
+}
+
+.zb-recovery-card form {
+  display: grid;
+  gap: .78rem;
+}
+
+.zb-recovery-form-heading > p,
+.zb-recovery-field > span:first-child {
+  display: block;
+  margin: 0 0 .38rem;
+  color: #34292c;
+  font-size: .75rem;
+  font-weight: 750;
+}
+
+.zb-recovery-account-switch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .38rem;
+}
+
+.zb-recovery-account-switch button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  min-height: 2.35rem;
+  padding: .42rem .55rem;
+  border: 1px solid #e8dcdf;
+  border-radius: .65rem;
+  background: #fff;
+  color: #675b5e;
+  font: inherit;
+  font-size: .72rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
+}
+
+.zb-recovery-account-switch button svg {
+  width: .9rem;
+  height: .9rem;
+}
+
+.zb-recovery-account-switch button:hover,
+.zb-recovery-account-switch button.is-active {
+  border-color: #d42236;
+  background: #fff5f6;
+  color: #b9172a;
+}
+
+.zb-recovery-account-switch button:focus-visible,
+.zb-recovery-submit:focus-visible,
+.zb-recovery-password-toggle:focus-visible {
+  outline: 2px solid #cf1d2b;
+  outline-offset: 2px;
+}
+
+.zb-recovery-field {
+  display: block;
+}
+
+.zb-recovery-input-wrap {
+  position: relative;
+  display: block;
+}
+
+.zb-recovery-input-wrap > svg:first-child {
+  position: absolute;
+  top: 50%;
+  left: .78rem;
+  z-index: 1;
+  width: 1rem;
+  height: 1rem;
+  color: #91878a;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.zb-recovery-input-wrap input {
+  width: 100%;
+  min-height: 2.7rem;
+  box-sizing: border-box;
+  padding: .68rem 2.55rem .68rem 2.35rem;
+  border: 1px solid #ded5d7;
+  border-radius: .68rem;
+  background: #fff;
+  color: #211a1c;
+  font: inherit;
+  font-size: .8rem;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.zb-recovery-input-wrap input:focus {
+  border-color: #c7192c;
+  box-shadow: 0 0 0 3px rgb(199 25 44 / 9%);
+}
+
+.zb-recovery-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: .55rem;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 0;
+  border-radius: .5rem;
+  background: transparent;
+  color: #6f6568;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.zb-recovery-password-toggle svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.zb-recovery-submit,
+.zb-recovery-primary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  min-height: 2.6rem;
+  padding: .62rem .9rem;
+  border: 0;
+  border-radius: .68rem;
+  background: linear-gradient(90deg, #d91f34, #b70f24);
+  color: #fff;
+  font: inherit;
+  font-size: .8rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.zb-recovery-submit svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.zb-recovery-submit:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.zb-recovery-back,
+.zb-recovery-success > a:not(.zb-recovery-primary-link) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  color: #776b6e;
+  font-size: .7rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.zb-recovery-back svg,
+.zb-recovery-success > a svg {
+  width: .85rem;
+  height: .85rem;
+}
+
+.zb-recovery-error {
+  margin: 0;
+  padding: .6rem .7rem;
+  border: 1px solid #fecdd3;
+  border-radius: .6rem;
+  background: #fff1f2;
+  color: #9f1239;
+  font-size: .72rem;
+  line-height: 1.45;
+}
+
+.zb-recovery-success {
+  display: grid;
+  justify-items: start;
+  gap: .62rem;
+}
+
+.zb-recovery-success > span {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  place-items: center;
+  border-radius: .72rem;
+  background: #ecfdf3;
+  color: #18894d;
+}
+
+.zb-recovery-success > span svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.zb-recovery-success h2 {
+  margin: .05rem 0 0;
+  color: #251e20;
+  font-size: 1.15rem;
+}
+
+.zb-recovery-success p,
+.zb-recovery-reading {
+  margin: 0;
+  color: #756a6d;
+  font-size: .76rem;
+  line-height: 1.55;
+}
+
+.zb-recovery-success button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #b9172a;
+  font: inherit;
+  font-size: .72rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.zb-recovery-success--neutral > span {
+  background: #fff4f5;
+  color: #ba1729;
+}
+
+.zb-recovery-rules {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .3rem .55rem;
+  margin: -.15rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zb-recovery-rules li {
+  display: flex;
+  align-items: center;
+  gap: .28rem;
+  color: #9a8e91;
+  font-size: .65rem;
+}
+
+.zb-recovery-rules li svg {
+  width: .72rem;
+  height: .72rem;
+}
+
+.zb-recovery-rules li.is-done {
+  color: #16824a;
+}
+
+body.zb-site:has(.zb-recovery-page) > main {
+  padding-top: .55rem;
+  padding-bottom: .55rem;
+}
+
+@media (max-width: 820px) {
+  .zb-recovery-shell {
+    grid-template-columns: 1fr;
+    width: min(100%, 37rem);
+  }
+
+  .zb-recovery-copy h1 {
+    font-size: clamp(2rem, 8vw, 2.8rem);
+  }
+}
+
+@media (max-width: 560px) {
+  .zb-recovery-shell {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .zb-recovery-account-switch {
+    grid-template-columns: 1fr;
+  }
+
+  .zb-recovery-account-switch button {
+    justify-content: flex-start;
+  }
+
+  .zb-recovery-rules {
+    grid-template-columns: 1fr;
+  }
+}

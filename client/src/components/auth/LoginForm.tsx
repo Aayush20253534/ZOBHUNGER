@@ -98,7 +98,7 @@ export function LoginForm() {
         </span>
       </label>
 
-      <div className="zb-login-form-links"><Link href="/forgot-password">Forgot admin password?</Link></div>
+      <div className="zb-login-form-links"><Link href="/forgot-password">Forgot password?</Link></div>
 
       {mfaRequired && (
         <label>

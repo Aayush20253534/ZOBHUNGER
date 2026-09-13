@@ -1,7 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { featuredBrandExperience } from "@/data/brand-experience";
 import { brandLogoUrl } from "@/data/brand-logos";
 import { partnerArtwork, partnerArtworkSrc, partnerLogoFit, partnerLogoToken } from "@/data/partner-artwork";
@@ -16,7 +16,12 @@ function PartnerMark({ brand }: { brand: string }) {
   const fit = partnerLogoFit(brand);
 
   return (
-    <span className="zb-partner-mark" data-brand={brandToken} data-fit={fit}>
+    <span
+      className="zb-partner-mark"
+      data-brand={brandToken}
+      data-fit={fit}
+      style={{ "--zb-logo-optical-scale": artwork?.scale ?? 1 } as CSSProperties}
+    >
       <span className="zb-partner-mark-surface">
         {failed || !source ? (
           <span className="zb-partner-mark-fallback">{brand}</span>
