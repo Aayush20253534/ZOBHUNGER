@@ -1562,17 +1562,11 @@ body.zb-site:has(.zb-auth-page) > main {
   --portal-soft: #fff7f8;
   position: relative;
   isolation: isolate;
-  padding-bottom: 1.25rem;
+  padding-bottom: 0.35rem;
 }
 
 .zb-auth-page--portal::before {
-  inset: 2.7rem -2.25rem auto;
-  height: min(35rem, 72vh);
-  border-radius: 2rem;
-  background:
-    radial-gradient(circle at 10% 10%, rgba(207, 29, 43, 0.07), transparent 28%),
-    radial-gradient(circle at 90% 85%, rgba(128, 22, 35, 0.08), transparent 30%),
-    linear-gradient(135deg, rgba(255, 249, 249, 0.95), rgba(255, 255, 255, 0.72));
+  display: none;
 }
 
 .zb-portal-access-shell {
@@ -1580,15 +1574,14 @@ body.zb-site:has(.zb-auth-page) > main {
   z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.78fr);
-  gap: clamp(2rem, 4vw, 4rem);
+  gap: clamp(1.5rem, 3vw, 2.6rem);
   width: min(100%, 68rem);
-  margin: 0.7rem auto 0;
-  padding: clamp(1.4rem, 2.8vw, 2.35rem);
-  border: 1px solid rgba(126, 47, 57, 0.1);
-  border-radius: 1.45rem;
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: 0 1.35rem 4rem rgba(54, 27, 31, 0.07);
-  backdrop-filter: blur(18px);
+  margin: 0.3rem auto 0;
+  padding: clamp(1rem, 2vw, 1.45rem);
+  border: 1px solid #ebe5e6;
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 0.9rem 2.6rem rgba(54, 27, 31, 0.055);
 }
 
 .zb-portal-access-intro {
@@ -1596,7 +1589,7 @@ body.zb-site:has(.zb-auth-page) > main {
   flex-direction: column;
   justify-content: center;
   min-width: 0;
-  padding: 0.15rem 0;
+  padding: 0;
 }
 
 .zb-portal-access-kicker,
@@ -1623,10 +1616,10 @@ body.zb-site:has(.zb-auth-page) > main {
 
 .zb-portal-access-intro > h1 {
   max-width: 34rem;
-  margin: 0.75rem 0 0;
+  margin: 0.55rem 0 0;
   color: var(--portal-ink);
-  font-size: clamp(2.15rem, 4.4vw, 3.75rem);
-  line-height: 0.98;
+  font-size: clamp(2rem, 3.7vw, 3.15rem);
+  line-height: 0.96;
   letter-spacing: -0.058em;
 }
 
@@ -1638,23 +1631,25 @@ body.zb-site:has(.zb-auth-page) > main {
 
 .zb-portal-access-copy {
   max-width: 35rem;
-  margin: 1rem 0 0;
+  margin: 0.7rem 0 0;
   color: var(--portal-muted);
-  font-size: 0.91rem;
-  line-height: 1.62;
+  font-size: 0.82rem;
+  line-height: 1.5;
 }
 
 .zb-portal-account-grid {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.5rem;
-  margin-top: 1.35rem;
+  margin-top: 0.9rem;
 }
 
 .zb-portal-account-grid article {
   display: flex;
   align-items: center;
-  gap: 0.72rem;
-  padding: 0.67rem 0.75rem;
+  gap: 0.55rem;
+  min-width: 0;
+  padding: 0.52rem 0.58rem;
   border: 1px solid transparent;
   border-radius: 0.78rem;
   background: rgba(255, 255, 255, 0.64);
@@ -1669,9 +1664,9 @@ body.zb-site:has(.zb-auth-page) > main {
 
 .zb-portal-account-icon {
   display: grid;
-  width: 2.35rem;
-  height: 2.35rem;
-  flex: 0 0 2.35rem;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 2rem;
   place-items: center;
   border: 1px solid #f0dadd;
   border-radius: 0.68rem;
@@ -1680,8 +1675,8 @@ body.zb-site:has(.zb-auth-page) > main {
 }
 
 .zb-portal-account-icon svg {
-  width: 1rem;
-  height: 1rem;
+  width: 0.9rem;
+  height: 0.9rem;
 }
 
 .zb-portal-account-grid h2 {
@@ -1694,16 +1689,16 @@ body.zb-site:has(.zb-auth-page) > main {
 .zb-portal-account-grid p {
   margin: 0.12rem 0 0;
   color: #82777a;
-  font-size: 0.72rem;
-  line-height: 1.38;
+  font-size: 0.64rem;
+  line-height: 1.28;
 }
 
 .zb-portal-trust-note {
   display: flex;
   align-items: flex-start;
   gap: 0.6rem;
-  margin-top: 1.2rem;
-  padding-top: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.65rem;
   border-top: 1px solid #eee5e7;
   color: #817679;
   font-size: 0.7rem;
@@ -1732,7 +1727,7 @@ body.zb-site:has(.zb-auth-page) > main {
 }
 
 .zb-portal-login-status {
-  margin: 0 0 0.65rem 0.15rem;
+  margin: 0 0 0.42rem 0.15rem;
   color: #776c6f;
   font-size: 0.61rem;
   letter-spacing: 0.1em;
@@ -1746,8 +1741,8 @@ body.zb-site:has(.zb-auth-page) > main {
 }
 
 .zb-auth-page--portal .zb-login-form {
-  gap: 0.78rem;
-  padding: clamp(1.25rem, 2.4vw, 1.55rem);
+  gap: 0.62rem;
+  padding: clamp(1rem, 1.8vw, 1.25rem);
   border-color: rgba(111, 46, 55, 0.14);
   border-radius: 1.05rem;
   background: rgba(255, 255, 255, 0.97);
@@ -1755,19 +1750,19 @@ body.zb-site:has(.zb-auth-page) > main {
 }
 
 .zb-auth-page--portal .zb-login-form-heading {
-  gap: 0.72rem;
-  padding-bottom: 0.78rem;
+  gap: 0.62rem;
+  padding-bottom: 0.55rem;
 }
 
 .zb-auth-page--portal .zb-login-form-heading .zb-icon-tile {
-  width: 2.55rem;
-  height: 2.55rem;
-  flex-basis: 2.55rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-basis: 2.25rem;
   border-radius: 0.68rem;
 }
 
 .zb-auth-page--portal .zb-login-form-heading h2 {
-  font-size: 1.28rem;
+  font-size: 1.12rem;
 }
 
 .zb-auth-page--portal .zb-login-form-heading .zb-eyebrow {
@@ -1781,7 +1776,7 @@ body.zb-site:has(.zb-auth-page) > main {
 }
 
 .zb-auth-page--portal .zb-login-form .zb-auth-input-wrap input {
-  min-height: 2.72rem;
+  min-height: 2.48rem;
   border-radius: 0.62rem;
   font-size: 0.82rem;
 }
@@ -1795,7 +1790,7 @@ body.zb-site:has(.zb-auth-page) > main {
 }
 
 .zb-auth-page--portal .zb-login-submit {
-  min-height: 2.75rem;
+  min-height: 2.5rem;
   margin-top: 0.05rem;
   font-size: 0.84rem;
 }
@@ -1807,7 +1802,7 @@ body.zb-site:has(.zb-auth-page) > main {
 }
 
 .zb-portal-login-help {
-  margin: 0.65rem 0 0;
+  margin: 0.42rem 0 0;
   color: #887c7f;
   text-align: center;
   font-size: 0.69rem;
@@ -1821,6 +1816,12 @@ body.zb-site:has(.zb-auth-page) > main {
 
 .zb-portal-login-help a:hover {
   text-decoration: underline;
+}
+
+
+body.zb-site:has(.zb-auth-page--portal) > main {
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
 }
 
 @media (max-width: 920px) {
@@ -1851,12 +1852,6 @@ body.zb-site:has(.zb-auth-page) > main {
 @media (max-width: 640px) {
   body.zb-site:has(.zb-auth-page--portal) > main {
     padding-top: 0.55rem;
-  }
-
-  .zb-auth-page--portal::before {
-    inset: 2.1rem -0.75rem auto;
-    height: 33rem;
-    border-radius: 1.35rem;
   }
 
   .zb-portal-access-shell {
