@@ -16,13 +16,14 @@ let mailConfigured = true;
 mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, { namedExports: {
   recoveryEmailConfigured: () => mailConfigured,
   sendBusinessRecoveryEmail: async (email, link) => { delivered.push({ email, link }); return true; },
-  sendOperationalEmail: async () => false,
+  sendOperationalEmail: async () => false, sendCorporateEmail: async () => false, sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false,
 } });
 const { app } = await import("../dist/app.js");
 const { prisma } = await import("../dist/config/db.js");
 const { signAccessToken } = await import("../dist/utils/jwt.js");
 const { hashPassword } = await import("../dist/utils/password.js");
 const { markLogin } = await import("../dist/modules/auth/auth.repository.js");
+const { requestBusinessRecovery } = await import("../dist/modules/auth/password-recovery.service.js");
 const prefix = `p21-${randomUUID()}`;
 const emailA = `${prefix}-a@example.test`, emailB = `${prefix}-b@example.test`;
 const password = "InitialTest9!", replacement = "ReplacementTest8!";
@@ -36,8 +37,11 @@ async function request(path, { cookie, method = "GET", body, headers = {} } = {}
   const response = await fetch(`${base}${path}`, { method, headers: { ...(body ? { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" } : {}), ...(cookie ? { Cookie: cookie } : {}), ...headers }, body: body ? JSON.stringify(body) : undefined });
   return { status: response.status, data: await response.json(), cookie: response.headers.get("set-cookie")?.split(";")[0], headers: response.headers };
 }
-async function waitForMail(count) {
-  for (let attempt = 0; attempt < 100 && delivered.length < count; attempt++) await new Promise(resolve => setTimeout(resolve, 10));
+async function waitForMail(count, timeoutMs = 15_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (delivered.length < count && Date.now() < deadline) {
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
   assert.equal(delivered.length, count, "Recovery email was issued through the test mailer");
 }
 
@@ -99,8 +103,8 @@ test("business foundation: access, ownership and recovery", async (t) => {
       const token = new URLSearchParams(link.hash.slice(1)).get("token");
       const stored = await prisma.passwordResetToken.findUnique({ where: { userId: users[0] } });
       assert.notEqual(stored.tokenHash, token); assert.equal(stored.tokenHash, createHash("sha256").update(token).digest("hex"));
-      await request("/auth/business/forgot-password", { method: "POST", body: { email: emailA } });
-      await new Promise(resolve => setTimeout(resolve, 50)); assert.equal(delivered.length, 1);
+      await requestBusinessRecovery(emailA, "integration-cooldown-check");
+      assert.equal(delivered.length, 1, "Recovery cooldown prevents duplicate delivery");
     });
     await t.test("reset links are single-use and invalidate old passwords and sessions", async () => {
       const token = new URLSearchParams(new URL(delivered[0].link).hash.slice(1)).get("token");

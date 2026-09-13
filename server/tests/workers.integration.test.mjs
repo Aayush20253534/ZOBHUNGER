@@ -11,7 +11,7 @@ mock.module(new URL("../dist/services/worker-email.service.js", import.meta.url)
   workerEmailConfigured: () => configured,
   sendWorkerAccessEmail: async (email, link, purpose) => { if (mailThrows) throw new Error("Mock provider unavailable"); deliveries.push({ email, link, purpose }); return deliver; },
 } });
-mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, { namedExports: { recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false } });
+mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, { namedExports: { recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false, sendCorporateEmail: async () => false, sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false } });
 const { app } = await import("../dist/app.js");
 const { prisma } = await import("../dist/config/db.js");
 const { signAccessToken } = await import("../dist/utils/jwt.js");

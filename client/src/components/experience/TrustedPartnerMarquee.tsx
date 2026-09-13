@@ -4,7 +4,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { featuredBrandExperience } from "@/data/brand-experience";
 import { brandLogoUrl } from "@/data/brand-logos";
-import { partnerArtwork, partnerArtworkSrc, partnerLogoToken } from "@/data/partner-artwork";
+import { partnerArtwork, partnerArtworkSrc, partnerLogoFit, partnerLogoToken } from "@/data/partner-artwork";
 import "@/styles/trusted-partners.css";
 
 // Local partner artwork is centralized in @/data/partner-artwork.
@@ -13,9 +13,10 @@ function PartnerMark({ brand }: { brand: string }) {
   const artwork = partnerArtwork[brand];
   const source = partnerArtworkSrc(brand) ?? brandLogoUrl(brand);
   const brandToken = partnerLogoToken(brand);
+  const fit = partnerLogoFit(brand);
 
   return (
-    <span className="zb-partner-mark" data-brand={brandToken}>
+    <span className="zb-partner-mark" data-brand={brandToken} data-fit={fit}>
       <span className="zb-partner-mark-surface">
         {failed || !source ? (
           <span className="zb-partner-mark-fallback">{brand}</span>

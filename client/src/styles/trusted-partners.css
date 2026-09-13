@@ -222,3 +222,67 @@
     transition: none;
   }
 }
+
+/* 2026-09 partner artwork normalization.
+   Logos arrive with wildly different aspect ratios and internal whitespace. A
+   fit class keeps their visible mass consistent without stretching/cropping. */
+.zb-partner-mark[data-fit] {
+  --zb-logo-scale: 1;
+}
+
+.zb-partner-mark-surface {
+  height: 4.35rem;
+  padding: .45rem .55rem;
+  border: 1px solid transparent;
+  border-radius: .8rem;
+  background: linear-gradient(180deg, #fff, #fdfdfd);
+}
+
+.zb-partner-item:hover .zb-partner-mark-surface {
+  border-color: #ececef;
+  box-shadow: 0 .45rem 1.15rem rgb(17 24 39 / 5%);
+}
+
+.zb-partner-mark[data-fit="wordmark"] > .zb-partner-mark-surface > img {
+  width: 94%;
+  height: 64%;
+  max-width: 94%;
+  max-height: 64%;
+}
+
+.zb-partner-mark[data-fit="balanced"] > .zb-partner-mark-surface > img {
+  width: 82%;
+  height: 72%;
+  max-width: 82%;
+  max-height: 72%;
+}
+
+.zb-partner-mark[data-fit="badge"] > .zb-partner-mark-surface > img {
+  width: 68%;
+  height: 78%;
+  max-width: 68%;
+  max-height: 78%;
+  transform: scale(1.06);
+}
+
+/* Long financial wordmarks need a little more horizontal breathing room. */
+.zb-partner-mark:is([data-brand="icici-securities"], [data-brand="motilal-oswal"], [data-brand="airtel-payments-bank"], [data-brand="axis-securities"])
+  > .zb-partner-mark-surface > img {
+  width: 98%;
+  max-width: 98%;
+}
+
+/* JPEG assets can include a white canvas. Keep that canvas visually integrated
+   instead of exposing a random square inside the marquee. */
+.zb-partner-mark:is([data-brand="uber"], [data-brand="yes-bank"], [data-brand="edelweiss"], [data-brand="marlboro"])
+  > .zb-partner-mark-surface {
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .zb-partner-mark-surface {
+    height: 3.75rem;
+    padding: .35rem .4rem;
+    border-radius: .7rem;
+  }
+}

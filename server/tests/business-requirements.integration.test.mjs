@@ -14,6 +14,8 @@ const notifications = [];
 mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, { namedExports: {
   recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false,
   sendOperationalEmail: async message => { notifications.push(message); return true; },
+  sendCorporateEmail: async message => { notifications.push(message); return true; },
+  sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false,
 } });
 const { app } = await import("../dist/app.js");
 const { prisma } = await import("../dist/config/db.js");

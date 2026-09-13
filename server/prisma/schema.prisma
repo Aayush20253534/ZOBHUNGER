@@ -256,7 +256,7 @@ model IntakeCase {
   submittedAt         DateTime
   sourceUpdatedAt     DateTime?
   createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
+  updatedAt           DateTime         @default(now()) @updatedAt
 
   assignedAdmin User?        @relation("IntakeCaseAssignee", fields: [assignedAdminId], references: [id], onDelete: SetNull)
   notes         IntakeNote[]
@@ -725,8 +725,8 @@ model ArticleDraft {
   seoDescription  String?
   canonicalUrl    String?
   ogImageUrl      String?
-  isDirty         Boolean  @default(true)
-  updatedAt       DateTime @updatedAt
+  isDirty         Boolean  @default(false)
+  updatedAt       DateTime @default(now()) @updatedAt
 
   article         Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
 

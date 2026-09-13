@@ -854,3 +854,33 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Keep the brand-experience grid optically aligned with the marquee. */
+.zb-experience-brand-logo[data-fit] {
+  --zb-mini-logo-scale: 1;
+  width: 3.7rem;
+  height: 2.35rem;
+  flex-basis: 3.7rem;
+  padding: .28rem .35rem;
+}
+
+.zb-experience-brand-logo[data-fit="wordmark"] img {
+  width: 100%;
+  height: 62%;
+}
+
+.zb-experience-brand-logo[data-fit="balanced"] img {
+  width: 82%;
+  height: 76%;
+}
+
+.zb-experience-brand-logo[data-fit="badge"] img {
+  width: 68%;
+  height: 84%;
+  transform: scale(1.04);
+}
+
+.zb-experience-brand-list li {
+  min-height: 3.15rem;
+  border-radius: .65rem;
+}

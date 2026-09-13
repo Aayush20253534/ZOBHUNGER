@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   ArrowUpRight,
   LoaderCircle,
+  LogOut,
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
@@ -22,7 +23,7 @@ import {
 } from "@/data/admin-navigation";
 import { adminDepartmentLabel, adminDepartmentProfile } from "@/data/admin-experience";
 import { site } from "@/data/site";
-import { getCurrentUser } from "@/services/auth.service";
+import { getCurrentUser, logout } from "@/services/auth.service";
 import type { AuthUser } from "@/types/auth.types";
 
 const SIDEBAR_STORAGE_KEY = "zobhunger:admin-sidebar-collapsed";
@@ -42,6 +43,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [collapsePreferenceReady, setCollapsePreferenceReady] = useState(false);
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [authReady, setAuthReady] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const isSecurityRoute = pathname.startsWith(adminSecurityNavigationItem.href);
   const matchedItem = isSecurityRoute ? adminSecurityNavigationItem : findAdminNavigationItem(pathname);
   const matchedGroup = isSecurityRoute ? { label: "Account" } : findAdminNavigationGroup(pathname);
@@ -108,6 +110,17 @@ export function AdminShell({ children }: { children: ReactNode }) {
       try { window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next)); } catch { /* non-critical preference */ }
       return next;
     });
+  }
+
+  async function handleSignOut() {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await logout();
+    } finally {
+      router.replace("/login");
+      router.refresh();
+    }
   }
 
   return (
@@ -179,6 +192,23 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <a className="zbo-admin-site-link" href="/" target="_blank" rel="noreferrer" title={sidebarCollapsed ? "Open public website" : undefined}>
             <span>Open public website</span><ArrowUpRight aria-hidden="true" />
           </a>
+          <div className="zbo-admin-account" title={sidebarCollapsed ? (authUser?.email ?? "Administrator account") : undefined}>
+            <span className="zbo-admin-account-avatar" aria-hidden="true">{initials(authUser?.email)}</span>
+            <span className="zbo-admin-account-copy">
+              <strong>{departmentProfile.shortLabel}</strong>
+              <small>{authUser?.email ?? "Administrator"}</small>
+            </span>
+            <button
+              type="button"
+              className="zbo-admin-signout"
+              aria-label="Sign out of admin"
+              title="Sign out"
+              disabled={signingOut}
+              onClick={() => void handleSignOut()}
+            >
+              {signingOut ? <LoaderCircle className="zbo-admin-spin" aria-hidden="true" /> : <LogOut aria-hidden="true" />}
+            </button>
+          </div>
           <div className="zbo-admin-security-status" title={sidebarCollapsed ? (authUser?.adminMfaEnabled ? "MFA protected access" : "Password-only access") : undefined}>
             <span className="zbo-admin-status-dot" aria-hidden="true" />
             <span>{authUser?.adminMfaEnabled ? "MFA protected access" : "Password-only access"}</span>

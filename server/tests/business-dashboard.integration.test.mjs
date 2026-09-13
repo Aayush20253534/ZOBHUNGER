@@ -12,7 +12,7 @@ Object.assign(process.env, {
   API_RATE_LIMIT_MAX: "1000", AUTH_RATE_LIMIT_MAX: "1000", SUBMISSION_RATE_LIMIT_MAX: "1000",
 });
 mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, { namedExports: {
-  recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false,
+  recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false, sendCorporateEmail: async () => false, sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false,
 } });
 const { app } = await import("../dist/app.js");
 const { prisma } = await import("../dist/config/db.js");

@@ -5,7 +5,7 @@ import { mock, test } from 'node:test';
 if (!process.env.TEST_DATABASE_URL) throw new Error('Set TEST_DATABASE_URL to a dedicated migrated test database.');
 Object.assign(process.env, { DATABASE_URL: process.env.TEST_DATABASE_URL, NODE_ENV: 'test', REDIS_ENABLED: 'false', JWT_SECRET: 'worker-finance-tests-only-not-a-production-secret', LOG_LEVEL: 'error', API_RATE_LIMIT_MAX: '5000', AUTH_RATE_LIMIT_MAX: '1000' });
 mock.module(new URL('../dist/services/worker-email.service.js', import.meta.url).href, { namedExports: { workerEmailConfigured: () => false, sendWorkerAccessEmail: async () => false } });
-mock.module(new URL('../dist/services/email.service.js', import.meta.url).href, { namedExports: { recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false } });
+mock.module(new URL('../dist/services/email.service.js', import.meta.url).href, { namedExports: { recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false, sendCorporateEmail: async () => false, sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false } });
 const { app } = await import('../dist/app.js');
 const { prisma } = await import('../dist/config/db.js');
 const { signAccessToken } = await import('../dist/utils/jwt.js');

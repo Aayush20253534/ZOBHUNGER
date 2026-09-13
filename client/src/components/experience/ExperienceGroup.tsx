@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import type { BrandExperienceGroup } from "@/data/brand-experience";
 
 import { brandLogoUrl } from "@/data/brand-logos";
-import { partnerArtwork, partnerArtworkSrc, partnerLogoToken } from "@/data/partner-artwork";
+import { partnerArtwork, partnerArtworkSrc, partnerLogoFit, partnerLogoToken } from "@/data/partner-artwork";
 
 export function ExperienceGroup({ group, index }: { group: BrandExperienceGroup; index: number }) {
   return (
@@ -27,9 +27,10 @@ export function ExperienceGroup({ group, index }: { group: BrandExperienceGroup;
           const artwork = partnerArtwork[brand];
           const logoUrl = partnerArtworkSrc(brand) ?? brandLogoUrl(brand);
           const brandToken = partnerLogoToken(brand);
+          const logoFit = partnerLogoFit(brand);
           return (
             <li key={brand}>
-              <span className="zb-experience-brand-logo" aria-hidden="true" data-brand={brandToken}>
+              <span className="zb-experience-brand-logo" aria-hidden="true" data-brand={brandToken} data-fit={logoFit}>
                 {logoUrl ? (
                   <img
                     src={logoUrl}

@@ -5,7 +5,7 @@ import { mock, test } from "node:test";
 
 if (!process.env.TEST_DATABASE_URL) throw new Error("Use TEST_DATABASE_URL for a dedicated migrated test database. Temporary fixtures are created and removed.");
 Object.assign(process.env, { DATABASE_URL: process.env.TEST_DATABASE_URL, NODE_ENV: "test", REDIS_ENABLED: "false", LOG_LEVEL: "error", JWT_SECRET: "phase2-integration-only-secret-at-least-32-characters", CLIENT_ORIGIN: "http://localhost:3000", PUBLIC_APP_URL: "http://localhost:3000", API_RATE_LIMIT_MAX: "10000", SUBMISSION_RATE_LIMIT_MAX: "1000" });
-mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, { namedExports: { recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false } });
+mock.module(new URL("../dist/services/email.service.js", import.meta.url).href, { namedExports: { recoveryEmailConfigured: () => false, sendBusinessRecoveryEmail: async () => false, sendOperationalEmail: async () => false, sendCorporateEmail: async () => false, sendAdminRecoveryEmail: async () => false, sendAdminInvitationEmail: async () => false } });
 const { app } = await import("../dist/app.js"), { prisma } = await import("../dist/config/db.js"), { signAccessToken } = await import("../dist/utils/jwt.js");
 const { istToday, addDays } = await import("../dist/modules/attendance/attendance.utils.js");
 const { csvCell } = await import("../dist/modules/phase2/reports.service.js");
