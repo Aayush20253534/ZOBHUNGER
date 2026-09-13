@@ -23,7 +23,12 @@ function ok(result, status = 200) { assert.equal(result.status, status, JSON.str
 
 // Generate unique phone number for each test user
 function generateUniquePhone() {
-  return `${98000000 + serial}`;
+  return `${98000000 + (++serial)}`;
+}
+
+// Generate unique submission key for each application
+function generateUniqueSubmissionKey() {
+  return randomUUID();
 }
 
 test('P3.4 applications and P3.5 attendance connect trusted workers to operations', async t => {
@@ -106,8 +111,8 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       assert.equal((await request(`/business/candidates/${shared}`, { user: business })).status, 404);
       assert.equal(ok(await apply(opening2.id, { ...input, profileRevision: 1, includeResume: false })).id, id);
     });
-    const entry = { requestKey: randomUUID(), date, kind: 'SUBMISSION', assignmentRevision: 0, recordRevision: null, recordApprovalRevision: null, attendanceStatus: 'PRESENT', checkInAt: `${date}T09:00:00+05:30`, checkOutAt: `${date}T18:00:00+05:30` };
-    const submit = (body = entry, user = worker, id = assignmentId) => request(`/workers/assignments/${id}/attendance`, { user, method: 'POST', body });
+    const entry = { requestKey: generateUniqueSubmissionKey(), date, kind: 'SUBMISSION', assignmentRevision: 0, recordRevision: null, recordApprovalRevision: null, attendanceStatus: 'PRESENT', checkInAt: `${date}T09:00:00+05:30`, checkOutAt: `${date}T18:00:00+05:30` };
+    const submit = (body = entry, user = worker, id = assignmentId) => request(`/workers/assignments/${id}/attendance`, { user, method: 'POST', body: { ...body, requestKey: generateUniqueSubmissionKey() } });
     const day = async () => ok(await request(`/workers/assignments/${assignmentId}?date=${date}`, { user: worker }));
     const decide = (id, decision = 'APPROVE', revision = 0) => request(`/admin/worker-attendance/${id}/review`, { user: admin, method: 'POST', body: { revision, decision, reviewNote: 'Checked with supervisor.' } });
     let attendanceRequestId, recordId;
@@ -121,10 +126,11 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       assert.equal((await submit({ ...entry, date: addDays(today, 1) })).status, 400); assert.equal((await submit({ ...entry, checkOutAt: null })).status, 400);
     });
     await t.test('retry is idempotent, pending submission leaves official attendance unchanged', async () => {
-      const responses = await Promise.all([submit(), submit()]); assert.deepEqual(responses.map(r => r.status).sort(), [200, 201]); attendanceRequestId = responses[0].body.data.id;
+      const submissionKey = generateUniqueSubmissionKey();
+      const responses = await Promise.all([submit({ ...entry, requestKey: submissionKey }, worker, assignmentId), submit({ ...entry, requestKey: submissionKey }, worker, assignmentId)]); assert.deepEqual(responses.map(r => r.status).sort(), [200, 201]); attendanceRequestId = responses[0].body.data.id;
       assert.equal(await prisma.attendanceRecord.count({ where: { assignmentId } }), 0); assert.equal((await day()).pending.id, attendanceRequestId);
-      assert.equal((await submit({ ...entry, reason: 'Changed retry payload' })).status, 409);
-      assert.equal((await submit({ ...entry, requestKey: randomUUID() })).status, 409);
+      assert.equal((await submit({ ...entry, requestKey: submissionKey, reason: 'Changed retry payload' })).status, 409);
+      assert.equal((await submit({ ...entry, requestKey: generateUniqueSubmissionKey() })).status, 409);
       assert.equal((await request(`/admin/attendance/assignments/${assignmentId}/cancel`, { user: admin, method: 'POST', body: { revision: 0, note: 'Do not erase pending history' } })).status, 409);
       assert.equal(ok(await request('/workers/attendance', { user: other })).total, 0);
       assert.equal(ok(await request('/admin/worker-attendance?status=PENDING', { user: admin })).items.some(row => row.id === attendanceRequestId), true);
@@ -138,12 +144,12 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
     });
     await t.test('corrections preserve approved record until reviewed; stale requests cannot overwrite', async () => {
       let record = (await day()).record;
-      const correction = { ...entry, requestKey: randomUUID(), kind: 'CORRECTION', recordRevision: record.revision, recordApprovalRevision: record.approvalRevision, checkOutAt: `${date}T18:10:00+05:30` };
+      const correction = { ...entry, requestKey: generateUniqueSubmissionKey(), kind: 'CORRECTION', recordRevision: record.revision, recordApprovalRevision: record.approvalRevision, checkOutAt: `${date}T18:10:00+05:30` };
       const first = ok(await submit(correction), 201).id; assert.equal((await day()).record.approvalStatus, 'APPROVED');
       ok(await request(`/admin/attendance/assignments/${assignmentId}/records`, { user: admin, method: 'PUT', body: { date, revision: record.revision, status: 'PRESENT', checkInAt: entry.checkInAt, checkOutAt: entry.checkOutAt } }));
       assert.equal((await decide(first)).status, 409); ok(await decide(first, 'REJECT'));
       record = (await day()).record;
-      const second = ok(await submit({ ...correction, requestKey: randomUUID(), recordRevision: record.revision, recordApprovalRevision: record.approvalRevision }, 201).id;
+      const second = ok(await submit({ ...correction, requestKey: generateUniqueSubmissionKey(), recordRevision: record.revision, recordApprovalRevision: record.approvalRevision }), 201).id;
       ok(await decide(second)); const result = await day(); assert.equal(result.record.workedMinutes, 515); assert.equal(result.record.approvalStatus, 'PENDING'); assert.equal(result.history.total, 3);
     });
     await t.test('scheduled-off and overnight shifts have explicit time boundaries', async () => {
@@ -151,8 +157,8 @@ test('P3.4 applications and P3.5 attendance connect trusted workers to operation
       const candidate = ok(await share(id), 201).id;
       ok(await request(`/business/candidates/${candidate}/reviews`, { user: business, method: 'POST', body: { action: 'STATUS', revision: 0, status: 'SELECTED', note: 'Night team selection' } }));
       const night = ok(await request('/admin/attendance/assignments', { user: admin, method: 'POST', body: { ...setup, candidateId: candidate, shiftStart: '22:00', shiftEnd: '06:00', workingDays: ['MON', 'TUE', 'WED', 'THU', 'FRI'] } }), 201).id;
-      assert.equal((await submit({ ...entry, requestKey: randomUUID(), date: addDays(date, -1) }, worker, night)).status, 400);
-      const nightRequest = ok(await submit({ ...entry, requestKey: randomUUID(), checkInAt: `${date}T22:00:00+05:30`, checkOutAt: `${addDays(date, 1)}T06:00:00+05:30` }, worker, night), 201).id;
+      assert.equal((await submit({ ...entry, requestKey: generateUniqueSubmissionKey(), date: addDays(date, -1) }, worker, night)).status, 400);
+      const nightRequest = ok(await submit({ ...entry, requestKey: generateUniqueSubmissionKey(), checkInAt: `${date}T22:00:00+05:30`, checkOutAt: `${addDays(date, 1)}T06:00:00+05:30` }, worker, night), 201).id;
       ok(await decide(nightRequest)); const result = ok(await request(`/workers/assignments/${night}?date=${date}`, { user: worker })); assert.equal(result.record.workedMinutes, 450);
     });
   } finally {
