@@ -1,5 +1,5 @@
 import type { KnowledgeCategory } from "./knowledge/knowledge.types.js";
-import type { KnowledgeSearchResult } from "./rag/rag.types.js";
+import type { KnowledgeIndex, KnowledgeSearchResult } from "./rag/rag.types.js";
 
 export type ChatbotHistoryRole = "user" | "assistant";
 export type ChatbotAudienceKey = "UNKNOWN" | "JOB_SEEKER" | "BUSINESS" | "VENDOR_PARTNER" | "GENERAL";
@@ -17,17 +17,39 @@ export interface ChatbotMessageInput {
 }
 
 export interface ChatbotSource {
+  citation: string;
   title: string;
   url: string;
   category: KnowledgeCategory;
+  section?: string;
 }
 
+export type ChatbotLinkAction = { id: string; label: string; kind: "link"; href: string };
+export type ChatbotToolAction = {
+  id: string;
+  label: string;
+  kind: "tool";
+  tool: string;
+  confirmationRequired: boolean;
+  input: Record<string, unknown>;
+};
 export type ChatbotAction =
-  | { id: string; label: string; kind: "link"; href: string }
-  | { id: string; label: string; kind: "lead" | "handover"; audience?: ChatbotAudienceKey };
+  | ChatbotLinkAction
+  | { id: string; label: string; kind: "lead" | "handover"; audience?: ChatbotAudienceKey }
+  | ChatbotToolAction;
+
+export interface ChatbotToolExecutionResult {
+  tool: string;
+  status: "completed";
+  message: string;
+  action?: ChatbotLinkAction;
+  data?: Record<string, unknown>;
+}
 
 export interface ChatbotMessageResult {
   answer: string;
+  language?: "en" | "hi" | "hinglish";
+  toolUsed?: string;
   sources: ChatbotSource[];
   grounded: boolean;
   unanswered: boolean;
@@ -50,12 +72,28 @@ export interface ChatbotServiceConfig {
   minGroundingScore?: number;
   memoryEnabled?: boolean;
   memoryMaxMessages?: number;
+  vectorEnabled?: boolean;
+  vectorCandidates?: number;
+  rrfK?: number;
+  decompositionEnabled?: boolean;
+  toolsEnabled?: boolean;
+  multilingualEnabled?: boolean;
+}
+
+export interface ChatbotRequestActor {
+  id: string;
+  email: string;
+  phone: string | null;
+  role: "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL";
+  adminDepartment?: string | null;
+  adminPermissions?: string[];
 }
 
 export interface ChatbotRequestContext {
   requestId?: string;
   clientFingerprint?: string;
   signal?: AbortSignal;
+  actor?: ChatbotRequestActor;
 }
 
 export interface ChatbotModelUsage {
@@ -95,6 +133,7 @@ export interface ChatbotModelClient {
 
 export interface ChatbotRetriever {
   readonly fingerprint: string;
+  readonly index?: KnowledgeIndex;
   search(
     query: string,
     options?: {

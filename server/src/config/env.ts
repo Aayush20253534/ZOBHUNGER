@@ -70,6 +70,16 @@ const envSchema = z.object({
   CHATBOT_CACHE_TTL_SECONDS: z.coerce.number().int().min(30).max(3_600).default(300),
   CHATBOT_DUPLICATE_WINDOW_MS: z.coerce.number().int().min(10_000).max(600_000).default(60_000),
   CHATBOT_DUPLICATE_MAX: z.coerce.number().int().min(1).max(20).default(4),
+  CHATBOT_VECTOR_ENABLED: z.enum(["true", "false"]).default("false").transform((value) => value === "true"),
+  GEMINI_API_KEY: optionalSetting(z.string().trim().min(8).max(512)),
+  GEMINI_EMBEDDING_API_BASE_URL: httpUrl.default("https://generativelanguage.googleapis.com/v1beta"),
+  GEMINI_EMBEDDING_MODEL: z.string().trim().regex(/^[a-zA-Z0-9._/-]{2,160}$/).default("gemini-embedding-2"),
+  GEMINI_EMBEDDING_TIMEOUT_MS: z.coerce.number().int().min(3_000).max(120_000).default(20_000),
+  CHATBOT_VECTOR_CANDIDATES: z.coerce.number().int().min(4).max(40).default(16),
+  CHATBOT_RRF_K: z.coerce.number().int().min(10).max(200).default(60),
+  CHATBOT_DECOMPOSITION_ENABLED: z.enum(["true", "false"]).default("true").transform((value) => value === "true"),
+  CHATBOT_TOOLS_ENABLED: z.enum(["true", "false"]).default("true").transform((value) => value === "true"),
+  CHATBOT_MULTILINGUAL_ENABLED: z.enum(["true", "false"]).default("true").transform((value) => value === "true"),
   GROQ_API_KEY: optionalSetting(z.string().trim().min(8).max(512)),
   GROQ_API_BASE_URL: httpUrl.default("https://api.groq.com/openai/v1"),
   GROQ_MODEL: z.string().trim().regex(/^[a-zA-Z0-9._/-]{2,160}$/).default("openai/gpt-oss-120b"),
@@ -129,6 +139,9 @@ if (!parsedData) {
 }
 if (parsedData.CHATBOT_ENABLED && !parsedData.GROQ_API_KEY) {
   throw new Error("Invalid environment configuration:\nGROQ_API_KEY is required when CHATBOT_ENABLED=true");
+}
+if (parsedData.CHATBOT_VECTOR_ENABLED && !parsedData.GEMINI_API_KEY) {
+  throw new Error("Invalid environment configuration:\nGEMINI_API_KEY is required when CHATBOT_VECTOR_ENABLED=true");
 }
 if (parsedData.CHATBOT_ENABLED) {
   const groqModelProblems = validateGroqModelPair(parsedData.GROQ_MODEL, parsedData.GROQ_FALLBACK_MODEL);
@@ -196,6 +209,10 @@ function productionProblems() {
     const groqUrl = new URL(parsedData.GROQ_API_BASE_URL);
     if (groqUrl.protocol !== "https:") problems.push("GROQ_API_BASE_URL must use HTTPS when the chatbot is enabled in production");
     if (parsedData.CHATBOT_CACHE_ENABLED && !parsedData.REDIS_ENABLED) problems.push("REDIS_ENABLED=true is required when CHATBOT_CACHE_ENABLED=true in production");
+    if (parsedData.CHATBOT_VECTOR_ENABLED) {
+      const embeddingUrl = new URL(parsedData.GEMINI_EMBEDDING_API_BASE_URL);
+      if (embeddingUrl.protocol !== "https:") problems.push("GEMINI_EMBEDDING_API_BASE_URL must use HTTPS when vector retrieval is enabled in production");
+    }
   }
   return problems;
 }

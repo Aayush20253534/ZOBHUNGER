@@ -16,7 +16,7 @@ export function formatKnowledgeContext(
     const result = results[index];
     if (!result) continue;
     const block = [
-      `[SOURCE ${index + 1}]`,
+      `[S${index + 1}]`,
       `Title: ${result.chunk.title}`,
       `Section: ${result.chunk.sectionPath.join(" > ")}`,
       `Category: ${result.chunk.category}`,

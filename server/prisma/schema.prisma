@@ -380,6 +380,12 @@ model ChatbotKnowledgeDocument {
   verifiedByUserId String?
   verifiedAt       DateTime?
   publishedAt      DateTime?
+  validFrom        DateTime?
+  validUntil       DateTime?
+  reviewDueAt      DateTime?
+  sourceVersion    String                 @default("1")
+  ownerDepartment  String?
+  supersedesDocumentId String?
   createdAt        DateTime               @default(now())
   updatedAt        DateTime               @updatedAt
 
@@ -389,6 +395,21 @@ model ChatbotKnowledgeDocument {
 
   @@index([status, updatedAt])
   @@index([category, status])
+  @@index([status, reviewDueAt])
+  @@index([status, validUntil])
+}
+
+// pgvector-backed RAG chunks. Embedding reads/writes stay raw SQL because
+// Prisma does not expose vector distance operators through the typed client.
+model ChatbotKnowledgeEmbedding {
+  chunkId              String   @id
+  documentId           String
+  contentHash          String
+  knowledgeFingerprint String
+  embedding            Unsupported("vector(1536)")
+  updatedAt            DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([documentId])
 }
 
 model IntakeCase {

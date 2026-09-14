@@ -42,7 +42,8 @@
     "chatbot:evaluate": "tsx scripts/chatbot/evaluate-rag.ts",
     "chatbot:release-check": "tsx scripts/chatbot/release-check.ts",
     "chatbot:smoke": "tsx scripts/chatbot/live-smoke.ts",
-    "chatbot:knowledge:coverage": "tsx scripts/chatbot/check-knowledge-coverage.ts"
+    "chatbot:knowledge:coverage": "tsx scripts/chatbot/check-knowledge-coverage.ts",
+    "chatbot:evaluate:answers": "tsx scripts/chatbot/evaluate-answers.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

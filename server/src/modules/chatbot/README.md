@@ -1,79 +1,86 @@
-# ZOBHUNGER public RAG chatbot API
+# ZOBHUNGER AI Assistant
 
-The public chatbot uses the version-controlled Markdown knowledge corpus, the local lexical RAG retriever, and Groq Chat Completions. Phase 7 adds production safeguards without changing the public response contract.
+The assistant is a grounded RAG and authenticated operations layer. Public answers come from verified ZOBHUNGER knowledge; logged-in Business, Worker and authorised Admin users can also use narrowly scoped server tools for their own platform data.
 
-## Endpoint
+## Public endpoint
 
-`POST /api/v1/chatbot/messages`
+`POST /api/v1/chatbot/messages` and `POST /api/v1/chatbot/stream` accept a message, bounded recent history, an optional public `currentPage`, and an optional conversation id. Authentication is optional on these read paths. When a valid session exists, the server derives the actor from the session rather than trusting role or account identifiers from the browser.
 
-The browser sends a message, bounded recent history and an optional public `currentPage`. The API returns only the generated answer, grounding flag and safe public ZOBHUNGER source links. API keys, raw knowledge chunks, hidden prompts, provider metadata and token usage are never returned to the client.
+Responses expose the answer, grounding/confidence state, public sources, citations (`S1`, `S2`, ...), safe actions and handover metadata. API keys, raw chunks, prompts and provider usage stay server-side.
 
-## Production flow
+## P0 retrieval and grounding
 
-1. Global API + chatbot rate limits run.
-2. The request body is validated and private portal page context is rejected.
-3. A duplicate-message guard limits repeated identical requests per hashed client.
-4. History-free public questions may use the short-lived Redis response cache.
-5. Cache identity includes the knowledge fingerprint and Groq model/prompt signature, so knowledge/model changes automatically stop matching older entries.
-6. A cache miss runs local RAG retrieval, builds bounded context and calls Groq.
-7. Only grounded successful first-turn answers are cacheable. Follow-up conversations always run through RAG + Groq.
-8. Structured logs record latency, grounding, source counts, cache status and provider usage without recording the user's raw message.
-9. Aggregate in-process metrics are exposed through the existing API health payload for operational monitoring.
+The retrieval path combines:
 
-## Cache behavior
+1. deterministic lexical/semantic-concept retrieval;
+2. optional dense embedding retrieval in PostgreSQL `pgvector`;
+3. reciprocal-rank fusion across the query and decomposed subqueries;
+4. the existing Groq neural reranker;
+5. the hard grounding threshold;
+6. answer-level citation validation and one constrained citation-repair pass.
 
-```env
-CHATBOT_CACHE_ENABLED=true
-CHATBOT_CACHE_TTL_SECONDS=300
-```
-
-Redis is optional for availability: if it is not ready, chatbot requests bypass persistent caching and still work. The cache also coalesces identical concurrent first-turn requests inside one API process. Ungrounded answers and provider errors are never stored.
-
-## Abuse controls
-
-The normal chatbot rate limit is supplemented by an identical-message guard:
+Dense retrieval is optional. The migration creates the `vector` extension, a 1536-dimension embedding table and an HNSW cosine index. Existing chunks are embedded lazily and refreshed when their content hash changes. If the vector provider or vector query fails, the request falls back to lexical retrieval rather than taking the assistant down.
 
 ```env
-CHATBOT_DUPLICATE_WINDOW_MS=60000
-CHATBOT_DUPLICATE_MAX=4
+CHATBOT_VECTOR_ENABLED=true
+GEMINI_API_KEY=...
+GEMINI_EMBEDDING_API_BASE_URL=https://generativelanguage.googleapis.com/v1beta
+GEMINI_EMBEDDING_MODEL=gemini-embedding-2
+CHATBOT_VECTOR_CANDIDATES=16
+CHATBOT_RRF_K=60
 ```
 
-The key uses a server-keyed HMAC client fingerprint plus a normalized message/page digest. Raw IP addresses are not sent to Groq. The same pseudonymous fingerprint is supplied through Groq's optional `user` field to improve provider-side abuse monitoring.
+Dense retrieval uses the native Gemini Embeddings REST API and requests 1536-dimensional vectors so the existing `pgvector vector(1536)` index remains unchanged. `gemini-embedding-2` is the default and uses Google's recommended asymmetric search formatting (`task: search result | query: ...` for queries and `title: ... | text: ...` for documents). Groq remains the generation/reranking provider.
 
-## Observability
+## Citation grounding
 
-Every completed chatbot request emits `chatbot.request.completed` with operational metadata such as request ID, character count, history count, page, latency, cache status, grounding, source count, provider response/model and token/timing usage when Groq returns it. Failures emit `chatbot.request.failed` with only stable error/status metadata.
+Retrieved context is labelled `[S1]`, `[S2]`, etc. Company-specific claims are instructed to cite those labels. The server validates that a non-refusal answer contains only citations that correspond to the returned retrieved sources. Invalid or missing citations receive one repair attempt; a second failure becomes the normal safe unknown response.
 
-The `/health` response includes a safe chatbot summary: enabled/initialized state, cache readiness, configured model, knowledge document/chunk counts after initialization, a shortened knowledge fingerprint and aggregate request/error/cache/latency/token counters. It performs no paid provider probe.
+## Auth-aware tools
 
-## Required environment
+`CHATBOT_TOOLS_ENABLED=true` enables deterministic tools that always enforce the authenticated server session:
 
-The feature remains off by default. To enable it:
+- Worker job matching reads the current worker profile and live non-demo jobs.
+- Business requirement-status lookup reads only requirements owned by the current business account.
+- Authorised Admin operational summaries expose only metrics permitted by the admin department/permissions.
+- The Business requirement copilot converts natural language into a structured draft preview.
 
-```env
-CHATBOT_ENABLED=true
-GROQ_API_KEY=gsk_...
-GROQ_MODEL=openai/gpt-oss-120b
-GROQ_FALLBACK_MODEL=openai/gpt-oss-20b
-CHATBOT_CACHE_ENABLED=true
-```
+Write tools are separate from chat generation. `POST /api/v1/chatbot/tools/execute` requires authentication, the normal write-request protection, a supported tool id and explicit confirmation. The model cannot directly write arbitrary database records. The first write tool saves a requirement **draft** only; final business submission remains a separate user action in the workspace.
 
-`GROQ_REASONING_EFFORT` remains optional because model support varies. Production startup rejects an enabled chatbot without a Groq key, a non-HTTPS Groq endpoint, or an enabled chatbot cache while Redis itself is explicitly disabled.
+## Query decomposition and multilingual support
 
-## Safety boundaries
+`CHATBOT_DECOMPOSITION_ENABLED=true` splits multi-part questions into a bounded set of retrieval queries before fusion. `CHATBOT_MULTILINGUAL_ENABLED=true` detects English, Hindi (Devanagari) and Roman Hinglish and instructs the answer layer to stay in that language while preserving official names and URLs.
 
-The public chatbot has no private database/tool access. It cannot use `/admin`, `/business`, `/worker` or employee-joining routes as page context. Retrieved Markdown is reference material rather than executable instructions, and ZOBHUNGER-specific factual claims must be grounded in retrieved public knowledge.
+## Managed knowledge freshness/versioning
 
-## Phase 8 release gates
+Managed knowledge supports `validFrom`, `validUntil`, `reviewDueAt`, `sourceVersion`, `ownerDepartment` and `supersedesDocumentId`. Only verified PUBLISHED documents that are currently valid and not overdue for review are added to live retrieval. The admin UI reports expired, overdue and soon-expiring sources. Editing a published record returns it to draft and requires verification again.
 
-The chatbot release path has deterministic offline quality gates and an optional live deployment smoke probe.
+## Privacy and caching
+
+Authenticated conversations bypass the public response cache and server-side public conversation memory so account-derived results cannot leak into a later signed-out session. Client responses produced by authenticated tools are visible for the current session but are not persisted into browser chat history. Tool action payloads are never written to local history. Public conversation memory remains bounded and pseudonymous.
+
+## Evaluation
+
+Two evaluation layers are available:
 
 ```bash
 npm run chatbot:evaluate
+npm run chatbot:evaluate:answers
 npm run chatbot:release-check
-npm run chatbot:smoke -- https://your-backend.example [expected-git-revision]
 ```
 
-`chatbot:evaluate` runs the version-controlled retrieval benchmark and writes `.release-artifacts/chatbot-rag-evaluation.json`. `chatbot:release-check` performs no paid provider calls: it validates the knowledge corpus, enforces RAG quality thresholds, scans published knowledge for private-route/secret material, verifies prompt-injection guardrails and rejects known retired Groq model IDs. It writes `.release-artifacts/chatbot-release-check.json` and is part of the repository-level `npm run verify` gate.
+`chatbot:evaluate` is the deterministic, provider-free retrieval benchmark used by release gates. `chatbot:evaluate:answers` is an explicit live quality benchmark that requires `CHATBOT_ENABLED=true` and a configured Groq key; it measures citation validity, expected-source hits, grounded/refusal correctness, multilingual behavior and forbidden-claim safety, writing `.release-artifacts/chatbot-answer-evaluation.json`. It is intentionally not part of ordinary offline CI because it makes paid provider calls.
 
-`chatbot:smoke` is intentionally separate because it calls the deployed backend and therefore uses the configured Groq provider. It checks `/api/v1/health`, a grounded service question and a prompt-injection request without mutating production data. Run it after a backend deployment, not as an ordinary unit test.
+`chatbot:release-check` remains offline. It validates the knowledge corpus, deterministic RAG quality, public-route/secret boundaries, prompt-injection invariants and model policy.
+
+## Production rollout
+
+After applying the P0/P1 migration:
+
+```bash
+npm run db:deploy
+npm run db:generate
+npm run build
+```
+
+Keep `CHATBOT_VECTOR_ENABLED=false` until `GEMINI_API_KEY` is configured and the target PostgreSQL database supports the migration's `vector` extension. The rest of P0/P1 continues to work through the existing lexical RAG path when dense retrieval is disabled.

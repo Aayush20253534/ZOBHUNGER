@@ -63,8 +63,8 @@ export function ChatMessage({ message, copied = false, onCopy, onAction }: ChatM
               {sources.map((source) => (
                 <Link href={source.url} key={`${source.url}:${source.title}`}>
                   <span>
-                    <strong>{source.title}</strong>
-                    <small>{source.category.replace(/-/g, " ")}</small>
+                    <strong>[{source.citation}] {source.title}</strong>
+                    <small>{source.section ? `${source.category.replace(/-/g, " ")} · ${source.section}` : source.category.replace(/-/g, " ")}</small>
                   </span>
                   <ArrowUpRight aria-hidden="true" />
                 </Link>

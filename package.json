@@ -35,6 +35,7 @@
     "chatbot:smoke": "npm --prefix server run chatbot:smoke --",
     "chatbot:knowledge:coverage": "npm --prefix server run chatbot:knowledge:coverage",
     "test:compliance": "node --test scripts/tests/compliance-management.test.mjs",
-    "test:ai-assistant": "node --test scripts/tests/ai-assistant-platform.test.mjs"
+    "test:ai-assistant": "node --test scripts/tests/ai-assistant-platform.test.mjs",
+    "chatbot:evaluate:answers": "npm --prefix server run chatbot:evaluate:answers"
   }
 }

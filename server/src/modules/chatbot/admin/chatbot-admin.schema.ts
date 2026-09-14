@@ -7,6 +7,14 @@ const publicUrl = z.string().trim().min(1).max(240)
   .refine((value) => value.startsWith("/") && !value.startsWith("//") && !/[?#\s]/.test(value), "Use a canonical site-relative public path")
   .refine(isPublicChatbotRoute, "Knowledge can only link to public chatbot routes");
 const listText = z.array(z.string().trim().min(2).max(100)).max(30).default([]);
+const optionalDate = z.preprocess(
+  (value) => value === "" ? null : value,
+  z.coerce.date().nullable().optional(),
+);
+const optionalShortText = z.preprocess(
+  (value) => value === "" ? null : value,
+  z.string().trim().max(120).nullable().optional(),
+);
 
 export const chatbotAdminListSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -24,11 +32,26 @@ export const chatbotKnowledgeCreateSchema = z.object({
   keywords: listText,
   aliases: listText,
   body: z.string().trim().min(20).max(60_000),
-}).strict();
+  validFrom: optionalDate,
+  validUntil: optionalDate,
+  reviewDueAt: optionalDate,
+  sourceVersion: z.string().trim().min(1).max(80).default("1"),
+  ownerDepartment: optionalShortText,
+  supersedesDocumentId: optionalShortText,
+}).strict().refine((value) => !value.validFrom || !value.validUntil || value.validFrom <= value.validUntil, { message: "validUntil must be on or after validFrom", path: ["validUntil"] });
 
-export const chatbotKnowledgeUpdateSchema = chatbotKnowledgeCreateSchema.omit({ slug: true }).partial().extend({
+export const chatbotKnowledgeUpdateSchema = z.object({
+  title: z.string().trim().min(3).max(160).optional(),
+  category: z.enum(KNOWLEDGE_CATEGORIES).optional(),
+  url: publicUrl.optional(),
+  description: z.string().trim().min(10).max(320).optional().or(z.literal("").transform(() => undefined)),
+  keywords: z.array(z.string().trim().min(2).max(100)).max(30).optional(),
+  aliases: z.array(z.string().trim().min(2).max(100)).max(30).optional(),
+  body: z.string().trim().min(20).max(60_000).optional(),
+  validFrom: optionalDate, validUntil: optionalDate, reviewDueAt: optionalDate,
+  sourceVersion: z.string().trim().min(1).max(80).optional(), ownerDepartment: optionalShortText, supersedesDocumentId: optionalShortText,
   expectedRevision: z.number().int().min(0),
-}).strict();
+}).strict().refine((value) => !value.validFrom || !value.validUntil || value.validFrom <= value.validUntil, { message: "validUntil must be on or after validFrom", path: ["validUntil"] });
 
 export const chatbotKnowledgeStatusSchema = z.object({
   status: z.enum([ChatbotKnowledgeStatus.PUBLISHED, ChatbotKnowledgeStatus.ARCHIVED, ChatbotKnowledgeStatus.DRAFT]),

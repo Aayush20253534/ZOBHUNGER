@@ -19,6 +19,12 @@ export interface AiKnowledgeDocument {
   revision: number;
   verifiedAt: string | null;
   publishedAt: string | null;
+  validFrom: string | null;
+  validUntil: string | null;
+  reviewDueAt: string | null;
+  sourceVersion: string;
+  ownerDepartment: string | null;
+  supersedesDocumentId: string | null;
   createdAt: string;
   updatedAt: string;
   createdBy: { id: string; email: string };
@@ -65,6 +71,7 @@ export interface AiAssistantAnalytics {
   audience: Partial<Record<ChatbotAudience, number>>;
   leadAudience: Partial<Record<AiManagedAudience, number>>;
   knowledge: Partial<Record<AiKnowledgeStatus, number>>;
+  knowledgeFreshness: { overdueReview: number; expired: number; expiringSoon: number };
   topUnanswered: Array<{ question: string; count: number }>;
 }
 
@@ -77,6 +84,12 @@ export interface AiKnowledgeDraftInput {
   keywords: string[];
   aliases: string[];
   body: string;
+  validFrom?: string | null;
+  validUntil?: string | null;
+  reviewDueAt?: string | null;
+  sourceVersion: string;
+  ownerDepartment?: string | null;
+  supersedesDocumentId?: string | null;
 }
 
 function queryString(input: Record<string, string | number | undefined>) {

@@ -5,6 +5,7 @@ import { ChatbotMetrics } from "./chatbot.metrics.js";
 import { getDefaultKnowledgeRetriever, invalidateDefaultKnowledgeRetriever } from "./rag/index.js";
 import { createChatbotService, type ChatbotService } from "./chatbot.service.js";
 import { createGroqClient } from "./groq.client.js";
+import { createGeminiEmbeddingClient } from "./rag/embedding.client.js";
 
 let servicePromise: Promise<ChatbotService> | null = null;
 const metrics = new ChatbotMetrics();
@@ -19,6 +20,12 @@ function modelSignature(): string {
     reasoningEffort: env.GROQ_REASONING_EFFORT ?? null,
     promptVersion: 3,
     rerank: env.CHATBOT_RERANK_ENABLED,
+    vector: env.CHATBOT_VECTOR_ENABLED,
+    embeddingProvider: env.CHATBOT_VECTOR_ENABLED ? "gemini" : null,
+    embeddingModel: env.CHATBOT_VECTOR_ENABLED ? env.GEMINI_EMBEDDING_MODEL : null,
+    decomposition: env.CHATBOT_DECOMPOSITION_ENABLED,
+    tools: env.CHATBOT_TOOLS_ENABLED,
+    multilingual: env.CHATBOT_MULTILINGUAL_ENABLED,
   });
 }
 
@@ -36,6 +43,12 @@ export function getChatbotService(): Promise<ChatbotService> {
       memoryMaxMessages: env.CHATBOT_MEMORY_MAX_MESSAGES,
       cacheEnabled: env.CHATBOT_CACHE_ENABLED,
       modelSignature: modelSignature(),
+      vectorEnabled: env.CHATBOT_VECTOR_ENABLED,
+      vectorCandidates: env.CHATBOT_VECTOR_CANDIDATES,
+      rrfK: env.CHATBOT_RRF_K,
+      decompositionEnabled: env.CHATBOT_DECOMPOSITION_ENABLED,
+      toolsEnabled: env.CHATBOT_TOOLS_ENABLED,
+      multilingualEnabled: env.CHATBOT_MULTILINGUAL_ENABLED,
     };
     const modelClient = createGroqClient({
       apiKey: env.GROQ_API_KEY ?? "",
@@ -47,6 +60,14 @@ export function getChatbotService(): Promise<ChatbotService> {
       temperature: env.GROQ_TEMPERATURE,
       ...(env.GROQ_REASONING_EFFORT ? { reasoningEffort: env.GROQ_REASONING_EFFORT } : {}),
     });
+    const embeddingClient = env.CHATBOT_VECTOR_ENABLED && env.GEMINI_API_KEY
+      ? createGeminiEmbeddingClient({
+          apiKey: env.GEMINI_API_KEY,
+          baseUrl: env.GEMINI_EMBEDDING_API_BASE_URL,
+          model: env.GEMINI_EMBEDDING_MODEL,
+          timeoutMs: env.GEMINI_EMBEDDING_TIMEOUT_MS,
+        })
+      : undefined;
     const responseCache = createChatbotResponseCache({
       enabled: env.CHATBOT_CACHE_ENABLED,
       prefix: env.REDIS_KEY_PREFIX,
@@ -69,7 +90,7 @@ export function getChatbotService(): Promise<ChatbotService> {
           documents: retriever.index.documentCount,
           chunks: retriever.index.chunkCount,
         };
-        return createChatbotService({ config, retriever, modelClient, responseCache, metrics });
+        return createChatbotService({ config, retriever, modelClient, embeddingClient, responseCache, metrics });
       });
     }
   }
@@ -90,7 +111,13 @@ export function chatbotOperationalStatus() {
       rerank: env.CHATBOT_RERANK_ENABLED,
       rerankCandidates: env.CHATBOT_RERANK_CANDIDATES,
       groundingThreshold: env.CHATBOT_MIN_GROUNDING_SCORE,
+      vector: env.CHATBOT_VECTOR_ENABLED,
+      embeddingProvider: env.CHATBOT_VECTOR_ENABLED ? "gemini" : null,
+      embeddingModel: env.CHATBOT_VECTOR_ENABLED ? env.GEMINI_EMBEDDING_MODEL : null,
+      decomposition: env.CHATBOT_DECOMPOSITION_ENABLED,
     },
+    tools: { enabled: env.CHATBOT_TOOLS_ENABLED },
+    multilingual: { enabled: env.CHATBOT_MULTILINGUAL_ENABLED },
     memory: { enabled: env.CHATBOT_MEMORY_ENABLED, maxMessages: env.CHATBOT_MEMORY_MAX_MESSAGES },
     knowledge: runtimeKnowledge
       ? { loaded: true, documents: runtimeKnowledge.documents, chunks: runtimeKnowledge.chunks, fingerprint: runtimeKnowledge.fingerprint.slice(0, 12) }

@@ -2,13 +2,30 @@ import type { RequestHandler, Response } from "express";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import { HttpError } from "../../utils/http-error.js";
 import { getChatbotService } from "./chatbot.runtime.js";
-import type { ChatbotLeadRequest, ChatbotMessageRequest } from "./chatbot.schema.js";
+import type { ChatbotLeadRequest, ChatbotMessageRequest, ChatbotToolExecutionRequest } from "./chatbot.schema.js";
 import { submitChatbotLead } from "./chatbot.leads.js";
+import { executeConfirmedChatbotTool } from "./chatbot.tools.js";
+import type { ChatbotRequestActor } from "./chatbot.types.js";
+
+function actorFromResponse(res: Response): ChatbotRequestActor | undefined {
+  const authUser = res.locals.authUser as {
+    id?: string; email?: string; phone?: string | null; role?: unknown;
+    adminDepartment?: string | null; adminPermissions?: string[];
+  } | undefined;
+  if (!authUser?.id || !authUser.email || !["ADMIN", "BUSINESS", "WORKER", "PLACEMENT_CELL"].includes(String(authUser.role))) return undefined;
+  return {
+    id: authUser.id, email: authUser.email, phone: authUser.phone ?? null,
+    role: authUser.role as ChatbotRequestActor["role"],
+    adminDepartment: authUser.adminDepartment ?? null, adminPermissions: authUser.adminPermissions ?? [],
+  };
+}
 
 function requestContext(res: Response, signal?: AbortSignal) {
+  const actor = actorFromResponse(res);
   return {
     requestId: res.locals.requestId,
     clientFingerprint: res.locals.chatbotClientFingerprint,
+    ...(actor ? { actor } : {}),
     ...(signal ? { signal } : {}),
   };
 }
@@ -67,4 +84,12 @@ export const submitChatbotLeadController: RequestHandler = async (_req, res) => 
   const input = res.locals.validated.body as ChatbotLeadRequest;
   const result = await submitChatbotLead(input, res.locals.requestId);
   res.status(201).json(apiSuccessResponse(result.message, result));
+};
+
+export const executeChatbotToolController: RequestHandler = async (_req, res) => {
+  const input = res.locals.validated.body as ChatbotToolExecutionRequest;
+  const actor = actorFromResponse(res);
+  if (!actor) throw new HttpError(401, "Authentication required", { code: "UNAUTHENTICATED" });
+  const result = await executeConfirmedChatbotTool(actor, input.tool, input.input);
+  res.status(200).json(apiSuccessResponse(result.message, result));
 };

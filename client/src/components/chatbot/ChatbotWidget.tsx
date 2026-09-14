@@ -12,6 +12,7 @@ import { usePathname } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import {
   streamChatbotMessage,
+  executeChatbotTool,
   type ChatbotAction,
   type ChatbotAudience,
   type ChatbotHistoryMessage,
@@ -310,8 +311,12 @@ export function ChatbotWidget() {
       if (requestSequence !== activeRequestSequence.current) return;
 
       setMessages((current) => {
+        // Authenticated tool replies can contain account-derived data. Keep them
+        // visible for the current session, but never persist them into browser
+        // history or feed them back into later public conversations.
+        const retainInHistory = !reply.toolUsed;
         const withUserHistory = current.map((entry) => entry.id === userMessageId
-          ? { ...entry, includeInHistory: true }
+          ? { ...entry, includeInHistory: retainInHistory }
           : entry);
         const hasAssistant = withUserHistory.some((entry) => entry.id === assistantMessageId);
         if (!hasAssistant) {
@@ -322,11 +327,11 @@ export function ChatbotWidget() {
             sources: reply.sources,
             actions: reply.actions,
             unanswered: reply.unanswered,
-            includeInHistory: true,
+            includeInHistory: retainInHistory,
           }];
         }
         return withUserHistory.map((entry) => entry.id === assistantMessageId
-          ? { ...entry, content: reply.answer, sources: reply.sources, actions: reply.actions, unanswered: reply.unanswered, includeInHistory: true }
+          ? { ...entry, content: reply.answer, sources: reply.sources, actions: reply.actions, unanswered: reply.unanswered, includeInHistory: retainInHistory }
           : entry);
       });
       if (!openRef.current) setUnreadCount((current) => Math.min(current + 1, 9));
@@ -373,10 +378,26 @@ export function ChatbotWidget() {
 
   const handleAction = useCallback((action: ChatbotAction) => {
     if (action.kind === "link") return;
+    if (action.kind === "tool") {
+      const confirmed = !action.confirmationRequired || window.confirm(`Confirm action: ${action.label}? You can review the result before any final submission.`);
+      if (!confirmed) return;
+      setError(null);
+      setLoading(true);
+      void executeChatbotTool(action).then((result) => {
+        setMessages((current) => [...current, {
+          id: nextId("tool"),
+          role: "assistant",
+          content: result.message,
+          ...(result.action ? { actions: [result.action] } : {}),
+          includeInHistory: false,
+        }]);
+      }).catch((toolError) => setError(publicErrorMessage(toolError))).finally(() => setLoading(false));
+      return;
+    }
     const audience = action.audience && action.audience !== "UNKNOWN" ? action.audience : "GENERAL";
     setLeadRequest({ audience, handover: action.kind === "handover" });
     setError(null);
-  }, []);
+  }, [nextId]);
 
   const handleLeadSubmitted = useCallback((message: string) => {
     setMessages((current) => [...current, {

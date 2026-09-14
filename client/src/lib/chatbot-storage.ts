@@ -52,9 +52,11 @@ function sanitizeMessage(value: unknown): ChatbotUiMessage | null {
       !isSafePublicSourceUrl(source.url)
     ) continue;
     sources.push({
+      citation: typeof source.citation === "string" && /^S\d{1,2}$/.test(source.citation) ? source.citation : `S${sources.length + 1}`,
       title: source.title.trim().slice(0, 160),
       url: source.url.slice(0, 300),
       category: source.category.trim().slice(0, 80),
+      ...(typeof source.section === "string" && source.section.trim() ? { section: source.section.trim().slice(0, 180) } : {}),
     });
   }
 

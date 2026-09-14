@@ -35,6 +35,15 @@ export const chatbotLeadSchema = z.object({
   handover: z.boolean().default(false),
 }).strict().refine((value) => Boolean(value.email || value.phone), { message: "Provide an email address or phone number", path: ["email"] });
 
+
+export const chatbotToolExecutionSchema = z.object({
+  tool: z.enum(["business.save_requirement_draft"]),
+  input: z.record(z.string(), z.unknown()),
+  confirmed: z.literal(true),
+}).strict();
+
+export type ChatbotToolExecutionRequest = z.infer<typeof chatbotToolExecutionSchema>;
+
 export type ChatbotLeadRequest = z.infer<typeof chatbotLeadSchema>;
 
 export type ChatbotMessageRequest = z.infer<typeof chatbotMessageSchema>;

@@ -24,7 +24,8 @@ function knowledgeWhere(input: ChatbotAdminListInput): Prisma.ChatbotKnowledgeDo
 
 const knowledgeSelect = {
   id: true, slug: true, title: true, category: true, url: true, description: true, keywords: true, aliases: true,
-  body: true, status: true, revision: true, verifiedAt: true, publishedAt: true, createdAt: true, updatedAt: true,
+  body: true, status: true, revision: true, verifiedAt: true, publishedAt: true, validFrom: true, validUntil: true, reviewDueAt: true,
+  sourceVersion: true, ownerDepartment: true, supersedesDocumentId: true, createdAt: true, updatedAt: true,
   createdBy: { select: { id: true, email: true } },
   updatedBy: { select: { id: true, email: true } },
   verifiedBy: { select: { id: true, email: true } },
@@ -62,8 +63,8 @@ export async function createChatbotKnowledge(actorId: string, input: ChatbotKnow
   try {
     return await prisma.$transaction(async (tx) => {
       const item = await tx.chatbotKnowledgeDocument.create({ data: {
-        ...input, description: input.description ?? null, status: ChatbotKnowledgeStatus.DRAFT,
-        createdByUserId: actorId, updatedByUserId: actorId,
+        ...input, description: input.description ?? null, ownerDepartment: input.ownerDepartment ?? null, supersedesDocumentId: input.supersedesDocumentId ?? null,
+        status: ChatbotKnowledgeStatus.DRAFT, createdByUserId: actorId, updatedByUserId: actorId,
       }, select: knowledgeSelect });
       await tx.auditLog.create({ data: { actorUserId: actorId, action: "chatbot.knowledge_created", entityType: "ChatbotKnowledgeDocument", entityId: item.id, metadata: { slug: item.slug } } });
       return item;
@@ -96,10 +97,15 @@ export async function updateChatbotKnowledge(actorId: string, id: string, input:
 
 export async function changeChatbotKnowledgeStatus(actorId: string, id: string, input: ChatbotKnowledgeStatusInput) {
   const item = await prisma.$transaction(async (tx) => {
-    const current = await tx.chatbotKnowledgeDocument.findUnique({ where: { id }, select: { slug: true, title: true, category: true, url: true, description: true, keywords: true, aliases: true, body: true } });
+    const current = await tx.chatbotKnowledgeDocument.findUnique({ where: { id }, select: { slug: true, title: true, category: true, url: true, description: true, keywords: true, aliases: true, body: true, validFrom: true, validUntil: true, reviewDueAt: true, supersedesDocumentId: true } });
     if (!current) throw new HttpError(404, "Knowledge document not found", { code: "CHATBOT_KNOWLEDGE_NOT_FOUND" });
     if (input.status === ChatbotKnowledgeStatus.PUBLISHED) validatePublishable(current);
     const now = new Date();
+    if (input.status === ChatbotKnowledgeStatus.PUBLISHED) {
+      if (current.validFrom && current.validUntil && current.validFrom > current.validUntil) throw new HttpError(400, "Knowledge validity window is invalid", { code: "CHATBOT_KNOWLEDGE_FRESHNESS_INVALID" });
+      if (current.validUntil && current.validUntil < now) throw new HttpError(400, "Expired knowledge cannot be published", { code: "CHATBOT_KNOWLEDGE_EXPIRED" });
+      if (current.reviewDueAt && current.reviewDueAt < now) throw new HttpError(400, "Review this knowledge before publishing it", { code: "CHATBOT_KNOWLEDGE_REVIEW_OVERDUE" });
+    }
     const changed = await tx.chatbotKnowledgeDocument.updateMany({ where: { id, revision: input.expectedRevision }, data: {
       status: input.status,
       updatedByUserId: actorId,
@@ -107,6 +113,19 @@ export async function changeChatbotKnowledgeStatus(actorId: string, id: string, 
       ...(input.status === ChatbotKnowledgeStatus.PUBLISHED ? { verifiedByUserId: actorId, verifiedAt: now, publishedAt: now } : { verifiedByUserId: null, verifiedAt: null, publishedAt: null }),
     } });
     if (changed.count !== 1) throw new HttpError(409, "This knowledge document changed. Refresh before changing status.", { code: "CHATBOT_KNOWLEDGE_CHANGED" });
+    if (input.status === ChatbotKnowledgeStatus.PUBLISHED && current.supersedesDocumentId) {
+      if (current.supersedesDocumentId === id) throw new HttpError(400, "A knowledge document cannot supersede itself", { code: "CHATBOT_KNOWLEDGE_SUPERSESSION_INVALID" });
+      const superseded = await tx.chatbotKnowledgeDocument.updateMany({
+        where: { id: current.supersedesDocumentId, status: ChatbotKnowledgeStatus.PUBLISHED },
+        data: {
+          status: ChatbotKnowledgeStatus.ARCHIVED, updatedByUserId: actorId, revision: { increment: 1 },
+          verifiedByUserId: null, verifiedAt: null, publishedAt: null,
+        },
+      });
+      if (superseded.count) {
+        await tx.auditLog.create({ data: { actorUserId: actorId, action: "chatbot.knowledge_superseded", entityType: "ChatbotKnowledgeDocument", entityId: current.supersedesDocumentId, metadata: { supersededBy: id } } });
+      }
+    }
     const updated = await tx.chatbotKnowledgeDocument.findUniqueOrThrow({ where: { id }, select: knowledgeSelect });
     await tx.auditLog.create({ data: { actorUserId: actorId, action: "chatbot.knowledge_status_changed", entityType: "ChatbotKnowledgeDocument", entityId: id, metadata: { status: updated.status, revision: updated.revision } } });
     return updated;
@@ -186,6 +205,13 @@ export async function chatbotAnalytics(input: ChatbotAnalyticsInput) {
     }
   }
 
+  const now = new Date();
+  const [overdueReview, expiredKnowledge, expiringSoon] = await prisma.$transaction([
+    prisma.chatbotKnowledgeDocument.count({ where: { status: "PUBLISHED", reviewDueAt: { lt: now } } }),
+    prisma.chatbotKnowledgeDocument.count({ where: { status: "PUBLISHED", validUntil: { lt: now } } }),
+    prisma.chatbotKnowledgeDocument.count({ where: { status: "PUBLISHED", validUntil: { gte: now, lte: new Date(now.getTime() + 30 * 86_400_000) } } }),
+  ]);
+
   const avgLatency = assistantMessages.length
     ? Math.round(assistantMessages.reduce((sum, row) => sum + (row.latencyMs ?? 0), 0) / assistantMessages.length)
     : 0;
@@ -207,6 +233,7 @@ export async function chatbotAnalytics(input: ChatbotAnalyticsInput) {
     audience,
     leadAudience,
     knowledge,
+    knowledgeFreshness: { overdueReview, expired: expiredKnowledge, expiringSoon },
     topUnanswered: [...unansweredMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 20).map(([question, count]) => ({ question, count })),
   };
 }

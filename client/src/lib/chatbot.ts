@@ -9,14 +9,17 @@ export interface ChatbotHistoryMessage {
 }
 
 export interface ChatbotSource {
+  citation: string;
   title: string;
   url: string;
   category: string;
+  section?: string;
 }
 
 export type ChatbotAction =
   | { id: string; label: string; kind: "link"; href: string }
-  | { id: string; label: string; kind: "lead" | "handover"; audience?: ChatbotAudience };
+  | { id: string; label: string; kind: "lead" | "handover"; audience?: ChatbotAudience }
+  | { id: string; label: string; kind: "tool"; tool: string; confirmationRequired: boolean; input: Record<string, unknown> };
 
 export interface ChatbotUiMessage {
   id: string;
@@ -30,6 +33,8 @@ export interface ChatbotUiMessage {
 
 export interface ChatbotReply {
   answer: string;
+  language?: "en" | "hi" | "hinglish";
+  toolUsed?: string;
   sources: ChatbotSource[];
   grounded: boolean;
   unanswered: boolean;
@@ -80,6 +85,22 @@ export async function submitChatbotLead(input: ChatbotLeadInput): Promise<Chatbo
   const response = await apiFetch<ApiSuccessEnvelope<ChatbotLeadResult>>("/chatbot/leads", {
     method: "POST",
     body: JSON.stringify(input),
+  });
+  return response.data;
+}
+
+export interface ChatbotToolResult {
+  tool: string;
+  status: "completed";
+  message: string;
+  action?: { id: string; label: string; kind: "link"; href: string };
+  data?: Record<string, unknown>;
+}
+
+export async function executeChatbotTool(action: Extract<ChatbotAction, { kind: "tool" }>): Promise<ChatbotToolResult> {
+  const response = await apiFetch<ApiSuccessEnvelope<ChatbotToolResult>>("/chatbot/tools/execute", {
+    method: "POST",
+    body: JSON.stringify({ tool: action.tool, input: action.input, confirmed: true }),
   });
   return response.data;
 }
