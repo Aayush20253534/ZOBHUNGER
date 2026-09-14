@@ -6,7 +6,7 @@ const runtimeConfig = resolveClientRuntimeConfig(process.env);
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
-  "form-action 'self'",
+  "form-action 'self' https://*.cashfree.com",
   "frame-ancestors 'self'",
   "object-src 'none'",
   // Next emits bootstrap/JSON scripts inline. Keep the allowance narrow to the

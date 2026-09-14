@@ -67,6 +67,7 @@ test("public checkout is token-protected, no-indexed and creates Cashfree orders
   assert.match(service, /timingSafeEqual\(received, expected\)/);
   assert.match(service, /createCashfreeOrder/);
   assert.match(nextConfig, /https:\/\/sdk\.cashfree\.com/);
+  assert.match(nextConfig, /form-action 'self' https:\/\/\*\.cashfree\.com/);
   assert.match(nextConfig, /source: "\/pay\/:path\*"/);
   assert.match(siteFrame, /pathname\.startsWith\("\/pay\/"\)/);
 });

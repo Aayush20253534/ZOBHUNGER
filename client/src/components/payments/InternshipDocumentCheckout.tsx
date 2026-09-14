@@ -129,7 +129,7 @@ export function InternshipDocumentCheckout({ token }: { token: string }) {
     if (payment.status === "PAID") return { title: "Payment confirmed", text: "Your printing and courier payment has been received. The ZOBHUNGER team can now proceed with the document dispatch workflow." };
     if (payment.status === "CANCELLED") return { title: "Payment request cancelled", text: "This request is no longer payable. Contact the ZOBHUNGER team if you still require the hard copy." };
     if (payment.status === "EXPIRED") return { title: "Payment request expired", text: "This payment request has expired. Please ask the ZOBHUNGER team to issue a new request." };
-    return { title: "Secure document payment", text: "Review the amount below, then continue to Cashfree's hosted checkout to complete the payment securely." };
+    return { title: "Secure document payment", text: "Review the amount, then continue to Cashfree's secure hosted checkout." };
   }, [payment]);
 
   if (loading) return <section className="zb-pay-shell"><div className="zb-pay-card zb-pay-loading"><LoaderCircle className="zb-pay-spin" aria-hidden="true" /><p>Loading secure payment request…</p></div></section>;
@@ -163,7 +163,7 @@ export function InternshipDocumentCheckout({ token }: { token: string }) {
 
       {active && <div className="zb-pay-actions">
         <button type="button" className="zb-pay-primary" onClick={() => void pay()} disabled={busy !== null}>{busy === "pay" ? <LoaderCircle className="zb-pay-spin" aria-hidden="true" /> : <LockKeyhole aria-hidden="true" />}Pay securely with Cashfree</button>
-        <button type="button" className="zb-pay-secondary" onClick={() => void refresh()} disabled={busy !== null}>{busy === "refresh" ? <LoaderCircle className="zb-pay-spin" aria-hidden="true" /> : <RefreshCw aria-hidden="true" />}Refresh payment status</button>
+        <button type="button" className="zb-pay-secondary" onClick={() => void refresh()} disabled={busy !== null}>{busy === "refresh" ? <LoaderCircle className="zb-pay-spin" aria-hidden="true" /> : <RefreshCw aria-hidden="true" />}Refresh status</button>
       </div>}
 
       {paid && payment.receiptUrl && <div className="zb-pay-actions"><a className="zb-pay-primary" href={payment.receiptUrl} target="_blank" rel="noopener noreferrer"><FileText aria-hidden="true" />View payment receipt</a></div>}
