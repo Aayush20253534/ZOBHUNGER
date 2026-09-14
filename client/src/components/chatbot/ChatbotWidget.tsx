@@ -35,7 +35,7 @@ import "@/styles/chatbot.css";
 const welcomeMessage: ChatbotUiMessage = {
   id: "welcome",
   role: "assistant",
-  content: "Hi, I’m the ZOBHUNGER Assistant. I can help you understand our services, hiring process, jobs, partnerships and public company information.",
+  content: "Hi, I’m Aarohi, ZOBHUNGER’s assistant. I can help you understand our services, hiring process, jobs, partnerships and public company information.",
   includeInHistory: false,
 };
 

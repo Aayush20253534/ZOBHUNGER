@@ -12,7 +12,6 @@ import {
 } from "react";
 import {
   ArrowDown,
-  Bot,
   MoreVertical,
   Plus,
   RotateCcw,
@@ -133,15 +132,13 @@ export function ChatbotPanel({
       aria-describedby="zb-chatbot-subtitle"
     >
       <header className="zb-chatbot-header">
-        <div className="zb-chatbot-header-mark" aria-hidden="true">
-          <Bot />
-        </div>
+        <div className="zb-chatbot-header-mark" aria-hidden="true" />
         <div className="zb-chatbot-header-copy">
           <div className="zb-chatbot-title-row">
-            <h2 id="zb-chatbot-title">ZOBHUNGER Assistant</h2>
+            <h2 id="zb-chatbot-title">Aarohi</h2>
             <span><i aria-hidden="true" />Public info</span>
           </div>
-          <p id="zb-chatbot-subtitle">Verified knowledge · secure enquiry handover</p>
+          <p id="zb-chatbot-subtitle">ZOBHUNGER assistant · verified knowledge</p>
         </div>
 
         <div className="zb-chatbot-header-actions">
@@ -212,7 +209,7 @@ export function ChatbotPanel({
           />
         ) : (<>
           <div className="zb-chatbot-context-note">
-            <span>Verified ZOBHUNGER assistant</span>
+            <span>Aarohi · Verified ZOBHUNGER knowledge</span>
             <p>Answers are grounded in approved ZOBHUNGER knowledge. If verified information is unavailable, the assistant will say so and can route you to a person.</p>
             <small>Successful conversation history is saved on this device so you can continue where you left off.</small>
           </div>
@@ -252,8 +249,8 @@ export function ChatbotPanel({
         ) : null}
 
         {showTyping ? (
-          <div className="zb-chatbot-message zb-chatbot-message--assistant" aria-label="ZOBHUNGER Assistant is responding">
-            <span className="zb-chatbot-message-avatar" aria-hidden="true"><Bot /></span>
+          <div className="zb-chatbot-message zb-chatbot-message--assistant" aria-label="Aarohi is responding">
+            <span className="zb-chatbot-message-avatar" aria-hidden="true" />
             <div className="zb-chatbot-bubble zb-chatbot-typing" role="status">
               <span /><span /><span />
               <em>Searching ZOBHUNGER knowledge</em>
@@ -284,7 +281,7 @@ export function ChatbotPanel({
       ) : null}
 
       {!leadRequest ? <form className="zb-chatbot-composer" onSubmit={submit}>
-        <label htmlFor="zb-chatbot-input" className="sr-only">Ask ZOBHUNGER</label>
+        <label htmlFor="zb-chatbot-input" className="sr-only">Ask Aarohi about ZOBHUNGER</label>
         <div className="zb-chatbot-input-wrap">
           <textarea
             ref={inputRef}
@@ -293,7 +290,7 @@ export function ChatbotPanel({
             maxLength={2000}
             rows={1}
             disabled={loading}
-            placeholder="Ask about ZOBHUNGER..."
+            placeholder="Ask Aarohi about ZOBHUNGER..."
             onChange={handleDraftChange}
             onKeyDown={handleKeyDown}
           />

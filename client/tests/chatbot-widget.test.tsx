@@ -60,7 +60,7 @@ async function renderWidget() {
 
 async function openWidget() {
   await renderWidget();
-  await flush(() => (container.querySelector("button[aria-label^='Open ZOBHUNGER Assistant']") as HTMLButtonElement).click());
+  await flush(() => (container.querySelector("button[aria-label^='Open Aarohi']") as HTMLButtonElement).click());
 }
 
 async function sendTypedMessage(message: string) {

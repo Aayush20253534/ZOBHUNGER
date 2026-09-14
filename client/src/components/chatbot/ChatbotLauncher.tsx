@@ -14,7 +14,7 @@ export function ChatbotLauncher({ open, unreadCount, buttonRef, onOpen }: Chatbo
       ref={buttonRef}
       type="button"
       className="zb-chatbot-launcher"
-      aria-label={unreadCount > 0 ? `Open ZOBHUNGER Assistant, ${unreadCount} unread response${unreadCount === 1 ? "" : "s"}` : "Open ZOBHUNGER Assistant"}
+      aria-label={unreadCount > 0 ? `Open Aarohi, ${unreadCount} unread response${unreadCount === 1 ? "" : "s"}` : "Open Aarohi"}
       aria-haspopup="dialog"
       aria-expanded={open}
       onClick={onOpen}
@@ -23,7 +23,7 @@ export function ChatbotLauncher({ open, unreadCount, buttonRef, onOpen }: Chatbo
       <span className="zb-chatbot-launcher-pulse" aria-hidden="true" />
       <MessageCircle aria-hidden="true" strokeWidth={2.15} />
       {unreadCount > 0 ? <span className="zb-chatbot-unread-badge" aria-hidden="true">{Math.min(unreadCount, 9)}</span> : null}
-      <span className="zb-chatbot-launcher-label">Ask ZOBHUNGER</span>
+      <span className="zb-chatbot-launcher-label">Ask Aarohi</span>
     </button>
   );
 }

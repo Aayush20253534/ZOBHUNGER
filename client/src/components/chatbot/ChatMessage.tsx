@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Bot, Check, Copy } from "lucide-react";
+import { ArrowUpRight, Check, Copy } from "lucide-react";
 import type { ChatbotAction, ChatbotUiMessage } from "@/lib/chatbot";
 import { ChatbotRichText } from "./ChatbotRichText";
 
@@ -19,12 +19,10 @@ export function ChatMessage({ message, copied = false, onCopy, onAction }: ChatM
   return (
     <article
       className={`zb-chatbot-message zb-chatbot-message--${message.role}`}
-      aria-label={isAssistant ? "ZOBHUNGER Assistant" : "You"}
+      aria-label={isAssistant ? "Aarohi, ZOBHUNGER Assistant" : "You"}
     >
       {isAssistant ? (
-        <span className="zb-chatbot-message-avatar" aria-hidden="true">
-          <Bot />
-        </span>
+        <span className="zb-chatbot-message-avatar" aria-hidden="true" />
       ) : null}
       <div className="zb-chatbot-message-content">
         <div className="zb-chatbot-bubble"><ChatbotRichText content={message.content} /></div>
