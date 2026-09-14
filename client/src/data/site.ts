@@ -30,6 +30,10 @@ const footerContacts = {
 
 export const site = {
   name: "ZOBHUNGER",
+  legal: {
+    companyName: "ZOBHUNGR Solutions Private Limited",
+    cin: "U74999UP2020PTC139925",
+  },
   url: publicBaseUrl(
     process.env.NEXT_PUBLIC_SITE_URL,
     "https://zobhungr.com",

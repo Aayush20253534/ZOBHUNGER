@@ -258,7 +258,11 @@ export function Footer() {
         </div>
 
         <div className="zb-footer-bottom">
-          <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
+          <div className="zb-footer-legal-identity" aria-label="Company legal information">
+            <p className="zb-footer-legal-name">{site.legal.companyName}</p>
+            <p className="zb-footer-cin">CIN: {site.legal.cin}</p>
+          </div>
+          <p className="zb-footer-copyright">© {new Date().getFullYear()} {site.legal.companyName}. All rights reserved.</p>
         </div>
       </div>
     </footer>

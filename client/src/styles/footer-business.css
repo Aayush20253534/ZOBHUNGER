@@ -1390,6 +1390,32 @@
   font-weight: 700;
 }
 
+.zb-site .zb-footer .zb-footer-legal-identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.9rem;
+  min-width: 0;
+}
+
+.zb-site .zb-footer .zb-footer-legal-name {
+  color: rgba(255, 242, 246, 0.92);
+  font-weight: 750;
+}
+
+.zb-site .zb-footer .zb-footer-cin {
+  color: rgba(255, 221, 228, 0.7);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.035em;
+  overflow-wrap: anywhere;
+}
+
+.zb-site .zb-footer .zb-footer-copyright {
+  color: rgba(255, 232, 237, 0.78);
+  font-weight: 650;
+  text-align: right;
+}
+
 .zb-site .zb-footer :is(.zb-footer-desktop-group li a, .zb-footer-mobile-group li a, .zb-footer-address, .zb-footer-office-meta a, .zb-footer-contact-channels a, .zb-footer-store-badge):focus-visible {
   outline: 2px solid #ff7890;
   outline-offset: 3px;
@@ -1500,6 +1526,14 @@
     margin-top: 1rem;
     padding-top: 1rem;
     align-items: center;
+    text-align: center;
+  }
+
+  .zb-site .zb-footer .zb-footer-legal-identity {
+    justify-content: center;
+  }
+
+  .zb-site .zb-footer .zb-footer-copyright {
     text-align: center;
   }
 }
