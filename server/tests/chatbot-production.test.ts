@@ -101,7 +101,7 @@ test("chatbot service caches only history-free turns and forwards hashed client 
       modelCalls += 1;
       seenUser = request.user;
       return {
-        text: "Use the public workforce flow.",
+        text: "Use the public workforce flow. [S1]",
         usage: { promptTokens: 100, completionTokens: 20, totalTokens: 120, providerDurationMs: 25 },
       };
     },

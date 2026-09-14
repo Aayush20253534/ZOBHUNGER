@@ -122,12 +122,12 @@ test("RAG retrieval returns no context for a completely unrelated query", async 
   assert.deepEqual(response.results, []);
 });
 
-test("RAG context formatter produces bounded source-labelled context for the future Grok layer", async () => {
+test("RAG context formatter produces bounded citation-labelled context", async () => {
   const retriever = await createKnowledgeRetriever();
   const response = retriever.search("What email should I use for a business enquiry?", { topK: 3 });
   const context = formatKnowledgeContext(response.results, { maxCharacters: 5000 });
 
-  assert.match(context, /\[SOURCE 1\]/);
+  assert.match(context, /\[S1\]/);
   assert.match(context, /URL: \/contact/);
   assert.match(context, /business@zobhungr\.com|help@zobhungr\.com/i);
   assert.ok(context.length <= 5000);

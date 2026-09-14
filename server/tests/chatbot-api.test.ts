@@ -92,7 +92,7 @@ test("chatbot system prompt contains retrieved public knowledge and strict groun
   const search = retriever.search("promoters for retail stores", { topK: 2 });
   const prompt = buildChatbotSystemPrompt(search.results, "/promoter-solutions", 5000);
 
-  assert.match(prompt, /official public website assistant for ZOBHUNGER/i);
+  assert.match(prompt, /official ZOBHUNGER AI Assistant/i);
   assert.match(prompt, /use only the KNOWLEDGE CONTEXT/i);
   assert.match(prompt, /Promoter Services/);
   assert.match(prompt, /\/promoter-solutions/);
@@ -105,7 +105,7 @@ test("chatbot service retrieves context, sends bounded history to the model and 
   const modelClient: ChatbotModelClient = {
     async generate(request) {
       capturedInput = request.input;
-      return { text: "ZOBHUNGER can support promoter manpower. Use the Hire Workforce flow." };
+      return { text: "ZOBHUNGER can support promoter manpower. Use the Hire Workforce flow. [S1]" };
     },
   };
   const service = createChatbotService({
@@ -408,8 +408,9 @@ test("chatbot service exposes progressive stream output while preserving grounde
     },
     async stream(_request, onDelta) {
       await onDelta("Promoter ");
-      await onDelta("support is available.");
-      return { text: "Promoter support is available.", model: "test-stream-model" };
+      await onDelta("support is available. ");
+      await onDelta("[S1]");
+      return { text: "Promoter support is available. [S1]", model: "test-stream-model" };
     },
   };
   const service = createChatbotService({
@@ -423,8 +424,8 @@ test("chatbot service exposes progressive stream output while preserving grounde
     {},
     (delta) => { deltas.push(delta); },
   );
-  assert.deepEqual(deltas, ["Promoter ", "support is available."]);
-  assert.equal(result.answer, "Promoter support is available.");
+  assert.deepEqual(deltas, ["Promoter ", "support is available. ", "[S1]"]);
+  assert.equal(result.answer, "Promoter support is available. [S1]");
   assert.equal(result.grounded, true);
   assert.equal(result.sources[0]?.url, "/promoter-solutions");
 });
