@@ -44,8 +44,9 @@ export const metadata: Metadata = {
   alternates: { canonical: canonicalHomeUrl },
   formatDetection: { telephone: false, email: false, address: false },
   icons: {
-    icon: [{ url: "/Logo/Logo.png", type: "image/png" }],
-    apple: [{ url: "/Logo/Logo.png", type: "image/png" }],
+    icon: [{ url: "/Logo/Logo.png", type: "image/png", sizes: "1254x1254" }],
+    shortcut: [{ url: "/Logo/Logo.png", type: "image/png" }],
+    apple: [{ url: "/Logo/Logo.png", type: "image/png", sizes: "1254x1254" }],
   },
   verification: googleVerification ? { google: googleVerification } : undefined,
   robots: {
