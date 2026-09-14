@@ -10,7 +10,18 @@ const CITATION_PATTERN = /^\[S\d+\]$/i;
 const INTERNAL_ROUTE_PATTERN = /^\/[A-Za-z0-9][A-Za-z0-9/_-]*(?:\?[A-Za-z0-9_=&%.-]+)?$/;
 const MARKDOWN_LINK_PATTERN = /^\[([^\]]+)\]\(((?:\/|https?:\/\/)[^)\s]+)\)$/i;
 
-function renderInline(text: string, keyPrefix: string): ReactNode[] {
+function humanizeRoute(route: string): string {
+  const pathname = route.split("?")[0];
+  const segments = pathname.split("/").filter(Boolean);
+  const segment = segments[segments.length - 1] ?? "open-page";
+  return segment
+    .split("-")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function renderInline(text: string, keyPrefix: string, humanizeInternalRoutes = false): ReactNode[] {
   return text.split(INLINE_PATTERN).filter(Boolean).map((part, index) => {
     const key = `${keyPrefix}-${index}`;
 
@@ -45,7 +56,11 @@ function renderInline(text: string, keyPrefix: string): ReactNode[] {
     }
 
     if (INTERNAL_ROUTE_PATTERN.test(part)) {
-      return <Link key={key} href={part} className="zb-chatbot-inline-link zb-chatbot-inline-route">{part}</Link>;
+      return (
+        <Link key={key} href={part} className="zb-chatbot-inline-link zb-chatbot-inline-route">
+          {humanizeInternalRoutes ? humanizeRoute(part) : part}
+        </Link>
+      );
     }
 
     return <Fragment key={key}>{part}</Fragment>;
@@ -114,15 +129,29 @@ function plainTableLabel(value: string): string {
     .trim();
 }
 
-function renderTablePrimaryCell(value: string, keyPrefix: string): ReactNode {
-  const cleaned = value.trim().replace(/^\*\*(.+)\*\*$/, "$1");
-  const match = cleaned.match(/^(.+?)\s*\((.+)\)$/);
+function tableCitations(value: string): string[] {
+  return Array.from(value.matchAll(/\[S\d+\]/gi), (match) => match[0].slice(1, -1).toUpperCase());
+}
 
-  if (!match) {
-    return <span className="zb-chatbot-table-title-main">{renderInline(value, keyPrefix)}</span>;
+function stripTableCitations(value: string): string {
+  return value
+    .replace(/\s*\[S\d+\]/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function renderTablePrimaryCell(value: string, keyPrefix: string): ReactNode {
+  const cleaned = stripTableCitations(value).replace(/\*\*/g, "").trim();
+  const openingParen = cleaned.indexOf("(");
+  const closingParen = cleaned.lastIndexOf(")");
+  const hasMeta = openingParen > 0 && closingParen > openingParen;
+
+  if (!hasMeta) {
+    return <span className="zb-chatbot-table-title-main">{renderInline(cleaned, keyPrefix)}</span>;
   }
 
-  const [, title, detail] = match;
+  const title = cleaned.slice(0, openingParen).trim();
+  const detail = cleaned.slice(openingParen + 1, closingParen).trim();
   const detailText = detail
     .split(",")
     .map((item) => item.trim())
@@ -227,22 +256,35 @@ export function ChatbotRichText({ content }: ChatbotRichTextProps) {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, rowIndex) => (
-                <tr key={`${key}-row-${rowIndex}`}>
-                  {row.map((cell, columnIndex) => (
-                    <td
-                      key={`${key}-cell-${rowIndex}-${columnIndex}`}
-                      data-label={plainTableLabel(headers[columnIndex] ?? "")}
-                    >
-                      <span className="zb-chatbot-table-value">
-                        {columnIndex === 0
-                          ? renderTablePrimaryCell(cell, `${key}-cell-${rowIndex}-${columnIndex}`)
-                          : renderInline(cell, `${key}-cell-${rowIndex}-${columnIndex}`)}
-                      </span>
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              {rows.map((row, rowIndex) => {
+                const citations = Array.from(new Set(row.flatMap(tableCitations)));
+
+                return (
+                  <tr key={`${key}-row-${rowIndex}`}>
+                    {row.map((cell, columnIndex) => (
+                      <td
+                        key={`${key}-cell-${rowIndex}-${columnIndex}`}
+                        data-label={plainTableLabel(headers[columnIndex] ?? "")}
+                      >
+                        <span className="zb-chatbot-table-value">
+                          {columnIndex === 0
+                            ? renderTablePrimaryCell(cell, `${key}-cell-${rowIndex}-${columnIndex}`)
+                            : renderInline(stripTableCitations(cell), `${key}-cell-${rowIndex}-${columnIndex}`, true)}
+                        </span>
+                        {columnIndex === 0 && citations.length > 0 ? (
+                          <span className="zb-chatbot-table-row-sources" aria-label={`Sources ${citations.join(", ")}`}>
+                            {citations.map((citation) => (
+                              <span key={`${key}-row-${rowIndex}-${citation}`} className="zb-chatbot-table-source-badge zb-chatbot-inline-citation">
+                                {citation}
+                              </span>
+                            ))}
+                          </span>
+                        ) : null}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>,
