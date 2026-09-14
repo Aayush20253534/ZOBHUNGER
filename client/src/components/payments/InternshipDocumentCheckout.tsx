@@ -69,31 +69,32 @@ export function InternshipDocumentCheckout({ token }: { token: string }) {
   const [error, setError] = useState("");
   const returnRefreshDone = useRef(false);
 
-  const loadPayment = useCallback(async () => {
+  const fetchPayment = useCallback(async () => {
     const response = await apiFetch<ApiSuccessEnvelope<{ payment: PublicPayment }>>(`/internship-payments/checkout/${encodeURIComponent(token)}`);
-    setPayment(response.data.payment);
     return response.data.payment;
   }, [token]);
 
   useEffect(() => {
     let active = true;
-    loadPayment()
+    void fetchPayment()
+      .then(nextPayment => { if (active) setPayment(nextPayment); })
       .catch(caught => { if (active) setError(caught instanceof Error ? caught.message : "Unable to load this payment request."); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, [loadPayment]);
+  }, [fetchPayment]);
 
   const refresh = useCallback(async (silent = false) => {
     if (!silent) { setBusy("refresh"); setError(""); }
     try {
       await apiFetch<ApiSuccessEnvelope<{ payment: { status: PaymentStatus } }>>(`/internship-payments/checkout/${encodeURIComponent(token)}/refresh`, { method: "POST" });
-      await loadPayment();
+      const nextPayment = await fetchPayment();
+      setPayment(nextPayment);
     } catch (caught) {
       if (!silent) setError(caught instanceof Error ? caught.message : "Unable to refresh payment status.");
     } finally {
       if (!silent) setBusy(null);
     }
-  }, [loadPayment, token]);
+  }, [fetchPayment, token]);
 
   useEffect(() => {
     if (returnRefreshDone.current || searchParams.get("returned") !== "1") return;
@@ -108,7 +109,8 @@ export function InternshipDocumentCheckout({ token }: { token: string }) {
       const response = await apiFetch<ApiSuccessEnvelope<{ checkout: CheckoutResponse }>>(`/internship-payments/checkout/${encodeURIComponent(token)}/order`, { method: "POST" });
       const checkout = response.data.checkout;
       if (checkout.status === "PAID") {
-        await loadPayment();
+        const nextPayment = await fetchPayment();
+        setPayment(nextPayment);
         return;
       }
       if (!checkout.paymentSessionId || !checkout.environment) throw new Error("Secure checkout session was not returned. Please retry.");
