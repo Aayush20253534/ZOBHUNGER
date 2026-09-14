@@ -154,7 +154,7 @@ export async function tryAuthenticatedChatbotTool(input: { message: string; acto
   if (actor.role === "BUSINESS" && REQUIREMENT_DRAFT_INTENT.test(message)) {
     const data = await buildRequirementDraft(actor, message);
     const summary = [data.workforceCount ? `${data.workforceCount} people` : "headcount not specified", data.serviceRequired, data.locations.map((item) => item.name).filter(Boolean).join(", ") || "location not specified", data.projectDuration || "duration not specified"].join(" · ");
-    const action: ChatbotToolAction = { id: "save-requirement-draft", label: "Save this requirement draft", kind: "tool", tool: "business.save_requirement_draft", confirmationRequired: true, input: data };
+    const action: ChatbotToolAction = { id: "save-requirement-draft", label: "Save this requirement draft", kind: "tool", tool: "business.save_requirement_draft", confirmationRequired: true, input: { ...data } };
     return { answer: `${localize(language, "I prepared a requirement draft from your message. Review it before saving:", "मैंने आपके message से requirement draft तैयार किया है। Save करने से पहले review करें:", "Maine aapke message se requirement draft prepare kiya hai. Save karne se pehle review karein:")}\n\n**${summary}**\n\n${localize(language, "Nothing will be submitted until you explicitly confirm and later submit the saved draft from your business workspace.", "आपकी explicit confirmation के बिना कुछ save नहीं होगा, और final submission business workspace से अलग से करनी होगी।", "Aapki explicit confirmation ke bina kuch save nahi hoga, aur final submission business workspace se separately karni hogi.")}`, actions: [action], toolName: "business.requirement_copilot" };
   }
   return null;
