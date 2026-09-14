@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Space_Grotesk } from "next/font/google";
 import type { ReactNode } from "react";
 import { SiteFrame } from "@/components/layout/SiteFrame";
 import { market } from "@/data/market";
@@ -10,6 +11,13 @@ import {
 } from "@/lib/seo";
 import "./globals.css";
 import "@/styles/mobile.css";
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-zb-space-grotesk",
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
+});
 
 export const viewport: Viewport = {
   themeColor: "#8d0d18",
@@ -73,7 +81,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en-IN">
-      <body className="zb-site min-h-screen bg-background text-foreground antialiased">
+      <body className={`${spaceGrotesk.variable} zb-site min-h-screen bg-background text-foreground antialiased`}>
         {structuredData.map((schema) => (
           <script
             key={schema["@type"]}
