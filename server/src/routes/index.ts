@@ -12,6 +12,7 @@ import { partnersRouter } from "../modules/partners/partners.routes.js";
 import { placementCellsRouter } from "../modules/placement-cells/placement-cells.routes.js";
 import { careersRouter } from "../modules/careers/careers.routes.js";
 import { employeeJoiningRouter } from "../modules/employee-joining/employee-joining.routes.js";
+import { internshipsRouter } from "../modules/internships/internships.routes.js";
 import { employeeComplianceRouter } from "../modules/compliance/compliance.routes.js";
 import { chatbotRouter } from "../modules/chatbot/chatbot.routes.js";
 
@@ -30,6 +31,7 @@ apiRouter.use("/partner-applications", partnersRouter);
 apiRouter.use("/placement-cell-applications", placementCellsRouter);
 
 apiRouter.use("/career-applications", careersRouter);
+apiRouter.use("/internship-applications", internshipsRouter);
 
 apiRouter.use("/vendor-applications", vendorsRouter);
 

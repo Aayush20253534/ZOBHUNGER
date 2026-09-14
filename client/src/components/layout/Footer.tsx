@@ -42,6 +42,7 @@ const companyLinks = [
 const opportunityLinks = [
   { label: "For workers", href: "/for-workers" },
   { label: "Submit your profile", href: "/careers/apply" },
+  { label: "Apply for Internship", href: "/internships/apply" },
   { label: "Jobs & opportunities", href: "/jobs" },
   { label: "Approved worker sign in", href: "/worker/login" },
   { label: "How it works", href: "/how-it-works" },

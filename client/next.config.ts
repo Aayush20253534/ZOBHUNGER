@@ -86,6 +86,7 @@ const nextConfig: NextConfig = {
       { source: "/placement-cell-partnership/apply", headers: noIndexRouteHeaders },
       { source: "/design-system", headers: noIndexRouteHeaders },
       { source: "/careers/apply", headers: noIndexRouteHeaders },
+      { source: "/internships/apply", headers: noIndexRouteHeaders },
     ];
   },
 };

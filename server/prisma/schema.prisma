@@ -778,6 +778,7 @@ model PartnerApplication {
 
 model CareerApplication {
   id               String                  @id @default(cuid())
+  applicationType  String                  @default("CAREER")
   submissionKey    String                  @unique
   submissionHash   String
   fullName         String
@@ -815,7 +816,7 @@ model CareerApplication {
   createdAt        DateTime                @default(now())
   updatedAt        DateTime                @updatedAt
 
-  @@index([status, createdAt])
+  @@index([applicationType, status, createdAt])
   @@index([email])
   @@index([city])
   @@index([resumeStoragePublicId])

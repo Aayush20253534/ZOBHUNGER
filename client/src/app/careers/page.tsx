@@ -153,6 +153,9 @@ export default function CareersPage() {
                 <ActionLink href="/jobs" variant="secondary">
                   View work opportunities
                 </ActionLink>
+                <ActionLink href="/internships/apply" variant="secondary">
+                  Apply for Internship
+                </ActionLink>
               </>
             }
           />
@@ -310,6 +313,19 @@ export default function CareersPage() {
               </p>
               <ActionLink href="/jobs" variant="secondary">
                 Explore jobs & opportunities <ArrowUpRight aria-hidden="true" />
+              </ActionLink>
+            </article>
+
+            <article className="zb-careers-work-option-card">
+              <GraduationCap className="zb-careers-option-icon" aria-hidden="true" />
+              <span className="zb-careers-option-label">Internships</span>
+              <h3>Learn through real execution.</h3>
+              <p>
+                Apply for an internship across business, operations, recruitment,
+                marketing or technology and share your resume directly with HR.
+              </p>
+              <ActionLink href="/internships/apply" variant="secondary">
+                Apply for Internship <ArrowUpRight aria-hidden="true" />
               </ActionLink>
             </article>
           </div>

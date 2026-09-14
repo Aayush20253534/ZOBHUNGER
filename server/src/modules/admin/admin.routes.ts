@@ -8,6 +8,7 @@ import { adminWorkerWorkflowRouter } from "../workers/worker-workflow.routes.js"
 import { adminVendorsRouter } from "../vendors/vendors.routes.js";
 import { adminPartnerAccessRouter } from "../partner-access/partner-access.routes.js";
 import { adminCareersRouter } from "../careers/careers.routes.js";
+import { adminInternshipsRouter } from "../internships/internships.routes.js";
 import { adminCandidatesRouter } from "../candidates/candidates.routes.js";
 import { adminPhase2Router } from "../phase2/phase2.routes.js";
 import { adminAttendanceRouter } from "../attendance/attendance.routes.js";
@@ -61,6 +62,7 @@ adminRouter.use("/articles", adminArticlesRouter);
 adminRouter.use("/vendors", adminVendorsRouter);
 adminRouter.use("/partners", adminPartnerAccessRouter);
 adminRouter.use("/careers", adminCareersRouter);
+adminRouter.use("/internships", adminInternshipsRouter);
 adminRouter.use("/employee-joining", adminEmployeeJoiningRouter);
 adminRouter.use("/compliance/pf", adminPfComplianceRouter);
 adminRouter.use("/compliance/esic", adminEsicComplianceRouter);

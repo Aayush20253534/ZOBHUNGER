@@ -11,6 +11,7 @@ import {
   ClipboardCheck,
   ClipboardList,
   FileCheck2,
+  GraduationCap,
   Newspaper,
   Handshake,
   IdCard,
@@ -80,6 +81,13 @@ export const adminNavigation: readonly AdminNavigationGroup[] = [
         label: "Career profiles",
         description: "Applicant review desk",
         icon: UserRoundCheck,
+      },
+      {
+        href: "/admin/internships",
+        permission: "CAREERS_MANAGE",
+        label: "Internship applications",
+        description: "Internship review desk",
+        icon: GraduationCap,
       },
       {
         href: "/admin/employee-joining",

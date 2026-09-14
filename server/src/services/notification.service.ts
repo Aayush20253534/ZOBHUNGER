@@ -488,6 +488,70 @@ export function notifyCareerProfileStatus(application: {
   });
 }
 
+export function notifyInternshipApplicationSubmitted(application: {
+  id: string;
+  fullName: string;
+  email: string;
+  preferredRole: string;
+  preferredLocation: string;
+}, requestId?: string) {
+  return Promise.allSettled([
+    sendInternalCaseEmail({
+      department: "HR",
+      requestId,
+      referenceId: application.id,
+      idempotencyKey: `internship-${application.id}-internal`,
+      subject: "New internship application | ZOBHUNGER",
+      title: "New internship application submitted",
+      intro: `${application.fullName} applied for an internship with ZOBHUNGER.`,
+      details: [{ label: "Preferred role", value: application.preferredRole }, { label: "Preferred location", value: application.preferredLocation }, { label: "Email", value: application.email }],
+    }),
+    sendReceipt({
+      to: application.email,
+      requestId,
+      idempotencyKey: `internship-${application.id}-receipt`,
+      subject: "Internship application received | ZOBHUNGER",
+      eyebrow: "Internship application",
+      title: "Your application is with our HR team",
+      intro: `Thank you, ${application.fullName}. We received your internship application for ${application.preferredRole}.`,
+      referenceId: application.id,
+      details: [{ label: "Preferred role", value: application.preferredRole }, { label: "Preferred location", value: application.preferredLocation }],
+      paragraphs: ["Submitting an application does not guarantee selection. The HR team will review your qualification, preferences and resume and will contact you if there is a suitable next step."],
+      action: { label: "Explore ZOBHUNGER careers", url: publicApp("/careers") },
+    }),
+  ]);
+}
+
+export function notifyInternshipApplicationStatus(application: {
+  id: string;
+  fullName: string;
+  email: string;
+  preferredRole: string;
+  status: "REVIEWED" | "SHORTLISTED" | "CONTACTED" | "HIRED" | "REJECTED";
+  updatedAt: Date;
+}) {
+  const status = application.status === "HIRED" ? "Selected" : statusWords(application.status);
+  const copy: Record<typeof application.status, string> = {
+    REVIEWED: "HR has completed an initial review of your internship application.",
+    SHORTLISTED: "Your internship application has been shortlisted. The team will contact you if a role-specific next step is available.",
+    CONTACTED: "The HR team has marked your application for active follow-up. Please watch the contact details you provided for communication.",
+    HIRED: "Your internship application has reached the selected stage. Joining details and any required documents will be shared separately.",
+    REJECTED: "The current internship application will not proceed further at this time. You may apply again for future opportunities that match your profile.",
+  };
+  return sendReceipt({
+    to: application.email,
+    idempotencyKey: `internship-${application.id}-status-${application.status}-${application.updatedAt.getTime()}`,
+    subject: `Internship application update: ${status} | ZOBHUNGER`,
+    eyebrow: "Internship update",
+    title: `Application status: ${status}`,
+    intro: `Hello ${application.fullName}, there is an update on your ZOBHUNGER internship application.`,
+    referenceId: application.id,
+    details: [{ label: "Preferred role", value: application.preferredRole }, { label: "Current status", value: status }],
+    paragraphs: [copy[application.status]],
+    action: application.status === "REJECTED" ? { label: "Explore careers", url: publicApp("/careers") } : undefined,
+  });
+}
+
 export function notifyVendorSubmitted(application: {
   id: string;
   companyName: string;

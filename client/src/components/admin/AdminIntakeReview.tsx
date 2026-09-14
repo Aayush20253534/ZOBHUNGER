@@ -9,7 +9,7 @@ import { getCurrentUser } from "@/services/auth.service";
 import type { CareerEducation, CareerExperience } from "@/types/career-intake.types";
 import "@/styles/admin-intake.css";
 
-type Kind = "partners" | "careers";
+type Kind = "partners" | "careers" | "internships";
 interface History { id: string; action: string; createdAt: string; metadata?: { from?: string; to?: string; notes?: string } | null }
 interface Application {
   id: string; fullName: string; email: string; status: string; createdAt: string; updatedAt: string;
@@ -31,7 +31,7 @@ const formatDate = (value: string) => new Intl.DateTimeFormat("en-IN", { dateSty
 const partnerStatuses = ["SUBMITTED", "REVIEWED", "CONTACTED", "APPROVED", "REJECTED", "CLOSED"];
 const careerStatuses = ["SUBMITTED", "REVIEWED", "SHORTLISTED", "CONTACTED", "HIRED", "REJECTED"];
 
-function Badge({ value }: { value: string }) { return <span className="zb-review-badge" data-status={value}>{statusLabel(value)}</span>; }
+function Badge({ value, internship = false }: { value: string; internship?: boolean }) { return <span className="zb-review-badge" data-status={value}>{internship && value === "HIRED" ? "Selected" : statusLabel(value)}</span>; }
 function DetailBlock({ title, children, icon: Icon }: { title: string; children: ReactNode; icon: typeof FileText }) {
   return <section className="zb-review-block"><h2><Icon aria-hidden="true" />{title}</h2>{children}</section>;
 }
@@ -53,9 +53,10 @@ function ApplicationDetails({ kind, initial, refresh }: { kind: Kind; initial: A
   const [reveal, setReveal] = useState(false);
   const [copied, setCopied] = useState(false);
   const partner = kind === "partners";
+  const internship = kind === "internships";
   const approved = partner && application.status === "APPROVED";
   const contactPhone = partner ? application.mobileNumber : application.phone;
-  const resumePath = partner ? `/admin/partner-applications/${application.id}/resume` : `/admin/careers/${application.id}/resume`;
+  const resumePath = partner ? `/admin/partner-applications/${application.id}/resume` : internship ? `/admin/internships/${application.id}/resume` : `/admin/careers/${application.id}/resume`;
 
   async function save(action: "review" | "approve" | "reissue") {
     if (busy) return;
@@ -82,9 +83,9 @@ function ApplicationDetails({ kind, initial, refresh }: { kind: Kind; initial: A
 
   return <>
     <header className="zb-review-detail-heading">
-      <span className="zb-review-avatar" aria-hidden="true">{partner ? <Building2 /> : <UsersRound />}</span>
-      <div><span className="zb-eyebrow">{partner ? "Partnership application" : "Career profile"}</span><h1>{application.fullName}</h1><p>{partner ? application.companyName : application.preferredRole}</p></div>
-      <Badge value={application.status} />
+      <span className="zb-review-avatar" aria-hidden="true">{partner ? <Building2 /> : internship ? <GraduationCap /> : <UsersRound />}</span>
+      <div><span className="zb-eyebrow">{partner ? "Partnership application" : internship ? "Internship application" : "Career profile"}</span><h1>{application.fullName}</h1><p>{partner ? application.companyName : application.preferredRole}</p></div>
+      <Badge value={application.status} internship={internship} />
     </header>
     <div className="zb-review-contact">
       <a href={`mailto:${application.email}`}><Mail aria-hidden="true" />{application.email}</a>
@@ -110,15 +111,15 @@ function ApplicationDetails({ kind, initial, refresh }: { kind: Kind; initial: A
           <DetailBlock title="Partnership interests" icon={Handshake}><dl className="zb-review-facts"><div><dt>Contribution</dt><dd>{application.contributionPreference}</dd></div><div><dt>Partnership area</dt><dd>{application.preferredPartnershipArea}</dd></div></dl>{application.professionalNetwork && <p>{application.professionalNetwork}</p>}{application.linkedInUrl && <SafeExternalLink href={application.linkedInUrl} />}</DetailBlock>
         </> : <>
           <DetailBlock title="Education" icon={GraduationCap}>{application.education?.map((entry, i) => <article className="zb-review-timeline-item" key={i}><h3>{entry.qualification}</h3><p>{entry.institution}</p><small>{[entry.fieldOfStudy, entry.graduationYear].filter(Boolean).join(" · ")}</small></article>)}</DetailBlock>
-          <DetailBlock title="Work experience" icon={BriefcaseBusiness}><p>{application.experienceYears} completed years of experience</p>{application.workExperience?.length ? application.workExperience.map((entry, i) => <article className="zb-review-timeline-item" key={i}><h3>{entry.title} · {entry.company}</h3><small>{entry.startMonth} → {entry.current ? "Present" : entry.endMonth}</small>{entry.description && <p>{entry.description}</p>}</article>) : <p>No employment history supplied. Consider for entry-level opportunities.</p>}</DetailBlock>
-          <DetailBlock title="Skills & preferences" icon={Sparkles}><ul className="zb-review-tags">{application.skills?.map(skill => <li key={skill}>{skill}</li>)}</ul><dl className="zb-review-facts"><div><dt>Availability</dt><dd>{application.availability}</dd></div><div><dt>Preferred locations</dt><dd>{application.preferredLocations?.join(", ") || "Not specified"}</dd></div></dl>{application.coverNote && <p>{application.coverNote}</p>}{application.portfolioUrl && <SafeExternalLink href={application.portfolioUrl} />}</DetailBlock>
+          {internship ? <DetailBlock title="Internship preference" icon={BriefcaseBusiness}><dl className="zb-review-facts"><div><dt>Preferred role</dt><dd>{application.preferredRole}</dd></div><div><dt>Preferred location</dt><dd>{application.preferredLocations?.join(", ") || "Not specified"}</dd></div><div><dt>Availability</dt><dd>{application.availability}</dd></div></dl></DetailBlock> : <DetailBlock title="Work experience" icon={BriefcaseBusiness}><p>{application.experienceYears} completed years of experience</p>{application.workExperience?.length ? application.workExperience.map((entry, i) => <article className="zb-review-timeline-item" key={i}><h3>{entry.title} · {entry.company}</h3><small>{entry.startMonth} → {entry.current ? "Present" : entry.endMonth}</small>{entry.description && <p>{entry.description}</p>}</article>) : <p>No employment history supplied. Consider for entry-level opportunities.</p>}</DetailBlock>}
+          <DetailBlock title={internship ? "Skills & applicant note" : "Skills & preferences"} icon={Sparkles}><ul className="zb-review-tags">{application.skills?.map(skill => <li key={skill}>{skill}</li>)}</ul>{!internship && <dl className="zb-review-facts"><div><dt>Availability</dt><dd>{application.availability}</dd></div><div><dt>Preferred locations</dt><dd>{application.preferredLocations?.join(", ") || "Not specified"}</dd></div></dl>}{application.coverNote && <p>{application.coverNote}</p>}{application.portfolioUrl && <SafeExternalLink href={application.portfolioUrl} />}</DetailBlock>
         </>}
         <DetailBlock title={partner ? "Supporting profile" : "CV / resume"} icon={FileText}>
           {application.resumeFileName ? <><p>{application.resumeFileName}</p><a className="zb-review-button zb-review-button--secondary" href={`/api/backend${resumePath}`}><Download aria-hidden="true" />Download {partner ? "profile" : "resume"}</a></> : <p>No resume is attached. You can contact the applicant to request one.</p>}
           {application.consentAt && <small>Recruitment contact consent recorded {formatDate(application.consentAt)}</small>}
         </DetailBlock>
         <DetailBlock title="Review history" icon={ClipboardCheck}>
-          {application.history?.length ? <ol className="zb-review-history">{application.history.map(event => <li key={event.id}><strong>{event.metadata?.to ? `Moved to ${statusLabel(event.metadata.to)}` : event.action.replaceAll(".", " ").replaceAll("_", " ")}</strong><time dateTime={event.createdAt}>{formatDate(event.createdAt)}</time>{event.metadata?.notes && <p>{event.metadata.notes}</p>}</li>)}</ol> : <p>No review activity yet.</p>}
+          {application.history?.length ? <ol className="zb-review-history">{application.history.map(event => <li key={event.id}><strong>{event.metadata?.to ? `Moved to ${internship && event.metadata.to === "HIRED" ? "Selected" : statusLabel(event.metadata.to)}` : event.action.replaceAll(".", " ").replaceAll("_", " ")}</strong><time dateTime={event.createdAt}>{formatDate(event.createdAt)}</time>{event.metadata?.notes && <p>{event.metadata.notes}</p>}</li>)}</ol> : <p>No review activity yet.</p>}
         </DetailBlock>
       </div>
       <aside className="zb-review-decision">
@@ -127,9 +128,9 @@ function ApplicationDetails({ kind, initial, refresh }: { kind: Kind; initial: A
           <p>{application.provisionedUser?.mustChangePassword ? "Waiting for the partner to set their own password." : "The partner has completed password setup."}</p>
           <p>Email status: <strong>{statusLabel(application.credentialsEmailStatus ?? "NOT_SENT")}</strong></p>
           {application.provisionedUser?.mustChangePassword && <button className="zb-review-button zb-review-button--secondary" type="button" disabled={busy} onClick={() => setIntent("reissue")}><RefreshCw aria-hidden="true" />Reissue temporary credentials</button>}
-        </DetailBlock> : <DetailBlock title={partner ? "Review & approval" : "HR decision"} icon={ClipboardCheck}>
+        </DetailBlock> : <DetailBlock title={partner ? "Review & approval" : internship ? "Internship decision" : "HR decision"} icon={ClipboardCheck}>
           <form onSubmit={(event: FormEvent) => { event.preventDefault(); void save("review"); }} aria-busy={busy}>
-            <label>Review status<select value={status} disabled={busy} onChange={event => setStatus(event.target.value)}>{(partner ? ["REVIEWED", "CONTACTED", "REJECTED", "CLOSED"] : careerStatuses.filter(value => value !== "SUBMITTED")).map(value => <option value={value} key={value}>{statusLabel(value)}</option>)}</select></label>
+            <label>Review status<select value={status} disabled={busy} onChange={event => setStatus(event.target.value)}>{(partner ? ["REVIEWED", "CONTACTED", "REJECTED", "CLOSED"] : careerStatuses.filter(value => value !== "SUBMITTED")).map(value => <option value={value} key={value}>{internship && value === "HIRED" ? "Selected" : statusLabel(value)}</option>)}</select></label>
             <label>Internal review notes<textarea rows={5} maxLength={4000} disabled={busy} value={notes} onChange={event => setNotes(event.target.value)} placeholder={partner ? "Evaluation, contact outcome and reasons for your decision." : "Role fit, strengths, interview notes and follow-up details."} /></label>
             <p className="zb-review-muted">Notes are visible to the company team, not to applicants.</p>
             <button type="submit" className="zb-review-button zb-review-button--secondary" disabled={busy}>{busy ? <LoaderCircle aria-hidden="true" /> : <ClipboardCheck aria-hidden="true" />}Save review</button>
@@ -159,6 +160,7 @@ export function AdminIntakeReview({ kind, id }: { kind: Kind; id?: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const partner = kind === "partners";
+  const internship = kind === "internships";
   const refresh = useCallback(() => setVersion(value => value + 1), []);
 
   useEffect(() => {
@@ -190,9 +192,9 @@ export function AdminIntakeReview({ kind, id }: { kind: Kind; id?: string }) {
   }, [kind, id, query, status, page, router, version]);
 
   return <div className="zb-review-page">
-    <nav className="zb-review-nav" aria-label="Admin application navigation"><Link href={id ? `/admin/${kind}` : "/admin"}><ArrowLeft aria-hidden="true" />{id ? "All applications" : "Admin dashboard"}</Link><Link href={partner ? "/admin/careers" : "/admin/partners"}>{partner ? "Career profiles" : "Partner approvals"}<ArrowRight aria-hidden="true" /></Link></nav>
-    {!id && <header className="zb-review-hero"><div><span className="zb-eyebrow">{partner ? "Partnerships · Company review" : "Talent inbox · HR review"}</span><h1>{partner ? "From application to approved partner." : "People worth getting to know."}</h1><p>{partner ? "Review the business, approve the fit and issue secure access. Every decision stays attached to the application." : "Explore candidate profiles, review their experience and resume, then contact the people who fit your opportunities."}</p></div><div className="zb-review-hero-art" aria-hidden="true"><span>{partner ? <Handshake /> : <UsersRound />}</span><span><ClipboardCheck /></span><span>{partner ? <KeyRound /> : <BadgeCheck />}</span></div></header>}
-    {loading && <div className="zb-review-empty" role="status"><LoaderCircle aria-hidden="true" /><h2>Loading {partner ? "partner applications" : "career profiles"}…</h2></div>}
+    <nav className="zb-review-nav" aria-label="Admin application navigation"><Link href={id ? `/admin/${kind}` : "/admin"}><ArrowLeft aria-hidden="true" />{id ? "All applications" : "Admin dashboard"}</Link><Link href={partner ? "/admin/careers" : internship ? "/admin/careers" : "/admin/internships"}>{partner ? "Career profiles" : internship ? "Career profiles" : "Internship applications"}<ArrowRight aria-hidden="true" /></Link></nav>
+    {!id && <header className="zb-review-hero"><div><span className="zb-eyebrow">{partner ? "Partnerships · Company review" : internship ? "Internships · HR review" : "Talent inbox · HR review"}</span><h1>{partner ? "From application to approved partner." : internship ? "Internship applications, ready for review." : "People worth getting to know."}</h1><p>{partner ? "Review the business, approve the fit and issue secure access. Every decision stays attached to the application." : internship ? "Review education, preferred role, location and resume, then shortlist the candidates who fit your internship needs." : "Explore candidate profiles, review their experience and resume, then contact the people who fit your opportunities."}</p></div><div className="zb-review-hero-art" aria-hidden="true"><span>{partner ? <Handshake /> : internship ? <GraduationCap /> : <UsersRound />}</span><span><ClipboardCheck /></span><span>{partner ? <KeyRound /> : <BadgeCheck />}</span></div></header>}
+    {loading && <div className="zb-review-empty" role="status"><LoaderCircle aria-hidden="true" /><h2>Loading {partner ? "partner applications" : internship ? "internship applications" : "career profiles"}…</h2></div>}
     {error && <div className="zb-review-error" role="alert"><p>{error}</p><button className="zb-review-button" onClick={refresh}><RefreshCw aria-hidden="true" />Try again</button></div>}
     {application && !loading && <ApplicationDetails key={`${application.id}:${version}`} kind={kind} initial={application} refresh={refresh} />}
     {data && !loading && <>
@@ -201,18 +203,18 @@ export function AdminIntakeReview({ kind, id }: { kind: Kind; id?: string }) {
       </div>
       <form className="zb-review-filters" onSubmit={event => { event.preventDefault(); setPage(1); setQuery(search.trim()); }}>
         <label><span>Search applications</span><div><Search aria-hidden="true" /><input type="search" maxLength={160} value={search} onChange={event => setSearch(event.target.value)} placeholder={partner ? "Name, company, email or city" : "Name, role, email or city"} /></div></label>
-        <label><span>Review status</span><select value={status} onChange={event => { setPage(1); setStatus(event.target.value); }}><option value="">All statuses</option>{(partner ? partnerStatuses : careerStatuses).map(value => <option value={value} key={value}>{statusLabel(value)}</option>)}</select></label>
+        <label><span>Review status</span><select value={status} onChange={event => { setPage(1); setStatus(event.target.value); }}><option value="">All statuses</option>{(partner ? partnerStatuses : careerStatuses).map(value => <option value={value} key={value}>{internship && value === "HIRED" ? "Selected" : statusLabel(value)}</option>)}</select></label>
         <button className="zb-review-button" type="submit">Search</button><button className="zb-review-icon-button" type="button" onClick={refresh} aria-label="Refresh applications"><RefreshCw aria-hidden="true" /></button>
       </form>
       <p className="zb-review-results">{data.total} matching {data.total === 1 ? "application" : "applications"}</p>
       {data.items.length ? <div className="zb-review-cards">{data.items.map(item => <article key={item.id}>
-        <div className="zb-review-card-top"><span className="zb-review-avatar" aria-hidden="true">{partner ? <Building2 /> : <UsersRound />}</span><Badge value={item.status} /></div>
+        <div className="zb-review-card-top"><span className="zb-review-avatar" aria-hidden="true">{partner ? <Building2 /> : internship ? <GraduationCap /> : <UsersRound />}</span><Badge value={item.status} internship={internship} /></div>
         <h2>{item.fullName}</h2><p>{partner ? item.companyName : item.preferredRole}</p>
-        <div className="zb-review-card-meta"><span><MapPin aria-hidden="true" />{partner ? item.currentCity : item.city}</span><span><BriefcaseBusiness aria-hidden="true" />{partner ? item.totalExperienceYears : item.experienceYears} years</span></div>
+        <div className="zb-review-card-meta"><span><MapPin aria-hidden="true" />{partner ? item.currentCity : internship ? item.preferredLocations?.[0] || item.city : item.city}</span><span><BriefcaseBusiness aria-hidden="true" />{partner ? `${item.totalExperienceYears} years` : internship ? item.availability || "Availability provided" : `${item.experienceYears} years`}</span></div>
         <p className="zb-review-card-note">{partner ? item.specialization : item.skills?.slice(0, 4).join(" · ")}</p>
-        <div className="zb-review-card-foot"><span>{item.resumeFileName ? "Resume attached" : "Profile details available"}</span><time dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleDateString("en-IN")}</time></div>
-        <Link className="zb-review-button zb-review-button--secondary" href={`/admin/${kind}/${item.id}`}>Open {partner ? "application" : "profile"}<ArrowRight aria-hidden="true" /></Link>
-      </article>)}</div> : <div className="zb-review-empty"><Inbox aria-hidden="true" /><h2>No matching applications</h2><p>{query || status ? "Try a different search or review status." : partner ? "New Become a Partner applications will appear here." : "Profiles submitted through Careers will appear here."}</p></div>}
+        <div className="zb-review-card-foot"><span>{item.resumeFileName ? "Resume attached" : internship ? "Application details available" : "Profile details available"}</span><time dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleDateString("en-IN")}</time></div>
+        <Link className="zb-review-button zb-review-button--secondary" href={`/admin/${kind}/${item.id}`}>Open {partner || internship ? "application" : "profile"}<ArrowRight aria-hidden="true" /></Link>
+      </article>)}</div> : <div className="zb-review-empty"><Inbox aria-hidden="true" /><h2>No matching applications</h2><p>{query || status ? "Try a different search or review status." : partner ? "New Become a Partner applications will appear here." : internship ? "New internship applications will appear here." : "Profiles submitted through Careers will appear here."}</p></div>}
       <div className="zb-review-pagination"><button className="zb-review-button zb-review-button--secondary" type="button" disabled={page <= 1} onClick={() => setPage(value => value - 1)}>Previous</button><span>Page {data.page} of {data.totalPages}</span><button className="zb-review-button zb-review-button--secondary" type="button" disabled={page >= data.totalPages} onClick={() => setPage(value => value + 1)}>Next</button></div>
     </>}
   </div>;

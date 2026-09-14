@@ -8,6 +8,7 @@ export const PUBLIC_FORM_ROUTES = [
   "/contact",
   "/hire-workforce",
   "/careers/apply",
+  "/internships/apply",
   "/vendor-empanelment",
   "/become-a-partner",
   "/placement-cell-partnership/apply",
@@ -20,6 +21,7 @@ export const NOINDEX_ENTRY_ROUTES = [
   "/placement-cell-login",
   "/placement-portal",
   "/careers/apply",
+  "/internships/apply",
   "/placement-cell-partnership/apply",
 ];
 

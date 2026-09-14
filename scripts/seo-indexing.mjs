@@ -10,6 +10,7 @@ const PRIVATE_SITEMAP_PATTERNS = [
   "/login",
   "/placement-cell-login",
   "/careers/apply",
+  "/internships/apply",
   "/placement-cell-partnership/apply",
 ];
 
