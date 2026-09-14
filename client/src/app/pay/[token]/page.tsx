@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { InternshipDocumentCheckout } from "@/components/payments/InternshipDocumentCheckout";
 import "@/styles/internship-payment-checkout.css";
+import "@/styles/internship-payment-professional.css";
 
 export const dynamic = "force-dynamic";
 
