@@ -44,7 +44,7 @@ describe("chatbot local persistence", () => {
     }));
 
     expect(loadStoredChatbotConversation()?.messages[0]?.sources).toEqual([
-      { title: "Public", url: "/promoter-solutions", category: "services" },
+      { citation: "S1", title: "Public", url: "/promoter-solutions", category: "services" },
     ]);
   });
 
