@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, Clock3, FileText, LoaderCircle, LockKeyhole, RefreshCw, ShieldCheck, Truck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { apiFetch, type ApiSuccessEnvelope } from "@/lib/api";
@@ -67,7 +67,7 @@ export function InternshipDocumentCheckout({ token }: { token: string }) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<"pay" | "refresh" | null>(null);
   const [error, setError] = useState("");
-  const [returnRefreshDone, setReturnRefreshDone] = useState(false);
+  const returnRefreshDone = useRef(false);
 
   const loadPayment = useCallback(async () => {
     const response = await apiFetch<ApiSuccessEnvelope<{ payment: PublicPayment }>>(`/internship-payments/checkout/${encodeURIComponent(token)}`);
@@ -77,7 +77,6 @@ export function InternshipDocumentCheckout({ token }: { token: string }) {
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
     loadPayment()
       .catch(caught => { if (active) setError(caught instanceof Error ? caught.message : "Unable to load this payment request."); })
       .finally(() => { if (active) setLoading(false); });
@@ -97,10 +96,10 @@ export function InternshipDocumentCheckout({ token }: { token: string }) {
   }, [loadPayment, token]);
 
   useEffect(() => {
-    if (returnRefreshDone || searchParams.get("returned") !== "1") return;
-    setReturnRefreshDone(true);
+    if (returnRefreshDone.current || searchParams.get("returned") !== "1") return;
+    returnRefreshDone.current = true;
     void refresh(true);
-  }, [refresh, returnRefreshDone, searchParams]);
+  }, [refresh, searchParams]);
 
   async function pay() {
     if (busy || payment?.status !== "ACTIVE") return;
@@ -168,7 +167,7 @@ export function InternshipDocumentCheckout({ token }: { token: string }) {
 
       {paid && payment.receiptUrl && <div className="zb-pay-actions"><a className="zb-pay-primary" href={payment.receiptUrl} target="_blank" rel="noopener noreferrer"><FileText aria-hidden="true" />View payment receipt</a></div>}
 
-      <footer className="zb-pay-foot"><ShieldCheck aria-hidden="true" /><p>Payment credentials are entered only on Cashfree's secure hosted checkout. ZOBHUNGER never receives or stores your UPI PIN, card number, CVV or banking password.</p></footer>
+      <footer className="zb-pay-foot"><ShieldCheck aria-hidden="true" /><p>Payment credentials are entered only on Cashfree&apos;s secure hosted checkout. ZOBHUNGER never receives or stores your UPI PIN, card number, CVV or banking password.</p></footer>
     </div>
   </section>;
 }
