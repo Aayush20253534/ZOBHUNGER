@@ -37,6 +37,7 @@ export interface CreateChatbotServiceOptions {
 }
 
 const SOCIAL_MESSAGE = /^(?:hi|hello|hey|namaste|नमस्ते|good\s+(?:morning|afternoon|evening)|thanks|thank\s+you|shukriya|धन्यवाद|what can you do|help)\s*[!.?]*$/i;
+const IDENTITY_MESSAGE = /(?:\bwho\s+are\s+you\b|\bwhat\s+are\s+you\b|\bwhat(?:'s|\s+is)\s+your\s+name\b|\bintroduce\s+yourself\b|\b(?:tum|aap)\s+(?:kaun|kon)\s+ho\b|\b(?:kaun|kon)\s+ho\s+(?:tum|aap)\b|(?:तुम|आप)\s+कौन\s+हो|तुम्हारा\s+नाम\s+क्या\s+है|आपका\s+नाम\s+क्या\s+है)/i;
 const UNCERTAINTY_SIGNAL = /\b(?:i do not have|i don't have|not enough verified information|cannot confirm|unable to confirm|enough verified zobhunger information nahi|verified zobhunger information nahi)\b|पर्याप्त.*जानकारी नहीं/i;
 
 function sourcesFor(results: KnowledgeSearchResult[]): ChatbotSource[] {
@@ -86,12 +87,21 @@ function unansweredResult(input: ChatbotMessageInput, audience: ChatbotAudience,
   };
 }
 
+function identityResult(input: ChatbotMessageInput, audience: ChatbotAudience, language: ReturnType<typeof detectChatbotLanguage>): ChatbotMessageResult {
+  const answer = language === "hi"
+    ? "नमस्ते, मैं Aarohi हूँ, ZOBHUNGER की assistant। मैं आपको हमारी services, hiring process, jobs, partnerships और public company information समझने में मदद कर सकती हूँ।"
+    : language === "hinglish"
+      ? "Hi, main Aarohi hoon, ZOBHUNGER ki assistant. Main aapko services, hiring process, jobs, partnerships aur public company information samajhne mein help kar sakti hoon."
+      : "Hi, I’m Aarohi, ZOBHUNGER’s assistant. I can help you understand our services, hiring process, jobs, partnerships and public company information.";
+  return { answer, language, sources: [], grounded: true, unanswered: false, confidence: 1, audience, actions: audienceActions(audience, false), handoverRecommended: false, ...(input.conversationId ? { conversationId: input.conversationId } : {}) };
+}
+
 function socialResult(input: ChatbotMessageInput, audience: ChatbotAudience, language: ReturnType<typeof detectChatbotLanguage>): ChatbotMessageResult {
   const answer = language === "hi"
-    ? "नमस्ते। मैं ZOBHUNGER AI Assistant हूँ। मैं verified services, workforce requirements, jobs, vendors और partnerships में मदद कर सकता हूँ।"
+    ? "नमस्ते, मैं Aarohi हूँ, ZOBHUNGER की assistant। मैं verified services, workforce requirements, jobs, vendors और partnerships में मदद कर सकती हूँ।"
     : language === "hinglish"
-      ? "Namaste. Main ZOBHUNGER AI Assistant hoon. Main verified services, workforce requirements, jobs, vendors aur partnerships mein help kar sakta hoon."
-      : "Hello. I’m the ZOBHUNGER AI Assistant. I can help with verified information about services, workforce requirements, jobs, vendors and partnerships, and connect you with the right team when needed.";
+      ? "Namaste, main Aarohi hoon, ZOBHUNGER ki assistant. Main verified services, workforce requirements, jobs, vendors aur partnerships mein help kar sakti hoon."
+      : "Hello, I’m Aarohi, ZOBHUNGER’s assistant. I can help with verified information about services, workforce requirements, jobs, vendors and partnerships, and connect you with the right team when needed.";
   return { answer, language, sources: [], grounded: true, unanswered: false, confidence: 1, audience, actions: audienceActions(audience, false), handoverRecommended: false, ...(input.conversationId ? { conversationId: input.conversationId } : {}) };
 }
 
@@ -118,10 +128,16 @@ export function createChatbotService(options: CreateChatbotServiceOptions) {
       return { result, provider: { retrievedChunks: 0, toolUsed: tool.toolName }, retrievalScore: 0 };
     }
 
+    if (IDENTITY_MESSAGE.test(input.message.trim())) {
+      const result = identityResult(input, audience, language);
+      if (onDelta) await onDelta(result.answer);
+      return { result, provider: { retrievedChunks: 0, intent: "identity" }, retrievalScore: 0 };
+    }
+
     if (SOCIAL_MESSAGE.test(input.message.trim())) {
       const result = socialResult(input, audience, language);
       if (onDelta) await onDelta(result.answer);
-      return { result, provider: { retrievedChunks: 0 }, retrievalScore: 0 };
+      return { result, provider: { retrievedChunks: 0, intent: "social" }, retrievalScore: 0 };
     }
 
     const retrievalQuery = buildRetrievalQuery(input.message, history);

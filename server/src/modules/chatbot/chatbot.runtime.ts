@@ -18,7 +18,7 @@ function modelSignature(): string {
     maxCompletionTokens: env.GROQ_MAX_COMPLETION_TOKENS,
     temperature: env.GROQ_TEMPERATURE,
     reasoningEffort: env.GROQ_REASONING_EFFORT ?? null,
-    promptVersion: 3,
+    promptVersion: 4,
     rerank: env.CHATBOT_RERANK_ENABLED,
     vector: env.CHATBOT_VECTOR_ENABLED,
     embeddingProvider: env.CHATBOT_VECTOR_ENABLED ? "gemini" : null,

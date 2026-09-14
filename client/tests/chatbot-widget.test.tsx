@@ -133,7 +133,7 @@ describe("advanced public chatbot widget", () => {
     expect(bubble.querySelectorAll("table tbody tr")).toHaveLength(2);
     expect(bubble.querySelector(".zb-chatbot-inline-citation")?.textContent).toBe("S1");
     expect(bubble.querySelector("a[href='/workforce-solutions']")?.textContent).toBe("Workforce Solutions");
-    expect(bubble.querySelector("a[href='/sales-force']")?.textContent).toBe("/sales-force");
+    expect(bubble.querySelector("a[href='/sales-force']")?.textContent).toBe("Sales Force");
     expect(bubble.textContent).not.toContain("| --- | --- | --- |");
   });
 

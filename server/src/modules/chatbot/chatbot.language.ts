@@ -1,7 +1,7 @@
 export type ChatbotLanguage = "en" | "hi" | "hinglish";
 
 const DEVANAGARI = /[\u0900-\u097F]/;
-const HINGLISH_WORDS = /\b(?:mujhe|chahiye|kaise|kya|hai|hain|mera|meri|mere|job|naukri|kaam|karna|karo|dikhao|batao|bataiye|kitna|kitne|wale|wali|mein|main|ke liye|aur|abhi|kal|mahine|din)\b/i;
+const HINGLISH_WORDS = /\b(?:mujhe|tum|aap|kaun|kon|ho|chahiye|kaise|kya|hai|hain|he|mera|meri|mere|job|naukri|kaam|karna|karta|karti|krta|krti|karo|dikhao|batao|bataiye|btao|bta|kitna|kitne|wale|wali|mein|main|me|ke liye|ke bare|ke baare|aur|abhi|kal|mahine|din)\b/i;
 
 export function detectChatbotLanguage(text: string): ChatbotLanguage {
   if (DEVANAGARI.test(text)) return "hi";

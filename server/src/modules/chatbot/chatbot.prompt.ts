@@ -6,9 +6,35 @@ import { languageInstruction } from "./chatbot.language.js";
 
 const REFERENTIAL_QUERY = /\b(this|that|these|those|it|they|them|there|which one|what about|tell me more|more details|go on|continue|iske|iska|uske|uska)\b/i;
 const SHORT_AMBIGUOUS_QUERY = /^(?:why|how|when|where|who|which|what else|and then|kyun|kaise|kab|kahan)[?.!]*$/i;
+const ZOBHUNGER_NAME = /\b(?:zobhunger|zobhungr)\b/i;
+const COMPANY_OVERVIEW_EN = /\b(?:what\s+(?:does|is)\s+(?:zobhunger|zobhungr)|tell\s+me\s+about\s+(?:zobhunger|zobhungr)|about\s+(?:zobhunger|zobhungr))\b/i;
+const COMPANY_OVERVIEW_HINGLISH = /\b(?:kya\s+(?:karta|krta|karti|krti|hai|he)|ke\s+(?:baare|bare)\s+(?:mein|me))\b/i;
+const COMPANY_OVERVIEW_HINDI = /(?:क्या\s+(?:करता|करती|है)|के\s+बारे\s+में|बताइए|बताओ)/;
+
+/**
+ * The public knowledge base is authored in English. Canonicalise a few very
+ * common multilingual intents before lexical retrieval so Roman-Hindi/Hindi
+ * phrasing still lands on the right verified document instead of failing the
+ * grounding threshold. The original user message is still sent to the model,
+ * so this only affects retrieval, not the reply language or tone.
+ */
+export function canonicalRetrievalIntent(message: string): string | null {
+  const trimmed = message.trim();
+  const mentionsZobhunger = ZOBHUNGER_NAME.test(trimmed) || /(?:ज़ोबहंगर|जोबहंगर)/.test(trimmed);
+  if (!mentionsZobhunger) return null;
+
+  if (COMPANY_OVERVIEW_EN.test(trimmed) || COMPANY_OVERVIEW_HINGLISH.test(trimmed) || COMPANY_OVERVIEW_HINDI.test(trimmed)) {
+    return "ZOBHUNGER company overview workforce sales business execution platform services";
+  }
+
+  return null;
+}
 
 export function buildRetrievalQuery(message: string, history: ChatbotHistoryMessage[]): string {
   const trimmed = message.trim();
+  const canonical = canonicalRetrievalIntent(trimmed);
+  if (canonical) return canonical;
+
   const shouldUseHistory = REFERENTIAL_QUERY.test(trimmed) || SHORT_AMBIGUOUS_QUERY.test(trimmed);
   if (!shouldUseHistory) return trimmed;
   const previousUserMessage = [...history].reverse().find((item) => item.role === "user")?.content.trim();
@@ -35,7 +61,7 @@ export function buildChatbotSystemPrompt(
     ? `The request was decomposed into these retrieval sub-questions: ${options.decomposedQueries.map((item, index) => `${index + 1}) ${item}`).join(" | ")}`
     : "No multi-part decomposition was needed.";
 
-  return `You are the official ZOBHUNGER AI Assistant.
+  return `You are Aarohi, the official ZOBHUNGER AI Assistant.
 
 Your job is to help visitors and authenticated users understand ZOBHUNGER services, industries, jobs, partnerships, and approved account information surfaced through safe server tools.
 

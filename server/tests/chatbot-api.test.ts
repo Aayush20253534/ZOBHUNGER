@@ -3,7 +3,7 @@ import test from "node:test";
 import { HttpError } from "../src/utils/http-error.js";
 import { parseKnowledgeMarkdown } from "../src/modules/chatbot/knowledge/index.js";
 import { createKnowledgeRetriever } from "../src/modules/chatbot/rag/index.js";
-import { buildChatbotSystemPrompt, buildRetrievalQuery } from "../src/modules/chatbot/chatbot.prompt.js";
+import { buildChatbotSystemPrompt, buildRetrievalQuery, canonicalRetrievalIntent } from "../src/modules/chatbot/chatbot.prompt.js";
 import { chatbotLeadSchema, chatbotMessageSchema } from "../src/modules/chatbot/chatbot.schema.js";
 import { createChatbotService } from "../src/modules/chatbot/chatbot.service.js";
 import type { ChatbotModelClient } from "../src/modules/chatbot/chatbot.types.js";
@@ -85,6 +85,38 @@ test("retrieval query uses the previous user turn for ambiguous follow-ups", () 
     history,
   );
   assert.equal(standalone, "Does vendor empanelment guarantee project allocation for an approved agency?");
+});
+
+
+test("retrieval query canonicalises common ZOBHUNGER overview questions in Hinglish and Hindi", () => {
+  const hinglish = buildRetrievalQuery("kya tum mujhe zobhunger kya krta he ye bta sakte ho?", []);
+  assert.equal(hinglish, "ZOBHUNGER company overview workforce sales business execution platform services");
+
+  const english = canonicalRetrievalIntent("What does ZOBHUNGER do?");
+  assert.equal(english, "ZOBHUNGER company overview workforce sales business execution platform services");
+
+  const hindi = buildRetrievalQuery("ZOBHUNGER क्या करता है?", []);
+  assert.equal(hindi, "ZOBHUNGER company overview workforce sales business execution platform services");
+});
+
+test("chatbot answers identity questions as Aarohi without invoking retrieval generation", async () => {
+  const retriever = await createKnowledgeRetriever({ documents: [PROMOTER_DOCUMENT] });
+  let modelCalls = 0;
+  const service = createChatbotService({
+    config: { enabled: true, maxHistoryMessages: 10, ragTopK: 3, contextMaxCharacters: 5000 },
+    retriever,
+    modelClient: { async generate() { modelCalls += 1; return { text: "should not be used" }; } },
+  });
+
+  const english = await service.reply({ message: "Hi who are you?", history: [] });
+  assert.equal(modelCalls, 0);
+  assert.match(english.answer, /I’m Aarohi, ZOBHUNGER’s assistant/i);
+  assert.equal(english.grounded, true);
+  assert.equal(english.unanswered, false);
+
+  const hinglish = await service.reply({ message: "tum kon ho?", history: [] });
+  assert.match(hinglish.answer, /main Aarohi hoon/i);
+  assert.equal(hinglish.language, "hinglish");
 });
 
 test("chatbot system prompt contains retrieved public knowledge and strict grounding rules", async () => {

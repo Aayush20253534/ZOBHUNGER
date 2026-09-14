@@ -14,6 +14,11 @@ keywords:
 aliases:
   - Zobhungr Solutions
   - Zobhungr
+  - what does ZOBHUNGER do
+  - tell me about ZOBHUNGER
+  - ZOBHUNGER kya karta hai
+  - ZOBHUNGER kya krta hai
+  - ZOBHUNGER ke baare mein
 status: published
 description: Core public facts about ZOBHUNGER, its positioning, service catalogue, engagement models and public scale figures.
 updatedAt: 2026-09-12

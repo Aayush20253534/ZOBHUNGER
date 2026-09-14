@@ -33,6 +33,13 @@ export const answerEvaluationCases: AnswerEvaluationCase[] = [
     requiredTerms: ["job"],
   },
   {
+    id: "answer-company-overview-hinglish",
+    question: "kya tum mujhe zobhunger kya krta he ye bta sakte ho?",
+    expectedSourceUrls: ["/", "/about"],
+    expectedLanguage: "hinglish",
+    requiredTerms: ["workforce"],
+  },
+  {
     id: "answer-hindi",
     question: "ज़ोबहंगर के माध्यम से नौकरी कैसे खोजें?",
     expectedSourceUrls: ["/jobs", "/careers", "/for-workers"],
