@@ -127,14 +127,14 @@ export function InternshipDocumentPaymentPanel({ applicationId, applicant, payme
         }),
       });
       onUpdated(response.data.documentPayment);
-      setMessage("Cashfree payment link created. It has also been sent to the intern by email/SMS where available.");
-    } catch (caught) { setError(caught instanceof Error ? caught.message : "Unable to create the Cashfree payment link."); }
+      setMessage("Secure ZOBHUNGER payment page created and sent to the intern by email.");
+    } catch (caught) { setError(caught instanceof Error ? caught.message : "Unable to create the secure payment request."); }
     finally { setBusy(null); }
   }
 
   async function action(type: "refresh" | "cancel" | "receipt") {
     if (busy) return;
-    if (type === "cancel" && !window.confirm("Cancel this unpaid Cashfree payment link? The intern will no longer be able to use it.")) return;
+    if (type === "cancel" && !window.confirm("Cancel this unpaid payment request? The intern will no longer be able to use the shared link.")) return;
     setBusy(type); setError(""); setMessage(""); setCopied(false);
     const suffix = type === "receipt" ? "resend-receipt" : type;
     try {
@@ -143,7 +143,7 @@ export function InternshipDocumentPaymentPanel({ applicationId, applicant, payme
         headers: { "X-Requested-With": "XMLHttpRequest" },
       });
       onUpdated(response.data.documentPayment);
-      setMessage(type === "refresh" ? "Payment status refreshed from Cashfree." : type === "cancel" ? "Payment link cancelled. You can now create a corrected replacement." : "Payment confirmation and receipt email sent again.");
+      setMessage(type === "refresh" ? "Payment status refreshed from Cashfree." : type === "cancel" ? "Payment request cancelled. You can now create a corrected replacement." : "Payment confirmation and receipt email sent again.");
     } catch (caught) { setError(caught instanceof Error ? caught.message : "The payment action could not be completed."); }
     finally { setBusy(null); }
   }
@@ -151,13 +151,13 @@ export function InternshipDocumentPaymentPanel({ applicationId, applicant, payme
   async function copyLink() {
     if (!payment?.cashfreeLinkUrl) return;
     try { await navigator.clipboard.writeText(payment.cashfreeLinkUrl); setCopied(true); }
-    catch { setError("Clipboard access is unavailable. Open the Cashfree link and copy it from the browser instead."); }
+    catch { setError("Clipboard access is unavailable. Open the payment page and copy its URL from the browser instead."); }
   }
 
   return <div className="zb-payment-panel">
     <div className="zb-payment-intro">
       <span><WalletCards aria-hidden="true" /></span>
-      <div><strong>Optional hard-copy payment</strong><p>Use only when the intern requests a printed certificate or related document. The intern pays on Cashfree’s hosted page; no card, UPI or banking credentials are collected on this website.</p></div>
+      <div><strong>Optional hard-copy payment</strong><p>Use only when the intern requests a printed certificate or related document. Admin sets the amount here and shares a ZOBHUNGER payment page. The intern is sent to Cashfree’s hosted checkout only when they pay; no card, UPI or banking credentials are collected by ZOBHUNGER.</p></div>
     </div>
 
     {message && <p className="zb-payment-message" role="status"><CheckCircle2 aria-hidden="true" />{message}</p>}
@@ -179,7 +179,7 @@ export function InternshipDocumentPaymentPanel({ applicationId, applicant, payme
         <label>Amount (₹)<input required type="number" min="1" max="100000" step="0.01" inputMode="decimal" value={form.amountRupees} onChange={event => change("amountRupees", event.target.value)} placeholder="e.g. 150" /></label>
         <label className="zb-payment-span-2">Courier / admin note <span>(optional)</span><textarea rows={3} maxLength={1000} value={form.courierNote} onChange={event => change("courierNote", event.target.value)} placeholder="Courier preference, document count or handling note." /></label>
       </div>
-      <div className="zb-payment-form-foot"><p>Amount is intentionally admin-controlled. Verify the address and charge before issuing the link.</p><button className="zb-review-button" type="submit" disabled={busy !== null}>{busy === "create" ? <LoaderCircle className="zb-spin" aria-hidden="true" /> : <Send aria-hidden="true" />}Create & share Cashfree link</button></div>
+      <div className="zb-payment-form-foot"><p>Amount is intentionally admin-controlled. Verify the address and charge before issuing the link.</p><button className="zb-review-button" type="submit" disabled={busy !== null}>{busy === "create" ? <LoaderCircle className="zb-spin" aria-hidden="true" /> : <Send aria-hidden="true" />}Create & share payment request</button></div>
     </form>}
 
     {payment && !mayCreate && <div className="zb-payment-summary" data-payment-status={payment.status}>
@@ -188,7 +188,7 @@ export function InternshipDocumentPaymentPanel({ applicationId, applicant, payme
         <div><dt>Recipient</dt><dd>{payment.recipientName}</dd></div>
         <div><dt>Contact</dt><dd>{payment.customerEmail}<br />{payment.customerPhone}</dd></div>
         <div><dt>Delivery</dt><dd>{deliveryAddress}</dd></div>
-        <div><dt>Cashfree status</dt><dd>{payment.cashfreeStatus}</dd></div>
+        <div><dt>Checkout status</dt><dd>{payment.cashfreeStatus === "NOT_STARTED" ? "Not started" : payment.cashfreeStatus}</dd></div>
         {payment.linkExpiresAt && <div><dt>Link expiry</dt><dd>{dateTime(payment.linkExpiresAt)}</dd></div>}
         {payment.paidAt && <div><dt>Paid on</dt><dd>{dateTime(payment.paidAt)}</dd></div>}
         {payment.cashfreeTransactionId && <div><dt>Cashfree payment ID</dt><dd>{payment.cashfreeTransactionId}</dd></div>}
@@ -196,7 +196,7 @@ export function InternshipDocumentPaymentPanel({ applicationId, applicant, payme
       </dl>
       {active && <div className="zb-payment-linkbox"><div><span>Shareable payment link</span><a href={payment.cashfreeLinkUrl} target="_blank" rel="noopener noreferrer">{payment.cashfreeLinkUrl}</a></div><button type="button" onClick={() => void copyLink()}><Copy aria-hidden="true" />{copied ? "Copied" : "Copy"}</button></div>}
       <div className="zb-payment-actions">
-        {active && <><a className="zb-review-button" href={payment.cashfreeLinkUrl} target="_blank" rel="noopener noreferrer"><ExternalLink aria-hidden="true" />Open Cashfree</a><button className="zb-review-button zb-review-button--secondary" type="button" disabled={busy !== null} onClick={() => void action("refresh")}>{busy === "refresh" ? <LoaderCircle className="zb-spin" aria-hidden="true" /> : <RefreshCw aria-hidden="true" />}Refresh status</button><button className="zb-review-button zb-payment-danger" type="button" disabled={busy !== null} onClick={() => void action("cancel")}><Ban aria-hidden="true" />Cancel unpaid link</button></>}
+        {active && <><a className="zb-review-button" href={payment.cashfreeLinkUrl} target="_blank" rel="noopener noreferrer"><ExternalLink aria-hidden="true" />Open payment page</a><button className="zb-review-button zb-review-button--secondary" type="button" disabled={busy !== null} onClick={() => void action("refresh")}>{busy === "refresh" ? <LoaderCircle className="zb-spin" aria-hidden="true" /> : <RefreshCw aria-hidden="true" />}Refresh status</button><button className="zb-review-button zb-payment-danger" type="button" disabled={busy !== null} onClick={() => void action("cancel")}><Ban aria-hidden="true" />Cancel payment request</button></>}
         {paid && <><button className="zb-review-button zb-review-button--secondary" type="button" disabled={busy !== null} onClick={() => void action("refresh")}>{busy === "refresh" ? <LoaderCircle className="zb-spin" aria-hidden="true" /> : <RefreshCw aria-hidden="true" />}Refresh from Cashfree</button>{payment.receiptUrl && <a className="zb-review-button" href={payment.receiptUrl} target="_blank" rel="noopener noreferrer"><ExternalLink aria-hidden="true" />Open receipt</a>}<button className="zb-review-button zb-review-button--secondary" type="button" disabled={busy !== null} onClick={() => void action("receipt")}>{busy === "receipt" ? <LoaderCircle className="zb-spin" aria-hidden="true" /> : <Mail aria-hidden="true" />}Resend receipt email</button></>}
       </div>
       {payment.courierNote && <p className="zb-payment-note"><strong>Courier note:</strong> {payment.courierNote}</p>}

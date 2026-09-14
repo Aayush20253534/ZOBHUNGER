@@ -95,17 +95,17 @@ adminInternshipsRouter.post("/:id/review", portalWrite, validate({ params: entit
 adminInternshipsRouter.post("/:id/hard-copy-payment", portalWrite, validate({ params: entityIdParamsSchema, body: createInternshipDocumentPaymentSchema }), async (_req, res) => {
   await createInternshipDocumentPayment(res.locals.validated.params.id, res.locals.authUser.id, res.locals.validated.body);
   const documentPayment = await getInternshipDocumentPayment(res.locals.validated.params.id);
-  res.status(201).json(apiSuccessResponse("Cashfree payment link created and shared", { documentPayment }));
+  res.status(201).json(apiSuccessResponse("Secure payment request created and shared", { documentPayment }));
 });
 adminInternshipsRouter.post("/:id/hard-copy-payment/cancel", portalWrite, validate({ params: entityIdParamsSchema }), async (_req, res) => {
   await cancelInternshipDocumentPayment(res.locals.validated.params.id, res.locals.authUser.id);
   const documentPayment = await getInternshipDocumentPayment(res.locals.validated.params.id);
-  res.json(apiSuccessResponse("Cashfree payment link cancelled", { documentPayment }));
+  res.json(apiSuccessResponse("Payment request cancelled", { documentPayment }));
 });
 adminInternshipsRouter.post("/:id/hard-copy-payment/refresh", portalWrite, validate({ params: entityIdParamsSchema }), async (_req, res) => {
   await refreshInternshipDocumentPayment(res.locals.validated.params.id, res.locals.authUser.id);
   const documentPayment = await getInternshipDocumentPayment(res.locals.validated.params.id);
-  res.json(apiSuccessResponse("Cashfree payment status refreshed", { documentPayment }));
+  res.json(apiSuccessResponse("Payment status refreshed from Cashfree", { documentPayment }));
 });
 adminInternshipsRouter.post("/:id/hard-copy-payment/resend-receipt", portalWrite, validate({ params: entityIdParamsSchema }), async (_req, res) => {
   await resendInternshipDocumentReceipt(res.locals.validated.params.id, res.locals.authUser.id);

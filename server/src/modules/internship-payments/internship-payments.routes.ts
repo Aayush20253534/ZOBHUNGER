@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { validate } from "../../middlewares/validate.middleware.js";
+import { apiSuccessResponse } from "../../utils/api-response.js";
 import { HttpError } from "../../utils/http-error.js";
 import { logger } from "../../utils/logger.js";
-import { cashfreePaymentWebhookSchema, receiptParamsSchema, receiptQuerySchema } from "./internship-payments.schema.js";
-import { getPaidInternshipDocumentReceipt, processCashfreePaymentWebhook, verifyInternshipDocumentReceiptToken } from "./internship-payments.service.js";
+import { cashfreePaymentWebhookSchema, checkoutParamsSchema, receiptParamsSchema, receiptQuerySchema } from "./internship-payments.schema.js";
+import { getPaidInternshipDocumentReceipt, getPublicInternshipDocumentPayment, processCashfreePaymentWebhook, refreshPublicInternshipDocumentPayment, startPublicInternshipDocumentCheckout, verifyInternshipDocumentReceiptToken } from "./internship-payments.service.js";
 import { verifyCashfreeWebhook } from "./cashfree.client.js";
 
 function escapeHtml(value: string | number | null | undefined) {
@@ -61,6 +62,25 @@ cashfreeWebhookRouter.post("/", async (req, res) => {
 });
 
 export const internshipPaymentPublicRouter = Router();
+internshipPaymentPublicRouter.use((_req, res, next) => {
+  res.set({ "Cache-Control": "private, no-store, max-age=0, must-revalidate", "X-Robots-Tag": "noindex, nofollow, noarchive" });
+  next();
+});
+
+internshipPaymentPublicRouter.get("/checkout/:token", validate({ params: checkoutParamsSchema }), async (_req, res) => {
+  const payment = await getPublicInternshipDocumentPayment(res.locals.validated.params.token);
+  res.json(apiSuccessResponse("Payment request", { payment }));
+});
+
+internshipPaymentPublicRouter.post("/checkout/:token/order", validate({ params: checkoutParamsSchema }), async (_req, res) => {
+  const checkout = await startPublicInternshipDocumentCheckout(res.locals.validated.params.token);
+  res.json(apiSuccessResponse("Secure checkout ready", { checkout }));
+});
+
+internshipPaymentPublicRouter.post("/checkout/:token/refresh", validate({ params: checkoutParamsSchema }), async (_req, res) => {
+  const payment = await refreshPublicInternshipDocumentPayment(res.locals.validated.params.token);
+  res.json(apiSuccessResponse("Payment status refreshed", { payment }));
+});
 internshipPaymentPublicRouter.get("/receipts/:id", validate({ params: receiptParamsSchema, query: receiptQuerySchema }), async (_req, res) => {
   const { id } = res.locals.validated.params;
   const { token } = res.locals.validated.query;

@@ -568,16 +568,16 @@ export function notifyInternshipDocumentPaymentLink(input: {
     idempotencyKey: `internship-${input.applicationId}-document-payment-link-${input.expiresAt.getTime()}`,
     subject: "Hard-copy document payment link | ZOBHUNGER",
     eyebrow: "Internship documents",
-    title: "Printing & courier payment link",
-    intro: `Hello ${input.recipientName}, a payment link has been created for the physical internship document request confirmed with our team.`,
+    title: "Printing & courier payment request",
+    intro: `Hello ${input.recipientName}, a secure payment request has been created for the physical internship document request confirmed with our team.`,
     referenceId: input.applicationId,
     details: [
       { label: "Document", value: input.documentDescription },
       { label: "Amount", value: amount },
       { label: "Link valid until", value: expires },
     ],
-    paragraphs: ["This charge is only for the requested printing and courier service. Payment is completed on Cashfree's secure hosted payment page; ZOBHUNGER does not collect card, UPI or banking credentials on its website."],
-    action: { label: "Pay securely with Cashfree", url: input.paymentLink },
+    paragraphs: ["This charge is only for the requested printing and courier service. Open the ZOBHUNGER payment page below and continue to Cashfree's secure hosted checkout. ZOBHUNGER never receives or stores your UPI PIN, card number, CVV or banking password."],
+    action: { label: "Open secure payment page", url: input.paymentLink },
     note: "Do not pay a link with a different amount or recipient. If any detail is incorrect, contact the HR team before making payment.",
   });
 }

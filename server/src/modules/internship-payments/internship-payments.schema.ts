@@ -22,9 +22,6 @@ export const createInternshipDocumentPaymentSchema = z.object({
 const amount = z.union([z.number(), z.string()]).transform(value => Number(value)).refine(Number.isFinite, "Invalid amount");
 const stringish = z.union([z.string(), z.number()]).transform(String);
 
-// Payment Link notify_url delivers normal PG payment webhooks. Successful link
-// payments include Cashfree's cf_link_id in order_tags, which maps the payment
-// attempt back to the exact link issued by the admin.
 export const cashfreePaymentWebhookSchema = z.object({
   type: z.enum(["PAYMENT_SUCCESS_WEBHOOK", "PAYMENT_FAILED_WEBHOOK", "PAYMENT_USER_DROPPED_WEBHOOK"]),
   event_time: z.string().optional(),
@@ -33,7 +30,7 @@ export const cashfreePaymentWebhookSchema = z.object({
       order_id: z.string().min(1),
       order_amount: amount,
       order_currency: z.string().min(3).max(8),
-      order_tags: z.object({ cf_link_id: stringish.optional() }).passthrough().nullable().optional(),
+      order_tags: z.object({ payment_id: stringish.optional(), application_id: stringish.optional() }).passthrough().nullable().optional(),
     }).passthrough(),
     payment: z.object({
       cf_payment_id: stringish,
@@ -44,6 +41,10 @@ export const cashfreePaymentWebhookSchema = z.object({
     }).passthrough(),
   }).passthrough(),
 }).passthrough();
+
+export const checkoutParamsSchema = z.object({
+  token: z.string().trim().min(76).max(180).regex(/^[A-Za-z0-9._-]+$/, "Invalid payment token"),
+}).strict();
 
 export const receiptParamsSchema = z.object({ id: z.string().trim().min(10).max(100) }).strict();
 export const receiptQuerySchema = z.object({ token: z.string().trim().regex(/^[a-f0-9]{64}$/i, "Invalid receipt token") }).strict();

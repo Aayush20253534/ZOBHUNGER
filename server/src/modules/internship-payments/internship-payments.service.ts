@@ -4,12 +4,21 @@ import { env } from "../../config/env.js";
 import { notifyInternshipDocumentPaymentCompleted, notifyInternshipDocumentPaymentLink } from "../../services/notification.service.js";
 import { HttpError } from "../../utils/http-error.js";
 import { logger } from "../../utils/logger.js";
-import { cancelCashfreePaymentLink, createCashfreePaymentLink, fetchCashfreePaymentLink, getCashfreePaymentLinkOrders, type CashfreeLinkOrder, type CashfreePaymentLink } from "./cashfree.client.js";
+import {
+  cashfreeCheckoutEnvironment,
+  createCashfreeOrder,
+  fetchCashfreeOrder,
+  getCashfreeOrderPayments,
+  terminateCashfreeOrder,
+  type CashfreeOrder,
+  type CashfreeOrderPayment,
+} from "./cashfree.client.js";
 import type { CashfreePaymentWebhook, CreateInternshipDocumentPayment } from "./internship-payments.schema.js";
 
 const paymentSelect = {
   id: true,
   careerApplicationId: true,
+  requestKey: true,
   recipientName: true,
   customerEmail: true,
   customerPhone: true,
@@ -40,6 +49,7 @@ const paymentSelect = {
 } as const;
 
 type PaymentRecord = Awaited<ReturnType<typeof findPaymentByApplication>>;
+type SavedPayment = NonNullable<PaymentRecord>;
 
 function appOrigin() {
   return env.PUBLIC_APP_URL ?? env.CLIENT_ORIGIN.split(",")[0].trim();
@@ -54,12 +64,20 @@ function normalizeCashfreePhone(value: string) {
   let digits = value.replace(/\D/g, "");
   if (digits.length === 12 && digits.startsWith("91")) digits = digits.slice(2);
   if (digits.length === 11 && digits.startsWith("0")) digits = digits.slice(1);
-  if (!/^\d{10}$/.test(digits)) throw new HttpError(400, "Cashfree payment links require a valid 10-digit Indian mobile number", { code: "CASHFREE_PHONE_INVALID" });
+  if (!/^\d{10}$/.test(digits)) throw new HttpError(400, "Cashfree checkout requires a valid 10-digit Indian mobile number", { code: "CASHFREE_PHONE_INVALID" });
   return digits;
 }
 
-function cashfreeLinkId(requestKey: string) {
-  return `zbh_intdoc_${requestKey.replaceAll("-", "").slice(0, 32)}`;
+function paymentRequestReference(requestKey: string) {
+  return `zbh_checkout_${requestKey.replaceAll("-", "").slice(0, 30)}`;
+}
+
+function cashfreeOrderId(paymentId: string) {
+  return `zbh_intdoc_${paymentId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 32)}`;
+}
+
+function cashfreeCustomerId(applicationId: string) {
+  return `zbh_${applicationId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 36)}`;
 }
 
 function toPaise(value: number | string | undefined | null) {
@@ -77,6 +95,30 @@ function receiptToken(paymentId: string) {
   return createHmac("sha256", env.JWT_SECRET).update(`internship-document-receipt:${paymentId}`).digest("hex");
 }
 
+function checkoutSignature(paymentId: string) {
+  return createHmac("sha256", env.JWT_SECRET).update(`internship-document-checkout:${paymentId}`).digest("hex");
+}
+
+function checkoutToken(paymentId: string) {
+  return `${paymentId}.${checkoutSignature(paymentId)}`;
+}
+
+function paymentCheckoutUrl(paymentId: string) {
+  return publicUrl(`/pay/${encodeURIComponent(checkoutToken(paymentId))}`);
+}
+
+function paymentIdFromCheckoutToken(token: string) {
+  const separator = token.lastIndexOf(".");
+  if (separator < 10) return null;
+  const paymentId = token.slice(0, separator);
+  const signature = token.slice(separator + 1);
+  if (!/^[a-f0-9]{64}$/i.test(signature) || paymentId.length > 100) return null;
+  const expected = Buffer.from(checkoutSignature(paymentId), "hex");
+  let received: Buffer;
+  try { received = Buffer.from(signature, "hex"); } catch { return null; }
+  return received.length === expected.length && timingSafeEqual(received, expected) ? paymentId : null;
+}
+
 export function internshipDocumentReceiptUrl(paymentId: string) {
   return publicUrl(`/api/backend/internship-payments/receipts/${encodeURIComponent(paymentId)}?token=${receiptToken(paymentId)}`);
 }
@@ -92,12 +134,30 @@ async function findPaymentByApplication(careerApplicationId: string) {
   return prisma.internshipDocumentPayment.findUnique({ where: { careerApplicationId }, select: paymentSelect });
 }
 
+async function findPaymentFromCheckoutToken(token: string) {
+  const paymentId = paymentIdFromCheckoutToken(token);
+  if (!paymentId) throw new HttpError(404, "Payment request not found", { code: "PAYMENT_CHECKOUT_NOT_FOUND" });
+  const payment = await prisma.internshipDocumentPayment.findUnique({ where: { id: paymentId }, select: paymentSelect });
+  if (!payment) throw new HttpError(404, "Payment request not found", { code: "PAYMENT_CHECKOUT_NOT_FOUND" });
+  return expireIfNeeded(payment);
+}
+
+async function expireIfNeeded(payment: SavedPayment) {
+  if (payment.status !== "ACTIVE" || !payment.linkExpiresAt || payment.linkExpiresAt.getTime() > Date.now()) return payment;
+  return prisma.internshipDocumentPayment.update({
+    where: { id: payment.id },
+    data: { status: "EXPIRED", cashfreeStatus: payment.cashfreeStatus === "PAID" ? "PAID" : "EXPIRED" },
+    select: paymentSelect,
+  });
+}
+
 export async function getInternshipDocumentPayment(careerApplicationId: string) {
   const payment = await findPaymentByApplication(careerApplicationId);
   if (!payment) return null;
+  const current = await expireIfNeeded(payment);
   return {
-    ...payment,
-    receiptUrl: payment.status === "PAID" && payment.receiptNumber ? internshipDocumentReceiptUrl(payment.id) : null,
+    ...current,
+    receiptUrl: current.status === "PAID" && current.receiptNumber ? internshipDocumentReceiptUrl(current.id) : null,
   };
 }
 
@@ -107,15 +167,15 @@ async function ensureInternshipApplication(applicationId: string) {
     select: { id: true, fullName: true, email: true, phone: true, status: true },
   });
   if (!application) throw new HttpError(404, "Internship application not found", { code: "INTERNSHIP_APPLICATION_NOT_FOUND" });
-  if (application.status === "REJECTED") throw new HttpError(409, "A hard-copy payment link cannot be issued for a rejected internship application", { code: "INTERNSHIP_PAYMENT_NOT_ELIGIBLE" });
+  if (application.status === "REJECTED") throw new HttpError(409, "A hard-copy payment request cannot be issued for a rejected internship application", { code: "INTERNSHIP_PAYMENT_NOT_ELIGIBLE" });
   return application;
 }
 
-function paidOrder(orders: CashfreeLinkOrder[]) {
-  return orders.find(order => order.order_status === "PAID") ?? orders.find(order => order.transaction_id != null) ?? orders[0];
+function successfulPayment(payments: CashfreeOrderPayment[]) {
+  return payments.find(payment => payment.payment_status === "SUCCESS") ?? payments[0];
 }
 
-async function deliverReceiptEmail(payment: NonNullable<PaymentRecord>, deliveryAttempt = "automatic") {
+async function deliverReceiptEmail(payment: SavedPayment, deliveryAttempt = "automatic") {
   if (payment.status !== "PAID" || !payment.receiptNumber || !payment.paidAt) return false;
   const accepted = await notifyInternshipDocumentPaymentCompleted({
     applicationId: payment.careerApplicationId,
@@ -135,10 +195,10 @@ async function deliverReceiptEmail(payment: NonNullable<PaymentRecord>, delivery
   return accepted;
 }
 
-async function issueReceipt(payment: NonNullable<PaymentRecord>, order?: CashfreeLinkOrder, eventTime?: string) {
+async function issueReceipt(payment: SavedPayment, input: { orderId?: string; transactionId?: string; amountPaidPaise?: number; paidAt?: string }) {
   if (payment.status === "PAID" && payment.receiptNumber) return payment;
-  const amountPaidPaise = payment.amountPaidPaise ?? payment.amountPaise;
-  const paidAt = eventTime && !Number.isNaN(Date.parse(eventTime)) ? new Date(eventTime) : new Date();
+  const amountPaidPaise = input.amountPaidPaise ?? payment.amountPaidPaise ?? payment.amountPaise;
+  const paidAt = input.paidAt && !Number.isNaN(Date.parse(input.paidAt)) ? new Date(input.paidAt) : new Date();
   const number = payment.receiptNumber ?? receiptNumber(payment.id, paidAt);
   const changed = await prisma.internshipDocumentPayment.updateMany({
     where: { id: payment.id, status: { not: "PAID" } },
@@ -146,8 +206,8 @@ async function issueReceipt(payment: NonNullable<PaymentRecord>, order?: Cashfre
       status: "PAID",
       cashfreeStatus: "PAID",
       amountPaidPaise,
-      cashfreeOrderId: order?.order_id ?? payment.cashfreeOrderId,
-      cashfreeTransactionId: order?.transaction_id != null ? String(order.transaction_id) : payment.cashfreeTransactionId,
+      cashfreeOrderId: input.orderId ?? payment.cashfreeOrderId,
+      cashfreeTransactionId: input.transactionId ?? payment.cashfreeTransactionId,
       paidAt,
       receiptNumber: number,
       receiptIssuedAt: new Date(),
@@ -157,64 +217,87 @@ async function issueReceipt(payment: NonNullable<PaymentRecord>, order?: Cashfre
   const saved = await prisma.internshipDocumentPayment.findUnique({ where: { id: payment.id }, select: paymentSelect });
   if (!saved) throw new HttpError(404, "Document payment record not found", { code: "INTERNSHIP_PAYMENT_NOT_FOUND" });
   if (changed.count === 1) {
-    await prisma.auditLog.create({ data: { action: "internship.document_payment_paid", entityType: "CareerApplication", entityId: saved.careerApplicationId, metadata: { paymentId: saved.id, amountPaise: saved.amountPaidPaise, receiptNumber: saved.receiptNumber, transactionId: saved.cashfreeTransactionId } } });
+    await prisma.auditLog.create({
+      data: {
+        action: "internship.document_payment_paid",
+        entityType: "CareerApplication",
+        entityId: saved.careerApplicationId,
+        metadata: { paymentId: saved.id, amountPaise: saved.amountPaidPaise, receiptNumber: saved.receiptNumber, transactionId: saved.cashfreeTransactionId },
+      },
+    });
     void deliverReceiptEmail(saved).catch(error => logger.warn("internship.document_receipt_email_failed", { paymentId: saved.id, reason: error instanceof Error ? error.message : "unknown" }));
   }
   return saved;
 }
 
-async function applyCashfreeState(payment: NonNullable<PaymentRecord>, provider: CashfreePaymentLink, order?: CashfreeLinkOrder, eventTime?: string) {
-  const expected = payment.amountPaise;
-  const providerAmount = toPaise(provider.link_amount);
-  const paidAmount = toPaise(provider.link_amount_paid);
-  if (provider.link_currency !== payment.currency || providerAmount !== expected) {
-    logger.error("cashfree.payment_mismatch", undefined, { paymentId: payment.id, linkId: payment.cashfreeLinkId, expectedAmountPaise: expected, providerAmountPaise: providerAmount, expectedCurrency: payment.currency, providerCurrency: provider.link_currency });
-    throw new HttpError(409, "Cashfree payment details do not match the amount issued by the admin", { code: "CASHFREE_PAYMENT_MISMATCH" });
+function assertOrderMatchesPayment(payment: SavedPayment, order: CashfreeOrder) {
+  const providerAmount = toPaise(order.order_amount);
+  if (order.order_currency !== payment.currency || providerAmount !== payment.amountPaise) {
+    logger.error("cashfree.payment_mismatch", undefined, {
+      paymentId: payment.id,
+      orderId: order.order_id,
+      expectedAmountPaise: payment.amountPaise,
+      providerAmountPaise: providerAmount,
+      expectedCurrency: payment.currency,
+      providerCurrency: order.order_currency,
+    });
+    throw new HttpError(409, "Cashfree order details do not match the amount issued by the admin", { code: "CASHFREE_PAYMENT_MISMATCH" });
   }
-  if (provider.link_status === "PAID") {
-    if (paidAmount < expected) throw new HttpError(409, "Cashfree reports the link as paid but the collected amount is incomplete", { code: "CASHFREE_PAYMENT_INCOMPLETE" });
-    const withAmount = { ...payment, amountPaidPaise: paidAmount || expected };
-    return issueReceipt(withAmount, order, eventTime);
+}
+
+async function applyCashfreeOrderState(payment: SavedPayment, order: CashfreeOrder, payments: CashfreeOrderPayment[] = []) {
+  assertOrderMatchesPayment(payment, order);
+  if (order.order_status === "PAID") {
+    const transaction = successfulPayment(payments);
+    const paidAmount = toPaise(transaction?.payment_amount ?? order.order_amount);
+    const paymentCurrency = transaction?.payment_currency ?? order.order_currency;
+    if (paymentCurrency !== payment.currency || paidAmount < payment.amountPaise) {
+      throw new HttpError(409, "Cashfree reports the order as paid but the collected amount does not match", { code: "CASHFREE_PAYMENT_MISMATCH" });
+    }
+    return issueReceipt(payment, {
+      orderId: order.order_id,
+      transactionId: transaction?.cf_payment_id != null ? String(transaction.cf_payment_id) : undefined,
+      amountPaidPaise: paidAmount,
+      paidAt: transaction?.payment_time,
+    });
   }
-  const mapped = provider.link_status === "EXPIRED" ? "EXPIRED" : provider.link_status === "CANCELLED" ? "CANCELLED" : "ACTIVE";
-  await prisma.internshipDocumentPayment.update({
+
+  let status: "ACTIVE" | "EXPIRED" | "CANCELLED" = payment.status === "CANCELLED" ? "CANCELLED" : "ACTIVE";
+  if (order.order_status === "EXPIRED") status = "EXPIRED";
+  if (order.order_status === "TERMINATED" || order.order_status === "TERMINATION_REQUESTED") status = "CANCELLED";
+  return prisma.internshipDocumentPayment.update({
     where: { id: payment.id },
-    data: { cashfreeStatus: provider.link_status, status: mapped, amountPaidPaise: paidAmount || null },
+    data: { cashfreeStatus: order.order_status, status },
+    select: paymentSelect,
   });
-  return (await prisma.internshipDocumentPayment.findUnique({ where: { id: payment.id }, select: paymentSelect }))!;
+}
+
+async function refreshPayment(payment: SavedPayment) {
+  const current = await expireIfNeeded(payment);
+  if (current.status === "PAID" || !current.cashfreeOrderId) return current;
+  const order = await fetchCashfreeOrder(current.cashfreeOrderId);
+  const payments = order.order_status === "PAID" ? await getCashfreeOrderPayments(order.order_id) : [];
+  return applyCashfreeOrderState(current, order, payments);
 }
 
 export async function createInternshipDocumentPayment(applicationId: string, actorUserId: string, input: CreateInternshipDocumentPayment) {
+  cashfreeCheckoutEnvironment();
   const application = await ensureInternshipApplication(applicationId);
   const priorByKey = await prisma.internshipDocumentPayment.findUnique({ where: { requestKey: input.requestKey }, select: paymentSelect });
   if (priorByKey) {
     if (priorByKey.careerApplicationId !== applicationId) throw new HttpError(409, "This payment request key is already used", { code: "PAYMENT_REQUEST_KEY_REUSED" });
     return priorByKey;
   }
-  const existing = await findPaymentByApplication(applicationId);
+  const existingRaw = await findPaymentByApplication(applicationId);
+  const existing = existingRaw ? await expireIfNeeded(existingRaw) : null;
   if (existing?.status === "PAID") throw new HttpError(409, "This hard-copy request is already paid", { code: "INTERNSHIP_PAYMENT_ALREADY_PAID" });
-  if (existing?.status === "ACTIVE") throw new HttpError(409, "An active payment link already exists. Cancel it before creating a replacement.", { code: "INTERNSHIP_PAYMENT_LINK_ACTIVE" });
+  if (existing?.status === "ACTIVE") throw new HttpError(409, "An active payment request already exists. Cancel it before creating a replacement.", { code: "INTERNSHIP_PAYMENT_LINK_ACTIVE" });
 
   const customerPhone = normalizeCashfreePhone(input.customerPhone);
   const amountPaise = Math.round(input.amountRupees * 100);
-  const linkId = cashfreeLinkId(input.requestKey);
   const expiresAt = new Date(Date.now() + input.expiryDays * 24 * 60 * 60_000);
   const paymentId = existing?.id ?? randomUUID();
-  const provider = await createCashfreePaymentLink({
-    linkId,
-    amountRupees: amountPaise / 100,
-    purpose: `Printing and courier charges - ${input.documentDescription}`.slice(0, 500),
-    customerName: input.recipientName,
-    customerEmail: input.customerEmail,
-    customerPhone,
-    expiresAt,
-    notifyUrl: publicUrl("/api/backend/payments/cashfree/webhook"),
-    requestKey: input.requestKey,
-    notes: { application_id: applicationId.slice(0, 50), payment_id: paymentId.slice(0, 50) },
-  });
-  if (!provider.link_url || !/^https:\/\//i.test(provider.link_url)) throw new HttpError(502, "Cashfree did not return a secure payment link", { code: "CASHFREE_LINK_INVALID" });
-  if (provider.cf_link_id == null || String(provider.cf_link_id).trim() === "") throw new HttpError(502, "Cashfree did not return a link reference required for payment confirmation", { code: "CASHFREE_LINK_REFERENCE_MISSING" });
-
+  const shareableUrl = paymentCheckoutUrl(paymentId);
   const data = {
     requestKey: input.requestKey,
     createdByUserId: actorUserId,
@@ -230,11 +313,13 @@ export async function createInternshipDocumentPayment(applicationId: string, act
     courierNote: input.courierNote || null,
     amountPaise,
     currency: "INR",
-    cashfreeLinkId: provider.link_id,
-    cashfreeCfLinkId: String(provider.cf_link_id),
-    cashfreeLinkUrl: provider.link_url,
-    cashfreeStatus: provider.link_status,
-    linkExpiresAt: provider.link_expiry_time ? new Date(provider.link_expiry_time) : expiresAt,
+    // Legacy column names are intentionally retained to avoid a risky production
+    // migration. They now hold our stable ZOBHUNGER checkout request reference/URL.
+    cashfreeLinkId: paymentRequestReference(input.requestKey),
+    cashfreeCfLinkId: null,
+    cashfreeLinkUrl: shareableUrl,
+    cashfreeStatus: "NOT_STARTED",
+    linkExpiresAt: expiresAt,
     status: "ACTIVE" as const,
     amountPaidPaise: null,
     cashfreeOrderId: null,
@@ -247,7 +332,16 @@ export async function createInternshipDocumentPayment(applicationId: string, act
   const saved = existing
     ? await prisma.internshipDocumentPayment.update({ where: { id: existing.id }, data, select: paymentSelect })
     : await prisma.internshipDocumentPayment.create({ data: { id: paymentId, careerApplicationId: applicationId, ...data }, select: paymentSelect });
-  await prisma.auditLog.create({ data: { actorUserId, action: "internship.document_payment_link_created", entityType: "CareerApplication", entityId: applicationId, metadata: { paymentId: saved.id, amountPaise, linkId: saved.cashfreeLinkId, documentDescription: saved.documentDescription } } });
+
+  await prisma.auditLog.create({
+    data: {
+      actorUserId,
+      action: "internship.document_payment_request_created",
+      entityType: "CareerApplication",
+      entityId: applicationId,
+      metadata: { paymentId: saved.id, amountPaise, paymentUrl: saved.cashfreeLinkUrl, documentDescription: saved.documentDescription },
+    },
+  });
   void notifyInternshipDocumentPaymentLink({
     applicationId,
     recipientName: saved.recipientName || application.fullName,
@@ -260,61 +354,152 @@ export async function createInternshipDocumentPayment(applicationId: string, act
   return saved;
 }
 
+export async function getPublicInternshipDocumentPayment(token: string) {
+  const payment = await findPaymentFromCheckoutToken(token);
+  return {
+    recipientName: payment.recipientName,
+    documentDescription: payment.documentDescription,
+    amountPaise: payment.amountPaise,
+    currency: payment.currency,
+    status: payment.status,
+    cashfreeStatus: payment.cashfreeStatus,
+    expiresAt: payment.linkExpiresAt,
+    paidAt: payment.paidAt,
+    receiptUrl: payment.status === "PAID" && payment.receiptNumber ? internshipDocumentReceiptUrl(payment.id) : null,
+  };
+}
+
+export async function startPublicInternshipDocumentCheckout(token: string) {
+  const payment = await findPaymentFromCheckoutToken(token);
+  if (payment.status === "PAID") return { status: "PAID" as const, receiptUrl: payment.receiptNumber ? internshipDocumentReceiptUrl(payment.id) : null };
+  if (payment.status === "CANCELLED") throw new HttpError(410, "This payment request has been cancelled. Contact the ZOBHUNGER team if you still need the hard copy.", { code: "PAYMENT_CHECKOUT_CANCELLED" });
+  if (payment.status === "EXPIRED") throw new HttpError(410, "This payment request has expired. Ask the ZOBHUNGER team to issue a new one.", { code: "PAYMENT_CHECKOUT_EXPIRED" });
+
+  let order: CashfreeOrder;
+  if (payment.cashfreeOrderId) {
+    order = await fetchCashfreeOrder(payment.cashfreeOrderId);
+    const refreshed = await applyCashfreeOrderState(payment, order, order.order_status === "PAID" ? await getCashfreeOrderPayments(order.order_id) : []);
+    if (refreshed.status === "PAID") return { status: "PAID" as const, receiptUrl: refreshed.receiptNumber ? internshipDocumentReceiptUrl(refreshed.id) : null };
+    if (refreshed.status !== "ACTIVE") throw new HttpError(410, "This payment request is no longer payable. Contact the ZOBHUNGER team for a replacement.", { code: "PAYMENT_CHECKOUT_INACTIVE" });
+  } else {
+    order = await createCashfreeOrder({
+      orderId: cashfreeOrderId(payment.id),
+      amountRupees: payment.amountPaise / 100,
+      purpose: `Printing and courier charges - ${payment.documentDescription}`,
+      customerId: cashfreeCustomerId(payment.careerApplicationId),
+      customerName: payment.recipientName,
+      customerEmail: payment.customerEmail,
+      customerPhone: payment.customerPhone,
+      expiresAt: payment.linkExpiresAt ?? new Date(Date.now() + 7 * 24 * 60 * 60_000),
+      returnUrl: `${payment.cashfreeLinkUrl}?returned=1`,
+      notifyUrl: publicUrl("/api/backend/payments/cashfree/webhook"),
+      requestKey: payment.requestKey,
+      tags: { payment_id: payment.id, application_id: payment.careerApplicationId },
+    });
+    assertOrderMatchesPayment(payment, order);
+    await prisma.internshipDocumentPayment.update({
+      where: { id: payment.id },
+      data: { cashfreeOrderId: order.order_id, cashfreeStatus: order.order_status },
+    });
+  }
+
+  if (order.order_status !== "ACTIVE" || !order.payment_session_id) {
+    throw new HttpError(502, "Cashfree did not return an active checkout session", { code: "CASHFREE_CHECKOUT_SESSION_INVALID" });
+  }
+  return {
+    status: "ACTIVE" as const,
+    orderId: order.order_id,
+    paymentSessionId: order.payment_session_id,
+    environment: cashfreeCheckoutEnvironment(),
+  };
+}
+
+export async function refreshPublicInternshipDocumentPayment(token: string) {
+  const payment = await findPaymentFromCheckoutToken(token);
+  const saved = await refreshPayment(payment);
+  return {
+    status: saved.status,
+    cashfreeStatus: saved.cashfreeStatus,
+    paidAt: saved.paidAt,
+    receiptUrl: saved.status === "PAID" && saved.receiptNumber ? internshipDocumentReceiptUrl(saved.id) : null,
+  };
+}
+
 export async function cancelInternshipDocumentPayment(applicationId: string, actorUserId: string) {
   await ensureInternshipApplication(applicationId);
-  const payment = await findPaymentByApplication(applicationId);
-  if (!payment) throw new HttpError(404, "No hard-copy payment link exists for this internship", { code: "INTERNSHIP_PAYMENT_NOT_FOUND" });
+  const paymentRaw = await findPaymentByApplication(applicationId);
+  if (!paymentRaw) throw new HttpError(404, "No hard-copy payment request exists for this internship", { code: "INTERNSHIP_PAYMENT_NOT_FOUND" });
+  const payment = await expireIfNeeded(paymentRaw);
   if (payment.status === "PAID") throw new HttpError(409, "A successful payment cannot be cancelled from the internship record", { code: "INTERNSHIP_PAYMENT_ALREADY_PAID" });
-  if (payment.status === "ACTIVE") await cancelCashfreePaymentLink(payment.cashfreeLinkId, randomUUID());
-  const saved = await prisma.internshipDocumentPayment.update({ where: { id: payment.id }, data: { status: "CANCELLED", cashfreeStatus: "CANCELLED" }, select: paymentSelect });
-  await prisma.auditLog.create({ data: { actorUserId, action: "internship.document_payment_link_cancelled", entityType: "CareerApplication", entityId: applicationId, metadata: { paymentId: payment.id, linkId: payment.cashfreeLinkId } } });
+
+  let providerStatus = payment.cashfreeOrderId ? payment.cashfreeStatus : "CANCELLED";
+  if (payment.cashfreeOrderId && payment.cashfreeStatus === "ACTIVE") {
+    const order = await terminateCashfreeOrder(payment.cashfreeOrderId, randomUUID());
+    providerStatus = order.order_status;
+    if (order.order_status === "PAID") {
+      const paid = await applyCashfreeOrderState(payment, order, await getCashfreeOrderPayments(order.order_id));
+      if (paid.status === "PAID") throw new HttpError(409, "This payment completed while cancellation was being processed", { code: "INTERNSHIP_PAYMENT_ALREADY_PAID" });
+    }
+    if (!["TERMINATED", "TERMINATION_REQUESTED"].includes(order.order_status)) {
+      throw new HttpError(502, "Cashfree did not confirm order cancellation. Refresh the payment status and retry.", { code: "CASHFREE_ORDER_TERMINATION_PENDING" });
+    }
+  }
+  const saved = await prisma.internshipDocumentPayment.update({
+    where: { id: payment.id },
+    data: { status: "CANCELLED", cashfreeStatus: providerStatus },
+    select: paymentSelect,
+  });
+  await prisma.auditLog.create({
+    data: { actorUserId, action: "internship.document_payment_cancelled", entityType: "CareerApplication", entityId: applicationId, metadata: { paymentId: payment.id, orderId: payment.cashfreeOrderId } },
+  });
   return saved;
 }
 
 export async function refreshInternshipDocumentPayment(applicationId: string, actorUserId: string) {
   await ensureInternshipApplication(applicationId);
   const payment = await findPaymentByApplication(applicationId);
-  if (!payment) throw new HttpError(404, "No hard-copy payment link exists for this internship", { code: "INTERNSHIP_PAYMENT_NOT_FOUND" });
-  const provider = await fetchCashfreePaymentLink(payment.cashfreeLinkId);
-  const orders = provider.link_status === "PAID" ? await getCashfreePaymentLinkOrders(payment.cashfreeLinkId) : [];
-  const saved = await applyCashfreeState(payment, provider, paidOrder(orders));
-  await prisma.auditLog.create({ data: { actorUserId, action: "internship.document_payment_status_refreshed", entityType: "CareerApplication", entityId: applicationId, metadata: { paymentId: payment.id, cashfreeStatus: provider.link_status } } });
+  if (!payment) throw new HttpError(404, "No hard-copy payment request exists for this internship", { code: "INTERNSHIP_PAYMENT_NOT_FOUND" });
+  const saved = await refreshPayment(payment);
+  await prisma.auditLog.create({
+    data: { actorUserId, action: "internship.document_payment_status_refreshed", entityType: "CareerApplication", entityId: applicationId, metadata: { paymentId: payment.id, cashfreeStatus: saved.cashfreeStatus, orderId: saved.cashfreeOrderId } },
+  });
   return saved;
 }
 
 export async function processCashfreePaymentWebhook(event: CashfreePaymentWebhook) {
-  const cfLinkId = event.data.order.order_tags?.cf_link_id;
-  if (!cfLinkId) {
-    logger.info("cashfree.webhook_without_link", { type: event.type, orderId: event.data.order.order_id });
-    return { matched: false, paid: false };
-  }
-  const payment = await prisma.internshipDocumentPayment.findUnique({ where: { cashfreeCfLinkId: String(cfLinkId) }, select: paymentSelect });
+  const taggedPaymentId = event.data.order.order_tags?.payment_id;
+  const payment = taggedPaymentId
+    ? await prisma.internshipDocumentPayment.findUnique({ where: { id: String(taggedPaymentId) }, select: paymentSelect })
+    : await prisma.internshipDocumentPayment.findFirst({ where: { cashfreeOrderId: event.data.order.order_id }, select: paymentSelect });
   if (!payment) {
-    logger.info("cashfree.webhook_unmatched_link", { cfLinkId: String(cfLinkId), type: event.type, orderId: event.data.order.order_id });
+    logger.info("cashfree.webhook_unmatched_order", { paymentId: taggedPaymentId ? String(taggedPaymentId) : undefined, type: event.type, orderId: event.data.order.order_id });
     return { matched: false, paid: false };
   }
   if (event.type !== "PAYMENT_SUCCESS_WEBHOOK" || event.data.payment.payment_status !== "SUCCESS") {
     return { matched: true, paid: payment.status === "PAID" };
   }
 
-  const provider: CashfreePaymentLink = {
-    link_id: payment.cashfreeLinkId,
-    link_status: "PAID",
-    link_currency: event.data.order.order_currency,
-    link_amount: event.data.order.order_amount,
-    link_amount_paid: event.data.payment.payment_amount,
-    link_url: payment.cashfreeLinkUrl,
-  };
-  if (event.data.payment.payment_currency !== payment.currency) {
-    logger.error("cashfree.payment_currency_mismatch", undefined, { paymentId: payment.id, paymentCurrency: event.data.payment.payment_currency, expectedCurrency: payment.currency });
-    throw new HttpError(409, "Cashfree payment currency does not match the issued link", { code: "CASHFREE_PAYMENT_MISMATCH" });
+  const expected = payment.amountPaise;
+  const orderAmount = toPaise(event.data.order.order_amount);
+  const paidAmount = toPaise(event.data.payment.payment_amount);
+  if (event.data.order.order_currency !== payment.currency || event.data.payment.payment_currency !== payment.currency || orderAmount !== expected || paidAmount < expected) {
+    logger.error("cashfree.payment_mismatch", undefined, {
+      paymentId: payment.id,
+      orderId: event.data.order.order_id,
+      expectedAmountPaise: expected,
+      orderAmountPaise: orderAmount,
+      paidAmountPaise: paidAmount,
+      orderCurrency: event.data.order.order_currency,
+      paymentCurrency: event.data.payment.payment_currency,
+    });
+    throw new HttpError(409, "Cashfree payment details do not match the amount issued by the admin", { code: "CASHFREE_PAYMENT_MISMATCH" });
   }
-  const saved = await applyCashfreeState(payment, provider, {
-    order_id: event.data.order.order_id,
-    order_status: "PAID",
-    order_amount: event.data.order.order_amount,
-    transaction_id: event.data.payment.cf_payment_id,
-  }, event.data.payment.payment_time ?? event.event_time);
+  const saved = await issueReceipt(payment, {
+    orderId: event.data.order.order_id,
+    transactionId: String(event.data.payment.cf_payment_id),
+    amountPaidPaise: paidAmount,
+    paidAt: event.data.payment.payment_time ?? event.event_time,
+  });
   return { matched: true, paid: saved.status === "PAID" };
 }
 

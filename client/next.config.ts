@@ -11,11 +11,12 @@ const contentSecurityPolicy = [
   "object-src 'none'",
   // Next emits bootstrap/JSON scripts inline. Keep the allowance narrow to the
   // site's own scripts instead of permitting arbitrary remote script origins.
-  "script-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-inline' https://sdk.cashfree.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  "connect-src 'self' https://*.cashfree.com",
+  "frame-src 'self' https://*.cashfree.com",
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   ...(production ? ["upgrade-insecure-requests"] : []),
@@ -87,6 +88,7 @@ const nextConfig: NextConfig = {
       { source: "/design-system", headers: noIndexRouteHeaders },
       { source: "/careers/apply", headers: noIndexRouteHeaders },
       { source: "/internships/apply", headers: noIndexRouteHeaders },
+      { source: "/pay/:path*", headers: privateRouteHeaders },
     ];
   },
 };

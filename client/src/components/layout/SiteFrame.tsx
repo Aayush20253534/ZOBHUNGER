@@ -25,6 +25,9 @@ export function SiteFrame({ children }: { children: ReactNode }) {
   if (pathname === "/employee-joining" || pathname.startsWith("/employee-joining/") || pathname === "/internships/apply") {
     return <main className="zb-employee-joining-root">{children}</main>;
   }
+  if (pathname.startsWith("/pay/")) {
+    return <main className="zb-payment-checkout-root">{children}</main>;
+  }
   if (pathname === "/business" || pathname.startsWith("/business/")) {
     return <main className="zb-business-root">{children}</main>;
   }
