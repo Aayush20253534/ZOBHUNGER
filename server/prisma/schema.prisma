@@ -175,6 +175,13 @@ enum CareerApplicationStatus {
   REJECTED
 }
 
+enum InternshipDocumentPaymentStatus {
+  ACTIVE
+  PAID
+  EXPIRED
+  CANCELLED
+}
+
 enum PlacementCellApplicationStatus {
   SUBMITTED
   UNDER_REVIEW
@@ -816,10 +823,51 @@ model CareerApplication {
   createdAt        DateTime                @default(now())
   updatedAt        DateTime                @updatedAt
 
+  documentPayment InternshipDocumentPayment?
+
   @@index([applicationType, status, createdAt])
   @@index([email])
   @@index([city])
   @@index([resumeStoragePublicId])
+}
+
+model InternshipDocumentPayment {
+  id                    String                          @id @default(cuid())
+  careerApplicationId   String                          @unique
+  requestKey            String                          @unique
+  createdByUserId       String
+  recipientName         String
+  customerEmail         String
+  customerPhone         String
+  documentDescription   String
+  addressLine1          String
+  addressLine2          String?
+  city                  String
+  state                 String
+  postalCode            String
+  courierNote           String?
+  amountPaise           Int
+  currency              String                          @default("INR")
+  cashfreeLinkId        String                          @unique
+  cashfreeCfLinkId      String?                         @unique
+  cashfreeLinkUrl       String
+  cashfreeStatus        String
+  linkExpiresAt         DateTime?
+  status                InternshipDocumentPaymentStatus @default(ACTIVE)
+  amountPaidPaise       Int?
+  cashfreeOrderId       String?
+  cashfreeTransactionId String?
+  paidAt                DateTime?
+  receiptNumber         String?                         @unique
+  receiptIssuedAt       DateTime?
+  receiptEmailStatus    String?
+  createdAt             DateTime                        @default(now())
+  updatedAt             DateTime                        @updatedAt
+
+  careerApplication CareerApplication @relation(fields: [careerApplicationId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+  @@index([customerEmail])
 }
 
 model PlacementCellApplication {

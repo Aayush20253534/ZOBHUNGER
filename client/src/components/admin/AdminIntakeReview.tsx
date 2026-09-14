@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, BadgeCheck, BriefcaseBusiness, Building2, CheckC
 import { apiFetch, ApiError, type ApiSuccessEnvelope } from "@/lib/api";
 import { getCurrentUser } from "@/services/auth.service";
 import type { CareerEducation, CareerExperience } from "@/types/career-intake.types";
+import { InternshipDocumentPaymentPanel, type InternshipDocumentPayment } from "./InternshipDocumentPaymentPanel";
 import "@/styles/admin-intake.css";
 
 type Kind = "partners" | "careers" | "internships";
@@ -23,6 +24,7 @@ interface Application {
   credentialsEmailStatus?: string | null;
   provisionedUser?: { partnerCode: string; mustChangePassword: boolean; temporaryPasswordExpiresAt: string | null; isActive: boolean } | null;
   history?: History[];
+  documentPayment?: InternshipDocumentPayment | null;
 }
 interface ListData { items: Application[]; total: number; page: number; totalPages: number; counts: Record<string, number> }
 interface Credentials { partnerCode: string; temporaryPassword: string; expiresAt: string; loginUrl: string; emailAccepted: boolean }
@@ -118,6 +120,14 @@ function ApplicationDetails({ kind, initial, refresh }: { kind: Kind; initial: A
           {application.resumeFileName ? <><p>{application.resumeFileName}</p><a className="zb-review-button zb-review-button--secondary" href={`/api/backend${resumePath}`}><Download aria-hidden="true" />Download {partner ? "profile" : "resume"}</a></> : <p>No resume is attached. You can contact the applicant to request one.</p>}
           {application.consentAt && <small>Recruitment contact consent recorded {formatDate(application.consentAt)}</small>}
         </DetailBlock>
+        {internship && <DetailBlock title="Hard-copy documents & payment" icon={FileText}>
+          <InternshipDocumentPaymentPanel
+            applicationId={application.id}
+            applicant={{ fullName: application.fullName, email: application.email, phone: application.phone, city: application.city, state: application.state }}
+            payment={application.documentPayment}
+            onUpdated={documentPayment => setApplication(current => ({ ...current, documentPayment }))}
+          />
+        </DetailBlock>}
         <DetailBlock title="Review history" icon={ClipboardCheck}>
           {application.history?.length ? <ol className="zb-review-history">{application.history.map(event => <li key={event.id}><strong>{event.metadata?.to ? `Moved to ${internship && event.metadata.to === "HIRED" ? "Selected" : statusLabel(event.metadata.to)}` : event.action.replaceAll(".", " ").replaceAll("_", " ")}</strong><time dateTime={event.createdAt}>{formatDate(event.createdAt)}</time>{event.metadata?.notes && <p>{event.metadata.notes}</p>}</li>)}</ol> : <p>No review activity yet.</p>}
         </DetailBlock>

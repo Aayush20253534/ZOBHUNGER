@@ -116,3 +116,59 @@
   .zb-review-pagination { flex-wrap: wrap; }
   .zb-review-credentials dl { display: grid; grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Internship hard-copy payment workspace */
+.zb-payment-panel { display: grid; gap: 1rem; }
+.zb-payment-intro { display: flex; gap: .9rem; align-items: flex-start; padding: 1rem; border: 1px solid #ead6de; border-radius: .85rem; background: #fff8fa; }
+.zb-payment-intro > span { display: grid; place-items: center; width: 2.55rem; height: 2.55rem; flex: 0 0 auto; border-radius: .7rem; background: #b51f40; color: #fff; }
+.zb-payment-intro strong { display: block; margin-bottom: .2rem; font-size: .88rem; color: #422832; }
+.zb-payment-intro p { margin: 0; font-size: .8rem; line-height: 1.6; }
+.zb-payment-message, .zb-payment-error { display: flex; gap: .55rem; align-items: center; margin: 0; padding: .8rem .9rem; border-radius: .7rem; border: 1px solid #b8dbc7; background: #f0faf4; color: #285e43 !important; font-size: .78rem !important; }
+.zb-payment-error { display: block; border-color: #e7bcc8; background: #fff4f7; color: #942f4a !important; }
+.zb-payment-form { display: grid; gap: 1rem; }
+.zb-payment-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+.zb-payment-grid label { min-width: 0; display: grid; gap: .4rem; color: #4f3b45; font-size: .75rem; font-weight: 700; }
+.zb-payment-grid label > span { color: #88747d; font-weight: 500; }
+.zb-payment-grid input, .zb-payment-grid select, .zb-payment-grid textarea { width: 100%; min-width: 0; min-height: 2.65rem; padding: .65rem .7rem; border: 1px solid #d4c1ca; border-radius: .55rem; background: #fff; color: #33242b; font: inherit; font-size: .85rem; font-weight: 400; }
+.zb-payment-grid textarea { resize: vertical; line-height: 1.5; }
+.zb-payment-span-2 { grid-column: 1 / -1; }
+.zb-payment-replace-note { padding: .75rem .85rem; border-radius: .65rem; background: #fff6e6; color: #755324; font-size: .76rem; }
+.zb-payment-form-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: .2rem; }
+.zb-payment-form-foot p { max-width: 48ch; margin: 0; font-size: .74rem; }
+.zb-payment-form-foot .zb-review-button { flex: 0 0 auto; }
+.zb-payment-summary { border: 1px solid #ded1d7; border-radius: .9rem; overflow: hidden; background: #fff; }
+.zb-payment-summary[data-payment-status="PAID"] { border-color: #afd0bb; }
+.zb-payment-summary-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1rem; background: #faf6f8; }
+.zb-payment-summary[data-payment-status="PAID"] .zb-payment-summary-head { background: #f0f9f3; }
+.zb-payment-summary-head h3 { margin: .45rem 0 .2rem; font-size: .95rem; font-weight: 750; }
+.zb-payment-summary-head p { margin: 0; font-size: .8rem; }
+.zb-payment-summary-head > svg { width: 1.8rem; height: 1.8rem; color: #9f2745; }
+.zb-payment-summary[data-payment-status="PAID"] .zb-payment-summary-head > svg { color: #34724f; }
+.zb-payment-status { display: inline-flex; padding: .28rem .5rem; border-radius: .45rem; background: #fff0f4; color: #992b48; font-size: .65rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.zb-payment-summary[data-payment-status="PAID"] .zb-payment-status { background: #e1f3e7; color: #286145; }
+.zb-payment-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 0; padding: .35rem 1rem; }
+.zb-payment-facts > div { min-width: 0; padding: .75rem 0; border-bottom: 1px solid #eee4e8; }
+.zb-payment-facts > div:nth-last-child(-n+2) { border-bottom: 0; }
+.zb-payment-facts dt { margin-bottom: .3rem; color: #8b747f; font-size: .67rem; }
+.zb-payment-facts dd { margin: 0; color: #402f37; font-size: .78rem; line-height: 1.55; overflow-wrap: anywhere; }
+.zb-payment-facts small { color: #806d76; }
+.zb-payment-linkbox { display: flex; align-items: center; gap: .8rem; margin: .25rem 1rem 1rem; padding: .8rem; border: 1px solid #e4d3db; border-radius: .7rem; background: #fff9fb; }
+.zb-payment-linkbox > div { min-width: 0; flex: 1; }
+.zb-payment-linkbox span { display: block; margin-bottom: .25rem; color: #826b76; font-size: .65rem; }
+.zb-payment-linkbox a { display: block; color: #922541; font-size: .75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.zb-payment-linkbox button { display: inline-flex; align-items: center; gap: .35rem; min-height: 2.4rem; padding: .5rem .65rem; border: 1px solid #d7bec8; border-radius: .5rem; background: #fff; color: #84243e; font-size: .72rem; font-weight: 700; cursor: pointer; }
+.zb-payment-actions { display: flex; flex-wrap: wrap; gap: .6rem; padding: 0 1rem 1rem; }
+.zb-payment-actions .zb-review-button { min-height: 2.55rem; font-size: .76rem; }
+.zb-payment-danger { border-color: #e4b7c1; background: #fff; color: #a72a44; }
+.zb-payment-note { margin: 0 !important; padding: .8rem 1rem; border-top: 1px solid #eee4e8; background: #fcfafb; font-size: .75rem !important; }
+.zb-spin { animation: zb-payment-spin .8s linear infinite; }
+@keyframes zb-payment-spin { to { transform: rotate(360deg); } }
+@media (max-width: 639px) {
+  .zb-payment-grid, .zb-payment-facts { grid-template-columns: minmax(0, 1fr); }
+  .zb-payment-span-2 { grid-column: auto; }
+  .zb-payment-form-foot, .zb-payment-linkbox { align-items: stretch; flex-direction: column; }
+  .zb-payment-form-foot .zb-review-button, .zb-payment-actions .zb-review-button { width: 100%; }
+  .zb-payment-facts > div { border-bottom: 1px solid #eee4e8 !important; }
+  .zb-payment-facts > div:last-child { border-bottom: 0 !important; }
+  .zb-payment-grid :is(input, select, textarea) { font-size: 1rem; }
+}

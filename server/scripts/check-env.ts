@@ -13,6 +13,7 @@ const summary = {
   redis: { enabled: env.REDIS_ENABLED, configured: Boolean(env.REDIS_URL) },
   email: { configured: missingResendSettings().length === 0, salesNotifications: Boolean(env.SALES_TEAM_EMAIL) },
   privateFileStorage: privateFileStorageConfigured(),
+  cashfree: { enabled: env.CASHFREE_ENABLED, environment: env.CASHFREE_ENVIRONMENT, configured: Boolean(env.CASHFREE_CLIENT_ID && env.CASHFREE_CLIENT_SECRET) },
   security: { mfaEncryption: Boolean(env.MFA_ENCRYPTION_KEY), hrPiiEncryption: Boolean(env.HR_PII_ENCRYPTION_KEY) },
 };
 

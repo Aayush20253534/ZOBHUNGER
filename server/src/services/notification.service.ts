@@ -552,6 +552,74 @@ export function notifyInternshipApplicationStatus(application: {
   });
 }
 
+export function notifyInternshipDocumentPaymentLink(input: {
+  applicationId: string;
+  recipientName: string;
+  email: string;
+  documentDescription: string;
+  amountPaise: number;
+  expiresAt: Date;
+  paymentLink: string;
+}) {
+  const amount = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(input.amountPaise / 100);
+  const expires = input.expiresAt.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" });
+  return sendReceipt({
+    to: input.email,
+    idempotencyKey: `internship-${input.applicationId}-document-payment-link-${input.expiresAt.getTime()}`,
+    subject: "Hard-copy document payment link | ZOBHUNGER",
+    eyebrow: "Internship documents",
+    title: "Printing & courier payment link",
+    intro: `Hello ${input.recipientName}, a payment link has been created for the physical internship document request confirmed with our team.`,
+    referenceId: input.applicationId,
+    details: [
+      { label: "Document", value: input.documentDescription },
+      { label: "Amount", value: amount },
+      { label: "Link valid until", value: expires },
+    ],
+    paragraphs: ["This charge is only for the requested printing and courier service. Payment is completed on Cashfree's secure hosted payment page; ZOBHUNGER does not collect card, UPI or banking credentials on its website."],
+    action: { label: "Pay securely with Cashfree", url: input.paymentLink },
+    note: "Do not pay a link with a different amount or recipient. If any detail is incorrect, contact the HR team before making payment.",
+  });
+}
+
+export function notifyInternshipDocumentPaymentCompleted(input: {
+  applicationId: string;
+  paymentId: string;
+  recipientName: string;
+  email: string;
+  documentDescription: string;
+  amountPaise: number;
+  receiptNumber: string;
+  transactionId?: string | null;
+  paidAt: Date;
+  deliveryLocation: string;
+  receiptUrl: string;
+  deliveryAttempt?: string;
+}) {
+  const amount = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(input.amountPaise / 100);
+  const paidAt = input.paidAt.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" });
+  return sendReceipt({
+    to: input.email,
+    idempotencyKey: `internship-document-payment-${input.paymentId}-receipt-${input.deliveryAttempt ?? "automatic"}`,
+    subject: `Payment received - ${input.receiptNumber} | ZOBHUNGER`,
+    eyebrow: "Payment confirmation",
+    title: "Your printing & courier payment is confirmed",
+    intro: `Hello ${input.recipientName}, Cashfree has confirmed your payment for the requested physical internship document.`,
+    referenceId: input.applicationId,
+    details: [
+      { label: "Receipt", value: input.receiptNumber },
+      { label: "Document", value: input.documentDescription },
+      { label: "Amount paid", value: amount },
+      { label: "Paid on", value: paidAt },
+      ...(input.transactionId ? [{ label: "Cashfree payment ID", value: input.transactionId }] : []),
+      { label: "Delivery", value: input.deliveryLocation },
+    ],
+    paragraphs: ["The HR/admin team can now proceed with the printing and courier workflow for this request."],
+    action: { label: "View payment receipt", url: input.receiptUrl },
+    note: "This is a payment receipt for printing/courier charges. Keep it for your records and quote the receipt number if you contact the team.",
+  });
+}
+
 export function notifyVendorSubmitted(application: {
   id: string;
   companyName: string;

@@ -8,6 +8,8 @@ import { entityIdParamsSchema } from "../admin/admin.schema.js";
 import { careerQuerySchema, careerReviewSchema, type CareerSubmission } from "../careers/careers.schema.js";
 import { getCareerApplication, getCareerResume, listCareerApplications, reviewCareerApplication, submitCareerProfile, uploadCareerResume } from "../careers/careers.service.js";
 import { internshipSubmissionSchema, type InternshipSubmission } from "./internships.schema.js";
+import { createInternshipDocumentPaymentSchema } from "../internship-payments/internship-payments.schema.js";
+import { cancelInternshipDocumentPayment, createInternshipDocumentPayment, getInternshipDocumentPayment, refreshInternshipDocumentPayment, resendInternshipDocumentReceipt } from "../internship-payments/internship-payments.service.js";
 
 const internshipScope = {
   applicationType: "INTERNSHIP",
@@ -16,6 +18,14 @@ const internshipScope = {
   auditPrefix: "internship",
   notFoundMessage: "Internship application not found",
 } as const;
+
+async function getInternshipApplicationWithPayment(id: string) {
+  const [application, documentPayment] = await Promise.all([
+    getCareerApplication(id, internshipScope),
+    getInternshipDocumentPayment(id),
+  ]);
+  return { ...application, documentPayment };
+}
 
 function asCareerSubmission(input: InternshipSubmission): CareerSubmission {
   return {
@@ -67,20 +77,42 @@ adminInternshipsRouter.get("/", validate({ query: careerQuerySchema }), async (_
   res.json(apiSuccessResponse("Internship applications", await listCareerApplications(res.locals.validated.query, internshipScope)));
 });
 adminInternshipsRouter.get("/:id", validate({ params: entityIdParamsSchema }), async (_req, res) => {
-  res.json(apiSuccessResponse("Internship application", await getCareerApplication(res.locals.validated.params.id, internshipScope)));
+  res.json(apiSuccessResponse("Internship application", await getInternshipApplicationWithPayment(res.locals.validated.params.id)));
 });
 adminInternshipsRouter.post("/:id/review", portalWrite, validate({ params: entityIdParamsSchema, body: careerReviewSchema }), async (_req, res) => {
-  const result = await reviewCareerApplication(res.locals.validated.params.id, res.locals.authUser.id, res.locals.validated.body, internshipScope);
+  await reviewCareerApplication(res.locals.validated.params.id, res.locals.authUser.id, res.locals.validated.body, internshipScope);
+  const application = await getInternshipApplicationWithPayment(res.locals.validated.params.id);
   void notifyInternshipApplicationStatus({
-    id: result.application.id,
-    fullName: result.application.fullName,
-    email: result.application.email,
-    preferredRole: result.application.preferredRole,
-    status: result.application.status as "REVIEWED" | "SHORTLISTED" | "CONTACTED" | "HIRED" | "REJECTED",
-    updatedAt: result.application.updatedAt,
+    id: application.id,
+    fullName: application.fullName,
+    email: application.email,
+    preferredRole: application.preferredRole,
+    status: application.status as "REVIEWED" | "SHORTLISTED" | "CONTACTED" | "HIRED" | "REJECTED",
+    updatedAt: application.updatedAt,
   });
-  res.json(apiSuccessResponse("Internship review saved", result));
+  res.json(apiSuccessResponse("Internship review saved", { application }));
 });
+adminInternshipsRouter.post("/:id/hard-copy-payment", portalWrite, validate({ params: entityIdParamsSchema, body: createInternshipDocumentPaymentSchema }), async (_req, res) => {
+  await createInternshipDocumentPayment(res.locals.validated.params.id, res.locals.authUser.id, res.locals.validated.body);
+  const documentPayment = await getInternshipDocumentPayment(res.locals.validated.params.id);
+  res.status(201).json(apiSuccessResponse("Cashfree payment link created and shared", { documentPayment }));
+});
+adminInternshipsRouter.post("/:id/hard-copy-payment/cancel", portalWrite, validate({ params: entityIdParamsSchema }), async (_req, res) => {
+  await cancelInternshipDocumentPayment(res.locals.validated.params.id, res.locals.authUser.id);
+  const documentPayment = await getInternshipDocumentPayment(res.locals.validated.params.id);
+  res.json(apiSuccessResponse("Cashfree payment link cancelled", { documentPayment }));
+});
+adminInternshipsRouter.post("/:id/hard-copy-payment/refresh", portalWrite, validate({ params: entityIdParamsSchema }), async (_req, res) => {
+  await refreshInternshipDocumentPayment(res.locals.validated.params.id, res.locals.authUser.id);
+  const documentPayment = await getInternshipDocumentPayment(res.locals.validated.params.id);
+  res.json(apiSuccessResponse("Cashfree payment status refreshed", { documentPayment }));
+});
+adminInternshipsRouter.post("/:id/hard-copy-payment/resend-receipt", portalWrite, validate({ params: entityIdParamsSchema }), async (_req, res) => {
+  await resendInternshipDocumentReceipt(res.locals.validated.params.id, res.locals.authUser.id);
+  const documentPayment = await getInternshipDocumentPayment(res.locals.validated.params.id);
+  res.json(apiSuccessResponse("Payment receipt email sent", { documentPayment }));
+});
+
 adminInternshipsRouter.get("/:id/resume", validate({ params: entityIdParamsSchema }), async (_req, res) => {
   const file = await getCareerResume(res.locals.validated.params.id, res.locals.authUser.id, internshipScope);
   res.set({ "Content-Type": file.resumeMimeType, "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(file.resumeFileName)}`, "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox", "Cache-Control": "private, no-store" });

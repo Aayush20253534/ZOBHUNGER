@@ -10,6 +10,7 @@ import { notFoundHandler } from "./middlewares/not-found.middleware.js";
 import { apiRouter } from "./routes/index.js";
 import { getHealth, getMonitoringStatus, getReadiness } from "./controllers/health.controller.js";
 import { apiRateLimiter } from "./middlewares/rate-limit.middleware.js";
+import { cashfreeWebhookRouter } from "./modules/internship-payments/internship-payments.routes.js";
 
 export const app = express();
 
@@ -26,6 +27,9 @@ app.use(
 app.use(requestContext);
 app.use(cors(corsOptions));
 app.use(cookieParser());
+// Cashfree signs the exact raw JSON bytes. Mount this webhook before express.json
+// so parsing cannot alter decimals, whitespace or field ordering before HMAC verification.
+app.use("/api/v1/payments/cashfree/webhook", express.raw({ type: ["application/json", "application/*+json"], limit: "128kb" }), cashfreeWebhookRouter);
 app.use(express.json({ limit: "64kb" }));
 app.use(express.urlencoded({ extended: true, limit: "64kb" }));
 

@@ -15,6 +15,7 @@ import { employeeJoiningRouter } from "../modules/employee-joining/employee-join
 import { internshipsRouter } from "../modules/internships/internships.routes.js";
 import { employeeComplianceRouter } from "../modules/compliance/compliance.routes.js";
 import { chatbotRouter } from "../modules/chatbot/chatbot.routes.js";
+import { internshipPaymentPublicRouter } from "../modules/internship-payments/internship-payments.routes.js";
 
 export const apiRouter = Router();
 
@@ -32,6 +33,7 @@ apiRouter.use("/placement-cell-applications", placementCellsRouter);
 
 apiRouter.use("/career-applications", careersRouter);
 apiRouter.use("/internship-applications", internshipsRouter);
+apiRouter.use("/internship-payments", internshipPaymentPublicRouter);
 
 apiRouter.use("/vendor-applications", vendorsRouter);
 

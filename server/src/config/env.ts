@@ -53,6 +53,12 @@ const envSchema = z.object({
   AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(10),
   SUBMISSION_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(3_600_000),
   SUBMISSION_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(30),
+  CASHFREE_ENABLED: z.enum(["true", "false"]).default("false").transform((value) => value === "true"),
+  CASHFREE_ENVIRONMENT: z.enum(["sandbox", "production"]).default("sandbox"),
+  CASHFREE_CLIENT_ID: optionalSetting(z.string().trim().min(3).max(256)),
+  CASHFREE_CLIENT_SECRET: optionalSetting(z.string().trim().min(8).max(512)),
+  CASHFREE_API_VERSION: z.literal("2026-01-01").default("2026-01-01"),
+  CASHFREE_TIMEOUT_MS: z.coerce.number().int().min(1_000).max(30_000).default(12_000),
   CHATBOT_ENABLED: z.enum(["true", "false"]).default("false")
     .transform((value) => value === "true"),
   CHATBOT_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().min(10_000).max(3_600_000).default(60_000),
@@ -204,6 +210,11 @@ function productionProblems() {
   if (!parsedData.CLOUDINARY_API_SECRET) problems.push("CLOUDINARY_API_SECRET is required in production");
 
   if (parsedData.REDIS_ENABLED && !parsedData.REDIS_URL) problems.push("REDIS_URL is required when REDIS_ENABLED=true in production");
+
+  if (parsedData.CASHFREE_ENABLED) {
+    if (!parsedData.CASHFREE_CLIENT_ID) problems.push("CASHFREE_CLIENT_ID is required when CASHFREE_ENABLED=true in production");
+    if (!parsedData.CASHFREE_CLIENT_SECRET) problems.push("CASHFREE_CLIENT_SECRET is required when CASHFREE_ENABLED=true in production");
+  }
 
   if (parsedData.CHATBOT_ENABLED) {
     const groqUrl = new URL(parsedData.GROQ_API_BASE_URL);
