@@ -20,7 +20,7 @@ const steps = [
   { name: "Server unit tests", folder: "server", script: "test" },
   { name: "Server build and route registration", folder: "server", script: "build" },
   { name: "Migrate dedicated test database", folder: "server", script: "db:deploy" },
-  { name: "Database schema matches migrations", cwd: `${root}server`, args: ["node_modules/prisma/build/index.js", "migrate", "diff", "--from-config-datasource", "--to-schema", "prisma/schema.prisma", "--exit-code"] },
+  { name: "Database schema matches migrations", cwd: `${root}server`, args: ["scripts/check-schema-drift.mjs"] },
   { name: "Requirement and Resend contract tests (mocked delivery)", cwd: `${root}server`, args: ["--import", "tsx", "--experimental-test-module-mocks", "--test", "tests/resend.test.mjs", "tests/public-requirement-contract.test.mjs"] },
   ...suite.map(name => ({ name: `${name} database integration`, cwd: `${root}server`, args: ["--experimental-test-module-mocks", "--test", `tests/${name}.integration.test.mjs`] })),
   { name: "Client portal regression tests", folder: "client", script: "test:business" },

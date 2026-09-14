@@ -96,6 +96,8 @@ test("P0 dense retrieval uses native Gemini embeddings, pgvector and reciprocal-
   const embedding = await text("server/src/modules/chatbot/rag/embedding.client.ts");
   const runtime = await text("server/src/modules/chatbot/chatbot.runtime.ts");
   const env = await text("server/src/config/env.ts");
+  const driftCheck = await text("server/scripts/check-schema-drift.mjs");
+  const verifier = await text("scripts/verify-phase2.mjs");
   assert.match(migration, /CREATE EXTENSION IF NOT EXISTS vector/);
   assert.match(migration, /vector\(1536\)/);
   assert.match(migration, /USING hnsw/);
@@ -115,6 +117,11 @@ test("P0 dense retrieval uses native Gemini embeddings, pgvector and reciprocal-
   assert.match(runtime, /GEMINI_API_KEY/);
   assert.match(env, /gemini-embedding-2/);
   assert.doesNotMatch(env, /CHATBOT_EMBEDDING_/);
+  assert.match(driftCheck, /ChatbotKnowledgeEmbedding_embedding_hnsw_idx/);
+  assert.match(driftCheck, /USING\\s\+hnsw/);
+  assert.match(driftCheck, /Removed index on columns \(embedding\)/);
+  assert.match(driftCheck, /Unexpected database\/schema drift detected/);
+  assert.match(verifier, /scripts\/check-schema-drift\.mjs/);
 });
 
 test("P0 answers enforce source citations and expose a live answer-quality evaluator", async () => {
