@@ -23,9 +23,9 @@ export const brandExperienceGroups: readonly BrandExperienceGroup[] = [
       "Shadowfax",
       "Rapido",
       "Ola",
-      "Uber",
+      // "Uber", // Temporarily hidden from public partner displays.
       "InDrive",
-      "Oye Rickshaw",
+      // "Oye Rickshaw", // Temporarily hidden from public partner displays.
       "KiranKart",
       "Bikayi",
       "Locooff",
