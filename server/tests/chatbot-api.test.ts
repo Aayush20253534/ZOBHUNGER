@@ -131,8 +131,12 @@ test("chatbot service retrieves context, sends bounded history to the model and 
   });
 
   assert.equal(result.grounded, true);
-  assert.equal(result.sources.length, 1);
+  assert.equal(result.sources.length, 2);
+  assert.equal(result.sources[0]?.citation, "S1");
+  assert.equal(result.sources[1]?.citation, "S2");
   assert.equal(result.sources[0]?.url, "/promoter-solutions");
+  assert.equal(result.sources[1]?.url, "/promoter-solutions");
+  assert.notEqual(result.sources[0]?.section, result.sources[1]?.section);
   assert.match(result.answer, /Hire Workforce/i);
   const input = capturedInput as Array<{ role: string; content: string }>;
   assert.equal(input.length, 4);
