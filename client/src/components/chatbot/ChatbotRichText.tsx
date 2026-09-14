@@ -114,6 +114,29 @@ function plainTableLabel(value: string): string {
     .trim();
 }
 
+function renderTablePrimaryCell(value: string, keyPrefix: string): ReactNode {
+  const cleaned = value.trim().replace(/^\*\*(.+)\*\*$/, "$1");
+  const match = cleaned.match(/^(.+?)\s*\((.+)\)$/);
+
+  if (!match) {
+    return <span className="zb-chatbot-table-title-main">{renderInline(value, keyPrefix)}</span>;
+  }
+
+  const [, title, detail] = match;
+  const detailText = detail
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .join(" · ");
+
+  return (
+    <>
+      <span className="zb-chatbot-table-title-main">{renderInline(title, `${keyPrefix}-title`)}</span>
+      <span className="zb-chatbot-table-title-meta">{renderInline(detailText, `${keyPrefix}-meta`)}</span>
+    </>
+  );
+}
+
 export function ChatbotRichText({ content }: ChatbotRichTextProps) {
   const lines = content.replace(/\r\n?/g, "\n").split("\n");
   const blocks: ReactNode[] = [];
@@ -211,7 +234,11 @@ export function ChatbotRichText({ content }: ChatbotRichTextProps) {
                       key={`${key}-cell-${rowIndex}-${columnIndex}`}
                       data-label={plainTableLabel(headers[columnIndex] ?? "")}
                     >
-                      {renderInline(cell, `${key}-cell-${rowIndex}-${columnIndex}`)}
+                      <span className="zb-chatbot-table-value">
+                        {columnIndex === 0
+                          ? renderTablePrimaryCell(cell, `${key}-cell-${rowIndex}-${columnIndex}`)
+                          : renderInline(cell, `${key}-cell-${rowIndex}-${columnIndex}`)}
+                      </span>
                     </td>
                   ))}
                 </tr>
