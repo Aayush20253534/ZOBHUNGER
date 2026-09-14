@@ -1,10 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
-import type { ExecutionVisualAsset } from "@/data/execution-visuals";
 import { cn } from "@/lib/utils";
 import "@/styles/execution-image.css";
 
+interface ExecutionImageVisual {
+  readonly src: string;
+  readonly srcSet: string;
+  readonly alt: string;
+  readonly width: number;
+  readonly height: number;
+}
+
 interface ExecutionImageProps {
-  visual: ExecutionVisualAsset;
+  visual: ExecutionImageVisual;
   sizes: string;
   priority?: boolean;
   className?: string;
