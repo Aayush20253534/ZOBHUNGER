@@ -142,8 +142,6 @@
  * corrections make the visible marks feel consistent without stretching or
  * cropping the artwork itself.
  */
-.zb-partner-mark[data-brand="5paisa"],
-.zb-partner-mark[data-brand="axis-securities"],
 .zb-partner-mark[data-brand="shadowfax"],
 .zb-partner-mark[data-brand="yes-bank"],
 .zb-partner-mark[data-brand="whitehat-jr"],
@@ -156,7 +154,6 @@
 .zb-partner-mark[data-brand="ola"],
 .zb-partner-mark[data-brand="indrive"],
 .zb-partner-mark[data-brand="bharatpe"],
-.zb-partner-mark[data-brand="motilal-oswal"],
 .zb-partner-mark[data-brand="airtel-payments-bank"],
 .zb-partner-mark[data-brand="mobikwik"] {
   --zb-logo-scale: 1.34;
@@ -183,7 +180,9 @@
 .zb-partner-mark[data-brand="tonetag"],
 .zb-partner-mark[data-brand="vacobinary"],
 .zb-partner-mark[data-brand="kotak-811"],
-.zb-partner-mark[data-brand="angel-one"] {
+.zb-partner-mark[data-brand="epson"],
+.zb-partner-mark[data-brand="shaadi-com"],
+.zb-partner-mark[data-brand="mbill"] {
   --zb-logo-scale: 1.06;
 }
 
@@ -266,7 +265,7 @@
 }
 
 /* Long financial wordmarks need a little more horizontal breathing room. */
-.zb-partner-mark:is([data-brand="icici-securities"], [data-brand="motilal-oswal"], [data-brand="airtel-payments-bank"], [data-brand="axis-securities"])
+.zb-partner-mark:is([data-brand="airtel-payments-bank"], [data-brand="shaadi-com"], [data-brand="epson"], [data-brand="tonetag"])
   > .zb-partner-mark-surface > img {
   width: 98%;
   max-width: 98%;

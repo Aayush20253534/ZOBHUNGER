@@ -4,6 +4,7 @@ import { BrandMarqueeMotion } from "@/components/experience/BrandMarqueeMotion";
 import { TrustedPartnerMarquee } from "@/components/experience/TrustedPartnerMarquee";
 import { brandLogoUrl } from "@/data/brand-logos";
 import { brandExperienceGroups } from "@/data/brand-experience";
+import { partnerArtwork, partnerArtworkSrc, partnerLogoFit, partnerLogoToken } from "@/data/partner-artwork";
 import "@/styles/brand-marquee.css";
 
 const allBrands = Array.from(
@@ -48,12 +49,25 @@ function LogoTrack({
   return (
     <ul className="zb-brand-marquee-track" aria-hidden={hidden || undefined}>
       {brands.map((brand) => {
-        const logoUrl = brandLogoUrl(brand);
+        const artwork = partnerArtwork[brand];
+        const logoUrl = partnerArtworkSrc(brand) ?? brandLogoUrl(brand);
         return (
           <li key={brand}>
-            <span className="zb-brand-marquee-logo" aria-hidden="true">
+            <span
+              className="zb-brand-marquee-logo"
+              aria-hidden="true"
+              data-brand={partnerLogoToken(brand)}
+              data-fit={partnerLogoFit(brand)}
+            >
               {logoUrl ? (
-                <img src={logoUrl} alt="" loading="lazy" width="42" height="42" />
+                <img
+                  src={logoUrl}
+                  alt=""
+                  loading="lazy"
+                  width="72"
+                  height="40"
+                  className={artwork?.invertOnLight ? "zb-brand-marquee-logo-dark" : undefined}
+                />
               ) : (
                 <span>{brand.slice(0, 1)}</span>
               )}

@@ -34,7 +34,7 @@ keywords:
   - Paytm
 status: published
 description: Public brand-experience groups and named brands from the client-provided ZOBHUNGER brand experience brief.
-updatedAt: 2026-09-12
+updatedAt: 2026-09-14
 ---
 # ZOBHUNGER Brand Experience
 
@@ -52,19 +52,19 @@ Brands listed: Amazon, Flipkart, Zepto, Zomato, Swiggy, Meesho, Delhivery, Shado
 
 Customer acquisition, application adoption, merchant outreach and on-ground engagement for digital-first businesses.
 
-Brands listed: Freecharge, MobiKwik, Siply, Paytm, Google Pay, Amazon QR, Airtel, Pine Labs, Tide, Cheq, PagarBook, BharatPe, Tonetag, VacoBinary.
+Brands listed: Freecharge, MobiKwik, Siply, Paytm, Google Pay, Amazon QR, Airtel, Pine Labs, Tide, Cheq, PagarBook, BharatPe, ToneTag, MBill, Shaadi.com, Aspire, VacoBinary.
 
 ## Banking & financial services
 
 Field-led customer acquisition, lead generation and campaign support across banking, investment and financial services.
 
-Brands listed: Airtel Payments Bank, Axis Bank, YES BANK, Kotak 811, Upstox, Axis Securities, ICICI Securities, Edelweiss, Angel One, 5paisa, Motilal Oswal, PwC, WhiteHat Jr..
+Brands listed: Airtel Payments Bank, Axis Bank, YES BANK, Kotak 811, Edelweiss, PwC, WhiteHat Jr..
 
 ## Deployment & audit
 
 Manpower deployment and field-audit experience across retail, food and beverage, consumer electronics and brand-led assignments.
 
-Brands listed: Subway, McDonald's, ASUS, Marlboro, Brown-Forman, Jim Beam, Tilaknagar Industries, Pine Labs, Usha.
+Brands listed: Subway, McDonald's, ASUS, Epson, Marlboro, Brown-Forman, Jim Beam, Tilaknagar Industries, Pine Labs, Usha.
 
 ## Sampling & consumer activation
 

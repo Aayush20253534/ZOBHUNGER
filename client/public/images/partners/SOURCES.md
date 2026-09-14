@@ -16,6 +16,15 @@ Brand marks remain the property of their respective owners.
 | `paytm.svg` | https://pwebassets.paytm.com/commonwebassets/paytmweb/header/images/logo_new.svg |
 | `pine-labs.svg` | https://plcorp-cdn.pinelabs.com/2025/03/pinelabs-logo.svg |
 | `swiggy.png` | https://www.swiggy.com/corporate/wp-content/uploads/unlimited_elements/Swiggy-newsroom-logo.png |
-| `upstox.svg` | https://assets.upstox.com/website/images/upstox-new-logo.svg |
 | `zepto.svg` | https://commons.wikimedia.org/wiki/File:Zepto_Logo.svg |
 | `zomato.png` | https://b.zmtcdn.com/web_assets/8313a97515fcb0447d2d77c276532a511583262271.png |
+
+## Client-provided artwork
+
+The following marks were supplied with the project update and normalized locally for consistent browser MIME types, whitespace, and logo presentation:
+
+- `epson.png`
+- `shaadi.png`
+- `aspire.png`
+- `tonetag.png`
+- `mbill.png`

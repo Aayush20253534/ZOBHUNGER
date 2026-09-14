@@ -77,9 +77,9 @@
 .zb-brand-marquee-logo {
   display: grid;
   place-items: center;
-  flex: 0 0 2.4rem;
-  width: 2.4rem;
-  height: 2.4rem;
+  flex: 0 0 3.2rem;
+  width: 3.2rem;
+  height: 2.45rem;
   overflow: hidden;
   border: 1px solid var(--zb-soft-border);
   border-radius: 0.55rem;
@@ -88,9 +88,24 @@
 
 .zb-brand-marquee-logo img {
   display: block;
-  width: 1.85rem;
-  height: 1.85rem;
+  width: 88%;
+  height: 76%;
   object-fit: contain;
+  object-position: center;
+}
+
+.zb-brand-marquee-logo[data-fit="wordmark"] img {
+  width: 96%;
+  height: 66%;
+}
+
+.zb-brand-marquee-logo[data-fit="badge"] img {
+  width: 76%;
+  height: 82%;
+}
+
+.zb-brand-marquee-logo-dark {
+  filter: brightness(0);
 }
 
 .zb-brand-marquee-logo > span {
