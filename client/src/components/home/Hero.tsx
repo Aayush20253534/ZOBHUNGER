@@ -34,7 +34,7 @@ export function Hero() {
         <div className="zb-home-hero-image">
           <ExecutionImage
             visual={home.hero.image}
-            sizes="(min-width: 1200px) 420px, (min-width: 900px) 35vw, (min-width: 640px) 560px, calc(100vw - 40px)"
+            sizes="(min-width: 1200px) 460px, (min-width: 900px) 40vw, (min-width: 640px) 560px, calc(100vw - 40px)"
             priority
           />
         </div>

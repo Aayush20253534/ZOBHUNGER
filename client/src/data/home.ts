@@ -1,4 +1,16 @@
-import { executionVisuals } from "@/data/execution-visuals";
+const homeHeroVisual = {
+  id: "home-hero-workforce",
+  title: "Workforce execution in the field",
+  alt: "ZOBHUNGER field executives discussing workforce and execution requirements with a business owner in a neighbourhood market.",
+  caption: "A coordinated field team turns a clear requirement into on-ground execution and visible progress.",
+  steps: ["Plan the requirement", "Deploy the team", "Review the work"] as const,
+  src: "/images/home/zobhunger-home-hero-1200.webp",
+  srcSet:
+    "/images/home/zobhunger-home-hero-600.webp 600w, /images/home/zobhunger-home-hero-900.webp 900w, /images/home/zobhunger-home-hero-1200.webp 1200w, /images/home/zobhunger-home-hero-1536.webp 1536w",
+  width: 1200,
+  height: 800,
+  sourceLabel: "Designed ZOBHUNGER homepage visual",
+} as const;
 
 /** Homepage copy adapted from the client's Phase 1 brief. No invented performance figures. */
 export const home = {
@@ -13,7 +25,7 @@ export const home = {
       { title: "Project-based", description: "Deliver a specific brief" },
       { title: "On-demand", description: "Plan for changing needs" },
     ],
-    image: executionVisuals["field-executives"],
+    image: homeHeroVisual,
   },
   solutions: {
     eyebrow: "Our services",
