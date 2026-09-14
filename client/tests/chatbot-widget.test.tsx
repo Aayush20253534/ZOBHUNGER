@@ -112,6 +112,31 @@ describe("advanced public chatbot widget", () => {
     expect(bubble.textContent).not.toContain("**");
   });
 
+  it("renders Markdown tables, citations and internal links as structured chat content", async () => {
+    streamMessage.mockResolvedValueOnce({
+      answer: [
+        "### Best starting points",
+        "",
+        "| Need | What ZOBHUNGER offers | Where to start |",
+        "| --- | --- | --- |",
+        "| Recruitment | End-to-end hiring and deployment. [S1] | [Workforce Solutions](/workforce-solutions) |",
+        "| Field sales | Sales and lead-generation teams. [S2] | /sales-force |",
+      ].join("\n"),
+      grounded: true,
+      sources: [],
+    });
+    await openWidget();
+    await sendTypedMessage("Where should my business start?");
+
+    const bubble = Array.from(container.querySelectorAll(".zb-chatbot-message--assistant .zb-chatbot-bubble")).at(-1) as HTMLElement;
+    expect(bubble.querySelectorAll("table thead th")).toHaveLength(3);
+    expect(bubble.querySelectorAll("table tbody tr")).toHaveLength(2);
+    expect(bubble.querySelector(".zb-chatbot-inline-citation")?.textContent).toBe("S1");
+    expect(bubble.querySelector("a[href='/workforce-solutions']")?.textContent).toBe("Workforce Solutions");
+    expect(bubble.querySelector("a[href='/sales-force']")?.textContent).toBe("/sales-force");
+    expect(bubble.textContent).not.toContain("| --- | --- | --- |");
+  });
+
   it("shows a visible clear-history menu action", async () => {
     await openWidget();
     await flush(() => (container.querySelector("button[aria-label='Chat options']") as HTMLButtonElement).click());

@@ -18,5 +18,5 @@ export function validateAnswerCitations(answer: string, results: KnowledgeSearch
 
 export function citationRepairPrompt(answer: string, results: KnowledgeSearchResult[]) {
   const available = results.map((result, index) => `[S${index + 1}] ${result.chunk.title} > ${result.chunk.section}`).join("\n");
-  return `Rewrite the draft answer so every ZOBHUNGER-specific factual sentence is supported by one or more citations in the exact form [S1], [S2], etc. Use only the listed source IDs. Do not add facts. If a factual claim is unsupported, remove it. Preserve the user's language and keep the answer concise.\n\nAVAILABLE SOURCE IDS\n${available}\n\nDRAFT ANSWER\n${answer}`;
+  return `Rewrite the draft answer so every ZOBHUNGER-specific factual sentence is supported by one or more citations in the exact form [S1], [S2], etc. Use only the listed source IDs. Do not add facts. If a factual claim is unsupported, remove it. Preserve the user's language, useful Markdown structure and valid links, and keep the answer concise. If the draft contains a Markdown table, keep it valid instead of flattening it into pipe-delimited prose.\n\nAVAILABLE SOURCE IDS\n${available}\n\nDRAFT ANSWER\n${answer}`;
 }
