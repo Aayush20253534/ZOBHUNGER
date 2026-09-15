@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   ArrowRight,
   BadgeCheck,
+  BriefcaseBusiness,
   Building2,
   CalendarDays,
   CheckCircle2,
@@ -280,6 +281,11 @@ export function AdminTechnicalInstituteDetail({ id }: { id: string }) {
     {approved && <section className="zti-student-roster-cta">
       <div><span><UsersRound aria-hidden="true" /></span><div><small>Part 3 · Technical student onboarding</small><h2>Build and verify the institute student roster.</h2><p>Add students manually, review self-registrations, or import an Excel/CSV batch with row-level validation.</p></div></div>
       <div><Link href={`/admin/technical-institutes/${record.id}/students`}>Manage student roster <ChevronRight aria-hidden="true" /></Link><a href={`/iti-polytechnic-cell/student-registration?code=${encodeURIComponent(record.partnershipCode ?? "")}`} target="_blank" rel="noreferrer">Open registration page <ExternalLink aria-hidden="true" /></a></div>
+    </section>}
+
+    {approved && <section className="zti-student-roster-cta zti-opportunity-cta">
+      <div><span><BriefcaseBusiness aria-hidden="true" /></span><div><small>Part 4 · Opportunity matching</small><h2>Connect verified technical talent to live requirements.</h2><p>Create jobs, internships, apprenticeships and training programs, then rank eligible students by qualification, trade, batch, skills and location.</p></div></div>
+      <div><Link href="/admin/technical-opportunities">Open opportunity desk <ChevronRight aria-hidden="true" /></Link></div>
     </section>}
 
     <div className="zti-detail-layout">

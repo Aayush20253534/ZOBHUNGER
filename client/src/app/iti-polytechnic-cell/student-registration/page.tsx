@@ -18,7 +18,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ c
   return <div className="zb-tech-student-page">
     <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "ITI & Polytechnic College Cell", href: "/iti-polytechnic-cell" }, { label: "Student Registration" }]} />
     <header className="zb-tech-student-header">
-      <div><span className="zb-eyebrow">Technical student onboarding</span><h1>Turn your technical qualification into the right opportunity path.</h1><p>Students from approved partner ITIs and Polytechnic colleges can create a structured profile for relevant jobs, internships, apprenticeships and training.</p></div>
+      <div><span className="zb-eyebrow">Technical student onboarding</span><h1>Build your technical profile for the right opportunity.</h1><p>Approved ITI and Polytechnic students can register once for qualification-led jobs, internships, apprenticeships and training.</p></div>
       <div className="zb-tech-student-header-points"><span><BadgeCheckIcon />Partner institute verification</span><span><WrenchIcon />Trade / branch mapping</span><span><GraduationIcon />Qualification-led eligibility</span></div>
     </header>
     <TechnicalStudentRegistrationForm initialCode={params.code ?? ""} />

@@ -201,6 +201,29 @@ enum TechnicalStudentSource {
   BULK_IMPORT
 }
 
+enum TechnicalOpportunityType {
+  JOB
+  INTERNSHIP
+  APPRENTICESHIP
+  TRAINING
+}
+
+enum TechnicalOpportunityStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+enum TechnicalOpportunityApplicationStatus {
+  SUBMITTED
+  REVIEWED
+  SHORTLISTED
+  SELECTED
+  REJECTED
+  JOINED
+}
+
 enum ComplianceStatus {
   DRAFT
   SUBMITTED
@@ -983,7 +1006,8 @@ model TechnicalStudent {
   createdAt                     DateTime               @default(now())
   updatedAt                     DateTime               @updatedAt
 
-  institute TechnicalInstituteApplication @relation(fields: [technicalInstituteApplicationId], references: [id], onDelete: Cascade)
+  institute    TechnicalInstituteApplication     @relation(fields: [technicalInstituteApplicationId], references: [id], onDelete: Cascade)
+  applications TechnicalOpportunityApplication[]
 
   @@unique([technicalInstituteApplicationId, email])
   @@unique([technicalInstituteApplicationId, enrollmentNumber])
@@ -992,6 +1016,63 @@ model TechnicalStudent {
   @@index([technicalInstituteApplicationId, passingYear])
   @@index([email])
   @@index([mobileNumber])
+}
+
+model TechnicalOpportunity {
+  id                     String                     @id @default(cuid())
+  title                  String
+  employerName           String
+  opportunityType        TechnicalOpportunityType
+  status                 TechnicalOpportunityStatus @default(DRAFT)
+  description            String
+  location               String
+  city                   String?
+  state                  String?
+  workMode               String?
+  eligibleQualifications String[]                   @default([])
+  eligibleTradesBranches String[]                   @default([])
+  eligiblePassingYears   String[]                   @default([])
+  requiredSkills         String[]                   @default([])
+  preferredSkills        String[]                   @default([])
+  eligibleStates         String[]                   @default([])
+  vacancies              Int?
+  compensation           String?
+  duration               String?
+  applicationDeadline    DateTime?
+  joiningDate            DateTime?
+  adminNotes             String?
+  createdByUserId        String?
+  createdAt              DateTime                   @default(now())
+  updatedAt              DateTime                   @updatedAt
+
+  applications TechnicalOpportunityApplication[]
+
+  @@index([status, opportunityType, createdAt])
+  @@index([city, state])
+  @@index([applicationDeadline])
+}
+
+model TechnicalOpportunityApplication {
+  id              String                                @id @default(cuid())
+  opportunityId   String
+  studentId       String
+  status          TechnicalOpportunityApplicationStatus @default(SUBMITTED)
+  matchScore      Int
+  matchReasons    String[]                              @default([])
+  note            String?
+  createdByUserId String?
+  reviewedAt      DateTime?
+  selectedAt      DateTime?
+  joinedAt        DateTime?
+  createdAt       DateTime                              @default(now())
+  updatedAt       DateTime                              @updatedAt
+
+  opportunity TechnicalOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  student     TechnicalStudent     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([opportunityId, studentId])
+  @@index([opportunityId, status, createdAt])
+  @@index([studentId, createdAt])
 }
 
 model Article {

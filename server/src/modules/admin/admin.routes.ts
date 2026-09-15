@@ -14,6 +14,7 @@ import { adminPhase2Router } from "../phase2/phase2.routes.js";
 import { adminAttendanceRouter } from "../attendance/attendance.routes.js";
 import { adminDeploymentsRouter } from "../deployments/deployments.routes.js";
 import { adminTechnicalInstitutesRouter } from "../technical-institutes/technical-institutes.routes.js";
+import { adminTechnicalOpportunitiesRouter } from "../technical-institutes/technical-opportunities.routes.js";
 import { Router } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
@@ -73,6 +74,7 @@ adminRouter.use("/attendance", adminAttendanceRouter);
 adminRouter.use("/deployments", adminDeploymentsRouter);
 adminRouter.use("/candidate-management", adminCandidatesRouter);
 adminRouter.use("/technical-institutes", adminTechnicalInstitutesRouter);
+adminRouter.use("/technical-opportunities", adminTechnicalOpportunitiesRouter);
 
 adminRouter.get("/overview", adminOverviewController);
 

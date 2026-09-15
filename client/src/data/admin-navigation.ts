@@ -98,6 +98,13 @@ export const adminNavigation: readonly AdminNavigationGroup[] = [
         icon: Wrench,
       },
       {
+        href: "/admin/technical-opportunities",
+        permission: "PLACEMENT_MANAGE",
+        label: "Technical opportunities",
+        description: "Jobs, training & apprenticeships",
+        icon: BriefcaseBusiness,
+      },
+      {
         href: "/admin/employee-joining",
         permission: "EMPLOYEE_JOINING_MANAGE",
         label: "Employee joining",

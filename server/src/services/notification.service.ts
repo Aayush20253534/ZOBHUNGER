@@ -944,3 +944,54 @@ export function notifyTechnicalInstituteReview(application: {
     note: "Opportunities are requirement-led and remain subject to qualification, employer criteria and student eligibility.",
   });
 }
+
+export function notifyTechnicalOpportunityApplication(
+  application: {
+    id: string;
+    status: string;
+    matchScore: number;
+    student: {
+      fullName: string;
+      email: string;
+      tradeBranch: string;
+      passingYear: string;
+      institute: { institutionName: string };
+    };
+    opportunity: {
+      title: string;
+      employerName: string;
+      opportunityType: string;
+      location: string;
+      compensation?: string | null;
+    };
+  },
+  requestId?: string,
+) {
+  const status = statusWords(application.status);
+  const isInitial = application.status === "SUBMITTED";
+  return sendReceipt({
+    to: application.student.email,
+    requestId,
+    idempotencyKey: `technical-opportunity-${application.id}-${application.status}`,
+    subject: `${isInitial ? "Technical opportunity update" : `Application ${status.toLowerCase()}`} | ZOBHUNGER`,
+    eyebrow: "ITI & Polytechnic College Cell",
+    title: isInitial ? "Your profile has been connected to a technical opportunity" : `Opportunity status: ${status}`,
+    intro: `Hello ${application.student.fullName}, your profile from ${application.student.institute.institutionName} has an update for ${application.opportunity.title}.`,
+    referenceId: application.id,
+    details: [
+      { label: "Opportunity", value: application.opportunity.title },
+      { label: "Organization", value: application.opportunity.employerName },
+      { label: "Type", value: statusWords(application.opportunity.opportunityType) },
+      { label: "Location", value: application.opportunity.location },
+      { label: "Status", value: status },
+      ...(application.opportunity.compensation ? [{ label: "Compensation / stipend", value: application.opportunity.compensation }] : []),
+    ],
+    paragraphs: [
+      isInitial
+        ? "Your verified technical profile matched the published eligibility criteria and has been submitted for consideration. Final selection remains subject to the employer's screening and selection process."
+        : "This status reflects the latest update recorded by the ZOBHUNGER technical hiring team. Selection, joining and final terms remain subject to employer confirmation and applicable eligibility requirements.",
+    ],
+    action: { label: "View ITI & Polytechnic College Cell", url: publicApp("/iti-polytechnic-cell") },
+    note: `Technical profile: ${application.student.tradeBranch} · ${application.student.passingYear} batch`,
+  });
+}

@@ -4,36 +4,39 @@
   padding-bottom: clamp(3rem, 6vw, 5rem);
 }
 
+.zb-tech-student-page > nav .zb-breadcrumbs { margin-bottom: .25rem; font-size: .8rem; }
+.zb-tech-student-page > nav .zb-breadcrumbs a { min-height: 2rem; }
+
 .zb-tech-student-header {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(16rem, .65fr);
-  gap: clamp(1.25rem, 4vw, 3.5rem);
-  align-items: end;
-  padding: 1rem 0 1.5rem;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: center;
+  padding: .55rem 0 .85rem;
   border-bottom: 1px solid var(--zb-border);
 }
 
 .zb-tech-student-header h1 {
-  max-width: 16ch;
-  margin: .35rem 0 0;
+  max-width: 19ch;
+  margin: .25rem 0 0;
   color: var(--zb-text);
-  font-size: clamp(2.1rem, 4.7vw, 4rem);
-  line-height: .99;
+  font-size: clamp(2rem, 3.7vw, 3.15rem);
+  line-height: 1;
   letter-spacing: -.055em;
 }
 
 .zb-tech-student-header p {
   max-width: 48rem;
-  margin: .8rem 0 0;
+  margin: .5rem 0 0;
   color: var(--zb-muted);
-  font-size: .98rem;
-  line-height: 1.65;
+  font-size: .84rem;
+  line-height: 1.5;
 }
 
 .zb-tech-student-header-points {
   display: grid;
-  gap: .55rem;
-  padding: 1rem;
+  gap: .4rem;
+  padding: .78rem .9rem;
   border: 1px solid var(--zb-border);
   border-radius: 1rem;
   background: #fff;
@@ -44,7 +47,7 @@
   gap: .55rem;
   align-items: center;
   color: #4b4245;
-  font-size: .78rem;
+  font-size: .72rem;
   font-weight: 700;
 }
 
@@ -61,7 +64,7 @@
 .zb-tech-student-form {
   display: grid;
   gap: 1rem;
-  margin-top: 1.2rem;
+  margin-top: .72rem;
 }
 
 .zb-tech-code-step {
@@ -69,7 +72,7 @@
   grid-template-columns: minmax(0, .85fr) minmax(18rem, 1.15fr);
   gap: 1rem 1.4rem;
   align-items: end;
-  padding: clamp(1rem, 2.5vw, 1.4rem);
+  padding: clamp(.85rem, 2vw, 1.15rem);
   border: 1px solid var(--zb-border);
   border-radius: 1rem;
   background: #fff;

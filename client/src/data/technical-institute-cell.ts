@@ -36,7 +36,7 @@ export const technicalCellSteps = [
   },
   {
     title: "Opportunity connection",
-    description: "Suitable students can be connected with jobs, internships, apprenticeships and training based on active requirements.",
+    description: "Verified students are matched to active jobs, internships, apprenticeships and training using qualification, trade, batch, skills and location criteria.",
   },
 ] as const;
 

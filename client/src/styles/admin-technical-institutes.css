@@ -229,3 +229,9 @@
 .zti-student-roster-cta a + a { border-color: #dfd3d6; color: #665b5f; background: #fff; }
 .zti-student-roster-cta a svg { width: 12px; height: 12px; }
 @media (max-width: 760px) { .zti-student-roster-cta { align-items: stretch; flex-direction: column; }.zti-student-roster-cta > div:last-child { justify-content: stretch; }.zti-student-roster-cta a { flex: 1; justify-content: center; } }
+
+.zti-opportunity-cta { background: linear-gradient(135deg, #fff 0%, #f8fbfa 100%); border-color: #d3dfda; }
+.zti-opportunity-cta > div:first-child > span { background: #edf8f3; color: #287154; }
+.zti-opportunity-cta small { color: #287154; }
+.zti-opportunity-cta a { border-color: #287154; background: #287154; }
+.zti-opportunity-cta a:hover { background: #205c45; border-color: #205c45; }

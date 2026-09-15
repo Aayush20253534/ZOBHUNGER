@@ -2923,8 +2923,15 @@
 }
 
 .zbo-dashboard-hero-actions button:last-child {
-  border-color: #efc9d0;
-  color: #9f1b31;
+  border-color: var(--zbo-red);
+  background: var(--zbo-red);
+  color: #fff;
+}
+
+.zbo-dashboard-hero-actions button:last-child:hover {
+  border-color: var(--zbo-red-dark);
+  background: var(--zbo-red-dark);
+  color: #fff;
 }
 
 .zbo-dashboard-scope,

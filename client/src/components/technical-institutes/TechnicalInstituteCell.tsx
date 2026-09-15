@@ -194,7 +194,7 @@ export function TechnicalInstituteCell() {
           id="tech-process-title"
           eyebrow="Partnership journey"
           title="A controlled path from institute onboarding to student opportunity matching."
-          description="Part 1 establishes the public partnership channel and institute intake. Later portal workflows can build on the same verified institute record."
+          description="The same verified institute record now supports student onboarding, technical talent verification and requirement-led matching across jobs, internships, apprenticeships and training."
         />
         <ol className="zb-tech-process">
           {technicalCellSteps.map((step, index) => (

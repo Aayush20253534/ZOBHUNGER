@@ -66,3 +66,10 @@ Students from approved ITI, Polytechnic and technical-institute partners can reg
 Self-registered student profiles enter a pending-verification queue. ZOBHUNGER administrators can verify or deactivate those records. Administrators can also add students manually or bulk-onboard institute rosters from `.xlsx` or `.csv` files. Bulk files are validated row by row, and duplicate email or enrollment records are skipped rather than silently overwritten.
 
 Student registration creates an eligibility profile only. It does not guarantee a job, internship, apprenticeship or training seat. Matching depends on active requirements, institute partnership status, student qualification and skills, location, employer criteria and other eligibility conditions.
+## Technical opportunity matching
+
+ZOBHUNGER administrators can create dedicated technical opportunities for Jobs, Internships, Apprenticeships and Training. Each requirement can define the employer, location, work mode, eligible qualification, trades or Polytechnic branches, passing batches, required skills, preferred skills, eligible states, vacancies, compensation or stipend, duration, application deadline and expected joining date.
+
+Only verified students from approved technical-institute partners enter the matching pool. The matching workflow first applies hard eligibility rules such as qualification, trade or branch, passing batch, state eligibility and required skills. Eligible profiles are then ranked using opportunity preference, location alignment, required-skill coverage and preferred skills or certifications.
+
+Administrators can submit a matched student into an opportunity pipeline and track the student through Submitted, Reviewed, Shortlisted, Selected, Rejected and Joined stages. Student email notifications are generated when a profile is submitted and when its recorded application status changes. Employer selection criteria and final joining decisions still apply.
