@@ -30,6 +30,8 @@ function isSafePublicSourceUrl(value: string): boolean {
     "/employee-joining",
     "/placement-portal",
     "/placement-cell-login",
+    "/technical-institute-portal",
+    "/technical-institute-login",
   ].some((prefix) => value === prefix || value.startsWith(`${prefix}/`));
 }
 

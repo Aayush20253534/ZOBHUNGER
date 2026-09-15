@@ -379,6 +379,9 @@ test("public route policy allows business-operations but blocks private/auth sur
     "/admin-access/activate",
     "/placement-portal/applications",
     "/placement-cell-login",
+    "/technical-institute-portal",
+    "/technical-institute-portal/students",
+    "/technical-institute-login",
     "/worker/jobs",
   ]) {
     assert.equal(

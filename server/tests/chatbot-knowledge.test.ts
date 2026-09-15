@@ -109,7 +109,7 @@ test("knowledge validator catches duplicate ids and category path mismatches", a
 test("repository knowledge corpus covers the current public website surface", async () => {
   const result = await loadKnowledgeBase();
   assert.equal(result.issues.length, 0);
-  assert.equal(result.documents.length, 46);
+  assert.equal(result.documents.length, 47);
 
   const categoryCounts = result.documents.reduce<Record<string, number>>((counts, document) => {
     counts[document.metadata.category] = (counts[document.metadata.category] ?? 0) + 1;
@@ -120,7 +120,7 @@ test("repository knowledge corpus covers the current public website surface", as
   assert.equal(categoryCounts.industries, 11);
   assert.equal(categoryCounts["case-studies"], 8);
   assert.equal(categoryCounts.company, 7);
-  assert.equal(categoryCounts.partnerships, 3);
+  assert.equal(categoryCounts.partnerships, 4);
   assert.equal(categoryCounts.jobs, 3);
   assert.equal(categoryCounts.businesses, 2);
   assert.equal(categoryCounts.workers, 1);
@@ -142,7 +142,7 @@ test("repository knowledge corpus covers the current public website surface", as
     assert.ok(ids.has(expectedId), `expected published knowledge document: ${expectedId}`);
   }
 
-  const protectedPrefixes = ["/admin", "/admin-access", "/business", "/worker", "/employee-joining", "/placement-portal", "/placement-cell-login"];
+  const protectedPrefixes = ["/admin", "/admin-access", "/business", "/worker", "/employee-joining", "/placement-portal", "/placement-cell-login", "/technical-institute-portal", "/technical-institute-login"];
   for (const document of result.documents) {
     assert.equal(
       protectedPrefixes.some(

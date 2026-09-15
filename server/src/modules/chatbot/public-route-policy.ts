@@ -7,6 +7,8 @@ const PRIVATE_ROUTE_ROOTS = [
   "/employee-joining",
   "/login",
   "/placement-cell-login",
+  "/technical-institute-portal",
+  "/technical-institute-login",
 ] as const;
 
 function normalizeRoute(value: string): string | null {

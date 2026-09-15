@@ -55,7 +55,7 @@ test("RAG index builds searchable chunks from the published repository corpus", 
   assert.equal(loaded.issues.length, 0);
 
   const index = buildKnowledgeIndex(loaded.documents);
-  assert.equal(index.documentCount, 46);
+  assert.equal(index.documentCount, 47);
   assert.ok(index.chunkCount > index.documentCount);
   assert.equal(index.chunks.length, index.chunkCount);
   assert.ok(index.documentFrequency.size > 100);
