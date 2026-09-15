@@ -5,10 +5,25 @@ import "@/styles/portal.css";
 import "@/styles/technical-institute-portal.css";
 
 export const metadata = {
-  ...getPageMetadata("Technical Institute Partner Login", "Secure portal access for approved ZOBHUNGER ITI & Polytechnic College Cell partners.", "/technical-institute-login"),
+  ...getPageMetadata(
+    "Technical Institute Partner Login",
+    "Secure portal access for approved ZOBHUNGER ITI & Polytechnic College Cell partners.",
+    "/technical-institute-login",
+  ),
   robots: { index: false, follow: false },
 };
 
 export default function Page() {
-  return <div className="zb-portal-page zb-auth-page zb-auth-page--placement"><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "ITI & Polytechnic College Cell", href: "/iti-polytechnic-cell" }, { label: "Partner Login" }]} /><TechnicalInstituteLoginAccess /></div>;
+  return (
+    <div className="zb-portal-page zb-auth-page zb-auth-page--portal zb-auth-page--technical">
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "ITI & Polytechnic College Cell", href: "/iti-polytechnic-cell" },
+          { label: "Partner Login" },
+        ]}
+      />
+      <TechnicalInstituteLoginAccess />
+    </div>
+  );
 }

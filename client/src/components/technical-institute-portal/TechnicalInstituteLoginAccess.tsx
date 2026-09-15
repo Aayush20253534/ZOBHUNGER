@@ -1,45 +1,105 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BadgeCheck, Building2, ShieldCheck, Wrench } from "lucide-react";
-import { PageShell } from "@/components/common/PageShell";
 import { TechnicalInstituteActivationForm } from "./TechnicalInstituteActivationForm";
 import { TechnicalInstituteLoginForm } from "./TechnicalInstituteLoginForm";
 
+const workspaceHighlights = [
+  {
+    title: "Technical talent roster",
+    icon: Wrench,
+    copy: "Manage verified ITI trade and diploma profiles in one institute-scoped workspace.",
+  },
+  {
+    title: "Opportunity tracking",
+    icon: BadgeCheck,
+    copy: "Review qualification-led matches, submissions, selections and joining progress.",
+  },
+  {
+    title: "Placement reporting",
+    icon: Building2,
+    copy: "Keep institute hiring activity and placement reporting organised in one place.",
+  },
+] as const;
+
 export function TechnicalInstituteLoginAccess() {
   const [activation, setActivation] = useState<string | null>(null);
+
   useEffect(() => {
     const read = () => {
       const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
       setActivation(params.get("activation"));
     };
+
     read();
     window.addEventListener("hashchange", read);
     return () => window.removeEventListener("hashchange", read);
   }, []);
 
-  return <>
-    <div className="zb-portal-heading">
-      <PageShell
-        eyebrow="ITI & Polytechnic partner access"
-        title={activation ? "Activate your technical institute workspace" : "Technical Institute Partner Portal"}
-        description={activation
-          ? "Create your secure password to complete institute portal activation."
-          : "Dedicated access for approved ITIs, Polytechnic colleges and authorized technical placement teams."}
-      />
-    </div>
-    <div className="zb-login-layout zb-placement-login-layout">
-      {activation ? <TechnicalInstituteActivationForm token={activation} /> : <TechnicalInstituteLoginForm />}
-      <aside className="zb-account-access-summary">
-        <p className="zb-eyebrow">Technical partnership workspace</p>
-        <h2>One place for institute-to-industry execution</h2>
-        <div className="zb-account-type-list">
-          <article><span className="zb-icon-tile"><ShieldCheck /></span><div><h3>Approved access</h3><p>Portal access is issued only after the ITI or Polytechnic partnership is approved.</p></div></article>
-          <article><span className="zb-icon-tile"><Wrench /></span><div><h3>Technical talent roster</h3><p>Manage verified trade and diploma profiles, including batch imports.</p></div></article>
-          <article><span className="zb-icon-tile"><BadgeCheck /></span><div><h3>Opportunity tracking</h3><p>View qualification-led matches, submissions, selections, joining and reports.</p></div></article>
-          <article><span className="zb-icon-tile"><Building2 /></span><div><h3>Institute scoped</h3><p>Every portal action stays limited to your approved institute partnership.</p></div></article>
+  return (
+    <section
+      className="zb-portal-access-shell"
+      aria-label="Technical Institute Partner Portal access"
+    >
+      <div className="zb-portal-access-intro">
+        <div className="zb-portal-access-kicker">
+          <span aria-hidden="true" />
+          ITI & Polytechnic partner access
         </div>
-      </aside>
-    </div>
-  </>;
+
+        <h1>
+          {activation ? "Secure activation." : "Technical talent."}
+          <span>{activation ? "Built for approved institutes." : "One secure workspace."}</span>
+        </h1>
+
+        <p className="zb-portal-access-copy">
+          {activation
+            ? "Create your password to activate the approved institute workspace linked to your official account."
+            : "A dedicated workspace for approved ITIs and Polytechnic colleges to manage student talent, opportunities and placement progress."}
+        </p>
+
+        <div className="zb-portal-account-grid" aria-label="Technical institute workspace features">
+          {workspaceHighlights.map((item) => {
+            const Icon = item.icon;
+            return (
+              <article key={item.title}>
+                <span className="zb-portal-account-icon" aria-hidden="true">
+                  <Icon />
+                </span>
+                <div>
+                  <h2>{item.title}</h2>
+                  <p>{item.copy}</p>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <div className="zb-portal-trust-note">
+          <ShieldCheck aria-hidden="true" />
+          <span>
+            <strong>Institute-scoped access</strong>
+            Every action stays restricted to the approved institute partnership and authorised representatives.
+          </span>
+        </div>
+      </div>
+
+      <div className="zb-portal-login-column">
+        <div className="zb-portal-login-status">
+          <span aria-hidden="true" />
+          {activation ? "Secure account activation" : "Approved partner access"}
+        </div>
+        {activation ? (
+          <TechnicalInstituteActivationForm token={activation} />
+        ) : (
+          <TechnicalInstituteLoginForm />
+        )}
+        <p className="zb-portal-login-help">
+          Need help accessing your institute account? <Link href="/contact">Contact support</Link>
+        </p>
+      </div>
+    </section>
+  );
 }

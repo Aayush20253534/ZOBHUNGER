@@ -29,12 +29,72 @@ export function TechnicalInstituteLoginForm() {
     }
   }
 
-  return <form className="zb-login-form" onSubmit={submit}>
-    <div className="zb-login-form-heading"><span className="zb-icon-tile"><Wrench /></span><div><p className="zb-eyebrow">Approved technical partners</p><h2>Institute portal login</h2></div></div>
-    <label><span>Official institute email</span><span className="zb-auth-input-wrap"><Mail aria-hidden="true" /><input type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="tpo@institution.edu" required /></span></label>
-    <label><span>Password</span><span className="zb-password-field zb-auth-input-wrap"><KeyRound aria-hidden="true" /><input type={showPassword ? "text" : "password"} autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required /><button className="zb-password-toggle" type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Hide password" : "Show password"}>{showPassword ? <EyeOff /> : <Eye />}</button></span></label>
-    {error && <p className="zb-login-error" role="alert">{error}</p>}
-    <button className="zb-login-submit" disabled={submitting}><LogIn />{submitting ? "Signing in..." : "Sign in to Technical Institute Portal"}</button>
-    <p className="zb-login-security-note"><ShieldCheck aria-hidden="true" />Access is restricted to approved and activated ITI & Polytechnic partner representatives.</p>
-  </form>;
+  return (
+    <form className="zb-login-form" onSubmit={submit}>
+      <div className="zb-login-form-heading">
+        <span className="zb-icon-tile" aria-hidden="true">
+          <Wrench />
+        </span>
+        <div>
+          <p className="zb-eyebrow">Secure institute access</p>
+          <h2>Sign in to your workspace</h2>
+        </div>
+      </div>
+
+      <label>
+        <span>Official institute email</span>
+        <span className="zb-auth-input-wrap">
+          <Mail aria-hidden="true" />
+          <input
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="tpo@institution.edu"
+            required
+          />
+        </span>
+      </label>
+
+      <label>
+        <span>Password</span>
+        <span className="zb-password-field zb-auth-input-wrap">
+          <KeyRound aria-hidden="true" />
+          <input
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Enter your password"
+            required
+          />
+          <button
+            className="zb-password-toggle"
+            type="button"
+            onClick={() => setShowPassword((value) => !value)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-pressed={showPassword}
+          >
+            {showPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+          </button>
+        </span>
+      </label>
+
+      {error && (
+        <p className="zb-login-error" role="alert">
+          {error}
+        </p>
+      )}
+
+      <button className="zb-login-submit" type="submit" disabled={submitting}>
+        <LogIn aria-hidden="true" />
+        {submitting ? "Signing in..." : "Sign in"}
+      </button>
+
+      <p className="zb-login-security-note">
+        <ShieldCheck aria-hidden="true" />
+        Access is limited to approved and activated ITI & Polytechnic partner representatives.
+      </p>
+    </form>
+  );
 }
