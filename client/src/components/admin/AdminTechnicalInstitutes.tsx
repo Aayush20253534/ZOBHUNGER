@@ -238,7 +238,10 @@ export function AdminTechnicalInstituteDetail({ id }: { id: string }) {
     }
   }, [id]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void load(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [load]);
 
   async function updateStatus(status: Exclude<TechnicalInstituteStatus, "SUBMITTED">) {
     if (!record || saving) return;

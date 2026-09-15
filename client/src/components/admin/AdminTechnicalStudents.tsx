@@ -298,7 +298,10 @@ export function AdminTechnicalStudents({ instituteId }: { instituteId: string })
     } finally { setLoading(false); }
   }, [instituteId, page, search, status, qualification, passingYear]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void load(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [load]);
 
   const hasFilters = Boolean(search || status || qualification || passingYear);
   const publicRegistrationUrl = useMemo(() => institute?.partnershipCode ? `/iti-polytechnic-cell/student-registration?code=${encodeURIComponent(institute.partnershipCode)}` : "/iti-polytechnic-cell/student-registration", [institute?.partnershipCode]);

@@ -8,7 +8,6 @@ import {
   BadgeCheck,
   BriefcaseBusiness,
   Building2,
-  CalendarDays,
   CheckCircle2,
   ChevronRight,
   CircleAlert,
@@ -362,7 +361,10 @@ export function AdminTechnicalOpportunities() {
     }
   }, [page, search, status, opportunityType]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void load(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [load]);
 
   const filtered = Boolean(search || status || opportunityType);
 
@@ -466,10 +468,22 @@ export function AdminTechnicalOpportunityDetail({ id }: { id: string }) {
     }
   }, [id, search, instituteId, minScore]);
 
-  useEffect(() => { void loadRecord(); }, [loadRecord]);
-  useEffect(() => { if (record) void loadMatches(); }, [record?.id, loadMatches]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void loadRecord(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [loadRecord]);
 
-  const applications = record?.applications ?? [];
+  const recordId = record?.id;
+  useEffect(() => {
+    if (!recordId) return undefined;
+    const timer = window.setTimeout(() => { void loadMatches(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [recordId, loadMatches]);
+
+  const applications = useMemo(
+    () => record?.applications ?? [],
+    [record?.applications],
+  );
   const applicationCounts = useMemo(() => applications.reduce<Record<string, number>>((acc, item) => { acc[item.status] = (acc[item.status] ?? 0) + 1; return acc; }, {}), [applications]);
 
   async function changeOpportunityStatus(status: TechnicalOpportunityStatus) {

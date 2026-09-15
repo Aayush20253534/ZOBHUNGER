@@ -50,7 +50,10 @@ export function TechnicalInstitutePortalStudents() {
     } finally { setLoading(false); }
   }, [search, status, qualification, profile, page]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void load(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [load]);
 
   async function updateStatus(student: TechnicalPortalStudent, next: TechnicalStudentStatus) {
     setError(""); setNotice("");

@@ -12,7 +12,6 @@ import {
   MapPin,
   SearchCheck,
   ShieldCheck,
-  Wrench,
 } from "lucide-react";
 import { ActionButton } from "@/components/common/ActionButton";
 import { FeedbackMessage } from "@/components/common/FeedbackMessage";
@@ -99,8 +98,10 @@ export function TechnicalStudentRegistrationForm({ initialCode = "" }: { initial
   }
 
   React.useEffect(() => {
-    if (initialCode.trim().length >= 6) void verify();
+    if (initialCode.trim().length < 6) return undefined;
+    const timer = window.setTimeout(() => { void verify(); }, 0);
     // The initial partnership code is intentionally verified once on first render.
+    return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -123,7 +124,7 @@ export function TechnicalStudentRegistrationForm({ initialCode = "" }: { initial
       <span><CheckCircle2 aria-hidden="true" /></span>
       <div>
         <small>Student profile received</small>
-        <h2>You're now in the technical talent verification queue.</h2>
+        <h2>You&apos;re now in the technical talent verification queue.</h2>
         <p>Your profile is linked to <strong>{state.instituteName}</strong>. ZOBHUNGER or the institute team can verify it before eligible jobs, internships, apprenticeships or training opportunities are matched.</p>
         <code>{state.reference}</code>
       </div>
