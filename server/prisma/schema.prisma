@@ -1015,10 +1015,10 @@ model TechnicalStudent {
   applications TechnicalOpportunityApplication[]
 
   @@unique([technicalInstituteApplicationId, email])
-  @@unique([technicalInstituteApplicationId, enrollmentNumber])
-  @@index([technicalInstituteApplicationId, status, createdAt])
-  @@index([technicalInstituteApplicationId, tradeBranch])
-  @@index([technicalInstituteApplicationId, passingYear])
+  @@unique([technicalInstituteApplicationId, enrollmentNumber], map: "TechnicalStudent_technicalInstituteApplicationId_enrollment_key")
+  @@index([technicalInstituteApplicationId, status, createdAt], map: "TechnicalStudent_technicalInstituteApplicationId_status_cre_idx")
+  @@index([technicalInstituteApplicationId, tradeBranch], map: "TechnicalStudent_technicalInstituteApplicationId_tradeBranc_idx")
+  @@index([technicalInstituteApplicationId, passingYear], map: "TechnicalStudent_technicalInstituteApplicationId_passingYea_idx")
   @@index([email])
   @@index([mobileNumber])
 }
@@ -1076,7 +1076,7 @@ model TechnicalOpportunityApplication {
   student     TechnicalStudent     @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([opportunityId, studentId])
-  @@index([opportunityId, status, createdAt])
+  @@index([opportunityId, status, createdAt], map: "TechnicalOpportunityApplication_opportunityId_status_create_idx")
   @@index([studentId, createdAt])
 }
 

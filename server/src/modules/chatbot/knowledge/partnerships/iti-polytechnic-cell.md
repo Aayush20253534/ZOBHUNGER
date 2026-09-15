@@ -76,7 +76,7 @@ Administrators can submit a matched student into an opportunity pipeline and tra
 
 ## Approved institute partner portal
 
-After an institute is approved, ZOBHUNGER can issue a secure Technical Institute Partner Portal account to the authorised official email. The activation link is time-limited and is used to create the institute password. Approved partners sign in at `/technical-institute-login`.
+After an institute is approved, ZOBHUNGER can issue a secure Technical Institute Partner Portal account to the authorised official email. The activation link is time-limited and is used to create the institute password. Approved partners receive their secure sign-in instructions directly from ZOBHUNGER after portal access is provisioned.
 
 The institute workspace is scoped only to that approved ITI or Polytechnic partnership. It allows authorised placement or training representatives to maintain their technical student roster, validate self-registered profiles, add or update students, import Excel/CSV batches, see live technical opportunities, review qualification-led student matches, submit eligible students, track application progress through selection and joining, and view placement and hiring reports. Reports can also be exported as CSV for institute records.
 
