@@ -10,6 +10,7 @@ import { requirementsRouter } from "../modules/requirements/requirements.routes.
 import { jobsRouter } from "../modules/jobs/jobs.routes.js";
 import { partnersRouter } from "../modules/partners/partners.routes.js";
 import { placementCellsRouter } from "../modules/placement-cells/placement-cells.routes.js";
+import { technicalInstitutesRouter } from "../modules/technical-institutes/technical-institutes.routes.js";
 import { careersRouter } from "../modules/careers/careers.routes.js";
 import { employeeJoiningRouter } from "../modules/employee-joining/employee-joining.routes.js";
 import { internshipsRouter } from "../modules/internships/internships.routes.js";
@@ -30,6 +31,7 @@ apiRouter.use("/contact", enquiriesRouter);
 apiRouter.use("/requirements", requirementsRouter);
 apiRouter.use("/partner-applications", partnersRouter);
 apiRouter.use("/placement-cell-applications", placementCellsRouter);
+apiRouter.use("/technical-institute-applications", technicalInstitutesRouter);
 
 apiRouter.use("/career-applications", careersRouter);
 apiRouter.use("/internship-applications", internshipsRouter);

@@ -30,6 +30,7 @@ const staticRoutes = [
   { path: "/vendor-empanelment", priority: 0.75, changeFrequency: "monthly" },
   { path: "/become-a-partner", priority: 0.7, changeFrequency: "monthly" },
   { path: "/placement-cell-partnership", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/iti-polytechnic-cell", priority: 0.72, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.8, changeFrequency: "monthly" },
   { path: "/hire-workforce", priority: 0.95, changeFrequency: "monthly" },
   { path: "/how-it-works", priority: 0.7, changeFrequency: "monthly" },

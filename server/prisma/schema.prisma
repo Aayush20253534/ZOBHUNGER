@@ -903,6 +903,42 @@ model PlacementCellApplication {
   @@index([institutionType])
 }
 
+model TechnicalInstituteApplication {
+  id                        String                         @id @default(cuid())
+  institutionName           String
+  institutionType           String
+  ownershipType             String
+  affiliationBody           String
+  affiliationNumber         String?
+  website                   String?
+  district                  String
+  city                      String
+  state                     String
+  postalCode                String
+  contactPersonName         String
+  designation               String
+  officialEmail             String
+  mobileNumber              String
+  alternateNumber           String?
+  totalStudents             Int
+  finalYearStudents         Int
+  passingYear               String
+  tradesBranches            String
+  preferredOpportunityTypes String[]                       @default([])
+  technicalHiringNotes      String?
+  status                    PlacementCellApplicationStatus @default(SUBMITTED)
+  reviewedByUserId          String?
+  reviewedAt                DateTime?
+  createdAt                 DateTime                       @default(now())
+  updatedAt                 DateTime                       @updatedAt
+
+  @@index([status, createdAt])
+  @@index([officialEmail])
+  @@index([city, state])
+  @@index([institutionType])
+  @@index([affiliationBody])
+}
+
 model Article {
   id             String   @id @default(cuid())
   slug           String   @unique

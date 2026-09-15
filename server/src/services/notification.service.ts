@@ -806,3 +806,67 @@ export function notifyChatbotLead(lead: {
   }));
   return Promise.allSettled(jobs);
 }
+
+export function notifyNewTechnicalInstituteApplication(
+  application: {
+    id: string;
+    institutionName: string;
+    institutionType: string;
+    ownershipType: string;
+    affiliationBody: string;
+    contactPersonName: string;
+    designation: string;
+    officialEmail: string;
+    mobileNumber: string;
+    district: string;
+    city: string;
+    state: string;
+    totalStudents: number;
+    finalYearStudents: number;
+    passingYear: string;
+    tradesBranches: string;
+    preferredOpportunityTypes: string[];
+  },
+  requestId?: string,
+) {
+  return Promise.allSettled([
+    sendInternalCaseEmail({
+      department: "PLACEMENT_CELL",
+      requestId,
+      referenceId: application.id,
+      idempotencyKey: `technical-institute-${application.id}-internal`,
+      subject: "New ITI / Polytechnic partnership request | ZOBHUNGER",
+      title: "New technical institute partnership request",
+      intro: `${application.institutionName} submitted an ITI & Polytechnic College Cell onboarding request.`,
+      details: [
+        { label: "Institute type", value: statusWords(application.institutionType) },
+        { label: "Affiliation", value: application.affiliationBody.toUpperCase().replaceAll("-", " ") },
+        { label: "Contact", value: `${application.contactPersonName} · ${application.designation}` },
+        { label: "Location", value: `${application.city}, ${application.district}, ${application.state}` },
+        { label: "Students", value: `${application.totalStudents} total · ${application.finalYearStudents} final-year` },
+        { label: "Passing batch", value: application.passingYear },
+        { label: "Partnership areas", value: application.preferredOpportunityTypes.join(", ") },
+      ],
+    }),
+    sendReceipt({
+      to: application.officialEmail,
+      requestId,
+      idempotencyKey: `technical-institute-${application.id}-receipt`,
+      subject: "Technical institute partnership request received | ZOBHUNGER",
+      eyebrow: "ITI & Polytechnic College Cell",
+      title: "Your institute partnership request has been received",
+      intro: `Thank you, ${application.contactPersonName}. We received the technical partnership request for ${application.institutionName}.`,
+      referenceId: application.id,
+      details: [
+        { label: "Institute", value: application.institutionName },
+        { label: "Location", value: `${application.city}, ${application.state}` },
+        { label: "Primary batch", value: application.passingYear },
+      ],
+      paragraphs: [
+        "The ZOBHUNGER team will review the institute profile, technical disciplines and requested collaboration areas before any further onboarding step.",
+        "Submission does not automatically create portal access or guarantee a job, internship, apprenticeship or training opportunity.",
+      ],
+      action: { label: "View ITI & Polytechnic College Cell", url: publicApp("/iti-polytechnic-cell") },
+    }),
+  ]);
+}

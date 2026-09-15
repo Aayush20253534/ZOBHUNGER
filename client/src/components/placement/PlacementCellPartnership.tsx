@@ -16,6 +16,7 @@ import {
   Sparkles,
   Target,
   Users,
+  Wrench,
 } from "lucide-react";
 import { ActionLink } from "@/components/common/ActionLink";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
@@ -98,6 +99,19 @@ export function PlacementCellPartnership() {
       <p className="zb-placement-tagline">
         Connect Your Students With Jobs, Internships, Freelance Work and Career Opportunities.
       </p>
+
+      <aside className="zb-placement-technical-callout">
+        <span className="zb-placement-technical-icon" aria-hidden="true"><Wrench /></span>
+        <div>
+          <span className="zb-eyebrow">Need technical hiring support?</span>
+          <h2>ITI & Polytechnic College Cell</h2>
+          <p>For ITI trades, Diploma and Polytechnic branches, apprenticeships and technical candidate sourcing, use the dedicated technical institute partnership channel.</p>
+        </div>
+        <ActionLink href="/iti-polytechnic-cell" variant="secondary">
+          Explore Technical Cell
+          <ArrowUpRight aria-hidden="true" className="size-4" />
+        </ActionLink>
+      </aside>
 
       <PublicVisualStory
         eyebrow="Experience beyond the classroom"
