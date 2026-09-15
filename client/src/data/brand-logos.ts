@@ -28,7 +28,6 @@ export const brandDomains: Readonly<Record<string, string>> = {
   "Axis Bank": "axisbank.com",
   "YES BANK": "yesbank.in",
   "Kotak 811": "kotak.com",
-  Edelweiss: "edelweissfin.com",
   PwC: "pwc.in",
   "WhiteHat Jr.": "whitehatjr.com",
   Subway: "subway.com",

@@ -5,7 +5,7 @@ export interface BrandExperienceGroup {
   brands: readonly string[];
 }
 
-/** Brand names below come from the client-provided brand experience brief. */
+/** Public partner list, kept in sync with the local artwork catalog. */
 export const brandExperienceGroups: readonly BrandExperienceGroup[] = [
   {
     id: "commerce-hyperlocal",
@@ -23,12 +23,14 @@ export const brandExperienceGroups: readonly BrandExperienceGroup[] = [
       "Shadowfax",
       "Rapido",
       "Ola",
-      // "Uber", // Temporarily hidden from public partner displays.
+      "Uber",
       "InDrive",
-      // "Oye Rickshaw", // Temporarily hidden from public partner displays.
+      "Oye Rickshaw",
       "KiranKart",
       "Bikayi",
       "Locooff",
+      "Instamart",
+      "Park+",
     ],
   },
   {
@@ -54,6 +56,7 @@ export const brandExperienceGroups: readonly BrandExperienceGroup[] = [
       "Shaadi.com",
       "Aspire",
       "VacoBinary",
+      "Rupeek",
     ],
   },
   {
@@ -66,7 +69,6 @@ export const brandExperienceGroups: readonly BrandExperienceGroup[] = [
       "Axis Bank",
       "YES BANK",
       "Kotak 811",
-      "Edelweiss",
       "PwC",
       "WhiteHat Jr.",
     ],
@@ -88,6 +90,12 @@ export const brandExperienceGroups: readonly BrandExperienceGroup[] = [
       "Tilaknagar Industries",
       "Pine Labs",
       "Usha",
+      "Bharat Zuppos",
+      "Aayu",
+      "Frankfinn",
+      "IDEMIA",
+      "Physics Wallah",
+      "Sehat Sathi",
     ],
   },
   {
