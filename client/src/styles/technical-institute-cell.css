@@ -1055,3 +1055,42 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Compact public hero refresh: keep the complete first-screen story visible on laptop
+   viewports and remove the decorative pink wash behind the hero. */
+.zb-tech-cell > .zb-breadcrumbs { margin-bottom: .55rem; }
+.zb-tech-hero { gap: clamp(1rem, 2.4vw, 2rem); align-items: center; }
+.zb-tech-hero::before { display: none; }
+.zb-tech-kicker { margin-bottom: .55rem; padding: .38rem .62rem; font-size: .72rem; background: #fff; }
+.zb-tech-hero .zb-page-heading > .zb-eyebrow { margin-bottom: .55rem; font-size: .72rem; }
+.zb-tech-hero .zb-page-heading h1 { max-width: 14ch; margin-top: 0; font-size: clamp(2.45rem, 4.4vw, 3.95rem); line-height: .98; letter-spacing: -.058em; }
+.zb-tech-hero .zb-page-description { max-width: 43rem; margin-top: .72rem; font-size: clamp(.9rem, 1.15vw, .98rem); line-height: 1.52; }
+.zb-tech-hero .zb-page-actions { margin-top: .82rem; gap: .55rem; }
+.zb-page-content .zb-tech-hero .zb-action-link { min-height: 2.6rem; padding-block: .5rem; font-size: .84rem; }
+.zb-tech-hero-assurances { gap: .42rem; margin-top: .82rem; }
+.zb-tech-hero-assurances span { min-height: 1.95rem; padding: .38rem .58rem; font-size: .69rem; }
+.zb-tech-network { padding: 1rem 1.05rem; border-radius: 1rem; box-shadow: 0 .8rem 2.2rem rgba(90, 34, 48, .12); }
+.zb-tech-network::after { width: 10rem; height: 10rem; right: -4rem; top: -5rem; }
+.zb-tech-network-top { gap: .7rem; }
+.zb-tech-network-mark { width: 2.35rem; height: 2.35rem; border-radius: .58rem; }
+.zb-tech-network-mark svg { width: 1.12rem; height: 1.12rem; }
+.zb-tech-network h2 { max-width: 18ch; margin-top: .22rem; font-size: clamp(1.3rem, 2.2vw, 1.72rem); line-height: 1.08; }
+.zb-tech-network-flow { grid-template-columns: minmax(0, .72fr) 1.35rem minmax(6.4rem, .9fr) 1.35rem minmax(0, 1fr); gap: .38rem; margin-top: .9rem; padding: .68rem 0; }
+.zb-tech-network-column { gap: .3rem; }
+.zb-tech-network-column span { padding: .38rem .42rem; font-size: .61rem; }
+.zb-tech-network-hub { padding: .68rem .5rem; }
+.zb-tech-network-hub strong { font-size: .7rem; }
+.zb-tech-network-hub span { font-size: .56rem; }
+.zb-tech-network-foot { gap: .55rem .8rem; padding-top: .68rem; }
+.zb-tech-network-foot span { font-size: .66rem; }
+
+@media (min-width: 940px) {
+  .zb-tech-hero { grid-template-columns: minmax(0, 1.12fr) minmax(22rem, .88fr); gap: clamp(1.4rem, 2.6vw, 2.4rem); }
+  .zb-tech-network { max-width: 28rem; }
+}
+
+@media (max-width: 939px) {
+  .zb-tech-hero .zb-page-heading h1 { max-width: 15ch; }
+}
+.zb-tech-cell > .zb-breadcrumbs { font-size: .8rem; }
+.zb-tech-cell > .zb-breadcrumbs a { min-height: 2rem; }

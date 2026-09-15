@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   TriangleAlert,
   UsersRound,
+  Wrench,
   MapPin,
   FileText,
   ChevronRight,
@@ -102,6 +103,20 @@ interface PlacementCellApplication {
   createdAt: string;
 }
 
+interface TechnicalInstituteApplication {
+  id: string;
+  institutionName: string;
+  institutionType: string;
+  affiliationBody: string;
+  city: string;
+  state: string;
+  totalStudents: number;
+  finalYearStudents: number;
+  status: "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
+  partnershipCode?: string | null;
+  createdAt: string;
+}
+
 interface IntakeOverview {
   total: number;
   submitted: number;
@@ -117,6 +132,7 @@ interface DashboardData {
   applications: Paginated<Application> | null;
   partnerApplications: Paginated<PartnerApplication> | null;
   placementCellApplications: Paginated<PlacementCellApplication> | null;
+  technicalInstituteApplications: Paginated<TechnicalInstituteApplication> | null;
   intake: IntakeOverview;
 }
 
@@ -276,7 +292,8 @@ export function AdminDashboard() {
             {data.partnerApplications && data.partnerApplications.total > 0 && <QueueItem icon={Handshake} title="Partner access" copy={`${data.partnerApplications.total} partner applications received`} href="/admin/partners" label="Open" />}
             {data.applications && data.applications.total > 0 && <QueueItem icon={UsersRound} title="Job applications" copy={`${data.applications.total} applications available`} href={granted.has("CANDIDATES_MANAGE") ? "/admin/candidate-management" : undefined} label="Review" />}
             {data.placementCellApplications && data.placementCellApplications.total > 0 && <QueueItem icon={Building2} title="Institution onboarding" copy={`${data.placementCellApplications.total} institution partnership submissions`} href="/admin#institution-onboarding" label="Review" />}
-            {!(data.enquiries?.total) && !(data.partnerApplications?.total) && !(data.applications?.total) && !(data.placementCellApplications?.total) && (
+            {data.technicalInstituteApplications && data.technicalInstituteApplications.total > 0 && <QueueItem icon={Wrench} title="Technical institute partnerships" copy={`${data.technicalInstituteApplications.total} ITI / Polytechnic records`} href="/admin/technical-institutes" label="Open" />}
+            {!(data.enquiries?.total) && !(data.partnerApplications?.total) && !(data.applications?.total) && !(data.placementCellApplications?.total) && !(data.technicalInstituteApplications?.total) && (
               <div className="zbo-dashboard-empty-state"><ShieldCheck aria-hidden="true" /><div><strong>{profile.emptyQueueTitle}</strong><span>{profile.emptyQueueDescription}</span></div></div>
             )}
           </div>
@@ -341,6 +358,16 @@ export function AdminDashboard() {
             <PlacementCellAdminRow key={item.id} item={item} onStatusChange={updatePlacementCellStatus} />
           ))}
         </AdminPanel></div>}
+
+        {data.technicalInstituteApplications && <AdminPanel title="Technical institute partnerships" icon={Wrench}>
+          <div className="zb-admin-panel-action">
+            <div><strong>Dedicated ITI & Polytechnic review desk</strong><span>Verify technical institutes, review student strength and maintain approved partnership records.</span></div>
+            <Link href="/admin/technical-institutes"><Wrench aria-hidden="true" />Open technical cell</Link>
+          </div>
+          {data.technicalInstituteApplications.items.length === 0 ? <EmptyRow /> : data.technicalInstituteApplications.items.map((item) => (
+            <AdminRow key={item.id} title={item.institutionName} meta={`${item.institutionType.toUpperCase()} · ${item.city}, ${item.state} · ${item.finalYearStudents} final-year students`} tag={item.status.replaceAll("_", " ")} />
+          ))}
+        </AdminPanel>}
       </section>
     </div>
   );

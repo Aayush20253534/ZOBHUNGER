@@ -16,6 +16,7 @@ import { hashPassword } from "../../utils/password.js";
 import { HttpError } from "../../utils/http-error.js";
 import { downloadPrivateFile } from "../../services/private-file-storage.js";
 import { jobCache } from "../../services/job-cache.service.js";
+import { listTechnicalInstitutesForAdmin } from "../technical-institutes/technical-institutes.service.js";
 import type {
   ListAdminJobsQuery,
   ListApplicationsQuery,
@@ -94,19 +95,20 @@ export async function adminOverviewForPermissions(permissions: AdminPermission[]
   const granted = new Set(permissions);
   const page = { page: 1, pageSize: 5 };
   const intakeWhere = department && department !== AdminDepartment.MAIN_ADMIN ? { department } : {};
-  const [enquiries, requirements, jobs, applications, partnerApplications, placementCellApplications, intakeTotal, intakeNew, intakeUnassigned, intakeRecent] = await Promise.all([
+  const [enquiries, requirements, jobs, applications, partnerApplications, placementCellApplications, technicalInstituteApplications, intakeTotal, intakeNew, intakeUnassigned, intakeRecent] = await Promise.all([
     granted.has(AdminPermission.ENQUIRIES_MANAGE) ? listEnquiriesForAdmin(page) : null,
     granted.has(AdminPermission.REQUIREMENTS_MANAGE) ? listRequirementsForAdmin(page) : null,
     granted.has(AdminPermission.JOBS_MANAGE) ? listJobsForAdmin(page) : null,
     granted.has(AdminPermission.APPLICATIONS_MANAGE) ? listApplicationsForAdmin(page) : null,
     granted.has(AdminPermission.PARTNERS_MANAGE) ? listPartnerApplicationsForAdmin(page) : null,
     granted.has(AdminPermission.PLACEMENT_MANAGE) ? listPlacementCellApplicationsForAdmin(page) : null,
+    granted.has(AdminPermission.PLACEMENT_MANAGE) ? listTechnicalInstitutesForAdmin(page) : null,
     prisma.intakeCase.count({ where: intakeWhere }),
     prisma.intakeCase.count({ where: { ...intakeWhere, status: "SUBMITTED" } }),
     prisma.intakeCase.count({ where: { ...intakeWhere, assignedAdminId: null } }),
     prisma.intakeCase.findMany({ where: intakeWhere, take: 5, orderBy: [{ submittedAt: "desc" }, { id: "desc" }], select: { id: true, subject: true, sourceType: true, status: true, department: true, submittedAt: true, assignedAdminId: true } }),
   ]);
-  return { enquiries, requirements, jobs, applications, partnerApplications, placementCellApplications, intake: { total: intakeTotal, submitted: intakeNew, unassigned: intakeUnassigned, mine: actorUserId ? await prisma.intakeCase.count({ where: { ...intakeWhere, assignedAdminId: actorUserId } }) : 0, recent: intakeRecent } };
+  return { enquiries, requirements, jobs, applications, partnerApplications, placementCellApplications, technicalInstituteApplications, intake: { total: intakeTotal, submitted: intakeNew, unassigned: intakeUnassigned, mine: actorUserId ? await prisma.intakeCase.count({ where: { ...intakeWhere, assignedAdminId: actorUserId } }) : 0, recent: intakeRecent } };
 }
 
 export async function changePlacementCellApplicationStatus(

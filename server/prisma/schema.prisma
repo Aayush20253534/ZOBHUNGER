@@ -927,8 +927,12 @@ model TechnicalInstituteApplication {
   preferredOpportunityTypes String[]                       @default([])
   technicalHiringNotes      String?
   status                    PlacementCellApplicationStatus @default(SUBMITTED)
+  partnershipCode           String?                        @unique
+  reviewNotes               String?
   reviewedByUserId          String?
   reviewedAt                DateTime?
+  approvedAt                DateTime?
+  rejectedAt                DateTime?
   createdAt                 DateTime                       @default(now())
   updatedAt                 DateTime                       @updatedAt
 

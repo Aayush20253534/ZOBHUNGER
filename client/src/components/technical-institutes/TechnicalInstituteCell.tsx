@@ -46,9 +46,8 @@ export function TechnicalInstituteCell() {
 
       <section className="zb-tech-hero">
         <div className="zb-tech-hero-copy">
-          <span className="zb-tech-kicker"><Wrench aria-hidden="true" /> Technical Talent Partnerships</span>
+          <span className="zb-tech-kicker"><Wrench aria-hidden="true" /> ITI & Polytechnic College Cell</span>
           <PageShell
-            eyebrow="ITI & Polytechnic College Cell"
             title="Build a Stronger Technical Talent Pipeline"
             description="A dedicated ZOBHUNGER partnership channel for ITIs, Polytechnic colleges and technical institutes to connect skilled students with jobs, internships, apprenticeships and training based on qualification, trade, skills and eligibility."
             actions={
@@ -75,7 +74,7 @@ export function TechnicalInstituteCell() {
             <span className="zb-tech-network-mark"><School aria-hidden="true" /></span>
             <div>
               <span className="zb-eyebrow">Technical talent network</span>
-              <h2>Institute to industry, through one focused cell.</h2>
+              <h2>Institute to industry. One focused technical cell.</h2>
             </div>
           </div>
           <div className="zb-tech-network-flow" aria-hidden="true">

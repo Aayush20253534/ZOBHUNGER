@@ -49,3 +49,26 @@ export const createTechnicalInstituteApplicationSchema = z.object({
 });
 
 export type CreateTechnicalInstituteApplicationInput = z.infer<typeof createTechnicalInstituteApplicationSchema>;
+
+export const technicalInstituteAdminListQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).max(100000).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  query: z.string().trim().min(1).max(160).optional(),
+  status: z.enum(["SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED"]).optional(),
+  institutionType: z.enum(["iti", "polytechnic", "technical-institute"]).optional(),
+  affiliationBody: z.enum(["ncvt", "scvt", "aicte", "state-board", "other"]).optional(),
+  state: z.string().trim().min(2).max(120).optional(),
+});
+
+export const technicalInstituteAdminParamsSchema = z.object({
+  id: z.string().trim().min(1).max(180),
+});
+
+export const reviewTechnicalInstituteApplicationSchema = z.object({
+  status: z.enum(["UNDER_REVIEW", "APPROVED", "REJECTED"]),
+  reviewNotes: z.union([z.string().trim().max(3000), z.literal("")]).optional().transform((value) => value || undefined),
+});
+
+export type TechnicalInstituteAdminListQuery = z.infer<typeof technicalInstituteAdminListQuerySchema>;
+export type TechnicalInstituteAdminParams = z.infer<typeof technicalInstituteAdminParamsSchema>;
+export type ReviewTechnicalInstituteApplicationInput = z.infer<typeof reviewTechnicalInstituteApplicationSchema>;

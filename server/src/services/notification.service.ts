@@ -870,3 +870,37 @@ export function notifyNewTechnicalInstituteApplication(
     }),
   ]);
 }
+
+export function notifyTechnicalInstituteReview(application: {
+  id: string;
+  institutionName: string;
+  contactPersonName: string;
+  officialEmail: string;
+  status: string;
+  partnershipCode?: string | null;
+  updatedAt?: Date;
+}) {
+  const status = statusWords(application.status);
+  const approved = application.status === "APPROVED";
+  const rejected = application.status === "REJECTED";
+  return sendReceipt({
+    to: application.officialEmail,
+    idempotencyKey: `technical-institute-${application.id}-status-${application.status}-${application.updatedAt?.getTime() ?? Date.now()}`,
+    subject: `Technical institute partnership update: ${status} | ZOBHUNGER`,
+    eyebrow: "ITI & Polytechnic College Cell",
+    title: approved ? "Your technical institute partnership is approved" : `Partnership status: ${status}`,
+    intro: `Hello ${application.contactPersonName}, the partnership request for ${application.institutionName} has been updated.`,
+    referenceId: application.id,
+    details: [
+      { label: "Current status", value: status },
+      ...(application.partnershipCode ? [{ label: "Partnership code", value: application.partnershipCode }] : []),
+    ],
+    paragraphs: [approved
+      ? "Your institute is now recorded as an approved ZOBHUNGER technical-institute partner. The Placement Cell team may contact you for technical hiring, apprenticeship, internship, training and campus-drive requirements that match your student profile."
+      : rejected
+        ? "The partnership request is not being approved at this stage. A future request may be considered if institute details or collaboration requirements change."
+        : "The ZOBHUNGER Placement Cell team is reviewing the institute profile, affiliations, student strength, technical disciplines and requested collaboration areas."],
+    action: approved ? { label: "View Technical Talent Cell", url: publicApp("/iti-polytechnic-cell") } : undefined,
+    note: "Opportunities are requirement-led and remain subject to qualification, employer criteria and student eligibility.",
+  });
+}

@@ -13,6 +13,7 @@ import { adminCandidatesRouter } from "../candidates/candidates.routes.js";
 import { adminPhase2Router } from "../phase2/phase2.routes.js";
 import { adminAttendanceRouter } from "../attendance/attendance.routes.js";
 import { adminDeploymentsRouter } from "../deployments/deployments.routes.js";
+import { adminTechnicalInstitutesRouter } from "../technical-institutes/technical-institutes.routes.js";
 import { Router } from "express";
 import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
@@ -71,6 +72,7 @@ adminRouter.use(adminWorkerWorkflowRouter);
 adminRouter.use("/attendance", adminAttendanceRouter);
 adminRouter.use("/deployments", adminDeploymentsRouter);
 adminRouter.use("/candidate-management", adminCandidatesRouter);
+adminRouter.use("/technical-institutes", adminTechnicalInstitutesRouter);
 
 adminRouter.get("/overview", adminOverviewController);
 

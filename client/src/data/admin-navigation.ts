@@ -23,6 +23,7 @@ import {
   UsersRound,
   UserRoundCheck,
   UserCog,
+  Wrench,
 } from "lucide-react";
 
 export interface AdminNavigationItem {
@@ -88,6 +89,13 @@ export const adminNavigation: readonly AdminNavigationGroup[] = [
         label: "Internship applications",
         description: "Internship review desk",
         icon: GraduationCap,
+      },
+      {
+        href: "/admin/technical-institutes",
+        permission: "PLACEMENT_MANAGE",
+        label: "Technical institutes",
+        description: "ITI & Polytechnic partnerships",
+        icon: Wrench,
       },
       {
         href: "/admin/employee-joining",

@@ -46,6 +46,7 @@ const routePermissions: Array<{ pattern: RegExp; permission: AdminPermission }> 
   { pattern: /^\/attendance-approvals(?:\/|$)/, permission: AdminPermission.ATTENDANCE_MANAGE },
   { pattern: /^\/earnings(?:\/|$)/, permission: AdminPermission.EARNINGS_MANAGE },
   { pattern: /^\/reports(?:\/|$)/, permission: AdminPermission.REPORTS_VIEW },
+  { pattern: /^\/technical-institutes(?:\/|$)/, permission: AdminPermission.PLACEMENT_MANAGE },
   { pattern: /^\/placement-cell-applications(?:\/|$)/, permission: AdminPermission.PLACEMENT_MANAGE },
 ];
 
