@@ -295,8 +295,19 @@
     [data-brand="cheq"],
     [data-brand="delhivery"],
     [data-brand="instamart"],
-    [data-brand="usha"]
+    [data-brand="usha"],
+    [data-brand="shadowfax"],
+    [data-brand="indrive"],
+    [data-brand="park"],
+    [data-brand="freecharge"],
+    [data-brand="mobikwik"],
+    [data-brand="airtel"],
+    [data-brand="amazon-qr"],
+    [data-brand="bharatpe"],
+    [data-brand="airtel-payments-bank"],
+    [data-brand="yes-bank"],
+    [data-brand="whitehat-jr"]
   ) {
-    --zb-logo-scale: min(calc(var(--zb-logo-optical-scale, 1) * 0.92), 3.2);
+    --zb-logo-scale: min(calc(var(--zb-logo-optical-scale, 1) * 0.92), 3.3);
   }
 }
