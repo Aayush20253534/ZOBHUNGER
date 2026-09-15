@@ -43,9 +43,6 @@ export function SiteFrame({ children }: { children: ReactNode }) {
   if (pathname === "/technical-institute-portal" || pathname.startsWith("/technical-institute-portal/")) {
     return <div className="zti-portal-root">{children}</div>;
   }
-  if (pathname === "/technical-institute-login") {
-    return <main className="zb-placement-access-root">{children}</main>;
-  }
   return (
     <>
       <Navbar />
