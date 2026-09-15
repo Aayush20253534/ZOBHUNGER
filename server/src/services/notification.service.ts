@@ -871,6 +871,42 @@ export function notifyNewTechnicalInstituteApplication(
   ]);
 }
 
+export function notifyNewTechnicalStudentRegistration(
+  input: {
+    studentId: string;
+    fullName: string;
+    email: string;
+    qualification: string;
+    tradeBranch: string;
+    passingYear: string;
+    institutionName: string;
+  },
+  requestId?: string,
+) {
+  const qualification = input.qualification === "iti" ? "ITI" : "Diploma / Polytechnic";
+  return sendReceipt({
+    to: input.email,
+    requestId,
+    idempotencyKey: `technical-student-${input.studentId}-receipt`,
+    subject: "Technical student profile received | ZOBHUNGER",
+    eyebrow: "ITI & Polytechnic College Cell",
+    title: "Your technical student profile is in verification",
+    intro: `Hello ${input.fullName}, your profile has been linked to ${input.institutionName}.`,
+    referenceId: input.studentId,
+    details: [
+      { label: "Institute", value: input.institutionName },
+      { label: "Qualification", value: `${qualification} · ${input.tradeBranch}` },
+      { label: "Passing year", value: input.passingYear },
+      { label: "Current status", value: "Pending verification" },
+    ],
+    paragraphs: [
+      "The institute or ZOBHUNGER team may verify the profile before it is considered for relevant technical opportunities.",
+      "Registration creates an eligibility profile only. Jobs, internships, apprenticeships and training remain subject to active requirements and selection criteria.",
+    ],
+    action: { label: "View Technical Talent Cell", url: publicApp("/iti-polytechnic-cell") },
+  });
+}
+
 export function notifyTechnicalInstituteReview(application: {
   id: string;
   institutionName: string;
@@ -896,11 +932,15 @@ export function notifyTechnicalInstituteReview(application: {
       ...(application.partnershipCode ? [{ label: "Partnership code", value: application.partnershipCode }] : []),
     ],
     paragraphs: [approved
-      ? "Your institute is now recorded as an approved ZOBHUNGER technical-institute partner. The Placement Cell team may contact you for technical hiring, apprenticeship, internship, training and campus-drive requirements that match your student profile."
+      ? "Your institute is now recorded as an approved ZOBHUNGER technical-institute partner. Use the partnership code above to onboard eligible ITI or Polytechnic students into the technical talent roster. The Placement Cell team may then connect verified profiles with matching hiring, apprenticeship, internship and training requirements."
       : rejected
         ? "The partnership request is not being approved at this stage. A future request may be considered if institute details or collaboration requirements change."
         : "The ZOBHUNGER Placement Cell team is reviewing the institute profile, affiliations, student strength, technical disciplines and requested collaboration areas."],
-    action: approved ? { label: "View Technical Talent Cell", url: publicApp("/iti-polytechnic-cell") } : undefined,
+    action: approved && application.partnershipCode
+      ? { label: "Open Student Registration", url: publicApp(`/iti-polytechnic-cell/student-registration?code=${encodeURIComponent(application.partnershipCode)}`) }
+      : approved
+        ? { label: "View Technical Talent Cell", url: publicApp("/iti-polytechnic-cell") }
+        : undefined,
     note: "Opportunities are requirement-led and remain subject to qualification, employer criteria and student eligibility.",
   });
 }

@@ -277,6 +277,11 @@ export function AdminTechnicalInstituteDetail({ id }: { id: string }) {
       <article><Network aria-hidden="true" /><span><small>Opportunity areas</small><strong>{record.preferredOpportunityTypes.length}</strong></span></article>
     </div>
 
+    {approved && <section className="zti-student-roster-cta">
+      <div><span><UsersRound aria-hidden="true" /></span><div><small>Part 3 · Technical student onboarding</small><h2>Build and verify the institute student roster.</h2><p>Add students manually, review self-registrations, or import an Excel/CSV batch with row-level validation.</p></div></div>
+      <div><Link href={`/admin/technical-institutes/${record.id}/students`}>Manage student roster <ChevronRight aria-hidden="true" /></Link><a href={`/iti-polytechnic-cell/student-registration?code=${encodeURIComponent(record.partnershipCode ?? "")}`} target="_blank" rel="noreferrer">Open registration page <ExternalLink aria-hidden="true" /></a></div>
+    </section>}
+
     <div className="zti-detail-layout">
       <main className="zti-detail-main">
         <DetailBlock title="Institute profile" icon={Building2}><dl className="zti-detail-grid"><DetailItem label="Institute type">{typeLabel(record.institutionType)}</DetailItem><DetailItem label="Ownership">{opportunityLabel(record.ownershipType)}</DetailItem><DetailItem label="Affiliation">{affiliationLabel(record.affiliationBody)}</DetailItem><DetailItem label="Affiliation / registration no.">{record.affiliationNumber}</DetailItem><DetailItem label="PIN code">{record.postalCode}</DetailItem><DetailItem label="Website">{record.website ? <a href={record.website} target="_blank" rel="noreferrer">{record.website}<ExternalLink aria-hidden="true" /></a> : "Not provided"}</DetailItem></dl></DetailBlock>

@@ -207,3 +207,25 @@
   .zti-detail-identity { grid-template-columns: 2.5rem minmax(0, 1fr); }
   .zti-detail-identity > span { width: 2.5rem; height: 2.5rem; }
 }
+
+.zti-student-roster-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 14px 16px;
+  border: 1px solid #d9c7cc;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #fff 0%, #fff8f9 100%);
+}
+.zti-student-roster-cta > div:first-child { display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: 11px; min-width: 0; }
+.zti-student-roster-cta > div:first-child > span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 11px; color: #b5122d; background: #fff0f3; }
+.zti-student-roster-cta > div:first-child > span svg { width: 19px; height: 19px; }
+.zti-student-roster-cta small { color: #b5122d; font-size: 9px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.zti-student-roster-cta h2 { margin: 2px 0 0; font-size: 15px; letter-spacing: -.025em; }
+.zti-student-roster-cta p { margin: 3px 0 0; color: #766b6f; font-size: 10px; line-height: 1.45; }
+.zti-student-roster-cta > div:last-child { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; flex: 0 0 auto; }
+.zti-student-roster-cta a { display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 0 10px; border: 1px solid #b5122d; border-radius: 8px; color: #fff; background: #b5122d; font-size: 9.5px; font-weight: 800; text-decoration: none; }
+.zti-student-roster-cta a + a { border-color: #dfd3d6; color: #665b5f; background: #fff; }
+.zti-student-roster-cta a svg { width: 12px; height: 12px; }
+@media (max-width: 760px) { .zti-student-roster-cta { align-items: stretch; flex-direction: column; }.zti-student-roster-cta > div:last-child { justify-content: stretch; }.zti-student-roster-cta a { flex: 1; justify-content: center; } }

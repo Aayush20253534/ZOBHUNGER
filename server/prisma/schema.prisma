@@ -189,7 +189,17 @@ enum PlacementCellApplicationStatus {
   REJECTED
 }
 
+enum TechnicalStudentStatus {
+  PENDING
+  VERIFIED
+  INACTIVE
+}
 
+enum TechnicalStudentSource {
+  SELF_REGISTRATION
+  ADMIN_ENTRY
+  BULK_IMPORT
+}
 
 enum ComplianceStatus {
   DRAFT
@@ -936,11 +946,52 @@ model TechnicalInstituteApplication {
   createdAt                 DateTime                       @default(now())
   updatedAt                 DateTime                       @updatedAt
 
+  students                  TechnicalStudent[]
+
   @@index([status, createdAt])
   @@index([officialEmail])
   @@index([city, state])
   @@index([institutionType])
   @@index([affiliationBody])
+}
+
+model TechnicalStudent {
+  id                            String                 @id @default(cuid())
+  technicalInstituteApplicationId String
+  fullName                      String
+  email                         String
+  mobileNumber                  String
+  enrollmentNumber              String?
+  dateOfBirth                   DateTime?
+  gender                        String?
+  qualification                 String
+  tradeBranch                   String
+  passingYear                   String
+  currentSemesterYear           String?
+  academicScore                 String?
+  skills                        String[]               @default([])
+  certifications               String[]               @default([])
+  currentCity                   String
+  currentState                  String
+  preferredLocations            String[]               @default([])
+  preferredOpportunityTypes     String[]               @default([])
+  status                        TechnicalStudentStatus @default(PENDING)
+  source                        TechnicalStudentSource @default(SELF_REGISTRATION)
+  importBatch                   String?
+  submittedByUserId             String?
+  consentAcceptedAt             DateTime?
+  createdAt                     DateTime               @default(now())
+  updatedAt                     DateTime               @updatedAt
+
+  institute TechnicalInstituteApplication @relation(fields: [technicalInstituteApplicationId], references: [id], onDelete: Cascade)
+
+  @@unique([technicalInstituteApplicationId, email])
+  @@unique([technicalInstituteApplicationId, enrollmentNumber])
+  @@index([technicalInstituteApplicationId, status, createdAt])
+  @@index([technicalInstituteApplicationId, tradeBranch])
+  @@index([technicalInstituteApplicationId, passingYear])
+  @@index([email])
+  @@index([mobileNumber])
 }
 
 model Article {

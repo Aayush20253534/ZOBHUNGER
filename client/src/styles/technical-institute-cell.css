@@ -1094,3 +1094,5 @@
 }
 .zb-tech-cell > .zb-breadcrumbs { font-size: .8rem; }
 .zb-tech-cell > .zb-breadcrumbs a { min-height: 2rem; }
+
+.zb-tech-student-path-copy .zb-action-link { margin-top: 1rem; }

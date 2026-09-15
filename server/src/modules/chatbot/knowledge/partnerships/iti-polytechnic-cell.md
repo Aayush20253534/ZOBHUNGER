@@ -58,3 +58,11 @@ The page gives examples including Electrician, Fitter, Welder, Electronics, Mech
 4. Suitable institutes and students can be connected to future requirements based on qualification and eligibility.
 
 The public onboarding route is `/iti-polytechnic-cell/apply`.
+
+## Technical student onboarding
+
+Students from approved ITI, Polytechnic and technical-institute partners can register through `/iti-polytechnic-cell/student-registration`. Registration requires the institute partnership code issued after ZOBHUNGER approves the institute. Student profiles capture qualification, ITI trade or Polytechnic branch, passing year, academic score, skills, certifications, current location, preferred locations and interest in jobs, internships, apprenticeships or training.
+
+Self-registered student profiles enter a pending-verification queue. ZOBHUNGER administrators can verify or deactivate those records. Administrators can also add students manually or bulk-onboard institute rosters from `.xlsx` or `.csv` files. Bulk files are validated row by row, and duplicate email or enrollment records are skipped rather than silently overwritten.
+
+Student registration creates an eligibility profile only. It does not guarantee a job, internship, apprenticeship or training seat. Matching depends on active requirements, institute partnership status, student qualification and skills, location, employer criteria and other eligibility conditions.

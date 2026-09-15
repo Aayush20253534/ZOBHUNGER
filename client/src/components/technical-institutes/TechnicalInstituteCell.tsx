@@ -11,6 +11,7 @@ import {
   Network,
   School,
   Target,
+  UserPlus,
   UsersRound,
   Wrench,
 } from "lucide-react";
@@ -225,6 +226,10 @@ export function TechnicalInstituteCell() {
           <p>
             Students from associated Placement Cells can receive Job, Training, Internship and Apprenticeship opportunities according to their qualifications, skills and eligibility. Opportunity availability depends on active requirements and selection criteria.
           </p>
+          <ActionLink href="/iti-polytechnic-cell/student-registration" variant="secondary">
+            Register Technical Student
+            <UserPlus aria-hidden="true" className="size-4" />
+          </ActionLink>
         </div>
         <div className="zb-tech-student-path-flow" aria-label="Student opportunity matching factors">
           <span>Education</span><i />
