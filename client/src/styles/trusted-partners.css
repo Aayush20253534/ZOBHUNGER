@@ -288,4 +288,15 @@
     padding: .35rem .4rem;
     border-radius: .7rem;
   }
+
+  /* These supplied files are square canvases containing horizontal wordmarks.
+     Give the actual marks enough optical mass on mobile as well. */
+  .zb-partner-mark:is(
+    [data-brand="cheq"],
+    [data-brand="delhivery"],
+    [data-brand="instamart"],
+    [data-brand="usha"]
+  ) {
+    --zb-logo-scale: min(calc(var(--zb-logo-optical-scale, 1) * 0.92), 3.2);
+  }
 }
