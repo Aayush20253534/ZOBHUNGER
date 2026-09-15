@@ -17,6 +17,7 @@ import {
   Filter,
   GraduationCap,
   LoaderCircle,
+  KeyRound,
   Mail,
   MapPin,
   Network,
@@ -32,6 +33,7 @@ import { ApiError } from "@/lib/api";
 import {
   getTechnicalInstituteAdmin,
   getTechnicalInstituteAdminSummary,
+  issueTechnicalInstitutePortalAccess,
   listTechnicalInstitutesAdmin,
   reviewTechnicalInstituteAdmin,
   type TechnicalInstituteAdminList,
@@ -218,6 +220,7 @@ export function AdminTechnicalInstituteDetail({ id }: { id: string }) {
   const [reviewNotes, setReviewNotes] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [portalBusy, setPortalBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
@@ -252,6 +255,24 @@ export function AdminTechnicalInstituteDetail({ id }: { id: string }) {
       else setError(caught instanceof Error ? caught.message : "Unable to update review.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function issuePortalAccess() {
+    if (!record || portalBusy || record.status !== "APPROVED") return;
+    setPortalBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      const response = await issueTechnicalInstitutePortalAccess(record.id);
+      setRecord(response.data.entity);
+      setNotice(response.data.portalAccess === "ACTIVATION"
+        ? "Technical Institute Portal activation access sent to the official institute email."
+        : "Portal access confirmed. Login instructions were sent to the official institute email.");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to issue institute portal access.");
+    } finally {
+      setPortalBusy(false);
     }
   }
 
@@ -307,7 +328,14 @@ export function AdminTechnicalInstituteDetail({ id }: { id: string }) {
           {record.status !== "UNDER_REVIEW" && <button type="button" className="zti-review-secondary" disabled={saving} onClick={() => void updateStatus("UNDER_REVIEW")}><ClipboardCheck aria-hidden="true" />Move to review</button>}
           <button type="button" className="zti-review-approve" disabled={saving} onClick={() => void updateStatus("APPROVED")}><BadgeCheck aria-hidden="true" />Approve institute</button>
           <button type="button" className="zti-review-reject" disabled={saving} onClick={() => void updateStatus("REJECTED")}><XCircle aria-hidden="true" />Reject request</button>
-        </div> : <div className="zti-approved-lock"><BadgeCheck aria-hidden="true" /><div><strong>Approved partnership</strong><span>This record is locked from returning to review. Future lifecycle controls can be handled as a separate status workflow.</span></div></div>}
+        </div> : <>
+          <div className="zti-approved-lock"><BadgeCheck aria-hidden="true" /><div><strong>Approved partnership</strong><span>The institute can now receive secure Technical Institute Portal access.</span></div></div>
+          <div className="zti-portal-access-admin">
+            <div><KeyRound aria-hidden="true" /><span><small>Part 5 · Institute portal</small><strong>{record.provisionedUserId ? (record.activationExpiresAt ? "Activation pending" : "Portal account linked") : "Portal access not issued"}</strong><em>{record.activationExpiresAt ? `Activation valid until ${dateLabel(record.activationExpiresAt)}` : record.provisionedUserId ? "Use reissue to resend secure access instructions." : "Issue an account to the official institute email."}</em></span></div>
+            <button type="button" disabled={portalBusy} onClick={() => void issuePortalAccess()}>{portalBusy ? <LoaderCircle className="zti-spin-icon" aria-hidden="true" /> : <KeyRound aria-hidden="true" />}{record.provisionedUserId ? "Reissue portal access" : "Issue portal access"}</button>
+            <a href="/technical-institute-login" target="_blank" rel="noreferrer">Open partner login <ExternalLink aria-hidden="true" /></a>
+          </div>
+        </>}
         {saving && <span className="zti-saving"><LoaderCircle aria-hidden="true" />Saving review…</span>}
         <div className="zti-review-checklist"><span><CheckCircle2 aria-hidden="true" />Affiliation checked</span><span><CheckCircle2 aria-hidden="true" />TPO contact checked</span><span><CheckCircle2 aria-hidden="true" />Student profile reviewed</span><span><CheckCircle2 aria-hidden="true" />Collaboration areas reviewed</span></div>
       </aside>

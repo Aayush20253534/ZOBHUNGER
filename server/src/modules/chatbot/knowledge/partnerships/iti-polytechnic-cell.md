@@ -73,3 +73,11 @@ ZOBHUNGER administrators can create dedicated technical opportunities for Jobs, 
 Only verified students from approved technical-institute partners enter the matching pool. The matching workflow first applies hard eligibility rules such as qualification, trade or branch, passing batch, state eligibility and required skills. Eligible profiles are then ranked using opportunity preference, location alignment, required-skill coverage and preferred skills or certifications.
 
 Administrators can submit a matched student into an opportunity pipeline and track the student through Submitted, Reviewed, Shortlisted, Selected, Rejected and Joined stages. Student email notifications are generated when a profile is submitted and when its recorded application status changes. Employer selection criteria and final joining decisions still apply.
+
+## Approved institute partner portal
+
+After an institute is approved, ZOBHUNGER can issue a secure Technical Institute Partner Portal account to the authorised official email. The activation link is time-limited and is used to create the institute password. Approved partners sign in at `/technical-institute-login`.
+
+The institute workspace is scoped only to that approved ITI or Polytechnic partnership. It allows authorised placement or training representatives to maintain their technical student roster, validate self-registered profiles, add or update students, import Excel/CSV batches, see live technical opportunities, review qualification-led student matches, submit eligible students, track application progress through selection and joining, and view placement and hiring reports. Reports can also be exported as CSV for institute records.
+
+Technical institute accounts use a dedicated access role and are separate from the general Placement Cell partner workspace.

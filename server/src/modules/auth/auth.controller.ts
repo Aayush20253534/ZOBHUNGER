@@ -3,7 +3,7 @@ import { env } from "../../config/env.js";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import { signAccessToken } from "../../utils/jwt.js";
 import type { BusinessLoginInput, LoginInput, RegisterInput } from "./auth.schema.js";
-import { changeAdminPassword, changeBusinessPassword, loginBusinessUser, loginPlacementCellUser, loginUser, registerUser, safeUser } from "./auth.service.js";
+import { changeAdminPassword, changeBusinessPassword, loginBusinessUser, loginPlacementCellUser, loginTechnicalInstituteUser, loginUser, registerUser, safeUser } from "./auth.service.js";
 import { beginAdminMfa, confirmAdminMfa, disableAdminMfa, rotateAdminMfa } from "./admin-mfa.service.js";
 
 function authCookieOptions() {
@@ -17,7 +17,7 @@ function authCookieOptions() {
 }
 
 export function setAuthCookie(res: Response, user: { id: string; role: unknown; sessionVersion: number }) {
-  const token = signAccessToken({ sub: user.id, role: user.role as "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL", version: user.sessionVersion });
+  const token = signAccessToken({ sub: user.id, role: user.role as "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL" | "TECHNICAL_INSTITUTE", version: user.sessionVersion });
   res.cookie(env.AUTH_COOKIE_NAME, token, {
     ...authCookieOptions(),
     maxAge: env.AUTH_COOKIE_MAX_AGE_MS,
@@ -100,4 +100,10 @@ export const changeAdminPasswordController: RequestHandler = async (_req, res) =
   const user = await changeAdminPassword(res.locals.authUser.id, currentPassword, password);
   setAuthCookie(res, user);
   res.json(apiSuccessResponse("Administrator password updated", { user }));
+};
+
+export const technicalInstituteLoginController: RequestHandler = async (_req, res) => {
+  const user = await loginTechnicalInstituteUser(res.locals.validated.body as LoginInput);
+  setAuthCookie(res, user);
+  res.status(200).json(apiSuccessResponse("Technical institute partner login successful", { user }));
 };

@@ -235,3 +235,17 @@
 .zti-opportunity-cta small { color: #287154; }
 .zti-opportunity-cta a { border-color: #287154; background: #287154; }
 .zti-opportunity-cta a:hover { background: #205c45; border-color: #205c45; }
+
+.zti-portal-access-admin { display: grid; gap: .5rem; margin-top: .55rem; padding: .65rem; border: 1px solid #e2d5d8; border-radius: .62rem; background: #fffafb; }
+.zti-portal-access-admin > div { display: grid; grid-template-columns: 1.75rem minmax(0,1fr); gap: .5rem; align-items: start; }
+.zti-portal-access-admin > div > svg { width: .9rem; height: .9rem; margin-top: .16rem; color: #a91c33; }
+.zti-portal-access-admin > div span { display: grid; gap: .08rem; }
+.zti-portal-access-admin small { color: #a91c33; font-size: .52rem; font-weight: 850; letter-spacing: .055em; text-transform: uppercase; }
+.zti-portal-access-admin strong { font-size: .65rem; color: #34383e; }
+.zti-portal-access-admin em { color: #7b7477; font-size: .56rem; font-style: normal; line-height: 1.4; }
+.zti-portal-access-admin button, .zti-portal-access-admin > a { display: inline-flex; align-items: center; justify-content: center; gap: .32rem; min-height: 2.15rem; padding: .4rem .55rem; border-radius: .5rem; font: inherit; font-size: .6rem; font-weight: 800; text-decoration: none; cursor: pointer; }
+.zti-portal-access-admin button { border: 1px solid #8d0d18; background: #8d0d18; color: #fff; }
+.zti-portal-access-admin button:disabled { opacity: .58; cursor: not-allowed; }
+.zti-portal-access-admin > a { border: 1px solid #dfd5d7; background: #fff; color: #625a5c; }
+.zti-portal-access-admin svg { width: .72rem; height: .72rem; }
+.zti-spin-icon { animation: zti-spin 800ms linear infinite; }

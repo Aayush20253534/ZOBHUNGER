@@ -123,6 +123,7 @@ export async function createTechnicalStudentForAdmin(input: {
   actorUserId: string;
   ipAddress?: string;
   userAgent?: string;
+  source?: TechnicalStudentSource;
 }) {
   return prisma.$transaction(async (tx) => {
     const student = await tx.technicalStudent.create({
@@ -130,7 +131,7 @@ export async function createTechnicalStudentForAdmin(input: {
         ...studentData(input.data),
         technicalInstituteApplicationId: input.instituteId,
         status: TechnicalStudentStatus.VERIFIED,
-        source: TechnicalStudentSource.ADMIN_ENTRY,
+        source: input.source ?? TechnicalStudentSource.ADMIN_ENTRY,
         submittedByUserId: input.actorUserId,
       },
     });

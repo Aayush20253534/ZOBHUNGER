@@ -29,6 +29,13 @@ export async function placementCellLogin(email: string, password: string) {
   });
 }
 
+export async function technicalInstituteLogin(email: string, password: string) {
+  return apiFetch<ApiSuccessEnvelope<AuthResponse>>("/auth/technical-institute-login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
 
 export function beginAdminMfa() {
   return apiFetch<ApiSuccessEnvelope<{ secret: string; otpauthUri: string }>>("/auth/admin-mfa/setup", { method: "POST" });

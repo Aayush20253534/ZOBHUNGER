@@ -4,7 +4,7 @@ import { env } from "../config/env.js";
 export interface AccessTokenPayload {
   sub: string;
   version?: number;
-  role: "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL";
+  role: "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL" | "TECHNICAL_INSTITUTE";
 }
 
 export function signAccessToken(payload: AccessTokenPayload): string {
@@ -23,7 +23,7 @@ export function verifyAccessToken(token: string): AccessTokenPayload {
     audience: env.JWT_AUDIENCE,
   });
   if (typeof decoded !== "object" || typeof decoded.sub !== "string" || typeof decoded.role !== "string") throw new Error("Invalid token payload");
-  if (!["ADMIN", "BUSINESS", "WORKER", "PLACEMENT_CELL"].includes(decoded.role)) throw new Error("Invalid token role");
+  if (!["ADMIN", "BUSINESS", "WORKER", "PLACEMENT_CELL", "TECHNICAL_INSTITUTE"].includes(decoded.role)) throw new Error("Invalid token role");
   if (decoded.version !== undefined && (!Number.isInteger(decoded.version) || decoded.version < 0)) throw new Error("Invalid token version");
   return { version: decoded.version ?? 0, sub: decoded.sub, role: decoded.role as AccessTokenPayload["role"] };
 }

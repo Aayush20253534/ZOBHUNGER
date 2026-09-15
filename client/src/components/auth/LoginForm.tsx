@@ -7,10 +7,11 @@ import { Eye, EyeOff, KeyRound, LockKeyhole, LogIn, Mail, ShieldCheck } from "lu
 import { ApiError } from "@/lib/api";
 import { login } from "@/services/auth.service";
 
-function destinationForRole(role: "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL") {
+function destinationForRole(role: "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL" | "TECHNICAL_INSTITUTE") {
   if (role === "ADMIN") return "/admin";
   if (role === "BUSINESS") return "/business";
   if (role === "PLACEMENT_CELL") return "/placement-portal";
+  if (role === "TECHNICAL_INSTITUTE") return "/technical-institute-portal";
   return "/worker";
 }
 

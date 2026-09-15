@@ -12,6 +12,7 @@ enum UserRole {
   BUSINESS
   WORKER
   PLACEMENT_CELL
+  TECHNICAL_INSTITUTE
 }
 
 
@@ -198,6 +199,7 @@ enum TechnicalStudentStatus {
 enum TechnicalStudentSource {
   SELF_REGISTRATION
   ADMIN_ENTRY
+  INSTITUTE_PORTAL
   BULK_IMPORT
 }
 
@@ -966,6 +968,9 @@ model TechnicalInstituteApplication {
   reviewedAt                DateTime?
   approvedAt                DateTime?
   rejectedAt                DateTime?
+  provisionedUserId         String?                        @unique
+  activationTokenHash       String?                        @unique
+  activationExpiresAt       DateTime?
   createdAt                 DateTime                       @default(now())
   updatedAt                 DateTime                       @updatedAt
 

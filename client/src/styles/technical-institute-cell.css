@@ -1096,3 +1096,7 @@
 .zb-tech-cell > .zb-breadcrumbs a { min-height: 2rem; }
 
 .zb-tech-student-path-copy .zb-action-link { margin-top: 1rem; }
+
+.zb-tech-institute-actions { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }
+.zb-tech-institute-actions .zb-action-link[data-variant="text"] { color: #8d0d18; font-weight: 800; }
+@media (max-width: 640px) { .zb-tech-institute-actions { align-items: stretch; flex-direction: column; }.zb-tech-institute-actions .zb-action-link { justify-content: center; } }

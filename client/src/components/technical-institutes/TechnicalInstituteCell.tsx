@@ -165,10 +165,16 @@ export function TechnicalInstituteCell() {
               <li key={benefit}><Check aria-hidden="true" />{benefit}</li>
             ))}
           </ul>
-          <ActionLink href="/iti-polytechnic-cell/apply">
-            Start Institute Onboarding
-            <ArrowUpRight aria-hidden="true" className="size-4" />
-          </ActionLink>
+          <div className="zb-tech-institute-actions">
+            <ActionLink href="/iti-polytechnic-cell/apply">
+              Start Institute Onboarding
+              <ArrowUpRight aria-hidden="true" className="size-4" />
+            </ActionLink>
+            <ActionLink href="/technical-institute-login" variant="text">
+              Approved Partner Login
+              <ArrowUpRight aria-hidden="true" className="size-4" />
+            </ActionLink>
+          </div>
         </div>
         <div className="zb-tech-talent-card">
           <div className="zb-tech-talent-card-head">

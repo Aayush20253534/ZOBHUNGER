@@ -61,6 +61,17 @@ export async function loginPlacementCellUser(input: LoginInput) {
   return safeUser(updated);
 }
 
+
+export async function loginTechnicalInstituteUser(input: LoginInput) {
+  const user = await findUserByEmail(input.email);
+  const validPassword = await verifyPasswordOrDummy(user?.passwordHash, input.password);
+  if (!user || !validPassword) throw new HttpError(401, "Invalid email or password", { code: "INVALID_CREDENTIALS" });
+  if (user.role !== "TECHNICAL_INSTITUTE") throw new HttpError(403, "This login is reserved for approved ITI & Polytechnic institute partners", { code: "TECHNICAL_INSTITUTE_LOGIN_REQUIRED" });
+  if (!user.isActive) throw new HttpError(403, "Activate your approved technical institute account before signing in", { code: "TECHNICAL_INSTITUTE_ACCOUNT_INACTIVE" });
+  const updated = await markLogin(user.id, user.sessionVersion);
+  return safeUser(updated);
+}
+
 export async function loginBusinessUser(input: BusinessLoginInput) {
   const user = input.identifier.includes("@")
     ? await findUserByEmail(input.identifier.toLowerCase())

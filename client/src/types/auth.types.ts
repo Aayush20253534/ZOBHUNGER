@@ -1,4 +1,4 @@
-export type UserRole = "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL";
+export type UserRole = "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL" | "TECHNICAL_INSTITUTE";
 
 export type AdminDepartment = "MAIN_ADMIN" | "HR" | "PF_EPFO" | "ESIC" | "ACCOUNTS" | "TECHNICAL" | "PLACEMENT_CELL" | "LEGAL";
 

@@ -1,10 +1,14 @@
+import { createHash, randomBytes } from "node:crypto";
 import { PlacementCellApplicationStatus } from "../../generated/prisma/client.js";
+import { env } from "../../config/env.js";
+import { hashPassword } from "../../utils/password.js";
 import { HttpError } from "../../utils/http-error.js";
-import { notifyTechnicalInstituteReview } from "../../services/notification.service.js";
+import { notifyTechnicalInstitutePortalAccess, notifyTechnicalInstituteReview } from "../../services/notification.service.js";
 import {
   createTechnicalInstituteApplication,
   findTechnicalInstituteApplicationForAdmin,
   listTechnicalInstituteApplicationsForAdmin,
+  provisionTechnicalInstitutePortalAccessWithAudit,
   reviewTechnicalInstituteApplicationWithAudit,
   technicalInstituteAdminSummary,
 } from "./technical-institutes.repository.js";
@@ -60,6 +64,23 @@ function partnershipCode(application: { id: string; institutionType: string; sta
   return `${institutePrefix(application.institutionType)}-${stateCode(application.state)}-${new Date().getFullYear()}-${suffix}`;
 }
 
+function portalProvisioning() {
+  const rawActivationToken = randomBytes(32).toString("hex");
+  return {
+    rawActivationToken,
+    provisioning: {
+      passwordHashPromise: hashPassword(randomBytes(48).toString("base64url")),
+      activationTokenHash: createHash("sha256").update(rawActivationToken).digest("hex"),
+      activationExpiresAt: new Date(Date.now() + 72 * 60 * 60 * 1000),
+    },
+  };
+}
+
+function portalUrl(path: string) {
+  const origin = (env.PUBLIC_APP_URL ?? env.CLIENT_ORIGIN.split(",")[0].trim()).replace(/\/$/, "");
+  return `${origin}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
 export async function reviewTechnicalInstituteApplication(
   id: string,
   input: ReviewTechnicalInstituteApplicationInput,
@@ -71,11 +92,24 @@ export async function reviewTechnicalInstituteApplication(
     ? partnershipCode(current)
     : undefined;
 
+  let rawActivationToken: string | undefined;
+  let provisioning: { passwordHash: string; activationTokenHash: string; activationExpiresAt: Date } | undefined;
+  if (status === PlacementCellApplicationStatus.APPROVED && !current.provisionedUserId) {
+    const generated = portalProvisioning();
+    rawActivationToken = generated.rawActivationToken;
+    provisioning = {
+      passwordHash: await generated.provisioning.passwordHashPromise,
+      activationTokenHash: generated.provisioning.activationTokenHash,
+      activationExpiresAt: generated.provisioning.activationExpiresAt,
+    };
+  }
+
   const result = await reviewTechnicalInstituteApplicationWithAudit({
     id,
     status,
     reviewNotes: input.reviewNotes,
     partnershipCode: code,
+    provisioning,
     ...context,
   });
 
@@ -89,8 +123,27 @@ export async function reviewTechnicalInstituteApplication(
       code: "TECHNICAL_INSTITUTE_ALREADY_APPROVED",
     });
   }
+  if (result.kind === "email-conflict") {
+    throw new HttpError(409, "The institute email is already attached to a different ZOBHUNGER account type", {
+      code: "TECHNICAL_INSTITUTE_EMAIL_CONFLICT",
+    });
+  }
 
-  if (result.kind === "updated" && current.status !== result.entity.status) {
+  if (result.kind === "updated" && status === PlacementCellApplicationStatus.APPROVED && result.portalAccess) {
+    const activationUrl = result.portalAccess === "ACTIVATION" && rawActivationToken
+      ? portalUrl(`/technical-institute-login#activation=${encodeURIComponent(rawActivationToken)}`)
+      : undefined;
+    void notifyTechnicalInstitutePortalAccess({
+      id: result.entity.id,
+      institutionName: result.entity.institutionName,
+      contactPersonName: result.entity.contactPersonName,
+      officialEmail: result.entity.officialEmail,
+      partnershipCode: result.entity.partnershipCode,
+      activationUrl,
+      existingAccount: result.portalAccess === "EXISTING_ACTIVE",
+      updatedAt: result.entity.updatedAt,
+    });
+  } else if (result.kind === "updated" && current.status !== result.entity.status) {
     void notifyTechnicalInstituteReview({
       id: result.entity.id,
       institutionName: result.entity.institutionName,
@@ -102,5 +155,41 @@ export async function reviewTechnicalInstituteApplication(
     });
   }
 
-  return { entity: result.entity, changed: result.kind === "updated" };
+  const safeEntity = await getTechnicalInstituteForAdmin(id);
+  return { entity: safeEntity, changed: result.kind === "updated", portalAccess: result.portalAccess ?? null };
+}
+
+export async function issueTechnicalInstitutePortalAccess(
+  id: string,
+  context: { actorUserId: string; ipAddress?: string; userAgent?: string },
+) {
+  const generated = portalProvisioning();
+  const result = await provisionTechnicalInstitutePortalAccessWithAudit({
+    id,
+    provisioning: {
+      passwordHash: await generated.provisioning.passwordHashPromise,
+      activationTokenHash: generated.provisioning.activationTokenHash,
+      activationExpiresAt: generated.provisioning.activationExpiresAt,
+    },
+    ...context,
+  });
+  if (result.kind === "not-found") throw new HttpError(404, "Technical institute partnership request not found", { code: "TECHNICAL_INSTITUTE_NOT_FOUND" });
+  if (result.kind === "approval-required") throw new HttpError(409, "Approve the institute before issuing portal access", { code: "TECHNICAL_INSTITUTE_APPROVAL_REQUIRED" });
+  if (result.kind === "email-conflict") throw new HttpError(409, "The institute email is already attached to a different ZOBHUNGER account type", { code: "TECHNICAL_INSTITUTE_EMAIL_CONFLICT" });
+
+  const activationUrl = result.portalAccess === "ACTIVATION"
+    ? portalUrl(`/technical-institute-login#activation=${encodeURIComponent(generated.rawActivationToken)}`)
+    : undefined;
+  await notifyTechnicalInstitutePortalAccess({
+    id: result.entity.id,
+    institutionName: result.entity.institutionName,
+    contactPersonName: result.entity.contactPersonName,
+    officialEmail: result.entity.officialEmail,
+    partnershipCode: result.entity.partnershipCode,
+    activationUrl,
+    existingAccount: result.portalAccess === "EXISTING_ACTIVE",
+    updatedAt: result.entity.updatedAt,
+  });
+  const safeEntity = await getTechnicalInstituteForAdmin(id);
+  return { entity: safeEntity, portalAccess: result.portalAccess };
 }

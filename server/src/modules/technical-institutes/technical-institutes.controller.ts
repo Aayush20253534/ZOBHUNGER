@@ -10,6 +10,7 @@ import type {
 import {
   getTechnicalInstituteAdminSummary,
   getTechnicalInstituteForAdmin,
+  issueTechnicalInstitutePortalAccess,
   listTechnicalInstitutesForAdmin,
   reviewTechnicalInstituteApplication,
   submitTechnicalInstituteApplication,
@@ -65,5 +66,16 @@ export const reviewTechnicalInstituteAdminController: RequestHandler = async (re
   res.status(200).json(apiSuccessResponse(
     result.changed ? "Technical institute partnership review updated" : "Technical institute partnership review unchanged",
     result.entity,
+  ));
+};
+
+export const issueTechnicalInstitutePortalAccessAdminController: RequestHandler = async (req, res) => {
+  const { id } = res.locals.validated.params as TechnicalInstituteAdminParams;
+  const data = await issueTechnicalInstitutePortalAccess(id, auditContext(req, res));
+  res.status(200).json(apiSuccessResponse(
+    data.portalAccess === "ACTIVATION"
+      ? "Technical institute activation email sent"
+      : "Technical institute portal access confirmed",
+    data,
   ));
 };

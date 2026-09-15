@@ -85,7 +85,7 @@ export async function getTechnicalStudentSummaryForAdmin(instituteId: string) {
 export async function addTechnicalStudentForAdmin(
   instituteId: string,
   input: TechnicalStudentCoreInput,
-  context: { actorUserId: string; ipAddress?: string; userAgent?: string },
+  context: { actorUserId: string; ipAddress?: string; userAgent?: string; source?: "ADMIN_ENTRY" | "INSTITUTE_PORTAL" },
 ) {
   await approvedInstitute(instituteId);
   try {

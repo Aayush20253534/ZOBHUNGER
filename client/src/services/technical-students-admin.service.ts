@@ -1,7 +1,7 @@
 import { apiFetch, type ApiSuccessEnvelope } from "@/lib/api";
 
 export type TechnicalStudentStatus = "PENDING" | "VERIFIED" | "INACTIVE";
-export type TechnicalStudentSource = "SELF_REGISTRATION" | "ADMIN_ENTRY" | "BULK_IMPORT";
+export type TechnicalStudentSource = "SELF_REGISTRATION" | "ADMIN_ENTRY" | "INSTITUTE_PORTAL" | "BULK_IMPORT";
 
 export interface TechnicalStudentRecord {
   id: string;

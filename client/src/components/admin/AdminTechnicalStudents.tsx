@@ -113,6 +113,7 @@ function statusLabel(status: TechnicalStudentStatus) {
 
 function sourceLabel(source: TechnicalStudentRecord["source"]) {
   if (source === "SELF_REGISTRATION") return "Student registration";
+  if (source === "INSTITUTE_PORTAL") return "Institute portal";
   if (source === "BULK_IMPORT") return "Bulk import";
   return "Admin entry";
 }

@@ -52,6 +52,7 @@ const partnershipLinks = [
   { label: "Vendor empanelment", href: "/vendor-empanelment" },
   { label: "Independent business partner", href: "/become-a-partner" },
   { label: "ITI & Polytechnic College Cell", href: "/iti-polytechnic-cell" },
+  { label: "Technical institute partner login", href: "/technical-institute-login" },
   { label: "Technical student registration", href: "/iti-polytechnic-cell/student-registration" },
   { label: "Placement cell & institution partnership", href: "/placement-cell-partnership" },
   { label: "Institution partner login", href: "/placement-cell-login" },

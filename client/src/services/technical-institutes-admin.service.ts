@@ -32,6 +32,8 @@ export interface TechnicalInstituteAdminRecord {
   reviewedAt?: string | null;
   approvedAt?: string | null;
   rejectedAt?: string | null;
+  provisionedUserId?: string | null;
+  activationExpiresAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -101,5 +103,12 @@ export function reviewTechnicalInstituteAdmin(
   return apiFetch<ApiSuccessEnvelope<TechnicalInstituteAdminRecord>>(
     `/admin/technical-institutes/${encodeURIComponent(id)}/review`,
     { method: "PATCH", body: JSON.stringify(input) },
+  );
+}
+
+export function issueTechnicalInstitutePortalAccess(id: string) {
+  return apiFetch<ApiSuccessEnvelope<{ entity: TechnicalInstituteAdminRecord; portalAccess: "ACTIVATION" | "EXISTING_ACTIVE" }>>(
+    `/admin/technical-institutes/${encodeURIComponent(id)}/portal-access`,
+    { method: "POST" },
   );
 }

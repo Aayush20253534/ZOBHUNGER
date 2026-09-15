@@ -995,3 +995,40 @@ export function notifyTechnicalOpportunityApplication(
     note: `Technical profile: ${application.student.tradeBranch} · ${application.student.passingYear} batch`,
   });
 }
+
+export function notifyTechnicalInstitutePortalAccess(input: {
+  id: string;
+  institutionName: string;
+  contactPersonName: string;
+  officialEmail: string;
+  partnershipCode?: string | null;
+  activationUrl?: string;
+  existingAccount?: boolean;
+  updatedAt?: Date;
+}) {
+  const activation = Boolean(input.activationUrl);
+  return sendReceipt({
+    to: input.officialEmail,
+    idempotencyKey: `technical-institute-${input.id}-portal-${activation ? "activation" : "login"}-${input.updatedAt?.getTime() ?? Date.now()}`,
+    subject: "ITI & Polytechnic College Cell portal access | ZOBHUNGER",
+    eyebrow: "ITI & Polytechnic College Cell",
+    title: activation ? "Activate your technical institute workspace" : "Your technical institute workspace is ready",
+    intro: `Hello ${input.contactPersonName}, secure portal access is ready for ${input.institutionName}.`,
+    referenceId: input.id,
+    details: [
+      ...(input.partnershipCode ? [{ label: "Partnership code", value: input.partnershipCode }] : []),
+      { label: "Portal", value: "ITI & Polytechnic College Cell" },
+      ...(activation ? [{ label: "Activation validity", value: "72 hours" }] : []),
+    ],
+    paragraphs: [activation
+      ? "Use the secure one-time link below to create the password for your institute workspace. After activation, the authorized institute representative can manage the technical student roster, view matching opportunities, track applications and download placement reports."
+      : "Your existing approved institution account has been connected to the technical institute workspace. Sign in with the same official email and password to manage students, opportunities, applications and reports."],
+    action: {
+      label: activation ? "Activate technical institute access" : "Open technical institute login",
+      url: input.activationUrl ?? publicApp("/technical-institute-login"),
+    },
+    note: activation
+      ? "Do not forward this activation link. It is time-limited and can be used only once."
+      : "Portal access is restricted to the approved institute representative account.",
+  });
+}

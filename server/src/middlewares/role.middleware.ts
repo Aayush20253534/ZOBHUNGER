@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import { HttpError } from "../utils/http-error.js";
 
-type Role = "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL";
+type Role = "ADMIN" | "BUSINESS" | "WORKER" | "PLACEMENT_CELL" | "TECHNICAL_INSTITUTE";
 export function requireRole(...roles: Role[]): RequestHandler {
   return (_req, res, next) => {
     const user = res.locals.authUser as { role?: Role } | undefined;
