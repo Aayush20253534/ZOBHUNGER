@@ -3,6 +3,7 @@ import { hashPassword, verifyPassword, verifyPasswordOrDummy } from "../../utils
 import type { BusinessLoginInput, LoginInput, RegisterInput } from "./auth.schema.js";
 import { findUserByEmail, findUserById, findUserByPartnerCode, markLogin } from "./auth.repository.js";
 import { prisma } from "../../config/db.js";
+import { env } from "../../config/env.js";
 import { verifyAdminMfaForLogin } from "./admin-mfa.service.js";
 import type { AdminDepartment, AdminPermission } from "../../generated/prisma/client.js";
 
@@ -13,6 +14,8 @@ export function safeUser(user: { id: string; email: string; phone: string | null
     sessionVersion: user.sessionVersion, partnerCode: user.partnerCode ?? null,
     businessAccessApproved: user.businessAccessApproved ?? false, mustChangePassword: user.mustChangePassword ?? false,
     temporaryPasswordExpiresAt: user.temporaryPasswordExpiresAt ?? null, adminMfaEnabled: Boolean(user.adminMfaEnabledAt),
+    adminMfaRequired: user.role === "ADMIN" && env.NODE_ENV === "production",
+    adminMfaEnrollmentRequired: user.role === "ADMIN" && env.NODE_ENV === "production" && !user.adminMfaEnabledAt,
     adminDepartment: user.adminDepartment ?? null, adminPermissions: user.adminPermissions ?? [],
   };
 }

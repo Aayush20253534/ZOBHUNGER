@@ -6,6 +6,7 @@ const actions = {
   sender: "Verify MAIL_FROM_EMAIL or its domain in the Resend dashboard before sending production email.",
   permission: "Check the Resend API-key permissions and account sending restrictions.",
   rate_limit: "Check Resend sending limits and retry after the provider rate-limit window.",
+  budget: "The configured daily email safety limit has been reached.",
   provider: "Resend is temporarily unavailable; try again after service is restored.",
   timeout: "Resend did not answer within the configured timeout; check outbound HTTPS connectivity.",
   network: "Check DNS and outbound HTTPS access to api.resend.com.",

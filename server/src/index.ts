@@ -4,6 +4,7 @@ import { env } from "./config/env.js";
 import { startRedis, stopRedis } from "./config/redis.js";
 import { logger } from "./utils/logger.js";
 import { chatbotOperationalStatus, getChatbotService } from "./modules/chatbot/chatbot.runtime.js";
+import { captureOperationalError } from "./observability/error-monitor.js";
 
 const SHUTDOWN_GRACE_MS = 12_000;
 
@@ -57,15 +58,18 @@ async function startServer(): Promise<void> {
 
 process.on("uncaughtException", (error) => {
   logger.error("process.uncaught_exception", error);
-  process.exit(1);
+  void captureOperationalError({ source: "process.uncaught_exception", error })
+    .finally(() => process.exit(1));
 });
 
 process.on("unhandledRejection", (reason) => {
   logger.error("process.unhandled_rejection", reason);
+  void captureOperationalError({ source: "process.unhandled_rejection", error: reason });
 });
 
 startServer().catch(async (error) => {
   logger.error("server.start.failed", error);
+  await captureOperationalError({ source: "server.start_failed", error });
   stopRedis();
   await disconnectDatabase().catch(() => undefined);
   process.exit(1);

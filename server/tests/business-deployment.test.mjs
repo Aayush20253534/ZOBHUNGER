@@ -15,7 +15,7 @@ async function withApi(override, run) {
     const protectedRoute = (path.startsWith("/business/") || path.startsWith("/admin/"));
     const status = custom?.status ?? (path === "/health" ? 200 : protectedRoute ? 401 : 400);
     const body = custom?.body ?? (path === "/health"
-      ? { success: true, data: { features: { businessPortal: true, businessDashboard: true, businessRequirements: true, businessCandidates: true, businessDeployments: true, businessAttendance: true, businessPhase2Complete: true } } }
+      ? { success: true, data: { status: "ok", service: "zobhunger-api" } }
       : { success: false, error: { code: protectedRoute ? "UNAUTHENTICATED" : "VALIDATION_ERROR" } });
     res.writeHead(status, { "Content-Type": "application/json" });
     res.end(JSON.stringify(body));
@@ -34,9 +34,9 @@ test("deployment check probes real route methods without login data or cookies",
     assert.ok(seen.filter(request => request.method !== "GET").every(request => request.body === "{}"));
   });
 });
-test("a healthy old API is rejected when it lacks the business deployment marker", async () => {
-  await withApi(path => path === "/health" ? { body: { success: true, data: { status: "ok" } } } : undefined,
-    base => assert.rejects(checkBusinessRoutes(base), /latest backend commit/));
+test("a non-ZOBHUNGER health endpoint is rejected", async () => {
+  await withApi(path => path === "/health" ? { body: { success: true, data: { status: "ok", service: "wrong-api" } } } : undefined,
+    base => assert.rejects(checkBusinessRoutes(base), /expected healthy ZOBHUNGER API/));
 });
 for (const missing of ["/business/requirement-drafts","/business/requirements/deployment-check/jobs","/business/attendance-approvals","/business/reports","/business/reports/export","/business/reports/print","/business/operations-summary","/admin/requirement-jobs","/admin/attendance-approvals","/admin/reports","/business/deployments", "/business/deployments/progress", "/business/deployments/assignments/deployment-check"]) {
   test(`deployment check rejects missing roster route ${missing}`, async () => {

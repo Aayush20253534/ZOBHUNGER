@@ -101,7 +101,7 @@ export async function technicalInstitutePortalOpportunityData(
 ) {
   const where = opportunityWhere(query);
   const skip = (query.page - 1) * query.pageSize;
-  const [items, total, students] = await prisma.$transaction([
+  const [items, total] = await prisma.$transaction([
     prisma.technicalOpportunity.findMany({
       where,
       orderBy: [{ applicationDeadline: "asc" }, { createdAt: "desc" }],
@@ -132,38 +132,16 @@ export async function technicalInstitutePortalOpportunityData(
       },
     }),
     prisma.technicalOpportunity.count({ where }),
-    prisma.technicalStudent.findMany({
-      where: {
-        technicalInstituteApplicationId: instituteId,
-        status: TechnicalStudentStatus.VERIFIED,
-        institute: { status: PlacementCellApplicationStatus.APPROVED },
-      },
-      orderBy: [{ fullName: "asc" }, { id: "asc" }],
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
-        mobileNumber: true,
-        qualification: true,
-        tradeBranch: true,
-        passingYear: true,
-        skills: true,
-        certifications: true,
-        currentCity: true,
-        currentState: true,
-        preferredLocations: true,
-        preferredOpportunityTypes: true,
-      },
-    }),
   ]);
   const opportunityIds = items.map((item) => item.id);
-  const applications = opportunityIds.length
-    ? await prisma.technicalOpportunityApplication.findMany({
+  const applicationCounts = opportunityIds.length
+    ? await prisma.technicalOpportunityApplication.groupBy({
+        by: ["opportunityId"],
         where: { opportunityId: { in: opportunityIds }, student: { technicalInstituteApplicationId: instituteId } },
-        select: { id: true, opportunityId: true, studentId: true, status: true, matchScore: true, createdAt: true },
+        _count: { _all: true },
       })
     : [];
-  return { items, total, students, applications };
+  return { items, total, applicationCounts };
 }
 
 export async function listTechnicalInstitutePortalApplications(
@@ -238,10 +216,47 @@ export function findPortalTechnicalStudent(instituteId: string, studentId: strin
   });
 }
 
-export function technicalInstitutePortalReportRows(instituteId: string) {
+export async function technicalInstitutePortalReportSummary(instituteId: string) {
+  const applicationWhere: Prisma.TechnicalOpportunityApplicationWhereInput = {
+    student: { technicalInstituteApplicationId: instituteId },
+  };
+  const [statusGroups, typeRows, employerRows] = await Promise.all([
+    prisma.technicalOpportunityApplication.groupBy({
+      by: ["status"],
+      where: applicationWhere,
+      _count: { _all: true },
+    }),
+    prisma.$queryRaw<Array<{ opportunityType: string; count: bigint }>>(Prisma.sql`
+      SELECT o."opportunityType"::text AS "opportunityType", COUNT(*)::bigint AS "count"
+      FROM "TechnicalOpportunityApplication" a
+      INNER JOIN "TechnicalStudent" s ON s."id" = a."studentId"
+      INNER JOIN "TechnicalOpportunity" o ON o."id" = a."opportunityId"
+      WHERE s."technicalInstituteApplicationId" = ${instituteId}
+      GROUP BY o."opportunityType"
+    `),
+    prisma.$queryRaw<Array<{ employer: string; count: bigint }>>(Prisma.sql`
+      SELECT o."employerName" AS "employer", COUNT(*)::bigint AS "count"
+      FROM "TechnicalOpportunityApplication" a
+      INNER JOIN "TechnicalStudent" s ON s."id" = a."studentId"
+      INNER JOIN "TechnicalOpportunity" o ON o."id" = a."opportunityId"
+      WHERE s."technicalInstituteApplicationId" = ${instituteId}
+      GROUP BY o."employerName"
+      ORDER BY COUNT(*) DESC, o."employerName" ASC
+      LIMIT 6
+    `),
+  ]);
+  return {
+    statusCounts: Object.fromEntries(statusGroups.map((row) => [row.status, row._count._all])),
+    typeCounts: Object.fromEntries(typeRows.map((row) => [row.opportunityType, Number(row.count)])),
+    topEmployers: employerRows.map((row) => ({ employer: row.employer, count: Number(row.count) })),
+  };
+}
+
+export function technicalInstitutePortalReportRows(instituteId: string, take: number) {
   return prisma.technicalOpportunityApplication.findMany({
     where: { student: { technicalInstituteApplicationId: instituteId } },
     orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
+    take,
     select: {
       id: true,
       status: true,

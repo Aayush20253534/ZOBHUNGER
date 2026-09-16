@@ -66,8 +66,8 @@ export async function checkBusinessRoutes(baseUrl) {
     if (check.code && (body.success !== false || body.error?.code !== check.code)) {
       throw new Error(`${check.path} did not reach the expected authentication or validation handler.`);
     }
-    if (check.path === "/health" && (body.success !== true || body.data?.features?.businessPortal !== true || body.data?.features?.businessDashboard !== true || body.data?.features?.businessRequirements !== true || body.data?.features?.businessCandidates !== true || body.data?.features?.businessDeployments !== true || body.data?.features?.businessAttendance !== true || body.data?.features?.businessPhase2Complete !== true)) {
-      throw new Error("This API does not report complete Phase 2 support. Deploy the latest backend commit and check NEXT_PUBLIC_API_URL.");
+    if (check.path === "/health" && (body.success !== true || body.data?.service !== "zobhunger-api" || body.data?.status !== "ok")) {
+      throw new Error("This endpoint is not the expected healthy ZOBHUNGER API. Deploy the latest backend commit and check NEXT_PUBLIC_API_URL.");
     }
     results.push({ method: check.method, path: check.path, status: response.status });
   }

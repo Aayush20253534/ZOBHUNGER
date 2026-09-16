@@ -91,8 +91,15 @@ function receiptNumber(paymentId: string, paidAt: Date) {
   return `ZBH-INTDOC-${paidAt.getUTCFullYear()}-${suffix}`;
 }
 
-function receiptToken(paymentId: string) {
-  return createHmac("sha256", env.JWT_SECRET).update(`internship-document-receipt:${paymentId}`).digest("hex");
+function receiptSignature(paymentId: string, expiresAtSeconds: number) {
+  return createHmac("sha256", env.JWT_SECRET)
+    .update(`internship-document-receipt:v2:${paymentId}:${expiresAtSeconds}`)
+    .digest("hex");
+}
+
+function receiptToken(paymentId: string, now = Date.now()) {
+  const expiresAtSeconds = Math.floor(now / 1000) + env.PAYMENT_RECEIPT_TOKEN_TTL_SECONDS;
+  return `${expiresAtSeconds}.${receiptSignature(paymentId, expiresAtSeconds)}`;
 }
 
 function checkoutSignature(paymentId: string) {
@@ -120,13 +127,17 @@ function paymentIdFromCheckoutToken(token: string) {
 }
 
 export function internshipDocumentReceiptUrl(paymentId: string) {
-  return publicUrl(`/api/backend/internship-payments/receipts/${encodeURIComponent(paymentId)}?token=${receiptToken(paymentId)}`);
+  return publicUrl(`/api/backend/internship-payments/receipts/${encodeURIComponent(paymentId)}?token=${encodeURIComponent(receiptToken(paymentId))}`);
 }
 
-export function verifyInternshipDocumentReceiptToken(paymentId: string, token: string) {
-  const expected = Buffer.from(receiptToken(paymentId), "hex");
+export function verifyInternshipDocumentReceiptToken(paymentId: string, token: string, now = Date.now()) {
+  const [expiryValue, signature, ...extra] = token.split(".");
+  if (extra.length || !/^\d{10,12}$/.test(expiryValue ?? "") || !/^[a-f0-9]{64}$/i.test(signature ?? "")) return false;
+  const expiresAtSeconds = Number(expiryValue);
+  if (!Number.isSafeInteger(expiresAtSeconds) || expiresAtSeconds <= Math.floor(now / 1000)) return false;
+  const expected = Buffer.from(receiptSignature(paymentId, expiresAtSeconds), "hex");
   let received: Buffer;
-  try { received = Buffer.from(token, "hex"); } catch { return false; }
+  try { received = Buffer.from(signature, "hex"); } catch { return false; }
   return received.length === expected.length && timingSafeEqual(received, expected);
 }
 

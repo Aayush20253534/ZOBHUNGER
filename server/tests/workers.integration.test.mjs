@@ -56,7 +56,7 @@ test("worker access, profiles, private resumes and real job discovery", async t 
       const live = await request("/route"); assert.equal(live.status, 200); assert.equal(live.body.status, "ok"); assert.equal(live.headers.get("cache-control"), "no-store");
       assert.deepEqual(Object.keys(live.body).sort(), ["service", "status", "timestamp", "uptimeSeconds"]);
       const head = await request("/route", { method: "HEAD" }); assert.equal(head.status, 200); assert.equal(head.body, "");
-      const health = await request("/health"); assert.equal(health.body.data.features.workerAccess, true); assert.equal(health.body.data.features.workerProfiles, true); assert.equal(health.body.data.features.workerJobDiscovery, true);
+      const health = await request("/health"); assert.equal(health.body.success, true); assert.equal(health.body.data.status, "ok"); assert.equal(health.body.data.service, "zobhunger-api"); assert.equal("features" in health.body.data, false);
     });
     await t.test("public worker self-registration is closed before any account is created", async () => {
       const workerRegister = await request("/auth/worker/register", { method: "POST", body: registration });

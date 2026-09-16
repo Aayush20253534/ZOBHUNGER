@@ -1,4 +1,4 @@
-import { apiFetch, ApiError, type ApiSuccessEnvelope } from "@/lib/api";
+import { apiFetch, apiRawFetch, ApiError, EXPORT_API_TIMEOUT_MS, type ApiSuccessEnvelope } from "@/lib/api";
 import type { BusinessRequirementInput, BusinessRequirementReceipt } from "@/types/business-requirements.types";
 import type { ApprovalDetail, ApprovalQueue, ApprovalRecord, DraftData, HiringBriefsPage, JobInput, LinkedJob, LinkedJobs, OperationsSummary, Page, ReportData, ReportFilters, ReportType, RequirementDraft } from "@/types/phase2.types";
 const json = (body: unknown, method = "POST") => ({ method, body: JSON.stringify(body), headers: { "X-Requested-With": "XMLHttpRequest" } });
@@ -21,7 +21,7 @@ export const getApproval = (admin: boolean, id: string, page: number, signal?: A
 export const decideApproval = (record: ApprovalRecord, action: "APPROVED" | "CHANGES_REQUESTED", note: string) => apiFetch(`/business/attendance-approvals/${record.id}/decision`, json({ revision: record.revision, approvalRevision: record.approvalRevision, action, note }));
 export const getReport = (admin: boolean, values: ReportFilters & { type: ReportType; page: number }, signal?: AbortSignal, print = false) => phaseGet<ReportData>(`${phaseBase(admin)}/reports${print ? "/print" : ""}?${params(values)}`, signal);
 export async function downloadReport(admin: boolean, values: ReportFilters & { type: ReportType; page: number }, signal?: AbortSignal) {
-  const response = await fetch(`/api/backend${phaseBase(admin)}/reports/export?${params(values)}`, { credentials: "include", cache: "no-store", signal });
+  const response = await apiRawFetch(`${phaseBase(admin)}/reports/export?${params(values)}`, { signal, timeoutMs: EXPORT_API_TIMEOUT_MS });
   if (!response.ok) { const body = await response.json().catch(() => null); throw new ApiError(body?.message || "The export could not be downloaded.", response.status); }
   const url = URL.createObjectURL(await response.blob()); const link = document.createElement("a"); link.href = url; link.download = `zobhunger-${values.type}-${values.from}-${values.to}.csv`;
   document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);

@@ -1,3 +1,7 @@
+import { env } from "../../../config/env.js";
+import { consumeProviderBudget } from "../../../operations/provider-budget.js";
+import { guardedProviderRequest } from "../../../operations/provider-circuit.js";
+
 export interface EmbeddingClientConfig {
   apiKey: string;
   baseUrl: string;
@@ -65,12 +69,15 @@ export function createGeminiEmbeddingClient(config: EmbeddingClientConfig): Embe
   async function embed(inputs: EmbeddingDocumentInput[], purpose: EmbeddingPurpose): Promise<number[][]> {
     if (!inputs.length) return [];
 
+    await consumeProviderBudget("gemini", "requests", 1, env.GEMINI_DAILY_REQUEST_LIMIT);
+    await consumeProviderBudget("gemini", "input_chars", inputs.reduce((sum, input) => sum + input.text.length + (input.title?.length ?? 0), 0), env.GEMINI_DAILY_INPUT_CHAR_LIMIT);
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), config.timeoutMs);
     const embedding2 = isGeminiEmbedding2(model);
 
     try {
-      const response = await fetch(`${cleanBaseUrl(config.baseUrl)}/${modelResource}:batchEmbedContents`, {
+      const response = await guardedProviderRequest("gemini", () => fetch(`${cleanBaseUrl(config.baseUrl)}/${modelResource}:batchEmbedContents`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +105,7 @@ export function createGeminiEmbeddingClient(config: EmbeddingClientConfig): Embe
           }),
         }),
         signal: controller.signal,
-      });
+      }));
 
       if (!response.ok) {
         const text = (await response.text()).slice(0, 500);

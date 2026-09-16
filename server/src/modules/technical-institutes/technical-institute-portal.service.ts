@@ -1,16 +1,20 @@
+import { observeOperation } from "../../observability/operation-metrics.js";
+import { env } from "../../config/env.js";
 import { HttpError } from "../../utils/http-error.js";
 import { notifyTechnicalOpportunityApplication } from "../../services/notification.service.js";
 import { getTechnicalInstitutePortalProfile } from "./technical-institute-access.service.js";
-import { scoreTechnicalStudent, submitTechnicalStudentToOpportunity } from "./technical-opportunities.service.js";
+import { getTechnicalOpportunityMatches, submitTechnicalStudentToOpportunity } from "./technical-opportunities.service.js";
 import {
   technicalInstitutePortalDashboard,
   technicalInstitutePortalOpportunityData,
   listTechnicalInstitutePortalApplications,
   findPortalTechnicalStudent,
   technicalInstitutePortalReportRows,
+  technicalInstitutePortalReportSummary,
 } from "./technical-institute-portal.repository.js";
 import type {
   TechnicalInstitutePortalApplicationQuery,
+  TechnicalInstitutePortalMatchQuery,
   TechnicalInstitutePortalOpportunityQuery,
   TechnicalInstitutePortalSubmitInput,
 } from "./technical-institute-portal.schema.js";
@@ -80,29 +84,36 @@ export async function importTechnicalInstitutePortalStudents(input: {
 
 export async function getTechnicalInstitutePortalOpportunities(userId: string, query: TechnicalInstitutePortalOpportunityQuery) {
   const profile = await getTechnicalInstitutePortalProfile(userId);
-  const { items, total, students, applications } = await technicalInstitutePortalOpportunityData(profile.id, query);
-  const byOpportunity = new Map<string, typeof applications>();
-  for (const application of applications) {
-    const list = byOpportunity.get(application.opportunityId) ?? [];
-    list.push(application);
-    byOpportunity.set(application.opportunityId, list);
-  }
-  const enriched = items.map((opportunity) => {
-    const matches = students.flatMap((student) => {
-      const match = scoreTechnicalStudent(opportunity, student);
-      if (!match || match.score < query.minScore) return [];
-      const application = (byOpportunity.get(opportunity.id) ?? []).find((item) => item.studentId === student.id) ?? null;
-      return [{ student, score: match.score, reasons: match.reasons, application }];
-    }).sort((a, b) => b.score - a.score || a.student.fullName.localeCompare(b.student.fullName));
-    return {
+  const { items, total, applicationCounts } = await technicalInstitutePortalOpportunityData(profile.id, query);
+  const submittedByOpportunity = new Map(applicationCounts.map((row) => [row.opportunityId, row._count._all]));
+  return {
+    items: items.map((opportunity) => ({
       ...opportunity,
-      eligibleCount: matches.length,
-      submittedCount: matches.filter((item) => item.application).length,
-      bestMatchScore: matches[0]?.score ?? null,
-      matches: matches.slice(0, 30),
-    };
+      submittedCount: submittedByOpportunity.get(opportunity.id) ?? 0,
+    })),
+    total,
+    page: query.page,
+    pageSize: query.pageSize,
+    totalPages: Math.max(1, Math.ceil(total / query.pageSize)),
+  };
+}
+
+export async function getTechnicalInstitutePortalOpportunityMatches(
+  userId: string,
+  opportunityId: string,
+  query: TechnicalInstitutePortalMatchQuery,
+) {
+  const profile = await getTechnicalInstitutePortalProfile(userId);
+  const result = await getTechnicalOpportunityMatches(opportunityId, {
+    ...query,
+    instituteId: profile.id,
   });
-  return { items: enriched, total, page: query.page, pageSize: query.pageSize, totalPages: Math.max(1, Math.ceil(total / query.pageSize)) };
+  return {
+    matches: result.matches,
+    totalMatches: result.totalMatches,
+    scannedCandidates: result.scannedCandidates,
+    candidatePoolTruncated: result.candidatePoolTruncated,
+  };
 }
 
 export async function submitTechnicalInstitutePortalCandidate(
@@ -133,26 +144,20 @@ export async function getTechnicalInstitutePortalApplications(userId: string, qu
 
 export async function getTechnicalInstitutePortalReports(userId: string) {
   const profile = await getTechnicalInstitutePortalProfile(userId);
-  const [dashboard, rows] = await Promise.all([
+  const [dashboard, summary] = await Promise.all([
     technicalInstitutePortalDashboard(profile.id),
-    technicalInstitutePortalReportRows(profile.id),
+    technicalInstitutePortalReportSummary(profile.id),
   ]);
-  const statusCounts: Record<string, number> = {};
-  const typeCounts: Record<string, number> = {};
-  const employerCounts: Record<string, number> = {};
-  for (const row of rows) {
-    statusCounts[row.status] = (statusCounts[row.status] ?? 0) + 1;
-    typeCounts[row.opportunity.opportunityType] = (typeCounts[row.opportunity.opportunityType] ?? 0) + 1;
-    employerCounts[row.opportunity.employerName] = (employerCounts[row.opportunity.employerName] ?? 0) + 1;
-  }
-  const conversionRate = rows.length ? Math.round((dashboard.applications.joined / rows.length) * 1000) / 10 : 0;
+  const conversionRate = dashboard.applications.total
+    ? Math.round((dashboard.applications.joined / dashboard.applications.total) * 1000) / 10
+    : 0;
   return {
     profile: { institutionName: profile.institutionName, partnershipCode: profile.partnershipCode },
     dashboard,
-    statusCounts,
-    typeCounts,
+    statusCounts: summary.statusCounts,
+    typeCounts: summary.typeCounts,
     conversionRate,
-    topEmployers: Object.entries(employerCounts).map(([employer, count]) => ({ employer, count })).sort((a, b) => b.count - a.count).slice(0, 6),
+    topEmployers: summary.topEmployers,
   };
 }
 
@@ -163,7 +168,10 @@ function csvCell(value: unknown) {
 
 export async function exportTechnicalInstitutePortalReport(userId: string) {
   const profile = await getTechnicalInstitutePortalProfile(userId);
-  const rows = await technicalInstitutePortalReportRows(profile.id);
+  const rows = await observeOperation("technical.report_export_rows", () => technicalInstitutePortalReportRows(profile.id, env.TECHNICAL_REPORT_EXPORT_MAX_ROWS + 1));
+  if (rows.length > env.TECHNICAL_REPORT_EXPORT_MAX_ROWS) {
+    throw new HttpError(413, `This report exceeds the ${env.TECHNICAL_REPORT_EXPORT_MAX_ROWS.toLocaleString("en-IN")} row export safety limit. Narrow the dataset before exporting.`, { code: "TECHNICAL_REPORT_EXPORT_TOO_LARGE" });
+  }
   const header = ["Student", "Email", "Mobile", "Qualification", "Trade / Branch", "Passing Year", "Opportunity", "Employer", "Type", "Location", "Compensation", "Match Score", "Status", "Submitted", "Updated", "Joined"];
   const body = rows.map((row) => [
     row.student.fullName,

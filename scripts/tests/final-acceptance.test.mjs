@@ -29,16 +29,12 @@ function fakeFetcher(overrides = {}) {
     });
     if (parsed.pathname === "/api/backend/health") return Response.json({
       success: true,
-      data: {
-        service: "zobhunger-api",
-        publicAppOrigin: canonical,
-        features: { productionDeployment: true, chatbot: true },
-      },
+      data: { status: "ok", service: "zobhunger-api", revision },
     });
     if (parsed.pathname === "/api/backend/health/ready") return Response.json({
       status: "ready",
       service: "zobhunger-api",
-      checks: { database: true, privateFileStorage: true, email: true, publicApp: true, cache: "ready" },
+      revision,
     });
     if (parsed.pathname.startsWith("/api/backend/")) {
       return Response.json({ success: false, error: { code: "UNAUTHENTICATED" } }, { status: 401 });
@@ -71,25 +67,21 @@ test("final acceptance composes production, SEO, readiness, portal, form, asset 
   assert.equal(report.automated.productionDeployment, true);
   assert.equal(report.automated.seoIndexing, true);
   assert.equal(report.automated.backendReadiness, true);
-  assert.equal(report.automated.redisReady, true);
+  assert.equal(report.automated.redisReady, null);
   assert.equal(report.automated.publicForms.length, PUBLIC_FORM_ROUTES.length);
   assert.equal(report.automated.protectedApis.length, PROTECTED_API_ROUTES.length);
   assert.equal(report.automated.noIndexEntries.length, NOINDEX_ENTRY_ROUTES.length);
   assert.ok(report.manualAcceptanceRequired.length >= 8);
 });
 
-test("final acceptance fails closed when Redis is falling back instead of ready", async () => {
+test("final acceptance fails closed when the minimal readiness endpoint is not ready", async () => {
   await assert.rejects(checkFinalAcceptance(canonical, {
     fetcher: fakeFetcher({
-      "/api/backend/health/ready": () => Response.json({
-        status: "ready",
-        service: "zobhunger-api",
-        checks: { database: true, privateFileStorage: true, email: true, publicApp: true, cache: "postgresql_fallback" },
-      }),
+      "/api/backend/health/ready": () => Response.json({ status: "not_ready", service: "zobhunger-api" }, { status: 503 }),
     }),
     productionCheck,
     seoCheck,
-  }), /Redis\/cache readiness/);
+  }), /Backend readiness endpoint returned 503/);
 });
 
 test("final acceptance rejects indexable private and submission entry routes", async () => {

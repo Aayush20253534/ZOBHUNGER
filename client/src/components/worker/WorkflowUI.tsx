@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, Check, Clock3, Download, RefreshCw, Search } from "lucide-react";
-import { ApiError, apiFetch, type ApiSuccessEnvelope } from "@/lib/api";
+import { ApiError, apiFetch, apiRawFetch, EXPORT_API_TIMEOUT_MS, type ApiSuccessEnvelope } from "@/lib/api";
 import { WorkerAlert, WorkerLoading, workerError } from "./WorkerUI";
 
 export const workflowGet = async <T,>(path: string, signal?: AbortSignal) => (await apiFetch<ApiSuccessEnvelope<T>>(path, { signal })).data;
@@ -31,7 +31,7 @@ export function WorkflowFilters({ statuses, status, setStatus, onSearch, reload 
 }
 export function PrivateResume({ path, name = "submitted-resume.pdf", className = "zw-button zw-button--secondary" }: { path: string; name?: string; className?: string }) {
   const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const lock = useRef(false);
-  async function download() { if (lock.current) return; lock.current = true; setBusy(true); setError(""); try { const response = await fetch(`/api/backend${path}`, { credentials: "include", cache: "no-store" }); if (!response.ok) throw new ApiError("Your CV download is unavailable. Refresh the page or sign in again.", response.status); const url = URL.createObjectURL(await response.blob()); const anchor = document.createElement("a"); anchor.href = url; anchor.download = name; anchor.click(); window.setTimeout(() => URL.revokeObjectURL(url), 10_000); } catch (caught) { setError(workerError(caught)); } finally { lock.current = false; setBusy(false); } }
+  async function download() { if (lock.current) return; lock.current = true; setBusy(true); setError(""); try { const response = await apiRawFetch(path, { timeoutMs: EXPORT_API_TIMEOUT_MS }); if (!response.ok) throw new ApiError("Your CV download is unavailable. Refresh the page or sign in again.", response.status); const url = URL.createObjectURL(await response.blob()); const anchor = document.createElement("a"); anchor.href = url; anchor.download = name; anchor.click(); window.setTimeout(() => URL.revokeObjectURL(url), 10_000); } catch (caught) { setError(workerError(caught)); } finally { lock.current = false; setBusy(false); } }
   return <div><button type="button" className={className} onClick={download} disabled={busy}><Download aria-hidden="true" />{busy ? "Downloading…" : "Download submitted CV"}</button><WorkerAlert message={error} /></div>;
 }
 export function WorkflowBack({ href, children }: { href: string; children: ReactNode }) { return <Link className="zw-back" href={href}><ArrowLeft aria-hidden="true" />{children}</Link>; }

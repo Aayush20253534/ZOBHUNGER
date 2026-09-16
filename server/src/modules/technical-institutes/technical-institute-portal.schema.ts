@@ -6,7 +6,6 @@ export const technicalInstitutePortalOpportunityQuerySchema = z.object({
   pageSize: z.coerce.number().int().min(1).max(50).default(20),
   search: z.string().trim().max(160).optional(),
   opportunityType: z.enum(technicalOpportunityTypeValues).optional(),
-  minScore: z.coerce.number().int().min(0).max(100).default(55),
 });
 
 export const technicalInstitutePortalApplicationQuerySchema = z.object({
@@ -15,6 +14,13 @@ export const technicalInstitutePortalApplicationQuerySchema = z.object({
   search: z.string().trim().max(160).optional(),
   status: z.enum(technicalOpportunityApplicationStatusValues).optional(),
   opportunityType: z.enum(technicalOpportunityTypeValues).optional(),
+});
+
+
+export const technicalInstitutePortalMatchQuerySchema = z.object({
+  search: z.string().trim().max(140).optional(),
+  minScore: z.coerce.number().int().min(0).max(100).default(55),
+  limit: z.coerce.number().int().min(1).max(100).default(30),
 });
 
 export const technicalInstitutePortalOpportunityParamsSchema = z.object({
@@ -31,5 +37,6 @@ export const technicalInstitutePortalSubmitSchema = z.object({
 });
 
 export type TechnicalInstitutePortalOpportunityQuery = z.infer<typeof technicalInstitutePortalOpportunityQuerySchema>;
+export type TechnicalInstitutePortalMatchQuery = z.infer<typeof technicalInstitutePortalMatchQuerySchema>;
 export type TechnicalInstitutePortalApplicationQuery = z.infer<typeof technicalInstitutePortalApplicationQuerySchema>;
 export type TechnicalInstitutePortalSubmitInput = z.infer<typeof technicalInstitutePortalSubmitSchema>;

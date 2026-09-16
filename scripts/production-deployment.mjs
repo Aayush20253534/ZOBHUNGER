@@ -76,8 +76,9 @@ export async function checkProductionDeployment(origin, {
   const apiResponse = await get(fetcher, `${canonical}/api/backend/health`, { accept: "application/json" });
   if (apiResponse.status !== 200) throw new Error("Frontend API proxy health endpoint is unavailable.");
   const api = await apiResponse.json();
-  if (api.data?.features?.productionDeployment !== true) throw new Error("Backend is missing the Phase 8 production deployment marker.");
-  if (api.data?.publicAppOrigin !== canonical) throw new Error(`Backend PUBLIC_APP_URL resolves to ${api.data?.publicAppOrigin ?? "unset"}; expected ${canonical}.`);
+  if (api?.success !== true || api.data?.service !== "zobhunger-api" || api.data?.status !== "ok") {
+    throw new Error("Frontend API proxy did not return the minimal ZOBHUNGER health envelope.");
+  }
 
   const aliasResponse = await get(fetcher, `${alias}/`, { redirect: "manual" });
   if (![301, 308].includes(aliasResponse.status)) {
@@ -92,7 +93,7 @@ export async function checkProductionDeployment(origin, {
 
   return {
     status: "passed",
-    scope: "Canonical HTTPS, alias redirect, security headers, private-route cache/index guards, frontend/backend origin alignment and release checks",
+    scope: "Canonical HTTPS, alias redirect, security headers, private-route cache/index guards, frontend canonical alignment, minimal backend health and release checks",
     canonicalOrigin: canonical,
     aliasOrigin: alias,
     checkedAt: new Date().toISOString(),

@@ -1,6 +1,7 @@
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { prisma } from "../../config/db.js";
 import { env } from "../../config/env.js";
+import { observeOperation } from "../../observability/operation-metrics.js";
 import { ComplianceArea, ComplianceDocumentKind, ComplianceStatus, type Prisma } from "../../generated/prisma/client.js";
 import { deletePrivateFile, downloadPrivateFile, uploadPrivateFile } from "../../services/private-file-storage.js";
 import { HttpError } from "../../utils/http-error.js";
@@ -662,6 +663,17 @@ function documentNames(joining: { documents: Array<{ kind: string }> }, complian
   return [...new Set([...joining.documents.map(item => item.kind), ...compliance.map(item => item.kind)])].join(", ");
 }
 
+async function enforceComplianceExportLimit(where: Prisma.EmployeeJoiningWhereInput, area: "PF" | "ESIC") {
+  const records = await observeOperation(`compliance.${area.toLowerCase()}_export_count`, () => prisma.employeeJoining.count({ where }));
+  if (records > env.COMPLIANCE_EXPORT_MAX_ROWS) {
+    throw new HttpError(413, `${area} export contains too many employee records. Narrow the filters and try again.`, {
+      code: "COMPLIANCE_EXPORT_TOO_LARGE",
+      details: { area, records, maxRows: env.COMPLIANCE_EXPORT_MAX_ROWS },
+    });
+  }
+  return records;
+}
+
 export async function exportPfCompliance(actorUserId: string, query: ComplianceListQuery) {
   const where = adminWhere(query);
   if (query.department || query.status) {
@@ -670,8 +682,10 @@ export async function exportPfCompliance(actorUserId: string, query: ComplianceL
       ...(query.status ? { status: query.status } : {}),
     };
   }
+  await enforceComplianceExportLimit(where, "PF");
   const rows = await prisma.employeeJoining.findMany({
     where,
+    take: env.COMPLIANCE_EXPORT_MAX_ROWS,
     select: {
       ...joiningSelect,
       pfCompliance: true,
@@ -738,8 +752,10 @@ export async function exportPfCompliance(actorUserId: string, query: ComplianceL
 export async function exportEsicCompliance(actorUserId: string, query: ComplianceListQuery) {
   const where = adminWhere(query);
   if (query.status) where.esicCompliance = { status: query.status };
+  await enforceComplianceExportLimit(where, "ESIC");
   const rows = await prisma.employeeJoining.findMany({
     where,
+    take: env.COMPLIANCE_EXPORT_MAX_ROWS,
     select: {
       ...joiningSelect,
       esicCompliance: { include: { familyMembers: { orderBy: { sortOrder: "asc" } } } },

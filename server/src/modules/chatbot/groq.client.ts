@@ -1,9 +1,12 @@
+import { env } from "../../config/env.js";
 import type {
   ChatbotModelClient,
   ChatbotModelRequest,
   ChatbotModelResponse,
   ChatbotModelUsage,
 } from "./chatbot.types.js";
+import { consumeProviderBudget, ProviderBudgetExceededError } from "../../operations/provider-budget.js";
+import { guardedProviderRequest, ProviderCircuitOpenError } from "../../operations/provider-circuit.js";
 
 export interface GroqClientConfig {
   apiKey: string;
@@ -116,6 +119,16 @@ function usageFrom(payload?: GroqUsagePayload): ChatbotModelUsage | undefined {
   };
 }
 
+function estimatedRequestTokens(config: GroqClientConfig, request: ChatbotModelRequest) {
+  const characters = request.input.reduce((sum, message) => sum + message.content.length + message.role.length + 8, 0);
+  return Math.max(1, Math.ceil(characters / 4) + config.maxCompletionTokens);
+}
+
+async function reserveGroqBudget(config: GroqClientConfig, request: ChatbotModelRequest) {
+  await consumeProviderBudget("groq", "requests", 1, env.GROQ_DAILY_REQUEST_LIMIT);
+  await consumeProviderBudget("groq", "tokens", estimatedRequestTokens(config, request), env.GROQ_DAILY_TOKEN_LIMIT);
+}
+
 function requestBody(config: GroqClientConfig, request: ChatbotModelRequest, model: string, stream: boolean) {
   const body: Record<string, unknown> = {
     model,
@@ -153,6 +166,12 @@ function abortScope(timeoutMs: number, external?: AbortSignal) {
 
 function mapTransportError(error: unknown, timedOut: boolean): GroqApiError {
   if (error instanceof GroqApiError) return error;
+  if (error instanceof ProviderBudgetExceededError) {
+    return new GroqApiError("AI provider daily safety budget exhausted", { code: "GROQ_BUDGET_EXCEEDED" });
+  }
+  if (error instanceof ProviderCircuitOpenError) {
+    return new GroqApiError("AI provider is temporarily unavailable after repeated upstream failures", { code: "GROQ_CIRCUIT_OPEN" });
+  }
   if (error instanceof Error && error.name === "AbortError") {
     return timedOut
       ? new GroqApiError("Groq request timed out", { code: "GROQ_TIMEOUT" })
@@ -181,7 +200,8 @@ export function createGroqClient(config: GroqClientConfig, fetchImpl: FetchLike 
   async function requestModel(request: ChatbotModelRequest, model: string): Promise<ChatbotModelResponse> {
     const scope = abortScope(config.timeoutMs, request.signal);
     try {
-      const response = await fetchImpl(endpoint, {
+      await reserveGroqBudget(config, request);
+      const response = await guardedProviderRequest("groq", () => fetchImpl(endpoint, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${config.apiKey}`,
@@ -189,7 +209,7 @@ export function createGroqClient(config: GroqClientConfig, fetchImpl: FetchLike 
         },
         body: JSON.stringify(requestBody(config, request, model, false)),
         signal: scope.signal,
-      });
+      }));
 
       if (!response.ok) throw await upstreamFailure(response);
       let payload: GroqChatCompletionPayload = {};
@@ -222,7 +242,8 @@ export function createGroqClient(config: GroqClientConfig, fetchImpl: FetchLike 
   ): Promise<ChatbotModelResponse> {
     const scope = abortScope(config.timeoutMs, request.signal);
     try {
-      const response = await fetchImpl(endpoint, {
+      await reserveGroqBudget(config, request);
+      const response = await guardedProviderRequest("groq", () => fetchImpl(endpoint, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${config.apiKey}`,
@@ -230,7 +251,7 @@ export function createGroqClient(config: GroqClientConfig, fetchImpl: FetchLike 
         },
         body: JSON.stringify(requestBody(config, request, model, true)),
         signal: scope.signal,
-      });
+      }));
 
       if (!response.ok) throw await upstreamFailure(response);
       if (!response.body) throw new GroqApiError("Groq returned no streaming body", { status: response.status });

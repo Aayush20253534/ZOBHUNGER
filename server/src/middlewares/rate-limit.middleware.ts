@@ -89,3 +89,12 @@ export const chatbotRateLimiter = limiter(
   "CHATBOT_RATE_LIMIT_EXCEEDED",
   "Too many chatbot messages. Please wait a moment before trying again.",
 );
+
+
+export const telemetryRateLimiter = limiter(
+  "telemetry",
+  5 * 60_000,
+  30,
+  "TELEMETRY_RATE_LIMIT_EXCEEDED",
+  "Too many client error reports. Please try again later.",
+);

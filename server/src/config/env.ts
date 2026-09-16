@@ -59,6 +59,7 @@ const envSchema = z.object({
   CASHFREE_CLIENT_SECRET: optionalSetting(z.string().trim().min(8).max(512)),
   CASHFREE_API_VERSION: z.literal("2026-01-01").default("2026-01-01"),
   CASHFREE_TIMEOUT_MS: z.coerce.number().int().min(1_000).max(30_000).default(12_000),
+  PAYMENT_RECEIPT_TOKEN_TTL_SECONDS: z.coerce.number().int().min(900).max(2_592_000).default(604_800),
   CHATBOT_ENABLED: z.enum(["true", "false"]).default("false")
     .transform((value) => value === "true"),
   CHATBOT_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().min(10_000).max(3_600_000).default(60_000),
@@ -94,6 +95,29 @@ const envSchema = z.object({
   GROQ_MAX_COMPLETION_TOKENS: z.coerce.number().int().min(128).max(4_096).default(700),
   GROQ_TEMPERATURE: z.coerce.number().min(0).max(2).default(0.2),
   GROQ_REASONING_EFFORT: optionalSetting(z.enum(["none", "default", "minimal", "low", "medium", "high", "xhigh", "max"])),
+  PROVIDER_BUDGETS_ENABLED: z.enum(["true", "false"]).default("true").transform((value) => value === "true"),
+  GROQ_DAILY_REQUEST_LIMIT: z.coerce.number().int().min(1).max(1_000_000).default(5_000),
+  GROQ_DAILY_TOKEN_LIMIT: z.coerce.number().int().min(10_000).max(1_000_000_000).default(2_000_000),
+  GEMINI_DAILY_REQUEST_LIMIT: z.coerce.number().int().min(1).max(1_000_000).default(5_000),
+  GEMINI_DAILY_INPUT_CHAR_LIMIT: z.coerce.number().int().min(10_000).max(2_000_000_000).default(10_000_000),
+  RESEND_DAILY_EMAIL_LIMIT: z.coerce.number().int().min(1).max(10_000_000).default(2_000),
+  CLOUDINARY_DAILY_REQUEST_LIMIT: z.coerce.number().int().min(1).max(10_000_000).default(10_000),
+  CLOUDINARY_DAILY_UPLOAD_BYTES_LIMIT: z.coerce.number().int().min(1_048_576).max(100_000_000_000).default(536_870_912),
+  TECHNICAL_MATCH_SCAN_LIMIT: z.coerce.number().int().min(100).max(10_000).default(2_000),
+  TECHNICAL_REPORT_EXPORT_MAX_ROWS: z.coerce.number().int().min(100).max(20_000).default(5_000),
+  COMPLIANCE_EXPORT_MAX_ROWS: z.coerce.number().int().min(100).max(10_000).default(2_000),
+  FILE_MALWARE_SCAN_PROVIDER: z.enum(["disabled", "clamav", "http"]).default("disabled"),
+  FILE_MALWARE_SCAN_TIMEOUT_MS: z.coerce.number().int().min(1_000).max(60_000).default(15_000),
+  CLAMAV_HOST: optionalSetting(z.string().trim().min(1).max(253)),
+  CLAMAV_PORT: z.coerce.number().int().min(1).max(65_535).default(3310),
+  FILE_MALWARE_SCAN_HTTP_URL: optionalSetting(httpUrl),
+  FILE_MALWARE_SCAN_TOKEN: optionalSetting(z.string().trim().min(8).max(1024)),
+  SLOW_REQUEST_MS: z.coerce.number().int().min(100).max(120_000).default(1_500),
+  ERROR_MONITORING_WEBHOOK_URL: optionalSetting(httpUrl),
+  ERROR_MONITORING_TOKEN: optionalSetting(z.string().trim().min(8).max(1024)),
+  ERROR_MONITORING_TIMEOUT_MS: z.coerce.number().int().min(500).max(10_000).default(3_000),
+  PROVIDER_CIRCUIT_FAILURE_THRESHOLD: z.coerce.number().int().min(2).max(50).default(5),
+  PROVIDER_CIRCUIT_COOLDOWN_MS: z.coerce.number().int().min(5_000).max(900_000).default(60_000),
   TRUST_PROXY: z
     .enum(["true", "false"])
     .default(process.env.NODE_ENV === "production" ? "true" : "false")
@@ -209,7 +233,16 @@ function productionProblems() {
   if (!parsedData.CLOUDINARY_API_KEY) problems.push("CLOUDINARY_API_KEY is required in production");
   if (!parsedData.CLOUDINARY_API_SECRET) problems.push("CLOUDINARY_API_SECRET is required in production");
 
+  if (parsedData.FILE_MALWARE_SCAN_PROVIDER === "disabled") {
+    problems.push("FILE_MALWARE_SCAN_PROVIDER must be clamav or http in production");
+  } else if (parsedData.FILE_MALWARE_SCAN_PROVIDER === "clamav" && !parsedData.CLAMAV_HOST) {
+    problems.push("CLAMAV_HOST is required when FILE_MALWARE_SCAN_PROVIDER=clamav");
+  } else if (parsedData.FILE_MALWARE_SCAN_PROVIDER === "http" && !parsedData.FILE_MALWARE_SCAN_HTTP_URL) {
+    problems.push("FILE_MALWARE_SCAN_HTTP_URL is required when FILE_MALWARE_SCAN_PROVIDER=http");
+  }
+
   if (parsedData.REDIS_ENABLED && !parsedData.REDIS_URL) problems.push("REDIS_URL is required when REDIS_ENABLED=true in production");
+  if (parsedData.PROVIDER_BUDGETS_ENABLED && !parsedData.REDIS_ENABLED) problems.push("REDIS_ENABLED=true is required when PROVIDER_BUDGETS_ENABLED=true in production so provider budgets are shared across instances");
 
   if (parsedData.CASHFREE_ENABLED) {
     if (!parsedData.CASHFREE_CLIENT_ID) problems.push("CASHFREE_CLIENT_ID is required when CASHFREE_ENABLED=true in production");

@@ -161,6 +161,9 @@ async function verifyAdminSecurityChallenge(userId: string, password: string, co
 }
 
 export async function disableAdminMfa(userId: string, password: string, code: string) {
+  if (env.NODE_ENV === "production") {
+    throw new HttpError(403, "Administrator MFA cannot be disabled in production.", { code: "ADMIN_MFA_REQUIRED_IN_PRODUCTION" });
+  }
   const user = await verifyAdminSecurityChallenge(userId, password, code);
   return prisma.$transaction(async tx => {
     const updated = await tx.user.update({

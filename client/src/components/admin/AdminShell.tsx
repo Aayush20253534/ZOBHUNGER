@@ -74,6 +74,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
           return;
         }
         setAuthUser(user);
+        if (user.adminMfaEnrollmentRequired && !isSecurityRoute) {
+          router.replace("/admin/security");
+        }
       })
       .catch(() => { if (active) router.replace("/login"); })
       .finally(() => { if (active) setAuthReady(true); });
@@ -100,7 +103,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
     .filter(group => group.items.length > 0), [granted]);
   const routeRegistered = isSecurityRoute || Boolean(matchedItem);
   const isMainAdministration = authUser?.adminDepartment === "MAIN_ADMIN";
-  const hasCurrentAccess = isSecurityRoute || (routeRegistered && (!matchedItem?.permission || granted.has(matchedItem.permission))) || (!routeRegistered && isMainAdministration);
+  const mfaEnrollmentBlocked = Boolean(authUser?.adminMfaEnrollmentRequired && !isSecurityRoute);
+  const hasCurrentAccess = !mfaEnrollmentBlocked && (isSecurityRoute || (routeRegistered && (!matchedItem?.permission || granted.has(matchedItem.permission))) || (!routeRegistered && isMainAdministration));
   const department = adminDepartmentLabel(authUser?.adminDepartment);
   const departmentProfile = adminDepartmentProfile(authUser?.adminDepartment);
 
@@ -209,9 +213,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
               {signingOut ? <LoaderCircle className="zbo-admin-spin" aria-hidden="true" /> : <LogOut aria-hidden="true" />}
             </button>
           </div>
-          <div className="zbo-admin-security-status" title={sidebarCollapsed ? (authUser?.adminMfaEnabled ? "MFA protected access" : "Password-only access") : undefined}>
+          <div className="zbo-admin-security-status" title={sidebarCollapsed ? (authUser?.adminMfaEnabled ? "MFA protected access" : authUser?.adminMfaEnrollmentRequired ? "MFA setup required" : "MFA not enabled") : undefined}>
             <span className="zbo-admin-status-dot" aria-hidden="true" />
-            <span>{authUser?.adminMfaEnabled ? "MFA protected access" : "Password-only access"}</span>
+            <span>{authUser?.adminMfaEnabled ? "MFA protected access" : authUser?.adminMfaEnrollmentRequired ? "MFA setup required" : "MFA not enabled"}</span>
           </div>
         </div>
       </aside>
@@ -234,6 +238,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <div className="zbo-admin-content-inner">
             {!authReady ? (
               <div className="zbo-admin-shell-state" role="status"><LoaderCircle className="zbo-admin-spin" aria-hidden="true" /><strong>Verifying secure access</strong><span>Checking your department permissions.</span></div>
+            ) : mfaEnrollmentBlocked ? (
+              <div className="zbo-admin-shell-state" role="status"><LoaderCircle className="zbo-admin-spin" aria-hidden="true" /><strong>MFA setup required</strong><span>Redirecting to administrator security setup.</span></div>
             ) : authUser && !hasCurrentAccess ? (
               <section className="zbo-admin-access-denied" aria-labelledby="access-denied-title">
                 <span className="zbo-admin-access-denied-icon"><ShieldAlert aria-hidden="true" /></span>

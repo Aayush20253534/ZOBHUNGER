@@ -6,6 +6,7 @@ import { corsOptions } from "./config/cors.js";
 import { env } from "./config/env.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { requestContext } from "./middlewares/request-context.middleware.js";
+import { responseCompression } from "./middlewares/response-compression.middleware.js";
 import { notFoundHandler } from "./middlewares/not-found.middleware.js";
 import { apiRouter } from "./routes/index.js";
 import { getHealth, getMonitoringStatus, getReadiness } from "./controllers/health.controller.js";
@@ -25,6 +26,7 @@ app.use(
   }),
 );
 app.use(requestContext);
+app.use(responseCompression);
 app.use(cors(corsOptions));
 app.use(cookieParser());
 // Cashfree signs the exact raw JSON bytes. Mount this webhook before express.json

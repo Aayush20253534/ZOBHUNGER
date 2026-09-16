@@ -6,62 +6,29 @@ import { redisStatus } from "../config/redis.js";
 import { privateFileStorageConfigured } from "../services/private-file-storage.js";
 import { missingResendSettings } from "../services/resend.client.js";
 import { chatbotOperationalStatus } from "../modules/chatbot/chatbot.runtime.js";
+import { providerBudgetStatus } from "../operations/provider-budget.js";
+import { providerCircuitStatus } from "../operations/provider-circuit.js";
+import { malwareScannerStatus } from "../services/malware-scan.service.js";
+import { errorMonitoringStatus } from "../observability/error-monitor.js";
+import { httpMetricsSnapshot } from "../observability/http-metrics.js";
+import { operationMetricsSnapshot } from "../observability/operation-metrics.js";
 
 function releaseRevision() {
   const revision = process.env.RELEASE_SHA || process.env.RENDER_GIT_COMMIT || process.env.GITHUB_SHA || "";
   return /^[a-f0-9]{40,64}$/i.test(revision) ? revision.toLowerCase() : null;
 }
 
-// Lightweight liveness probe for uptime monitors. It needs no cookies, does not
-// touch the database or mail provider, and reports no configuration secrets.
-export const getMonitoringStatus: RequestHandler = (_req, res) => {
-  res.set("Cache-Control", "no-store");
-  res.status(200).json({ status: "ok", service: "zobhunger-api", uptimeSeconds: Math.floor(process.uptime()), timestamp: new Date().toISOString() });
-};
+function publicStatus(status: "ok" | "ready" | "not_ready") {
+  return {
+    status,
+    service: "zobhunger-api",
+    revision: releaseRevision(),
+    timestamp: new Date().toISOString(),
+    uptimeSeconds: Math.floor(process.uptime()),
+  };
+}
 
-export const getHealth: RequestHandler = (_req, res) => {
-  res.set("Cache-Control", "no-store");
-  const cache = redisStatus();
-  res.status(200).json(
-    apiSuccessResponse("API is healthy", {
-      status: "ok",
-      service: "zobhunger-api",
-      revision: releaseRevision(),
-      features: {
-        businessPortal: true,
-        businessDashboard: true,
-        businessRequirements: true,
-        businessCandidates: true,
-        businessDeployments: true,
-        businessAttendance: true,
-        businessPhase2Complete: true,
-        workerAccess: true,
-        workerProfiles: true,
-        workerJobDiscovery: true,
-        workerApplications: true,
-        workerAssignments: true,
-        workerAttendance: true,
-        workerEarnings: true,
-        workerDashboard: true,
-        workerPhase3Complete: true,
-        productionFoundation: true,
-        productionDeployment: true,
-        chatbot: env.CHATBOT_ENABLED,
-      },
-      chatbot: chatbotOperationalStatus(),
-      publicAppOrigin: env.PUBLIC_APP_URL ? new URL(env.PUBLIC_APP_URL).origin : null,
-      cache: cache.ready ? "ready" : cache.enabled ? "postgresql_fallback" : "disabled",
-      uptimeSeconds: Math.floor(process.uptime()),
-      timestamp: new Date().toISOString(),
-    }),
-  );
-};
-
-// Readiness is intentionally separate from liveness. Deployments and load
-// balancers can use it to avoid routing traffic before essential dependencies
-// are available, while / and /route continue to prove only that Node is alive.
-export const getReadiness: RequestHandler = async (_req, res) => {
-  res.set("Cache-Control", "no-store");
+async function readinessChecks() {
   let database = false;
   try {
     await Promise.race([
@@ -77,12 +44,8 @@ export const getReadiness: RequestHandler = async (_req, res) => {
   const email = env.NODE_ENV !== "production" || missingResendSettings().length === 0;
   const publicApp = env.NODE_ENV !== "production" || Boolean(env.PUBLIC_APP_URL);
   const cache = redisStatus();
-  const ready = database && privateFileStorage && email && publicApp;
-
-  res.status(ready ? 200 : 503).json({
-    status: ready ? "ready" : "not_ready",
-    service: "zobhunger-api",
-    revision: releaseRevision(),
+  return {
+    ready: database && privateFileStorage && email && publicApp,
     checks: {
       database,
       privateFileStorage,
@@ -90,6 +53,63 @@ export const getReadiness: RequestHandler = async (_req, res) => {
       publicApp,
       cache: cache.ready ? "ready" : cache.enabled ? "postgresql_fallback" : "disabled",
     },
-    timestamp: new Date().toISOString(),
-  });
+  };
+}
+
+// Anonymous monitors only need proof that the Node process is serving the
+// expected application. Operational configuration lives behind admin auth.
+export const getMonitoringStatus: RequestHandler = (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  res.status(200).json(publicStatus("ok"));
+};
+
+export const getHealth: RequestHandler = (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  res.status(200).json(apiSuccessResponse("API is healthy", publicStatus("ok")));
+};
+
+// Readiness remains public for load balancers, but dependency-by-dependency
+// details are intentionally omitted. A 200/503 status is enough for routing.
+export const getReadiness: RequestHandler = async (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  const { ready } = await readinessChecks();
+  res.status(ready ? 200 : 503).json(publicStatus(ready ? "ready" : "not_ready"));
+};
+
+// Detailed diagnostics are mounted inside the authenticated, permission-gated
+// admin router. No public origin or secret values are returned.
+export const getDetailedHealth: RequestHandler = async (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  const { ready, checks } = await readinessChecks();
+  res.status(ready ? 200 : 503).json(apiSuccessResponse("Operational health retrieved", {
+    ...publicStatus(ready ? "ready" : "not_ready"),
+    checks,
+    chatbot: chatbotOperationalStatus(),
+    safeguards: {
+      providerBudgets: providerBudgetStatus(),
+      providerCircuits: providerCircuitStatus(),
+      malwareScanner: malwareScannerStatus(),
+      errorMonitoring: errorMonitoringStatus(),
+    },
+    features: {
+      businessPortal: true,
+      workerPortal: true,
+      placementPortal: true,
+      technicalInstitutePortal: true,
+      compliance: true,
+      internshipPayments: env.CASHFREE_ENABLED,
+      chatbot: env.CHATBOT_ENABLED,
+    },
+  }));
+};
+
+
+export const getOperationalMetrics: RequestHandler = (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  res.status(200).json(apiSuccessResponse("Operational metrics retrieved", {
+    http: httpMetricsSnapshot(),
+    operations: operationMetricsSnapshot(),
+    providerBudgets: providerBudgetStatus(),
+    providerCircuits: providerCircuitStatus(),
+  }));
 };

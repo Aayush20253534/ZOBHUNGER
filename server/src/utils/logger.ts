@@ -1,4 +1,5 @@
 import { env } from "../config/env.js";
+import { redactSensitiveText, sanitizeLogContext } from "./log-sanitizer.js";
 
 type LogLevel = "debug" | "info" | "warn" | "error";
 
@@ -16,8 +17,8 @@ function serializeError(error: unknown) {
 
   return {
     name: error.name,
-    message: error.message,
-    ...(env.NODE_ENV !== "production" && error.stack ? { stack: error.stack } : {}),
+    message: redactSensitiveText(error.message),
+    ...(env.NODE_ENV !== "production" && error.stack ? { stack: redactSensitiveText(error.stack) } : {}),
   };
 }
 
@@ -28,8 +29,8 @@ function write(level: LogLevel, message: string, context: LogContext = {}) {
     timestamp: new Date().toISOString(),
     level,
     service: "zobhunger-api",
-    message,
-    ...context,
+    message: redactSensitiveText(message),
+    ...sanitizeLogContext(context),
   });
 
   if (level === "error") {
@@ -55,7 +56,7 @@ export const logger = {
   },
   error(message: string, error?: unknown, context: LogContext = {}) {
     write("error", message, {
-      ...context,
+      ...sanitizeLogContext(context),
       ...(error !== undefined ? { error: serializeError(error) } : {}),
     });
   },

@@ -21,7 +21,6 @@ const noIndexPages = new Set([
   "/employee-joining", "/login", "/admin", "/worker/login", "/placement-portal",
   ...pages.filter(path => path.startsWith("/business/")),
 ]);
-const features = ["businessPortal", "businessDashboard", "businessRequirements", "businessCandidates", "businessDeployments", "businessAttendance", "businessPhase2Complete", "productionFoundation", "productionDeployment"];
 
 export function siteOrigin(value) {
   let url;
@@ -51,11 +50,11 @@ export async function checkRelease(origin, { fetcher = fetch, expectedRevision }
     return body;
   }
   const health = await read("/api/backend/health", 200, "application/json");
-  if (health.success !== true || health.data?.service !== "zobhunger-api" || features.some(feature => health.data?.features?.[feature] !== true)) {
+  if (health.success !== true || health.data?.service !== "zobhunger-api" || health.data?.status !== "ok") {
     throw new Error("The frontend proxy does not reach the expected production API surface.");
   }
   const readiness = await read("/api/backend/health/ready", 200, "application/json");
-  if (readiness.status !== "ready" || readiness.service !== "zobhunger-api" || readiness.checks?.database !== true) {
+  if (readiness.status !== "ready" || readiness.service !== "zobhunger-api") {
     throw new Error("The API readiness probe is not ready. Check database and required production configuration.");
   }
   const frontend = await read("/api/release", 200, "application/json");

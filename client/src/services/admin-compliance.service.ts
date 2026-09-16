@@ -1,4 +1,4 @@
-import { apiFetch, type ApiSuccessEnvelope } from "@/lib/api";
+import { apiFetch, apiRawFetch, EXPORT_API_TIMEOUT_MS, type ApiSuccessEnvelope } from "@/lib/api";
 import type { AdminComplianceMaster, ComplianceHistoryItem, ComplianceStatus, EsicComplianceRecord, PfComplianceRecord } from "@/types/compliance.types";
 
 export interface ComplianceStats { totalEmployees: number; pendingSubmission: number; byStatus: Partial<Record<ComplianceStatus, number>>; }
@@ -35,7 +35,7 @@ export function reviewPfCompliance(id: string, input: { status: "UNDER_REVIEW"|"
 export function reviewEsicCompliance(id: string, input: { status: "UNDER_REVIEW"|"NEEDS_CORRECTION"|"VERIFIED"|"PROCESSED"; remarks: string; expectedRevision: number }) { return apiFetch<ApiSuccessEnvelope<{ record: EsicComplianceRecord }>>(`/admin/compliance/esic/${encodeURIComponent(id)}/review`, { method: "POST", body: JSON.stringify(input) }); }
 
 export async function downloadAdminCompliance(path: string, fileName: string) {
-  const response = await fetch(`/api/backend${path}`, { credentials: "include", cache: "no-store" });
+  const response = await apiRawFetch(path, { timeoutMs: EXPORT_API_TIMEOUT_MS });
   if (!response.ok) throw new Error(`Download failed (${response.status})`);
   const blob = await response.blob(); const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href=url; anchor.download=fileName; anchor.click(); URL.revokeObjectURL(url);
 }

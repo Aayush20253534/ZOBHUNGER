@@ -1,8 +1,10 @@
 import type { ErrorRequestHandler } from "express";
 import { env } from "../config/env.js";
+import { captureOperationalError } from "../observability/error-monitor.js";
 import { apiErrorResponse } from "../utils/api-response.js";
 import { HttpError } from "../utils/http-error.js";
 import { logger } from "../utils/logger.js";
+import { sanitizeRequestTarget } from "../utils/log-sanitizer.js";
 
 export const errorHandler: ErrorRequestHandler = (error: unknown, req, res, next) => {
   if (res.headersSent) {
@@ -10,7 +12,24 @@ export const errorHandler: ErrorRequestHandler = (error: unknown, req, res, next
     return;
   }
 
+  const requestContext = {
+    requestId: res.locals.requestId,
+    method: req.method,
+    path: sanitizeRequestTarget(req.originalUrl),
+  };
+
   if (error instanceof HttpError) {
+    if (error.statusCode >= 500) {
+      logger.error("request.failed", error, requestContext);
+      void captureOperationalError({
+        source: "http",
+        error,
+        requestId: res.locals.requestId,
+        statusCode: error.statusCode,
+        path: requestContext.path,
+        context: { method: req.method, code: error.code },
+      });
+    }
     res.status(error.statusCode).json(
       apiErrorResponse(error.message, {
         code: error.code,
@@ -34,10 +53,14 @@ export const errorHandler: ErrorRequestHandler = (error: unknown, req, res, next
     return;
   }
 
-  logger.error("request.failed", error, {
+  logger.error("request.failed", error, requestContext);
+  void captureOperationalError({
+    source: "http",
+    error,
     requestId: res.locals.requestId,
-    method: req.method,
-    path: req.originalUrl,
+    statusCode: 500,
+    path: requestContext.path,
+    context: { method: req.method },
   });
 
   res.status(500).json(

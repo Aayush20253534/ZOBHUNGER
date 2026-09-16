@@ -1,4 +1,6 @@
 import { env } from "../config/env.js";
+import { consumeProviderBudget, ProviderBudgetExceededError } from "../operations/provider-budget.js";
+import { guardedProviderRequest, ProviderCircuitOpenError } from "../operations/provider-circuit.js";
 import { assertResendAccepted, ResendDeliveryError, resendDiagnostic } from "./resend-errors.js";
 
 const RESEND_EMAIL_ENDPOINT = "https://api.resend.com/emails";
@@ -25,7 +27,8 @@ function fromAddress(): string {
 export async function postResendMessage(message: ResendMessage): Promise<{ id: string }> {
   let response: Response;
   try {
-    response = await fetch(RESEND_EMAIL_ENDPOINT, {
+    await consumeProviderBudget("resend", "recipients", Math.max(1, message.to.length), env.RESEND_DAILY_EMAIL_LIMIT);
+    response = await guardedProviderRequest("resend", () => fetch(RESEND_EMAIL_ENDPOINT, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${env.RESEND_API_KEY!}`,
@@ -43,8 +46,14 @@ export async function postResendMessage(message: ResendMessage): Promise<{ id: s
         ...((message.replyTo ?? env.MAIL_REPLY_TO_EMAIL) ? { reply_to: message.replyTo ?? env.MAIL_REPLY_TO_EMAIL } : {}),
       }),
       signal: AbortSignal.timeout(env.RESEND_TIMEOUT_MS),
-    });
+    }));
   } catch (error) {
+    if (error instanceof ProviderBudgetExceededError) {
+      throw new ResendDeliveryError({ provider: "resend", reason: "budget", action: "The configured daily email safety limit has been reached." });
+    }
+    if (error instanceof ProviderCircuitOpenError) {
+      throw new ResendDeliveryError({ provider: "resend", reason: "provider", action: "Email delivery is temporarily paused after repeated provider failures." });
+    }
     throw new ResendDeliveryError(resendDiagnostic(error));
   }
 

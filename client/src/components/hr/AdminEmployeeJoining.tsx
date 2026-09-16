@@ -8,7 +8,7 @@ import {
   Download, FileCheck2, FileText, GraduationCap, IdCard, Inbox, LoaderCircle, Mail, MapPin, Phone, RefreshCw, Search,
   Send, ShieldCheck, Signature, UserRound,
 } from "lucide-react";
-import { apiFetch, ApiError, type ApiSuccessEnvelope } from "@/lib/api";
+import { apiFetch, apiRawFetch, ApiError, EXPORT_API_TIMEOUT_MS, type ApiSuccessEnvelope } from "@/lib/api";
 import { getCurrentUser } from "@/services/auth.service";
 import "@/styles/hr-admin.css";
 
@@ -56,7 +56,7 @@ function EmploymentHistory({ items }: { items?: Array<Record<string, unknown>> }
 }
 
 async function download(path: string, filename: string) {
-  const response = await fetch(`/api/backend${path}`, { credentials: "include", cache: "no-store" });
+  const response = await apiRawFetch(path, { timeoutMs: EXPORT_API_TIMEOUT_MS });
   if (!response.ok) throw new ApiError(`Download failed (${response.status}).`, response.status);
   const url = URL.createObjectURL(await response.blob());
   const anchor = document.createElement("a"); anchor.href = url; anchor.download = filename; anchor.click();

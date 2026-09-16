@@ -16,6 +16,7 @@ export function AdminSecurity() {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [enabled, setEnabled] = useState(false);
+  const [required, setRequired] = useState(false);
   const [setup, setSetup] = useState<Setup | null>(null);
   const [code, setCode] = useState("");
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
@@ -34,6 +35,7 @@ export function AdminSecurity() {
       if (result.data.user.role !== "ADMIN") return router.replace("/login");
       setEmail(result.data.user.email);
       setEnabled(Boolean(result.data.user.adminMfaEnabled));
+      setRequired(Boolean(result.data.user.adminMfaRequired));
     }).catch(() => router.replace("/login")).finally(() => setLoading(false));
   }, [router]);
 
@@ -57,17 +59,17 @@ export function AdminSecurity() {
     <section className="zb-admin-security-card">
       <header className="zb-admin-security-heading">
         <span className="zb-admin-security-icon"><ShieldCheck /></span>
-        <div><p className="zb-eyebrow">Administrator security</p><h1>Account protection</h1><p>MFA is optional. If you enable it, sign-in will require your password plus an authenticator or recovery code.</p></div>
-        <span className={`zb-admin-security-status${enabled ? " is-enabled" : ""}`}>{enabled ? <CheckCircle2 /> : <ShieldOff />}<span>{enabled ? "MFA enabled" : "Password only"}</span></span>
+        <div><p className="zb-eyebrow">Administrator security</p><h1>Account protection</h1><p>Multi-factor authentication protects administrator access. In production it is mandatory before any administrator workspace can be opened.</p></div>
+        <span className={`zb-admin-security-status${enabled ? " is-enabled" : ""}`}>{enabled ? <CheckCircle2 /> : <ShieldOff />}<span>{enabled ? "MFA enabled" : required ? "MFA setup required" : "MFA not enabled"}</span></span>
       </header>
       {error && <p className="zb-login-error zb-admin-security-error" role="alert">{error}</p>}
       {message && <p className="zb-admin-security-message" role="status">{message}</p>}
 
-      {!enabled && !setup && <div className="zb-admin-security-start"><div className="zb-admin-security-start-copy"><span><Smartphone /></span><div><strong>Add an authenticator</strong><p>Optional extra protection using Google Authenticator, Microsoft Authenticator, Authy, 1Password or another TOTP app.</p></div></div><button type="button" disabled={busy} onClick={() => void start()}>Set up MFA <ArrowRight /></button></div>}
+      {!enabled && !setup && <div className="zb-admin-security-start"><div className="zb-admin-security-start-copy"><span><Smartphone /></span><div><strong>Add an authenticator</strong><p>Connect Google Authenticator, Microsoft Authenticator, Authy, 1Password or another TOTP app to secure administrator sign-in.</p></div></div><button type="button" disabled={busy} onClick={() => void start()}>Set up MFA <ArrowRight /></button></div>}
 
       {enabled && !recoveryCodes.length && <div className="zb-admin-security-manage-grid">
         <section className="zb-admin-security-manage-card"><div><RefreshCw /><span><strong>Change MFA device</strong><small>Verify your current password and current authenticator code, then connect the replacement device.</small></span></div><label>Current password<input type="password" autoComplete="current-password" value={managePassword} onChange={e => setManagePassword(e.target.value)} /></label><label>Current authenticator code<input inputMode="numeric" value={manageCode} onChange={e => setManageCode(e.target.value.replace(/\D/g, "").slice(0,6))} placeholder="000000" /></label><button type="button" disabled={busy || !managePassword || manageCode.length !== 6} onClick={() => void rotate()}>Change device</button></section>
-        <section className="zb-admin-security-manage-card is-danger"><div><ShieldOff /><span><strong>Turn off MFA</strong><small>Your administrator account will continue to work with password-only sign-in.</small></span></div><p>Use the same verification fields above to confirm this change.</p><button type="button" disabled={busy || !managePassword || manageCode.length !== 6} onClick={() => void disable()}>Turn off MFA</button></section>
+        {required ? <section className="zb-admin-security-manage-card"><div><ShieldCheck /><span><strong>Production protection</strong><small>MFA is mandatory for administrator accounts in production and cannot be disabled.</small></span></div><p>You can rotate the authenticator device at any time using the verified flow beside this card.</p></section> : <section className="zb-admin-security-manage-card is-danger"><div><ShieldOff /><span><strong>Turn off MFA</strong><small>Disabling MFA reduces administrator account protection.</small></span></div><p>Use the same verification fields above to confirm this change.</p><button type="button" disabled={busy || !managePassword || manageCode.length !== 6} onClick={() => void disable()}>Turn off MFA</button></section>}
       </div>}
 
       {setup && <div className="zb-admin-mfa-setup"><div className="zb-admin-mfa-grid"><section className="zb-admin-mfa-panel"><div className="zb-admin-mfa-panel-head"><div><p className="zb-eyebrow">Connect device</p><h2>Scan the QR code</h2></div><QrCode /></div><div className="zb-admin-qr-wrap"><div className="zb-admin-qr-code"><QRCodeSVG value={setup.otpauthUri} size={174} level="M" bgColor="#fff" fgColor="#18171a" marginSize={2} /></div><div className="zb-admin-qr-copy"><strong>Authenticator setup</strong><p>Scan the code, or use the setup key manually.</p><div className="zb-admin-secret"><code>{setup.secret}</code><button type="button" onClick={() => void copy(setup.secret, "secret")}>{copied === "secret" ? <Check /> : <ClipboardCopy />}{copied === "secret" ? "Copied" : "Copy key"}</button></div></div></div></section><section className="zb-admin-mfa-panel zb-admin-mfa-verify"><div><p className="zb-eyebrow">Verify device</p><h2>Enter the new code</h2><p>This activates MFA only after the code succeeds.</p></div><label htmlFor="admin-mfa-code">Authenticator code</label><input id="admin-mfa-code" value={code} onChange={e => setCode(e.target.value.replace(/\D/g, "").slice(0,6))} inputMode="numeric" autoComplete="one-time-code" placeholder="000000" /><button type="button" className="zb-admin-mfa-primary" disabled={busy || code.length !== 6} onClick={() => void confirm()}>Verify and enable MFA <ArrowRight /></button></section></div></div>}

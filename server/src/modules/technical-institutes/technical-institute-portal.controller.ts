@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from "express";
 import { apiSuccessResponse } from "../../utils/api-response.js";
 import type { TechnicalStudentAdminListQuery, TechnicalStudentCoreInput, TechnicalStudentImportQuery } from "./technical-students.schema.js";
-import type { TechnicalInstitutePortalApplicationQuery, TechnicalInstitutePortalOpportunityQuery, TechnicalInstitutePortalSubmitInput } from "./technical-institute-portal.schema.js";
+import type { TechnicalInstitutePortalApplicationQuery, TechnicalInstitutePortalMatchQuery, TechnicalInstitutePortalOpportunityQuery, TechnicalInstitutePortalSubmitInput } from "./technical-institute-portal.schema.js";
 import {
   addTechnicalInstitutePortalStudent,
   editTechnicalInstitutePortalStudent,
@@ -9,6 +9,7 @@ import {
   getTechnicalInstitutePortalApplications,
   getTechnicalInstitutePortalDashboard,
   getTechnicalInstitutePortalOpportunities,
+  getTechnicalInstitutePortalOpportunityMatches,
   getTechnicalInstitutePortalReports,
   getTechnicalInstitutePortalStudents,
   importTechnicalInstitutePortalStudents,
@@ -63,6 +64,16 @@ export const importTechnicalInstitutePortalStudentsController: RequestHandler = 
 export const technicalInstitutePortalOpportunitiesController: RequestHandler = async (_req, res) => {
   const data = await getTechnicalInstitutePortalOpportunities(userId(res), res.locals.validated.query as TechnicalInstitutePortalOpportunityQuery);
   res.status(200).json(apiSuccessResponse("Technical opportunities retrieved", data));
+};
+
+export const technicalInstitutePortalOpportunityMatchesController: RequestHandler = async (_req, res) => {
+  const { opportunityId } = res.locals.validated.params as { opportunityId: string };
+  const data = await getTechnicalInstitutePortalOpportunityMatches(
+    userId(res),
+    opportunityId,
+    res.locals.validated.query as TechnicalInstitutePortalMatchQuery,
+  );
+  res.status(200).json(apiSuccessResponse("Technical opportunity matches retrieved", data));
 };
 
 export const submitTechnicalInstitutePortalCandidateController: RequestHandler = async (req, res) => {

@@ -1,4 +1,4 @@
-import { apiFetch, type ApiSuccessEnvelope } from "@/lib/api";
+import { apiFetch, apiRawFetch, EXPORT_API_TIMEOUT_MS, UPLOAD_API_TIMEOUT_MS, type ApiSuccessEnvelope } from "@/lib/api";
 
 export type TechnicalStudentStatus = "PENDING" | "VERIFIED" | "INACTIVE";
 export type TechnicalOpportunityType = "JOB" | "INTERNSHIP" | "APPRENTICESHIP" | "TRAINING";
@@ -128,10 +128,15 @@ export interface TechnicalPortalOpportunity {
   duration?: string | null;
   applicationDeadline?: string | null;
   joiningDate?: string | null;
-  eligibleCount: number;
   submittedCount: number;
-  bestMatchScore?: number | null;
+}
+
+
+export interface TechnicalPortalOpportunityMatchResult {
   matches: TechnicalPortalOpportunityMatch[];
+  totalMatches: number;
+  scannedCandidates: number;
+  candidatePoolTruncated: boolean;
 }
 
 export interface TechnicalPortalApplication {
@@ -212,20 +217,8 @@ export function setTechnicalInstitutePortalStudentStatus(studentId: string, stat
   });
 }
 
-export async function importTechnicalInstitutePortalStudents(file: File, mode: "validate" | "import") {
-  const response = await fetch(`/api/backend/technical-institute-applications/portal/students/import?mode=${mode}`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": file.type || (file.name.toLowerCase().endsWith(".csv") ? "text/csv" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
-      "X-Requested-With": "XMLHttpRequest",
-      "X-File-Name": file.name,
-    },
-    body: await file.arrayBuffer(),
-  });
-  const body = await response.json();
-  if (!response.ok) throw new Error(body?.message ?? "Unable to process the student file.");
-  return body as ApiSuccessEnvelope<{
+export function importTechnicalInstitutePortalStudents(file: File, mode: "validate" | "import") {
+  return file.arrayBuffer().then(body => apiFetch<ApiSuccessEnvelope<{
     mode: "validate" | "import";
     totalRows: number;
     validRows: number;
@@ -236,17 +229,32 @@ export async function importTechnicalInstitutePortalStudents(file: File, mode: "
     errors: Array<{ row: number; field?: string; message: string }>;
     preview?: Array<Record<string, unknown>>;
     canImport?: boolean;
-  }>;
+  }>>(`/technical-institute-applications/portal/students/import?mode=${mode}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": file.type || (file.name.toLowerCase().endsWith(".csv") ? "text/csv" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+      "X-File-Name": file.name,
+    },
+    body,
+    timeoutMs: UPLOAD_API_TIMEOUT_MS,
+  }));
 }
 
-export function listTechnicalInstitutePortalOpportunities(filters: { page?: number; pageSize?: number; search?: string; opportunityType?: TechnicalOpportunityType | ""; minScore?: number }) {
+export function listTechnicalInstitutePortalOpportunities(filters: { page?: number; pageSize?: number; search?: string; opportunityType?: TechnicalOpportunityType | "" }) {
   const params = new URLSearchParams();
   params.set("page", String(filters.page ?? 1));
   params.set("pageSize", String(filters.pageSize ?? 20));
-  params.set("minScore", String(filters.minScore ?? 55));
   if (filters.search) params.set("search", filters.search);
   if (filters.opportunityType) params.set("opportunityType", filters.opportunityType);
   return apiFetch<ApiSuccessEnvelope<{ items: TechnicalPortalOpportunity[]; total: number; page: number; pageSize: number; totalPages: number }>>(`/technical-institute-applications/portal/opportunities?${params.toString()}`);
+}
+
+export function getTechnicalInstitutePortalOpportunityMatches(opportunityId: string, filters: { minScore?: number; limit?: number; search?: string } = {}) {
+  const params = new URLSearchParams();
+  params.set("minScore", String(filters.minScore ?? 55));
+  params.set("limit", String(filters.limit ?? 30));
+  if (filters.search) params.set("search", filters.search);
+  return apiFetch<ApiSuccessEnvelope<TechnicalPortalOpportunityMatchResult>>(`/technical-institute-applications/portal/opportunities/${encodeURIComponent(opportunityId)}/matches?${params.toString()}`);
 }
 
 export function submitTechnicalInstitutePortalCandidate(opportunityId: string, studentId: string, note?: string) {
@@ -278,7 +286,7 @@ export function getTechnicalInstitutePortalReports() {
 }
 
 export async function downloadTechnicalInstitutePortalReport() {
-  const response = await fetch("/api/backend/technical-institute-applications/portal/reports/export", { credentials: "include", cache: "no-store" });
+  const response = await apiRawFetch("/technical-institute-applications/portal/reports/export", { timeoutMs: EXPORT_API_TIMEOUT_MS });
   if (!response.ok) throw new Error("Unable to export the placement report.");
   const blob = await response.blob();
   const disposition = response.headers.get("content-disposition") ?? "";

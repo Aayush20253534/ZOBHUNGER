@@ -21,6 +21,7 @@ export function requireAdminPermission(...permissions: AdminPermission[]): Reque
 
 const routePermissions: Array<{ pattern: RegExp; permission: AdminPermission }> = [
   { pattern: /^\/overview(?:\/|$)/, permission: AdminPermission.DASHBOARD_VIEW },
+  { pattern: /^\/system(?:\/|$)/, permission: AdminPermission.DASHBOARD_VIEW },
   { pattern: /^\/intake(?:\/|$)/, permission: AdminPermission.DASHBOARD_VIEW },
   { pattern: /^\/articles(?:\/|$)/, permission: AdminPermission.BLOGS_MANAGE },
   { pattern: /^\/ai-assistant(?:\/|$)/, permission: AdminPermission.AI_ASSISTANT_MANAGE },
@@ -58,6 +59,10 @@ const routePermissions: Array<{ pattern: RegExp; permission: AdminPermission }> 
  */
 export const requireMappedAdminPermission: RequestHandler = (req, res, next) => {
   const match = routePermissions.find(entry => entry.pattern.test(req.path));
-  if (!match) return next();
+  if (!match) {
+    return next(new HttpError(403, "This administrator route is not registered in the permission policy.", {
+      code: "ADMIN_ROUTE_UNMAPPED",
+    }));
+  }
   return requireAdminPermission(match.permission)(req, res, next);
 };

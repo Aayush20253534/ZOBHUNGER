@@ -6,6 +6,7 @@ import {
   TechnicalStudentStatus,
 } from "../../generated/prisma/client.js";
 import { prisma } from "../../config/db.js";
+import { env } from "../../config/env.js";
 import type { TechnicalOpportunityInput, TechnicalOpportunityListQuery, TechnicalOpportunityMatchQuery } from "./technical-opportunities.schema.js";
 
 function opportunityData(input: TechnicalOpportunityInput) {
@@ -127,10 +128,16 @@ export function updateTechnicalOpportunity(
   });
 }
 
-export async function listVerifiedTechnicalStudentsForMatching(query: TechnicalOpportunityMatchQuery, opportunityId: string) {
+export async function listVerifiedTechnicalStudentsForMatching(
+  query: TechnicalOpportunityMatchQuery,
+  opportunityId: string,
+  eligibility?: { eligibleQualifications: string[]; eligiblePassingYears: string[] },
+) {
   const where: Prisma.TechnicalStudentWhereInput = {
     status: TechnicalStudentStatus.VERIFIED,
     institute: { status: PlacementCellApplicationStatus.APPROVED },
+    ...(eligibility?.eligibleQualifications.length ? { qualification: { in: eligibility.eligibleQualifications } } : {}),
+    ...(eligibility?.eligiblePassingYears.length ? { passingYear: { in: eligibility.eligiblePassingYears } } : {}),
   };
   if (query.instituteId) where.technicalInstituteApplicationId = query.instituteId;
   if (query.search) {
@@ -143,15 +150,17 @@ export async function listVerifiedTechnicalStudentsForMatching(query: TechnicalO
       { institute: { institutionName: { contains: query.search, mode: "insensitive" } } },
     ];
   }
-  return prisma.technicalStudent.findMany({
+  const rows = await prisma.technicalStudent.findMany({
     where,
     orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
-    take: 1000,
+    take: env.TECHNICAL_MATCH_SCAN_LIMIT + 1,
     include: {
       institute: { select: { id: true, institutionName: true, partnershipCode: true, city: true, state: true } },
-      applications: { where: { opportunityId }, select: { id: true, status: true, createdAt: true } },
+      applications: { where: { opportunityId }, select: { id: true, status: true, matchScore: true, createdAt: true } },
     },
   });
+  const truncated = rows.length > env.TECHNICAL_MATCH_SCAN_LIMIT;
+  return { students: rows.slice(0, env.TECHNICAL_MATCH_SCAN_LIMIT), truncated };
 }
 
 export function findVerifiedTechnicalStudent(studentId: string) {

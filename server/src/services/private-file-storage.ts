@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
 import { env } from "../config/env.js";
 import { HttpError } from "../utils/http-error.js";
+import { consumeProviderBudget, ProviderBudgetExceededError } from "../operations/provider-budget.js";
+import { guardedProviderRequest, ProviderCircuitOpenError } from "../operations/provider-circuit.js";
+import { scanUploadedFile } from "./malware-scan.service.js";
 
 export interface PrivateFileAsset {
   publicId: string;
@@ -65,8 +68,32 @@ export function privateFileStorageConfigured() {
   return configured();
 }
 
+async function storageProviderRequest(request: () => Promise<Response>) {
+  try {
+    await consumeProviderBudget("cloudinary", "requests", 1, env.CLOUDINARY_DAILY_REQUEST_LIMIT);
+    return await guardedProviderRequest("cloudinary", request);
+  } catch (error) {
+    if (error instanceof ProviderBudgetExceededError) {
+      throw new HttpError(503, "Private file storage is temporarily unavailable because the daily request safety limit has been reached", { code: "FILE_STORAGE_DAILY_LIMIT_REACHED" });
+    }
+    if (error instanceof ProviderCircuitOpenError) {
+      throw new HttpError(503, "Private file storage is temporarily unavailable after repeated upstream failures", { code: "FILE_STORAGE_CIRCUIT_OPEN" });
+    }
+    throw error;
+  }
+}
+
 export async function uploadPrivateFile(input: UploadPrivateFileInput): Promise<PrivateFileAsset> {
   requireConfigured();
+  await scanUploadedFile({ fileName: input.fileName, mimeType: input.mimeType, buffer: input.buffer, sha256: input.sha256 });
+  try {
+    await consumeProviderBudget("cloudinary", "upload_bytes", input.buffer.length, env.CLOUDINARY_DAILY_UPLOAD_BYTES_LIMIT);
+  } catch (error) {
+    if (error instanceof ProviderBudgetExceededError) {
+      throw new HttpError(503, "Private file upload is temporarily unavailable because the daily safety limit has been reached", { code: "FILE_STORAGE_DAILY_LIMIT_REACHED" });
+    }
+    throw error;
+  }
   const publicId = uploadPublicId(input);
   const format = extension(input.fileName);
 
@@ -92,7 +119,7 @@ export async function uploadPrivateFile(input: UploadPrivateFileInput): Promise<
   form.set("invalidate", "true");
   form.set("signature", sign(signedParams));
 
-  const response = await fetch(cloudinaryApi("raw", "upload"), { method: "POST", body: form, signal: AbortSignal.timeout(env.CLOUDINARY_TIMEOUT_MS) });
+  const response = await storageProviderRequest(() => fetch(cloudinaryApi("raw", "upload"), { method: "POST", body: form, signal: AbortSignal.timeout(env.CLOUDINARY_TIMEOUT_MS) }));
   const body = await response.json().catch(() => ({})) as Record<string, unknown>;
   if (!response.ok || typeof body.public_id !== "string") {
     throw new HttpError(502, "Private file storage rejected the upload", { code: "FILE_STORAGE_UPLOAD_FAILED" });
@@ -132,7 +159,7 @@ export async function downloadPrivateFile(asset: Pick<PrivateFileAsset, "publicI
   for (const [key, value] of Object.entries(params)) query.set(key, normalizeSignatureValue(value));
   query.set("api_key", env.CLOUDINARY_API_KEY!);
   query.set("signature", sign(params));
-  const response = await fetch(`${cloudinaryApi("raw", "download")}?${query.toString()}`, { signal: AbortSignal.timeout(env.CLOUDINARY_TIMEOUT_MS) });
+  const response = await storageProviderRequest(() => fetch(`${cloudinaryApi("raw", "download")}?${query.toString()}`, { signal: AbortSignal.timeout(env.CLOUDINARY_TIMEOUT_MS) }));
   if (!response.ok) throw new HttpError(response.status === 404 ? 404 : 502, response.status === 404 ? "Stored file not found" : "Private file storage could not deliver the file", { code: response.status === 404 ? "FILE_STORAGE_NOT_FOUND" : "FILE_STORAGE_DOWNLOAD_FAILED" });
   return Buffer.from(await response.arrayBuffer());
 }
@@ -146,6 +173,6 @@ export async function deletePrivateFile(asset: Pick<PrivateFileAsset, "publicId"
   for (const [key, value] of Object.entries(params)) form.set(key, normalizeSignatureValue(value));
   form.set("api_key", env.CLOUDINARY_API_KEY!);
   form.set("signature", sign(params));
-  const response = await fetch(cloudinaryApi("raw", "destroy"), { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: form, signal: AbortSignal.timeout(env.CLOUDINARY_TIMEOUT_MS) });
+  const response = await storageProviderRequest(() => fetch(cloudinaryApi("raw", "destroy"), { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: form, signal: AbortSignal.timeout(env.CLOUDINARY_TIMEOUT_MS) }));
   if (!response.ok) throw new HttpError(502, "Private file storage could not remove the file", { code: "FILE_STORAGE_DELETE_FAILED" });
 }

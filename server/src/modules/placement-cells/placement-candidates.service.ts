@@ -14,7 +14,14 @@ function candidateWriteError(error: unknown): never {
   throw error;
 }
 export async function getPlacementCandidates(userId: string, query: PlacementCandidateQuery) {
-  return listPlacementCandidates(await placementCellIdForUser(userId), query);
+  const { items, total } = await listPlacementCandidates(await placementCellIdForUser(userId), query);
+  return {
+    items,
+    total,
+    page: query.page,
+    pageSize: query.pageSize,
+    totalPages: Math.max(1, Math.ceil(total / query.pageSize)),
+  };
 }
 export async function addPlacementCandidate(userId: string, input: PlacementCandidateInput) {
   try { return await createPlacementCandidate(await placementCellIdForUser(userId), input); } catch (error) { return candidateWriteError(error); }

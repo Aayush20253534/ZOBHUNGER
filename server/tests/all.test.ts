@@ -20,3 +20,4 @@ import "./chatbot-production.test.js";
 import "./chatbot-evaluation.test.js";
 import "./technical-students.schema.test.js";
 import "./technical-opportunities.schema.test.js";
+import "./log-sanitizer.test.js";

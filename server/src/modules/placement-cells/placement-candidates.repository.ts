@@ -1,23 +1,37 @@
 import { prisma } from "../../config/db.js";
 import type { PlacementCandidateInput, PlacementCandidateQuery } from "./placement-candidates.schema.js";
 
-export function listPlacementCandidates(placementCellApplicationId: string, query: PlacementCandidateQuery) {
+function placementCandidateWhere(placementCellApplicationId: string, query: PlacementCandidateQuery) {
   const search = query.search?.trim();
-  return prisma.placementCandidate.findMany({
-    where: {
-      placementCellApplicationId,
-      ...(query.city ? { city: { equals: query.city, mode: "insensitive" as const } } : {}),
-      ...(query.workType ? { preferredWorkTypes: { has: query.workType } } : {}),
-      ...(search ? { OR: [
-        { fullName: { contains: search, mode: "insensitive" as const } },
-        { email: { contains: search, mode: "insensitive" as const } },
-        { course: { contains: search, mode: "insensitive" as const } },
-        { qualification: { contains: search, mode: "insensitive" as const } },
-      ] } : {}),
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  return {
+    placementCellApplicationId,
+    ...(query.city ? { city: { equals: query.city, mode: "insensitive" as const } } : {}),
+    ...(query.workType ? { preferredWorkTypes: { has: query.workType } } : {}),
+    ...(search ? { OR: [
+      { fullName: { contains: search, mode: "insensitive" as const } },
+      { email: { contains: search, mode: "insensitive" as const } },
+      { course: { contains: search, mode: "insensitive" as const } },
+      { qualification: { contains: search, mode: "insensitive" as const } },
+      { city: { contains: search, mode: "insensitive" as const } },
+    ] } : {}),
+  };
 }
+
+export async function listPlacementCandidates(placementCellApplicationId: string, query: PlacementCandidateQuery) {
+  const where = placementCandidateWhere(placementCellApplicationId, query);
+  const skip = (query.page - 1) * query.pageSize;
+  const [items, total] = await prisma.$transaction([
+    prisma.placementCandidate.findMany({
+      where,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      skip,
+      take: query.pageSize,
+    }),
+    prisma.placementCandidate.count({ where }),
+  ]);
+  return { items, total };
+}
+
 export function countPlacementCandidates(placementCellApplicationId: string) {
   return prisma.placementCandidate.count({ where: { placementCellApplicationId } });
 }

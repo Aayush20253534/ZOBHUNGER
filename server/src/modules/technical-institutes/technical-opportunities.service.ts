@@ -1,3 +1,4 @@
+import { observeOperation } from "../../observability/operation-metrics.js";
 import { Prisma, TechnicalOpportunityApplicationStatus, TechnicalOpportunityStatus } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
 import type { TechnicalOpportunityInput, TechnicalOpportunityListQuery, TechnicalOpportunityMatchQuery, TechnicalOpportunitySubmitInput } from "./technical-opportunities.schema.js";
@@ -145,7 +146,12 @@ export async function editTechnicalOpportunity(
 
 export async function getTechnicalOpportunityMatches(id: string, query: TechnicalOpportunityMatchQuery) {
   const opportunity = await getTechnicalOpportunity(id);
-  const students = await listVerifiedTechnicalStudentsForMatching(query, id);
+  const { students, truncated } = await observeOperation("technical.match_candidates", () =>
+    listVerifiedTechnicalStudentsForMatching(query, id, {
+      eligibleQualifications: opportunity.eligibleQualifications,
+      eligiblePassingYears: opportunity.eligiblePassingYears,
+    }),
+  );
   const scoredMatches = students.flatMap((student) => {
     const match = scoreTechnicalStudent(opportunity, student);
     if (!match || match.score < query.minScore) return [];
@@ -171,7 +177,13 @@ export async function getTechnicalOpportunityMatches(id: string, query: Technica
       application: student.applications[0] ?? null,
     }];
   }).sort((a, b) => b.score - a.score || a.student.fullName.localeCompare(b.student.fullName));
-  return { opportunity, matches: scoredMatches.slice(0, query.limit), totalMatches: scoredMatches.length };
+  return {
+    opportunity,
+    matches: scoredMatches.slice(0, query.limit),
+    totalMatches: scoredMatches.length,
+    scannedCandidates: students.length,
+    candidatePoolTruncated: truncated,
+  };
 }
 
 export async function submitTechnicalStudentToOpportunity(

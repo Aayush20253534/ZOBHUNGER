@@ -262,7 +262,7 @@ export function AdminDashboard() {
       <section className="zbo-dashboard-scope" aria-label="Current administrator scope">
         <div><span>Department</span><strong>{profile.label}</strong></div>
         <div><span>Visible workspaces</span><strong>{workspaceLinks.length + 1}</strong></div>
-        <div><span>Security</span><strong>{user?.adminMfaEnabled ? "MFA protected" : "Password only"}</strong></div>
+        <div><span>Security</span><strong>{user?.adminMfaEnabled ? "MFA protected" : user?.adminMfaRequired ? "MFA setup required" : "MFA not enabled"}</strong></div>
       </section>
 
       {error && <p className="zb-login-error" role="alert">{error}</p>}

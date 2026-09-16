@@ -1,4 +1,4 @@
-import { ApiError, apiFetch, type ApiSuccessEnvelope } from "@/lib/api";
+import { ApiError, apiFetch, apiRawFetch, EXPORT_API_TIMEOUT_MS, type ApiSuccessEnvelope } from "@/lib/api";
 import type { AuthUser } from "@/types/auth.types";
 import type { WorkerJob, WorkerJobFacets, WorkerJobList, WorkerProfileInput, WorkerProfileResult, WorkerWorkspace } from "@/types/worker.types";
 
@@ -14,7 +14,7 @@ export const saveWorkerProfile = (body: WorkerProfileInput) => apiFetch<ApiSucce
 export const uploadWorkerResume = (file: File, revision: number) => apiFetch<ApiSuccessEnvelope<WorkerProfileResult>>("/workers/profile/resume", { method: "PUT", body: file, headers: { ...writeHeaders, "Content-Type": "application/pdf", "X-File-Name": encodeURIComponent(file.name), "X-Resume-Revision": String(revision) } });
 export const removeWorkerResume = (revision: number) => apiFetch<ApiSuccessEnvelope<WorkerProfileResult>>("/workers/profile/resume", { ...json({ revision }), method: "DELETE" });
 export async function downloadWorkerResume() {
-  const response = await fetch("/api/backend/workers/profile/resume", { credentials: "include", cache: "no-store" });
+  const response = await apiRawFetch("/workers/profile/resume", { timeoutMs: EXPORT_API_TIMEOUT_MS });
   if (!response.ok) throw new ApiError("The resume could not be downloaded. Check your session and try again.", response.status);
   return response.blob();
 }

@@ -34,6 +34,8 @@ test("admin API applies MFA then deny-by-permission before every existing admin 
   assert.match(middleware, /AdminPermission\.ESIC_VIEW/);
   assert.match(middleware, /AdminPermission\.AI_ASSISTANT_MANAGE/);
   assert.match(middleware, /ADMIN_USERS_MANAGE/);
+  assert.match(middleware, /ADMIN_ROUTE_UNMAPPED/);
+  assert.doesNotMatch(middleware, /if \(!match\) return next\(\)/);
 });
 
 test("department policy stays least-privilege and Main Administration is protected", async () => {
@@ -92,7 +94,7 @@ test("access-management and activation surfaces keep the secure corporate shell"
   const activationCss = await text("client/src/styles/admin-access-activation.css");
   assert.match(access, /Department admin access, without separate portals/);
   assert.match(access, /Add administrator/);
-  assert.match(access, /MFA optional after activation/);
+  assert.match(access, /MFA required in production/);
   assert.match(siteFrame, /zb-admin-activation-root/);
   assert.match(css, /zba-access-hero/);
   assert.match(activationCss, /zb-admin-activation-root/);

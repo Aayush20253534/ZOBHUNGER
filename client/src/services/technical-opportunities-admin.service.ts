@@ -111,6 +111,8 @@ export interface TechnicalOpportunityMatchResult {
   opportunity: TechnicalOpportunityRecord;
   matches: TechnicalOpportunityMatch[];
   totalMatches: number;
+  scannedCandidates: number;
+  candidatePoolTruncated: boolean;
 }
 
 export function listTechnicalOpportunitiesAdmin(filters: {

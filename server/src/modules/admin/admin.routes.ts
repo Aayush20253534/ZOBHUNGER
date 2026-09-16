@@ -22,6 +22,7 @@ import { requireAdminMfa } from "../../middlewares/admin-mfa.middleware.js";
 import { requireMappedAdminPermission } from "../../middlewares/admin-permission.middleware.js";
 import { portalWrite } from "../../middlewares/portal-write.middleware.js";
 import { validate } from "../../middlewares/validate.middleware.js";
+import { getDetailedHealth, getOperationalMetrics } from "../../controllers/health.controller.js";
 import {
   adminOverviewController,
   listApplicationsController,
@@ -75,6 +76,9 @@ adminRouter.use("/deployments", adminDeploymentsRouter);
 adminRouter.use("/candidate-management", adminCandidatesRouter);
 adminRouter.use("/technical-institutes", adminTechnicalInstitutesRouter);
 adminRouter.use("/technical-opportunities", adminTechnicalOpportunitiesRouter);
+
+adminRouter.get("/system/health", getDetailedHealth);
+adminRouter.get("/system/metrics", getOperationalMetrics);
 
 adminRouter.get("/overview", adminOverviewController);
 

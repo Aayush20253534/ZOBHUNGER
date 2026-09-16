@@ -17,6 +17,7 @@ import { internshipsRouter } from "../modules/internships/internships.routes.js"
 import { employeeComplianceRouter } from "../modules/compliance/compliance.routes.js";
 import { chatbotRouter } from "../modules/chatbot/chatbot.routes.js";
 import { internshipPaymentPublicRouter } from "../modules/internship-payments/internship-payments.routes.js";
+import { telemetryRouter } from "../modules/telemetry/telemetry.routes.js";
 
 export const apiRouter = Router();
 
@@ -25,6 +26,7 @@ apiRouter.use("/business", businessRouter);
 apiRouter.use("/workers", workersRouter);
 apiRouter.use("/articles", articlesRouter);
 apiRouter.use("/chatbot", chatbotRouter);
+apiRouter.use("/telemetry", telemetryRouter);
 apiRouter.use("/admin", adminRouter);
 apiRouter.use("/jobs", jobsRouter);
 apiRouter.use("/contact", enquiriesRouter);

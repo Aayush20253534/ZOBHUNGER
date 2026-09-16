@@ -7,12 +7,6 @@ import { canonicalAliasOrigin, checkProductionDeployment } from "../production-d
 const revision = "c".repeat(40);
 const canonical = "https://example.test";
 const alias = "https://www.example.test";
-const featureNames = [
-  "businessPortal", "businessDashboard", "businessRequirements", "businessCandidates",
-  "businessDeployments", "businessAttendance", "businessPhase2Complete",
-  "productionFoundation", "productionDeployment",
-];
-
 const securityHeaders = {
   "Content-Type": "text/html; charset=utf-8",
   "Strict-Transport-Security": "max-age=31536000",
@@ -48,16 +42,10 @@ function canonicalResponse(path) {
     status: "ready",
     service: "zobhunger-api",
     revision,
-    checks: { database: true, privateFileStorage: true, email: true, publicApp: true, cache: "ready" },
   });
   if (path === "/api/backend/health") return Response.json({
     success: true,
-    data: {
-      service: "zobhunger-api",
-      revision,
-      publicAppOrigin: canonical,
-      features: Object.fromEntries(featureNames.map(key => [key, true])),
-    },
+    data: { status: "ok", service: "zobhunger-api", revision },
   });
   if (path.startsWith("/api/backend/")) return Response.json({ success: false, error: { code: "UNAUTHENTICATED" } }, { status: 401 });
   return html(path);
@@ -144,7 +132,8 @@ test("repository config enforces canonical host redirect and private-route trans
   ]) assert.ok(nextConfig.includes(token), `next.config.ts missing ${token}`);
   assert.ok(releaseRoute.includes("phase8ProductionDeployment: true"));
   assert.ok(releaseRoute.includes("canonicalOrigin"));
-  assert.ok(healthController.includes("productionDeployment: true"));
-  assert.ok(healthController.includes("publicAppOrigin"));
+  assert.ok(healthController.includes("getDetailedHealth"));
+  assert.ok(healthController.includes("readinessChecks"));
+  assert.ok(!healthController.includes("publicAppOrigin"));
   assert.ok(serverApp.includes("strictTransportSecurity"));
 });

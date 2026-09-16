@@ -88,28 +88,18 @@ function requireUnauthenticatedEnvelope(body, route) {
   }
 }
 
-function requireReadiness(readiness, { requireRedisReady }) {
+function requireReadiness(readiness) {
   if (readiness?.status !== "ready" || readiness?.service !== "zobhunger-api") {
     throw new Error("Backend readiness is not ready.");
   }
-  for (const check of ["database", "privateFileStorage", "email", "publicApp"]) {
-    if (readiness.checks?.[check] !== true) {
-      throw new Error(`Backend readiness check ${check} is not ready.`);
-    }
-  }
-  const cache = readiness.checks?.cache;
-  if (requireRedisReady && cache !== "ready") {
-    throw new Error(`Redis/cache readiness is ${cache ?? "unknown"}; final production acceptance requires ready.`);
-  }
-  if (!requireRedisReady && !["ready", "postgresql_fallback", "disabled"].includes(cache)) {
-    throw new Error(`Backend cache readiness value is invalid: ${cache ?? "unknown"}.`);
-  }
+  // Dependency-by-dependency diagnostics are intentionally not exposed on the
+  // anonymous readiness endpoint. They live at /admin/system/health.
 }
+
 
 export async function checkFinalAcceptance(origin, {
   fetcher = fetch,
   expectedRevision,
-  requireRedisReady = true,
   productionCheck = checkProductionDeployment,
   seoCheck = checkSeoIndexing,
 } = {}) {
@@ -160,13 +150,10 @@ export async function checkFinalAcceptance(origin, {
     throw new Error("Frontend release revision does not match the requested acceptance revision.");
   }
 
-  if (health?.success !== true || health?.data?.service !== "zobhunger-api") {
-    throw new Error("Backend health response is not the expected ZOBHUNGER API envelope.");
+  if (health?.success !== true || health?.data?.service !== "zobhunger-api" || health?.data?.status !== "ok") {
+    throw new Error("Backend health response is not the expected minimal ZOBHUNGER API envelope.");
   }
-  if (health.data?.features?.productionDeployment !== true || health.data?.publicAppOrigin !== canonical) {
-    throw new Error("Backend production deployment marker or PUBLIC_APP_URL alignment is invalid.");
-  }
-  requireReadiness(readiness, { requireRedisReady });
+  requireReadiness(readiness);
 
   assertBrandedHtml(homepageHtml, "Homepage");
   assertViewport(homepageHtml);
@@ -229,6 +216,7 @@ export async function checkFinalAcceptance(origin, {
     "Placement Cell activation, candidate management and opportunity application",
     "Employee joining submission, protected documents and generated offer-letter delivery",
     "Real Resend inbox delivery for acknowledgement, status-update and credential emails",
+    "Authenticated Main Admin review of /admin/system/health dependency diagnostics",
     "Chatbot production smoke using the approved public RAG knowledge base",
     "Responsive review on representative phone, tablet and desktop browsers",
     "Google Search Console ownership verification and sitemap submission",
@@ -244,7 +232,7 @@ export async function checkFinalAcceptance(origin, {
       productionDeployment: production.status === "passed",
       seoIndexing: seo.status === "passed",
       backendReadiness: true,
-      redisReady: readiness.checks?.cache === "ready",
+      redisReady: null,
       publicForms,
       noIndexEntries,
       protectedApis,
@@ -254,11 +242,12 @@ export async function checkFinalAcceptance(origin, {
       openGraphImage: true,
     },
     providers: {
-      database: readiness.checks?.database === true,
-      privateFileStorage: readiness.checks?.privateFileStorage === true,
-      emailConfiguration: readiness.checks?.email === true,
-      cache: readiness.checks?.cache ?? "unknown",
-      chatbotEnabled: health.data?.features?.chatbot === true,
+      diagnostics: "protected_at_/api/backend/admin/system/health",
+      database: "not_exposed_publicly",
+      privateFileStorage: "not_exposed_publicly",
+      emailConfiguration: "not_exposed_publicly",
+      cache: "not_exposed_publicly",
+      chatbotEnabled: "not_exposed_publicly",
     },
     nestedReports: { production, seo },
     manualAcceptanceRequired: manualAcceptance,

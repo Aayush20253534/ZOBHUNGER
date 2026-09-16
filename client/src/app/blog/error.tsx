@@ -1,10 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
+import { reportClientError } from "@/lib/client-monitoring";
+
 import { ActionButton } from "@/components/common/ActionButton";
 import { ActionLink } from "@/components/common/ActionLink";
 import { FeedbackMessage } from "@/components/common/FeedbackMessage";
 
-export default function ErrorPage({ reset }: { reset: () => void }) {
+export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => { void reportClientError(error, "blog"); }, [error]);
   return (
     <div className="zb-editorial-status">
       <FeedbackMessage tone="error" title="We couldn’t load the insights">

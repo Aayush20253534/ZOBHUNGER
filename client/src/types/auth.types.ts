@@ -39,6 +39,8 @@ export interface AuthUser {
   businessAccessApproved?: boolean;
   mustChangePassword?: boolean;
   adminMfaEnabled?: boolean;
+  adminMfaRequired?: boolean;
+  adminMfaEnrollmentRequired?: boolean;
   adminDepartment?: AdminDepartment | null;
   adminPermissions?: AdminPermission[];
   email: string;

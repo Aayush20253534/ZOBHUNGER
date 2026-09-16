@@ -33,7 +33,11 @@ export function LoginForm() {
     try {
       const response = await login(email.trim(), password, mfaRequired ? mfaCode : undefined);
       const user = response.data.user;
-      router.push(user.mustChangePassword ? "/business/change-password" : destinationForRole(user.role));
+      router.push(user.mustChangePassword
+        ? "/business/change-password"
+        : user.role === "ADMIN" && user.adminMfaEnrollmentRequired
+          ? "/admin/security"
+          : destinationForRole(user.role));
       router.refresh();
     } catch (caught) {
       if (caught instanceof ApiError && caught.code === "MFA_REQUIRED") {

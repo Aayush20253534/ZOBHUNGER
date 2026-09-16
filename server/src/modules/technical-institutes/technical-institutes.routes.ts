@@ -50,6 +50,7 @@ import {
   technicalInstitutePortalApplicationsController,
   technicalInstitutePortalDashboardController,
   technicalInstitutePortalOpportunitiesController,
+  technicalInstitutePortalOpportunityMatchesController,
   technicalInstitutePortalReportExportController,
   technicalInstitutePortalReportsController,
   technicalInstitutePortalStudentsController,
@@ -58,6 +59,7 @@ import {
 } from "./technical-institute-portal.controller.js";
 import {
   technicalInstitutePortalApplicationQuerySchema,
+  technicalInstitutePortalMatchQuerySchema,
   technicalInstitutePortalOpportunityParamsSchema,
   technicalInstitutePortalOpportunityQuerySchema,
   technicalInstitutePortalStudentParamsSchema,
@@ -137,6 +139,13 @@ technicalInstitutesRouter.get(
   requireRole("TECHNICAL_INSTITUTE"),
   validate({ query: technicalInstitutePortalOpportunityQuerySchema }),
   technicalInstitutePortalOpportunitiesController,
+);
+technicalInstitutesRouter.get(
+  "/portal/opportunities/:opportunityId/matches",
+  requireAuth,
+  requireRole("TECHNICAL_INSTITUTE"),
+  validate({ params: technicalInstitutePortalOpportunityParamsSchema, query: technicalInstitutePortalMatchQuerySchema }),
+  technicalInstitutePortalOpportunityMatchesController,
 );
 technicalInstitutesRouter.post(
   "/portal/opportunities/:opportunityId/applications",

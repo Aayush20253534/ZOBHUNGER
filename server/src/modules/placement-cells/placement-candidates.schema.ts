@@ -20,6 +20,8 @@ export const placementCandidateBodySchema = z.object({
 });
 export const placementCandidateParamsSchema = z.object({ id: z.string().trim().min(1).max(100) });
 export const placementCandidateQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(25),
   search: z.string().trim().max(120).optional(),
   city: z.string().trim().max(100).optional(),
   workType: z.string().trim().max(80).optional(),

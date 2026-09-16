@@ -47,7 +47,7 @@ export const checkoutParamsSchema = z.object({
 }).strict();
 
 export const receiptParamsSchema = z.object({ id: z.string().trim().min(10).max(100) }).strict();
-export const receiptQuerySchema = z.object({ token: z.string().trim().regex(/^[a-f0-9]{64}$/i, "Invalid receipt token") }).strict();
+export const receiptQuerySchema = z.object({ token: z.string().trim().max(90).regex(/^\d{10,12}\.[a-f0-9]{64}$/i, "Invalid receipt token") }).strict();
 
 export type CreateInternshipDocumentPayment = z.infer<typeof createInternshipDocumentPaymentSchema>;
 export type CashfreePaymentWebhook = z.infer<typeof cashfreePaymentWebhookSchema>;

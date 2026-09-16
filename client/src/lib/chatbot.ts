@@ -1,4 +1,4 @@
-import { ApiError, apiFetch, type ApiSuccessEnvelope } from "@/lib/api";
+import { ApiError, apiFetch, apiRawFetch, type ApiSuccessEnvelope } from "@/lib/api";
 
 export type ChatbotMessageRole = "user" | "assistant";
 export type ChatbotAudience = "UNKNOWN" | "JOB_SEEKER" | "BUSINESS" | "VENDOR_PARTNER" | "GENERAL";
@@ -121,10 +121,10 @@ async function httpError(response: Response): Promise<ApiError> {
 }
 
 export async function streamChatbotMessage(input: SendChatbotMessageInput, options: StreamChatbotOptions): Promise<ChatbotReply> {
-  const response = await fetch("/api/backend/chatbot/stream", {
+  const response = await apiRawFetch("/chatbot/stream", {
     method: "POST", credentials: "include", cache: "no-store",
     headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest", "Accept": "text/event-stream" },
-    body: requestBody(input), signal: options.signal,
+    body: requestBody(input), signal: options.signal, timeoutMs: null,
   });
   if (!response.ok) throw await httpError(response);
   if (!response.body) throw new ApiError("The chatbot returned an empty stream.", 502, "CHATBOT_EMPTY_STREAM");

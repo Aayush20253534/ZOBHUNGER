@@ -1,10 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
+import { reportClientError } from "@/lib/client-monitoring";
+
 import { ActionButton } from "@/components/common/ActionButton";
 import { ActionLink } from "@/components/common/ActionLink";
 import { PageShell } from "@/components/common/PageShell";
 
-export default function ErrorPage({ reset }: { reset: () => void }) {
+export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => { void reportClientError(error, "public"); }, [error]);
   return (
     <section className="zb-site-status">
       <PageShell
