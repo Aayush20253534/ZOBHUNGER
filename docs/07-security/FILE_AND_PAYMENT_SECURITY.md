@@ -6,7 +6,7 @@ Supported upload handlers enforce explicit size limits and allowed media types. 
 
 ## Malware scanning
 
-Production protected-file workflows use the configured ClamAV or HTTP scanner. Technical student spreadsheet imports are scanned before parsing. Scanner/provider failures follow fail-safe behavior appropriate to security-sensitive uploads.
+Production protected-file workflows use the configured ClamAV or HTTP scanner. Technical student spreadsheet imports are scanned before parsing. If no scanner is configured, the API can remain online but protected uploads are rejected with HTTP 503; scanner/provider failures follow the same fail-closed behavior.
 
 A structurally valid PDF or spreadsheet is not assumed safe merely because its header bytes are correct.
 

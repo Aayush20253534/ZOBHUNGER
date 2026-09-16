@@ -55,7 +55,7 @@ Settings cover assistant enablement, rate limits, memory/cache, grounding/rerank
 - external error-monitoring webhook/token
 - provider circuit-breaker threshold/cooldown
 
-Production intentionally requires a malware scanner for protected file workflows.
+Production protected uploads require a working malware scanner. The API may boot with the scanner disabled so non-upload features remain available, but protected uploads fail closed with HTTP 503 until ClamAV or an HTTP scanner is configured.
 
 ## Frontend
 

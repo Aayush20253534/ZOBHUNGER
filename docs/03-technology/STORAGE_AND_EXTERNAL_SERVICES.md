@@ -28,7 +28,7 @@ Groq supplies assistant generation. Gemini embeddings are optional for vector re
 
 ## Malware scanning
 
-`FILE_MALWARE_SCAN_PROVIDER` selects ClamAV or an HTTP scanning service in production. Supported upload paths are scanned before acceptance/storage or parsing. Scanner failure is handled conservatively for production security-sensitive paths.
+`FILE_MALWARE_SCAN_PROVIDER` selects ClamAV or an HTTP scanning service. Supported upload paths are scanned before acceptance/storage or parsing. If production starts with scanning disabled, non-upload API features remain available while protected uploads fail closed with HTTP 503 until a scanner is configured. Scanner/provider failures are also handled conservatively.
 
 ## External error monitoring
 

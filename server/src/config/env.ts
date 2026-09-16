@@ -233,9 +233,11 @@ function productionProblems() {
   if (!parsedData.CLOUDINARY_API_KEY) problems.push("CLOUDINARY_API_KEY is required in production");
   if (!parsedData.CLOUDINARY_API_SECRET) problems.push("CLOUDINARY_API_SECRET is required in production");
 
-  if (parsedData.FILE_MALWARE_SCAN_PROVIDER === "disabled") {
-    problems.push("FILE_MALWARE_SCAN_PROVIDER must be clamav or http in production");
-  } else if (parsedData.FILE_MALWARE_SCAN_PROVIDER === "clamav" && !parsedData.CLAMAV_HOST) {
+  // A missing malware provider must not take the whole API offline. The upload
+  // service itself fails closed in production while the provider is disabled.
+  // When a provider is explicitly selected, however, incomplete configuration
+  // is still a startup error because that would otherwise look operational.
+  if (parsedData.FILE_MALWARE_SCAN_PROVIDER === "clamav" && !parsedData.CLAMAV_HOST) {
     problems.push("CLAMAV_HOST is required when FILE_MALWARE_SCAN_PROVIDER=clamav");
   } else if (parsedData.FILE_MALWARE_SCAN_PROVIDER === "http" && !parsedData.FILE_MALWARE_SCAN_HTTP_URL) {
     problems.push("FILE_MALWARE_SCAN_HTTP_URL is required when FILE_MALWARE_SCAN_PROVIDER=http");

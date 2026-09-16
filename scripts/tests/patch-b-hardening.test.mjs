@@ -53,11 +53,12 @@ test("technical and compliance exports reject oversized result sets before unbou
   assert.equal((compliance.match(/take:\s*env\.COMPLIANCE_EXPORT_MAX_ROWS/g) ?? []).length, 2);
 });
 
-test("private uploads are malware-scanned before storage and scanning is required in production", () => {
+test("private uploads are malware-scanned before storage and fail closed per-upload when scanning is unavailable", () => {
   const env = read("server/src/config/env.ts");
   const storage = read("server/src/services/private-file-storage.ts");
   const scanner = read("server/src/services/malware-scan.service.ts");
-  assert.match(env, /FILE_MALWARE_SCAN_PROVIDER must be clamav or http in production/);
+  assert.doesNotMatch(env, /FILE_MALWARE_SCAN_PROVIDER must be clamav or http in production/);
+  assert.match(scanner, /env\.NODE_ENV === "production"[\s\S]*?scannerUnavailable\(\)/);
   const scanIndex = storage.indexOf("await scanUploadedFile");
   const uploadIndex = storage.indexOf('storageProviderRequest(() => fetch(cloudinaryApi("raw", "upload")');
   assert.ok(scanIndex >= 0 && uploadIndex > scanIndex, "scan must run before Cloudinary upload");

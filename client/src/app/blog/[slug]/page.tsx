@@ -26,17 +26,14 @@ import { blogPostingJsonLd, breadcrumbJsonLd, serializeJsonLd } from "@/lib/seo"
 import { site } from "@/data/site";
 import { getArticleVisualStory } from "@/data/article-visual-stories";
 import { executionVisuals } from "@/data/execution-visuals";
-import { mockArticles } from "@/mocks/articles";
 import { getArticleForPage } from "@/services/articles.service";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return mockArticles
-    .filter((article) => article.isPublished)
-    .map((article) => ({ slug: article.slug }));
-}
-
+// CMS articles live in the API and can change independently of frontend deploys.
+// Render them at request time so a temporary API outage during `next build` does
+// not make the entire frontend deployment fail.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await getArticleForPage((await params).slug);

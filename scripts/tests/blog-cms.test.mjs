@@ -53,6 +53,8 @@ test("public blog reads the production API and renders CMS-authored rich content
   const inline = await read("client/src/components/blog/ArticleInlineText.tsx");
   assert.match(service, /getEditorialDataMode\(\) === "api"/);
   assert.match(service, /getDataAdapter\(\)\.listArticles/);
+  assert.match(article, /export const dynamic = "force-dynamic"/);
+  assert.doesNotMatch(article, /generateStaticParams/);
   assert.match(article, /article\.coverImageUrl/);
   assert.match(article, /section\.quotes/);
   assert.match(article, /section\.images/);

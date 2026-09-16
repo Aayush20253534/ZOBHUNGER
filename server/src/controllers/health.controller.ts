@@ -18,11 +18,11 @@ function releaseRevision() {
   return /^[a-f0-9]{40,64}$/i.test(revision) ? revision.toLowerCase() : null;
 }
 
-function publicStatus(status: "ok" | "ready" | "not_ready") {
+function publicStatus(status: "ok" | "ready" | "not_ready", includeRevision = true) {
   return {
     status,
     service: "zobhunger-api",
-    revision: releaseRevision(),
+    ...(includeRevision ? { revision: releaseRevision() } : {}),
     timestamp: new Date().toISOString(),
     uptimeSeconds: Math.floor(process.uptime()),
   };
@@ -60,7 +60,7 @@ async function readinessChecks() {
 // expected application. Operational configuration lives behind admin auth.
 export const getMonitoringStatus: RequestHandler = (_req, res) => {
   res.set("Cache-Control", "no-store");
-  res.status(200).json(publicStatus("ok"));
+  res.status(200).json(publicStatus("ok", false));
 };
 
 export const getHealth: RequestHandler = (_req, res) => {
