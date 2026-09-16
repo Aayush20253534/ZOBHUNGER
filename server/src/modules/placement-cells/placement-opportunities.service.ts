@@ -24,7 +24,15 @@ async function approvedPlacementCellForUser(userId: string) {
 export async function getPlacementOpportunities(userId: string, query: PlacementOpportunityQuery) {
   await approvedPlacementCellForUser(userId);
   // Only the common job catalogue is cached, after checking current access.
-  return jobCache.remember("placement-list", query, () => listPlacementOpportunities(query));
+  const result = await jobCache.remember("placement-list", query, () => listPlacementOpportunities(query));
+  return {
+    items: result.items,
+    total: result.total,
+    page: query.page,
+    pageSize: query.pageSize,
+    totalPages: Math.max(1, Math.ceil(result.total / query.pageSize)),
+    opportunityTypes: result.opportunityTypes,
+  };
 }
 
 export async function submitPlacementCandidateToOpportunity(userId: string, jobReference: string, input: PlacementOpportunityApplicationInput) {
@@ -63,5 +71,12 @@ export async function submitPlacementCandidateToOpportunity(userId: string, jobR
 
 export async function getPlacementOpportunityApplications(userId: string, query: PlacementApplicationQuery) {
   const placementCell = await approvedPlacementCellForUser(userId);
-  return listPlacementOpportunityApplications(placementCell.id, query);
+  const result = await listPlacementOpportunityApplications(placementCell.id, query);
+  return {
+    items: result.items,
+    total: result.total,
+    page: query.page,
+    pageSize: query.pageSize,
+    totalPages: Math.max(1, Math.ceil(result.total / query.pageSize)),
+  };
 }

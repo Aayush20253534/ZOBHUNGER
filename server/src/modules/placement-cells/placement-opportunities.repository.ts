@@ -20,7 +20,7 @@ const opportunitySelect = {
   publishedAt: true,
 } satisfies Prisma.JobSelect;
 
-export function listPlacementOpportunities(query: PlacementOpportunityQuery) {
+export async function listPlacementOpportunities(query: PlacementOpportunityQuery) {
   const where: Prisma.JobWhereInput = { status: JobStatus.OPEN };
   if (query.city) {
     where.OR = [
@@ -46,12 +46,26 @@ export function listPlacementOpportunities(query: PlacementOpportunityQuery) {
       where.OR = search;
     }
   }
-  return prisma.job.findMany({
-    where: { AND: [where, availableJobWhere] },
-    select: opportunitySelect,
-    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-    take: 100,
-  });
+  const boundedWhere = { AND: [where, availableJobWhere] } satisfies Prisma.JobWhereInput;
+  const skip = (query.page - 1) * query.pageSize;
+  const [items, total, typeRows] = await prisma.$transaction([
+    prisma.job.findMany({
+      where: boundedWhere,
+      select: opportunitySelect,
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      skip,
+      take: query.pageSize,
+    }),
+    prisma.job.count({ where: boundedWhere }),
+    prisma.job.findMany({
+      where: { AND: [{ status: JobStatus.OPEN }, availableJobWhere] },
+      distinct: ["engagementType"],
+      select: { engagementType: true },
+      orderBy: { engagementType: "asc" },
+      take: 100,
+    }),
+  ]);
+  return { items, total, opportunityTypes: typeRows.map((row) => row.engagementType) };
 }
 
 export function findOpenPlacementOpportunity(jobId: string) {
@@ -101,7 +115,7 @@ export function findPlacementApplicationByJobAndCandidate(jobId: string, candida
   });
 }
 
-export function listPlacementOpportunityApplications(placementCellApplicationId: string, query: PlacementApplicationQuery) {
+export async function listPlacementOpportunityApplications(placementCellApplicationId: string, query: PlacementApplicationQuery) {
   const where: Prisma.JobApplicationWhereInput = { placementCellApplicationId };
   if (query.status) where.status = ApplicationStatus[query.status];
   if (query.search) {
@@ -112,15 +126,21 @@ export function listPlacementOpportunityApplications(placementCellApplicationId:
       { placementCandidate: { course: { contains: query.search, mode: "insensitive" } } },
     ];
   }
-  return prisma.jobApplication.findMany({
-    where,
-    orderBy: { createdAt: "desc" },
-    include: {
-      job: { select: { id: true, slug: true, title: true, engagementType: true, location: true, status: true } },
-      placementCandidate: { select: { id: true, fullName: true, email: true, course: true, qualification: true } },
-    },
-    take: 200,
-  });
+  const skip = (query.page - 1) * query.pageSize;
+  const [items, total] = await prisma.$transaction([
+    prisma.jobApplication.findMany({
+      where,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      include: {
+        job: { select: { id: true, slug: true, title: true, engagementType: true, location: true, status: true } },
+        placementCandidate: { select: { id: true, fullName: true, email: true, course: true, qualification: true } },
+      },
+      skip,
+      take: query.pageSize,
+    }),
+    prisma.jobApplication.count({ where }),
+  ]);
+  return { items, total };
 }
 
 export function countPlacementOpportunityApplications(placementCellApplicationId: string) {

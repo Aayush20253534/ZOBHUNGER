@@ -6,8 +6,15 @@ import type { PlacementApplicationQuery, PlacementOpportunityApplicationInput, P
 const userId = (res: any) => (res.locals.authUser as { id: string }).id;
 
 export const listPlacementOpportunitiesController: RequestHandler = async (_req, res) => {
-  const opportunities = await getPlacementOpportunities(userId(res), res.locals.validated.query as PlacementOpportunityQuery);
-  res.json(apiSuccessResponse("Placement opportunities retrieved", { opportunities }));
+  const result = await getPlacementOpportunities(userId(res), res.locals.validated.query as PlacementOpportunityQuery);
+  res.json(apiSuccessResponse("Placement opportunities retrieved", {
+    opportunities: result.items,
+    total: result.total,
+    page: result.page,
+    pageSize: result.pageSize,
+    totalPages: result.totalPages,
+    opportunityTypes: result.opportunityTypes,
+  }));
 };
 
 export const submitPlacementOpportunityApplicationController: RequestHandler = async (_req, res) => {
@@ -17,6 +24,12 @@ export const submitPlacementOpportunityApplicationController: RequestHandler = a
 };
 
 export const listPlacementOpportunityApplicationsController: RequestHandler = async (_req, res) => {
-  const applications = await getPlacementOpportunityApplications(userId(res), res.locals.validated.query as PlacementApplicationQuery);
-  res.json(apiSuccessResponse("Placement applications retrieved", { applications }));
+  const result = await getPlacementOpportunityApplications(userId(res), res.locals.validated.query as PlacementApplicationQuery);
+  res.json(apiSuccessResponse("Placement applications retrieved", {
+    applications: result.items,
+    total: result.total,
+    page: result.page,
+    pageSize: result.pageSize,
+    totalPages: result.totalPages,
+  }));
 };

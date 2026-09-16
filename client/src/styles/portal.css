@@ -2271,3 +2271,7 @@ body.zb-site:has(.zb-recovery-page) > main {
     grid-template-columns: 1fr;
   }
 }
+
+/* Placement portal paging/search hardening: keep large opportunity/candidate datasets bounded. */
+.zb-placement-pagination{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:1rem;padding:.8rem 1rem;border:1px solid var(--zb-border);border-radius:.7rem;background:#fff;color:var(--zb-muted);font-size:.78rem;font-weight:700}.zb-placement-pagination button{display:inline-flex;align-items:center;gap:.35rem;min-height:2.35rem;padding:.5rem .8rem;border:1px solid var(--zb-border);border-radius:.5rem;background:#fff;color:var(--zb-ink);font:inherit;font-weight:700;cursor:pointer}.zb-placement-pagination button:hover:not(:disabled){border-color:#d67b83;color:var(--zb-action);background:#fff5f5}.zb-placement-pagination button:disabled{opacity:.45;cursor:not-allowed}.zb-placement-pagination button svg{width:.9rem}.zb-opportunity-submit-panel label>small{display:block;margin-top:.3rem;color:var(--zb-muted);font-size:.72rem;font-weight:500;line-height:1.35}.zb-opportunity-submit-panel input{width:100%;min-height:2.6rem;padding:.6rem .7rem;border:1px solid var(--zb-border);border-radius:.5rem;background:#fff;color:var(--zb-ink);font:inherit;outline:none}.zb-opportunity-submit-panel input:focus{border-color:var(--zb-action);box-shadow:0 0 0 3px rgba(207,29,43,.08)}
+@media(max-width:540px){.zb-placement-pagination{align-items:stretch;flex-direction:column;text-align:center}.zb-placement-pagination button{justify-content:center;width:100%}}
