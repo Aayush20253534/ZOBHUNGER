@@ -47,11 +47,6 @@ export function TechnicalInstitutePortalOpportunities() {
     return () => window.clearTimeout(handle);
   }, [load]);
 
-  useEffect(() => {
-    setMatches({});
-    setExpanded(null);
-  }, [minScore]);
-
   async function loadMatches(opportunityId: string, force = false) {
     if (!force && matches[opportunityId]) return;
     setMatchingId(opportunityId);
@@ -93,7 +88,11 @@ export function TechnicalInstitutePortalOpportunities() {
   return <div className="zti-portal-shell">
     <header className="zti-portal-subhero"><div><Link href="/technical-institute-portal"><ArrowLeft />Portal dashboard</Link><small>Qualification-led matching</small><h1>Technical opportunities</h1><p>See live jobs, internships, apprenticeships and training mapped against verified students from your institute.</p></div><Link className="zti-portal-outline-link" href="/technical-institute-portal/applications">Track applications</Link></header>
     {error && <div className="zti-portal-alert"><CircleAlert />{error}</div>}{notice && <div className="zti-portal-notice"><BadgeCheck />{notice}</div>}
-    <section className="zti-portal-opportunity-toolbar"><label><Search /><input value={search} onChange={(event) => { setPage(1); setSearch(event.target.value); }} placeholder="Opportunity, employer or location" /></label><select value={type} onChange={(event) => { setPage(1); setType(event.target.value as TechnicalOpportunityType | ""); }}><option value="">All opportunity types</option><option value="JOB">Jobs</option><option value="INTERNSHIP">Internships</option><option value="APPRENTICESHIP">Apprenticeships</option><option value="TRAINING">Training</option></select><select value={minScore} onChange={(event) => setMinScore(Number(event.target.value))}><option value={55}>55%+ eligible</option><option value={65}>65%+ relevant</option><option value={75}>75%+ strong</option><option value={85}>85%+ best fit</option></select><span>{total} open · matches calculated when opened</span></section>
+    <section className="zti-portal-opportunity-toolbar"><label><Search /><input value={search} onChange={(event) => { setPage(1); setSearch(event.target.value); }} placeholder="Opportunity, employer or location" /></label><select value={type} onChange={(event) => { setPage(1); setType(event.target.value as TechnicalOpportunityType | ""); }}><option value="">All opportunity types</option><option value="JOB">Jobs</option><option value="INTERNSHIP">Internships</option><option value="APPRENTICESHIP">Apprenticeships</option><option value="TRAINING">Training</option></select><select value={minScore} onChange={(event) => {
+      setMinScore(Number(event.target.value));
+      setMatches({});
+      setExpanded(null);
+    }}><option value={55}>55%+ eligible</option><option value={65}>65%+ relevant</option><option value={75}>75%+ strong</option><option value={85}>85%+ best fit</option></select><span>{total} open · matches calculated when opened</span></section>
     <div className="zti-portal-opportunity-grid">{items.length ? items.map((opportunity) => {
       const result = matches[opportunity.id];
       const bestScore = result?.matches[0]?.score;

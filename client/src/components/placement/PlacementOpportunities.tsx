@@ -58,8 +58,6 @@ export function PlacementOpportunities() {
 
   useEffect(() => {
     if (!selectedJob) {
-      setCandidateResults([]);
-      setCandidateTotal(0);
       return;
     }
     const controller = new AbortController();
@@ -97,6 +95,9 @@ export function PlacementOpportunities() {
       setSelectedJob(null);
       setCandidateId("");
       setCandidateQuery("");
+      setCandidateResults([]);
+      setCandidateTotal(0);
+      setCandidateLoading(false);
       setMessage("");
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "Unable to submit candidate.");
@@ -140,6 +141,9 @@ export function PlacementOpportunities() {
           setSelectedJob(next);
           setCandidateId("");
           setCandidateQuery("");
+          setCandidateResults([]);
+          setCandidateTotal(0);
+          setCandidateLoading(false);
           setError(null);
           setSuccess(null);
         }}><UsersRound />Match a candidate</button>
