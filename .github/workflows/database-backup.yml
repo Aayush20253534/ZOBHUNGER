@@ -35,12 +35,16 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install PostgreSQL client tools
+      - name: Install PostgreSQL 18 client tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y postgresql-client
-          pg_dump --version
-          pg_restore --version
+          sudo apt-get install -y postgresql-common ca-certificates
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-18
+          echo "/usr/lib/postgresql/18/bin" >> "$GITHUB_PATH"
+          /usr/lib/postgresql/18/bin/pg_dump --version
+          /usr/lib/postgresql/18/bin/pg_restore --version
 
       - name: Create encrypted Drive backup
         run: npm run backup:database
