@@ -14,7 +14,10 @@ function requireAll(path, content, needles) {
 const workflowPath = ".github/workflows/security-ci.yml";
 const workflow = requireFile(workflowPath);
 requireAll(workflowPath, workflow, [
-  "npm audit --omit=dev --audit-level=high",
+  "node scripts/security/audit-runtime-deps.mjs ${{ matrix.workspace }}",
+  "npm run test:patch-a",
+  "npm run test:patch-b",
+  "npm run test:patch-c",
   "npm run security:secrets",
   "github/codeql-action/init@v3",
   "github/codeql-action/analyze@v3",

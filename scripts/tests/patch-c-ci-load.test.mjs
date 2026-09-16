@@ -6,7 +6,14 @@ const read = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), "
 
 test("security CI gates dependency audit, secret scanning and CodeQL", () => {
   const workflow = read(".github/workflows/security-ci.yml");
-  assert.match(workflow, /npm audit --omit=dev --audit-level=high/);
+  assert.match(workflow, /audit-runtime-deps\.mjs \${{ matrix\.workspace }}/);
+  const auditWrapper = read("scripts/security/audit-runtime-deps.mjs");
+  assert.match(auditWrapper, /entry\.devOptional !== true/);
+  assert.match(auditWrapper, /entry\.dev !== true/);
+  assert.match(auditWrapper, /runtimeNodes/);
+  assert.match(workflow, /npm run test:patch-a/);
+  assert.match(workflow, /npm run test:patch-b/);
+  assert.match(workflow, /npm run test:patch-c/);
   assert.match(workflow, /npm run security:secrets/);
   assert.match(workflow, /github\/codeql-action\/init@v3/);
   assert.match(workflow, /github\/codeql-action\/analyze@v3/);

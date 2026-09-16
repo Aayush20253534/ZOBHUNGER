@@ -29,6 +29,8 @@ jobs:
       - run: npm run security:secrets
       - run: npm run security:ci-policy
       - run: npm run audit:regressions
+      - run: npm run test:patch-a
+      - run: npm run test:patch-b
       - run: npm run test:patch-c
 
   dependency-audit:
@@ -45,9 +47,8 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: ${{ matrix.workspace }}/package-lock.json
-      - name: Audit production dependencies
-        working-directory: ${{ matrix.workspace }}
-        run: npm audit --omit=dev --audit-level=high
+      - name: Audit runtime dependency exposure
+        run: node scripts/security/audit-runtime-deps.mjs ${{ matrix.workspace }}
 
   codeql:
     name: CodeQL (JavaScript/TypeScript)
