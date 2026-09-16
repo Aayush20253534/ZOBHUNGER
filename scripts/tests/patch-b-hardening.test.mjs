@@ -53,6 +53,21 @@ test("technical and compliance exports reject oversized result sets before unbou
   assert.equal((compliance.match(/take:\s*env\.COMPLIANCE_EXPORT_MAX_ROWS/g) ?? []).length, 2);
 });
 
+test("CSV exports neutralize spreadsheet formulas and reject silent 5,000-row truncation", () => {
+  const intake = read("server/src/modules/intake/intake.service.ts");
+  const technical = read("server/src/modules/technical-institutes/technical-institute-portal.service.ts");
+  const employeeJoining = read("server/src/modules/employee-joining/employee-joining.service.ts");
+
+  for (const source of [intake, technical]) {
+    assert.ok(source.includes('/^[\\s\\u0000-\\u001f]*[=+@-]/'), "CSV export should neutralize formula-like cells including leading whitespace/control characters");
+  }
+
+  assert.match(intake, /take:\s*intakeExportMaxRows \+ 1/);
+  assert.match(intake, /INTAKE_EXPORT_TOO_LARGE/);
+  assert.match(employeeJoining, /take:\s*employeeJoiningExportMaxRows \+ 1/);
+  assert.match(employeeJoining, /EMPLOYEE_JOINING_EXPORT_TOO_LARGE/);
+});
+
 test("private uploads are malware-scanned before storage and fail closed per-upload when scanning is unavailable", () => {
   const env = read("server/src/config/env.ts");
   const storage = read("server/src/services/private-file-storage.ts");

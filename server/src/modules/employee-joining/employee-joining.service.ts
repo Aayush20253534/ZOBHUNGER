@@ -282,8 +282,13 @@ function csvCell(value: unknown) {
   return `"${text.replace(/"/g, '""')}"`;
 }
 
+const employeeJoiningExportMaxRows = 5000;
+
 export async function exportEmployeeJoiningsCsv(actorUserId: string) {
-  const records = await prisma.employeeJoining.findMany({ where: { status: { not: "DRAFT" } }, include: { offer: true }, orderBy: [{ submittedAt: "desc" }, { id: "desc" }], take: 5000 });
+  const records = await prisma.employeeJoining.findMany({ where: { status: { not: "DRAFT" } }, include: { offer: true }, orderBy: [{ submittedAt: "desc" }, { id: "desc" }], take: employeeJoiningExportMaxRows + 1 });
+  if (records.length > employeeJoiningExportMaxRows) {
+    fail(413, `This employee joining export exceeds ${employeeJoiningExportMaxRows.toLocaleString("en-IN")} rows. Narrow the dataset before exporting.`, "EMPLOYEE_JOINING_EXPORT_TOO_LARGE");
+  }
   const headers = ["Employee Number","Status","Project Code","Project / Assignment","Full Name","Father / Guardian","Personal Email","Phone","Alternate Phone","Date of Birth","Gender","Marital Status","Blood Group","Shirt Size","Current Address","Permanent Address","Emergency Contact","Emergency Relationship","Emergency Phone","Aadhaar","PAN","Bank Account Holder","Bank Name","Bank Account Number","IFSC","Bank Branch","UPI","UAN","Highest Qualification","Institution","Board / University","Graduation Year","Grade","Previous Employment","Offer Status","Designation","Department","Work Location","Joining Date","Employment Type","Monthly Gross Salary","Annual CTC","Submitted At","Approved At"];
   const rows = records.map(record => [
     record.employeeNumber, record.status, record.projectCode, record.projectAssignment, record.fullName, record.fatherGuardianName, record.personalEmail, record.phone, record.alternatePhone,

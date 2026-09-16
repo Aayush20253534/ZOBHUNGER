@@ -176,14 +176,20 @@ export async function addIntakeNote(actor: IntakeActor, id: string, input: AddIn
   return getIntakeCase(actor, id);
 }
 
+const intakeExportMaxRows = 5000;
+
 function csvCell(value: unknown) {
-  const text = value == null ? "" : String(value);
+  let text = value == null ? "" : String(value);
+  if (/^[\s\u0000-\u001f]*[=+@-]/.test(text)) text = `'${text}`;
   return `"${text.replaceAll('"', '""')}"`;
 }
 
 export async function exportIntakeCases(actor: IntakeActor, input: IntakeListQuery) {
   const where = listWhere(actor, { ...input, page: 1 });
-  const rows = await prisma.intakeCase.findMany({ where, select: listSelect, take: 5000, orderBy: [{ submittedAt: "desc" }, { id: "desc" }] });
+  const rows = await prisma.intakeCase.findMany({ where, select: listSelect, take: intakeExportMaxRows + 1, orderBy: [{ submittedAt: "desc" }, { id: "desc" }] });
+  if (rows.length > intakeExportMaxRows) {
+    throw new HttpError(413, `This intake export exceeds ${intakeExportMaxRows.toLocaleString("en-IN")} rows. Narrow the filters before exporting.`, { code: "INTAKE_EXPORT_TOO_LARGE" });
+  }
   const header = ["Case ID", "Department", "Status", "Source", "Source reference", "Subject", "Contact", "Email", "Phone", "Organisation", "City", "Assigned admin", "Submitted at", "Updated at"];
   const lines = [header.map(csvCell).join(","), ...rows.map(row => [row.id, row.department, row.status, row.sourceType, row.sourceId, row.subject, row.contactName, row.contactEmail, row.contactPhone, row.organizationName, row.city, row.assignedAdmin?.email, row.submittedAt.toISOString(), row.updatedAt.toISOString()].map(csvCell).join(","))];
   await prisma.auditLog.create({ data: { actorUserId: actor.id, action: "intake.exported", entityType: "IntakeCase", entityId: "export", metadata: { rows: rows.length } } });

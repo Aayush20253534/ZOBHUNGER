@@ -162,7 +162,8 @@ export async function getTechnicalInstitutePortalReports(userId: string) {
 }
 
 function csvCell(value: unknown) {
-  const text = value == null ? "" : String(value);
+  let text = value == null ? "" : String(value);
+  if (/^[\s\u0000-\u001f]*[=+@-]/.test(text)) text = `'${text}`;
   return `"${text.replaceAll('"', '""')}"`;
 }
 
