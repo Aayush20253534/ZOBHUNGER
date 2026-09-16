@@ -29,6 +29,7 @@ const requiredDocs = [
   "docs/06-api/API_OVERVIEW.md",
   "docs/07-security/SECURITY_ARCHITECTURE.md",
   "docs/08-operations/DEPLOYMENT.md",
+  "docs/08-operations/DATABASE_BACKUP_AND_RECOVERY.md",
   "docs/09-development/LOCAL_SETUP.md",
   "docs/09-development/TESTING.md",
 ];

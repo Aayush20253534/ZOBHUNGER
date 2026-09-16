@@ -42,7 +42,11 @@
 
 ## Data recovery
 
-- [ ] external database backup/PITR policy exists;
-- [ ] restore procedure has been tested in an isolated environment.
+- [ ] GitHub backup workflow secrets are configured;
+- [ ] scheduled encrypted Google Drive backups succeed at 01:00 and 13:00 IST;
+- [ ] backup encryption key is held outside GitHub in a second secure location;
+- [ ] latest backup passes `npm run backup:verify`;
+- [ ] restore procedure has been tested in an isolated PostgreSQL database;
+- [ ] provider-native snapshot/PITR policy is enabled when available.
 
-The last two are operational requirements but **are not currently implemented by repository automation**.
+Repository automation for twice-daily encrypted logical backups is documented in [Database backup and recovery](DATABASE_BACKUP_AND_RECOVERY.md). A successful upload is not equivalent to a tested restore.

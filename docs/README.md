@@ -51,7 +51,11 @@ Documents cover the public website, authentication, each portal, workforce execu
 Current authentication, authorization, PII, upload, payment, logging and release controls.
 
 ### 08 Operations
-Deployment, health/observability, load testing and production release procedures.
+- [Deployment](08-operations/DEPLOYMENT.md)
+- [Database backup and recovery](08-operations/DATABASE_BACKUP_AND_RECOVERY.md)
+- [Health and observability](08-operations/HEALTH_OBSERVABILITY.md)
+- [Performance and load testing](08-operations/PERFORMANCE_AND_LOAD_TESTING.md)
+- [Production checklist](08-operations/PRODUCTION_CHECKLIST.md)
 
 ### 09 Development
 Local setup, Prisma/database workflow, tests, CI/CD and contribution rules.

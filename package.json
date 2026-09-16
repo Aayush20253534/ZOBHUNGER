@@ -9,7 +9,7 @@
     "build:server": "npm --prefix server run build",
     "test:server": "npm --prefix server run test",
     "smoke:server": "npm --prefix server run test:smoke",
-    "verify": "npm run audit:foundation && npm run test:release && npm run test:rbac && npm run test:patch-a && npm run test:patch-b && npm run test:patch-c && npm run test:deployment-runtime && npm run security:secrets && npm run security:audit-runtime:self-test && npm run security:ci-policy && npm run audit:regressions && npm run test:admin-experience && npm run test:compliance && npm run test:intake && npm run test:internship-payments && npm run test:hiring && npm run test:blog-cms && npm run test:email-production && npm run test:production-deployment && npm run test:seo && npm run test:acceptance && npm run chatbot:release-check && npm run test:ai-assistant && npm run test:docs && npm run test:server && npm run build:server && npm --prefix client run lint && npm run build:client",
+    "verify": "npm run audit:foundation && npm run test:release && npm run test:rbac && npm run test:patch-a && npm run test:patch-b && npm run test:patch-c && npm run test:deployment-runtime && npm run security:secrets && npm run security:audit-runtime:self-test && npm run security:ci-policy && npm run audit:regressions && npm run test:admin-experience && npm run test:compliance && npm run test:intake && npm run test:internship-payments && npm run test:hiring && npm run test:blog-cms && npm run test:email-production && npm run test:production-deployment && npm run test:seo && npm run test:acceptance && npm run chatbot:release-check && npm run test:ai-assistant && npm run test:backup && npm run test:docs && npm run test:server && npm run build:server && npm --prefix client run lint && npm run build:client",
     "verify:phase2": "node scripts/verify-phase2.mjs",
     "check:release": "node scripts/check-release.mjs",
     "verify:workers": "node scripts/verify-phase2.mjs --workers",
@@ -48,6 +48,11 @@
     "load:smoke": "node scripts/run-load-test.mjs --smoke",
     "security:audit-runtime:self-test": "node scripts/security/audit-runtime-deps.mjs --self-test",
     "test:docs": "node --test scripts/tests/documentation-structure.test.mjs",
-    "test:deployment-runtime": "node --test scripts/tests/deployment-runtime-regressions.test.mjs"
+    "test:deployment-runtime": "node --test scripts/tests/deployment-runtime-regressions.test.mjs",
+    "backup:drive-auth": "node scripts/backup/google-drive-oauth.mjs",
+    "backup:database": "node scripts/backup/create-drive-backup.mjs",
+    "backup:verify": "node scripts/backup/verify-drive-backup.mjs",
+    "backup:restore": "node scripts/backup/verify-drive-backup.mjs --restore",
+    "test:backup": "node --test scripts/tests/database-backup.test.mjs"
   }
 }

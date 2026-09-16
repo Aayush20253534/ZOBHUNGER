@@ -57,6 +57,18 @@ Settings cover assistant enablement, rate limits, memory/cache, grounding/rerank
 
 Production protected uploads require a working malware scanner. The API may boot with the scanner disabled so non-upload features remain available, but protected uploads fail closed with HTTP 503 until ClamAV or an HTTP scanner is configured.
 
+## Backup automation (GitHub Actions only)
+
+Database backup credentials are **not server runtime environment variables**. They belong in GitHub Actions Secrets for `.github/workflows/database-backup.yml`:
+
+- `BACKUP_DATABASE_URL`
+- `BACKUP_ENCRYPTION_KEY_B64`
+- `GOOGLE_DRIVE_CLIENT_ID` / `GOOGLE_DRIVE_CLIENT_SECRET`
+- `GOOGLE_DRIVE_REFRESH_TOKEN`
+- `GOOGLE_DRIVE_FOLDER_ID`
+
+Optional repository variables are `BACKUP_ENCRYPTION_KEY_ID` and `BACKUP_RETENTION_DAYS`. See [Database backup and recovery](../08-operations/DATABASE_BACKUP_AND_RECOVERY.md).
+
 ## Frontend
 
 - `NEXT_PUBLIC_DATA_MODE`
