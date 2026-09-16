@@ -1999,19 +1999,119 @@
 }
 
 .zbo-admin-content-inner .zb-admin-security-status {
-  width: max-content;
-  min-width: max-content;
-  min-height: 2.45rem;
+  display: grid;
+  grid-template-columns: 3.35rem minmax(0, 1fr);
+  align-items: stretch;
+  width: min(100%, 22rem);
+  min-width: 18.5rem;
+  min-height: 0;
   flex: 0 0 auto;
   justify-self: end;
-  padding: .5rem .72rem;
-  border-radius: 999px;
-  overflow: visible;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--zbo-red) 18%, #dfd5d8);
+  border-left: 4px solid var(--zbo-red);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, #fff 0%, #fff7f8 100%);
+  box-shadow: 0 .8rem 2rem rgba(24, 28, 36, .08);
 }
 
-.zbo-admin-content-inner .zb-admin-security-status-label {
-  min-width: max-content;
-  white-space: nowrap;
+.zbo-admin-content-inner .zb-admin-security-status-icon {
+  display: grid;
+  place-items: center;
+  border-right: 1px solid color-mix(in srgb, var(--zbo-red) 10%, #ece7e9);
+  background: linear-gradient(180deg, #fff5f7 0%, #ffeff2 100%);
+  color: var(--zbo-red);
+}
+
+.zbo-admin-content-inner .zb-admin-security-status-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  stroke-width: 2.1;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status-copy {
+  display: grid;
+  align-content: center;
+  gap: .22rem;
+  min-width: 0;
+  padding: .82rem .95rem .86rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status-copy small {
+  margin: 0;
+  color: #85666f;
+  font-size: .64rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status-copy strong {
+  margin: 0;
+  color: #b91f35;
+  font-size: .98rem;
+  font-weight: 820;
+  line-height: 1.1;
+  letter-spacing: -.018em;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status-copy em {
+  margin: 0;
+  color: #6d5c63;
+  font-size: .74rem;
+  font-style: normal;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-enabled {
+  border-color: #cfe5d8;
+  border-left-color: #20815c;
+  background: linear-gradient(180deg, #ffffff 0%, #f6fcf8 100%);
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-enabled .zb-admin-security-status-icon {
+  border-right-color: #d9ece1;
+  background: linear-gradient(180deg, #f3fbf6 0%, #ebf8f0 100%);
+  color: #1b6f50;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-enabled .zb-admin-security-status-copy small {
+  color: #5f7a6d;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-enabled .zb-admin-security-status-copy strong {
+  color: #196d4e;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-enabled .zb-admin-security-status-copy em {
+  color: #607268;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-inactive {
+  border-color: #e6e1e3;
+  border-left-color: #8a7c82;
+  background: linear-gradient(180deg, #fff 0%, #faf8f9 100%);
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-inactive .zb-admin-security-status-icon {
+  border-right-color: #ebe7e8;
+  background: linear-gradient(180deg, #fbf9fa 0%, #f6f3f4 100%);
+  color: #75686e;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-inactive .zb-admin-security-status-copy small {
+  color: #83757b;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-inactive .zb-admin-security-status-copy strong {
+  color: #41393d;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-inactive .zb-admin-security-status-copy em {
+  color: #73676c;
 }
 
 .zbo-admin-content-inner .zb-admin-security-state,
@@ -2155,7 +2255,9 @@
 
   .zbo-admin-content-inner .zb-admin-security-status {
     grid-column: 1 / -1;
-    justify-self: start;
+    width: 100%;
+    min-width: 0;
+    justify-self: stretch;
   }
 
   .zbo-admin-content-inner .zb-admin-security-state {

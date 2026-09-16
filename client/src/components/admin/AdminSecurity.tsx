@@ -57,13 +57,19 @@ export function AdminSecurity() {
 
   const statusTitle = enabled ? "MFA enabled" : required ? "MFA setup required" : "MFA not enabled";
   const statusDescription = enabled ? "Administrator sign-in is protected." : required ? "Required before admin access." : "Password-only administrator access.";
+  const statusClassName = [
+    "zb-admin-security-status",
+    enabled ? "is-enabled" : "",
+    required ? "is-required" : "",
+    !enabled && !required ? "is-inactive" : "",
+  ].filter(Boolean).join(" ");
 
   return <div className="zb-admin-security-page">
     <section className="zb-admin-security-card">
       <header className="zb-admin-security-heading">
         <span className="zb-admin-security-icon"><ShieldCheck /></span>
         <div><p className="zb-eyebrow">Administrator security</p><h1>Account protection</h1><p>Multi-factor authentication protects administrator access. In production it is mandatory before any administrator workspace can be opened.</p></div>
-        <span className={`zb-admin-security-status${enabled ? " is-enabled" : ""}`}>
+        <span className={statusClassName}>
           <span className="zb-admin-security-status-icon">{enabled ? <CheckCircle2 /> : <ShieldOff />}</span>
           <span className="zb-admin-security-status-copy">
             <small>Security status</small>
