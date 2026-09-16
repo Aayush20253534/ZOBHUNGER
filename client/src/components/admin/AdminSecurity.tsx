@@ -55,12 +55,22 @@ export function AdminSecurity() {
 
   if (loading) return <section className="zb-admin-security-card zb-admin-security-loading"><ShieldCheck /><span>Checking administrator security…</span></section>;
 
+  const statusTitle = enabled ? "MFA enabled" : required ? "MFA setup required" : "MFA not enabled";
+  const statusDescription = enabled ? "Administrator sign-in is protected." : required ? "Required before admin access." : "Password-only administrator access.";
+
   return <div className="zb-admin-security-page">
     <section className="zb-admin-security-card">
       <header className="zb-admin-security-heading">
         <span className="zb-admin-security-icon"><ShieldCheck /></span>
         <div><p className="zb-eyebrow">Administrator security</p><h1>Account protection</h1><p>Multi-factor authentication protects administrator access. In production it is mandatory before any administrator workspace can be opened.</p></div>
-        <span className={`zb-admin-security-status${enabled ? " is-enabled" : ""}`}>{enabled ? <CheckCircle2 /> : <ShieldOff />}<span>{enabled ? "MFA enabled" : required ? "MFA setup required" : "MFA not enabled"}</span></span>
+        <span className={`zb-admin-security-status${enabled ? " is-enabled" : ""}`}>
+          <span className="zb-admin-security-status-icon">{enabled ? <CheckCircle2 /> : <ShieldOff />}</span>
+          <span className="zb-admin-security-status-copy">
+            <small>Security status</small>
+            <strong>{statusTitle}</strong>
+            <em>{statusDescription}</em>
+          </span>
+        </span>
       </header>
       {error && <p className="zb-login-error zb-admin-security-error" role="alert">{error}</p>}
       {message && <p className="zb-admin-security-message" role="status">{message}</p>}
