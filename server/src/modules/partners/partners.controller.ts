@@ -21,7 +21,7 @@ export const uploadPartnerResumeController: RequestHandler = async (req, res) =>
     uploadToken: req.get("x-upload-token"),
     fileName: req.get("x-file-name"),
     mimeType: req.get("content-type"),
-    body: req.body as Buffer,
+    body: req.body,
   });
 
   res.status(200).json(apiSuccessResponse("Resume uploaded successfully.", result));

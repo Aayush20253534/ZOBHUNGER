@@ -139,7 +139,7 @@ function importBatchName(fileName?: string) {
 export async function importTechnicalStudentsForAdmin(input: {
   instituteId: string;
   mode: TechnicalStudentImportQuery["mode"];
-  buffer: Buffer;
+  buffer: unknown;
   mimeType?: string;
   fileName?: string;
   actorUserId: string;
@@ -147,13 +147,17 @@ export async function importTechnicalStudentsForAdmin(input: {
   userAgent?: string;
 }) {
   await approvedInstitute(input.instituteId);
+  if (!Buffer.isBuffer(input.buffer) || input.buffer.length === 0) {
+    throw new HttpError(415, "Upload a valid CSV or XLSX file", { code: "TECHNICAL_STUDENT_IMPORT_BODY_INVALID" });
+  }
+  const buffer = Buffer.from(input.buffer);
   await scanUploadedFile({
     fileName: input.fileName ?? "technical-students-import.xlsx",
     mimeType: input.mimeType ?? "application/octet-stream",
-    buffer: input.buffer,
-    sha256: createHash("sha256").update(input.buffer).digest("hex"),
+    buffer,
+    sha256: createHash("sha256").update(buffer).digest("hex"),
   });
-  const parsed = parseTechnicalStudentSpreadsheet({ buffer: input.buffer, mimeType: input.mimeType, fileName: input.fileName });
+  const parsed = parseTechnicalStudentSpreadsheet({ buffer, mimeType: input.mimeType, fileName: input.fileName });
   const existing = parsed.rows.length ? await existingTechnicalStudentKeys(input.instituteId, parsed.rows) : [];
   const existingEmails = new Set(existing.map((row) => row.email.toLowerCase()));
   const existingEnrollments = new Set(existing.map((row) => row.enrollmentNumber?.toLowerCase()).filter((value): value is string => Boolean(value)));

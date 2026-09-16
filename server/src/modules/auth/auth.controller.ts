@@ -11,8 +11,9 @@ function authCookieOptions() {
   return {
     httpOnly: true,
     secure: production,
-    sameSite: "lax" as const,
+    sameSite: production ? "strict" as const : "lax" as const,
     path: "/",
+    priority: "high" as const,
   };
 }
 

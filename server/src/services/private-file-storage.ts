@@ -20,7 +20,7 @@ interface UploadPrivateFileInput {
   ownerId: string;
   fileName: string;
   mimeType: string;
-  buffer: Buffer;
+  buffer: unknown;
   sha256: string;
 }
 
@@ -85,9 +85,15 @@ async function storageProviderRequest(request: () => Promise<Response>) {
 
 export async function uploadPrivateFile(input: UploadPrivateFileInput): Promise<PrivateFileAsset> {
   requireConfigured();
-  await scanUploadedFile({ fileName: input.fileName, mimeType: input.mimeType, buffer: input.buffer, sha256: input.sha256 });
+  if (!Buffer.isBuffer(input.buffer) || input.buffer.length === 0) {
+    throw new HttpError(400, "A valid non-empty file payload is required", { code: "INVALID_FILE_PAYLOAD" });
+  }
+  // Treat every service boundary as untrusted at runtime. TypeScript annotations
+  // disappear in production, so keep a fresh Buffer copy after narrowing.
+  const buffer = Buffer.from(input.buffer);
+  await scanUploadedFile({ fileName: input.fileName, mimeType: input.mimeType, buffer, sha256: input.sha256 });
   try {
-    await consumeProviderBudget("cloudinary", "upload_bytes", input.buffer.length, env.CLOUDINARY_DAILY_UPLOAD_BYTES_LIMIT);
+    await consumeProviderBudget("cloudinary", "upload_bytes", buffer.length, env.CLOUDINARY_DAILY_UPLOAD_BYTES_LIMIT);
   } catch (error) {
     if (error instanceof ProviderBudgetExceededError) {
       throw new HttpError(503, "Private file upload is temporarily unavailable because the daily safety limit has been reached", { code: "FILE_STORAGE_DAILY_LIMIT_REACHED" });
@@ -98,8 +104,8 @@ export async function uploadPrivateFile(input: UploadPrivateFileInput): Promise<
   const format = extension(input.fileName);
 
   if (!configured() && env.NODE_ENV === "test") {
-    memoryAssets.set(publicId, Buffer.from(input.buffer));
-    return { publicId, resourceType: "raw", deliveryType: "authenticated", format, version: "test", assetId: `test:${publicId}`, bytes: input.buffer.length };
+    memoryAssets.set(publicId, Buffer.from(buffer));
+    return { publicId, resourceType: "raw", deliveryType: "authenticated", format, version: "test", assetId: `test:${publicId}`, bytes: buffer.length };
   }
 
   const timestamp = Math.floor(Date.now() / 1000);
@@ -108,8 +114,8 @@ export async function uploadPrivateFile(input: UploadPrivateFileInput): Promise<
   // Node's Buffer is typed as Uint8Array<ArrayBufferLike>, while the DOM Blob
   // constructor requires an ArrayBuffer-backed BlobPart. Copying into a fresh
   // Uint8Array keeps the bytes identical and gives TypeScript the safe backing type.
-  const uploadBytes = new Uint8Array(input.buffer.length);
-  uploadBytes.set(input.buffer);
+  const uploadBytes = new Uint8Array(buffer.length);
+  uploadBytes.set(buffer);
   form.set("file", new Blob([uploadBytes], { type: input.mimeType }), `secure.${format}`);
   form.set("api_key", env.CLOUDINARY_API_KEY!);
   form.set("timestamp", String(timestamp));
@@ -131,7 +137,7 @@ export async function uploadPrivateFile(input: UploadPrivateFileInput): Promise<
     format: typeof body.format === "string" && body.format ? body.format : format,
     version: String(body.version ?? ""),
     assetId: typeof body.asset_id === "string" ? body.asset_id : null,
-    bytes: typeof body.bytes === "number" ? body.bytes : input.buffer.length,
+    bytes: typeof body.bytes === "number" ? body.bytes : buffer.length,
   };
 }
 

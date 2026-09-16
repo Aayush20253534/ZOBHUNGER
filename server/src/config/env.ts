@@ -47,7 +47,7 @@ const envSchema = z.object({
   API_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(120),
   JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
   JWT_ACCESS_EXPIRES_IN: z.string().min(2).default("15m"),
-  AUTH_COOKIE_NAME: z.string().min(1).default("zobhunger_access"),
+  AUTH_COOKIE_NAME: z.string().min(1).default(process.env.NODE_ENV === "production" ? "__Host-zobhunger_access" : "zobhunger_access"),
   AUTH_COOKIE_MAX_AGE_MS: z.coerce.number().int().positive().default(900_000),
   AUTH_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(900_000),
   AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(10),
@@ -218,6 +218,7 @@ function productionProblems() {
     if (!clientOrigins.includes(publicUrl.origin)) problems.push("PUBLIC_APP_URL must also be present in CLIENT_ORIGIN");
   }
 
+  if (!parsedData.AUTH_COOKIE_NAME.startsWith("__Host-")) problems.push("AUTH_COOKIE_NAME must use the __Host- prefix in production");
   if (parsedData.JWT_SECRET === "replace-with-at-least-32-random-characters") problems.push("JWT_SECRET still uses the example placeholder");
   if (!parsedData.MFA_ENCRYPTION_KEY) problems.push("MFA_ENCRYPTION_KEY is required in production");
   if (!parsedData.HR_PII_ENCRYPTION_KEY) problems.push("HR_PII_ENCRYPTION_KEY is required in production");

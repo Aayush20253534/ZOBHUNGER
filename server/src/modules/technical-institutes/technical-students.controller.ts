@@ -106,7 +106,7 @@ export const importTechnicalStudentsAdminController: RequestHandler = async (req
   const data = await importTechnicalStudentsForAdmin({
     instituteId: id,
     mode,
-    buffer: req.body as Buffer,
+    buffer: req.body,
     mimeType: req.get("Content-Type"),
     fileName: fileName(req),
     ...auditContext(req, res),

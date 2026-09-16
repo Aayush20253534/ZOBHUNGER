@@ -53,7 +53,7 @@ function validatePartnerResume(body: unknown, contentType?: string, fileName?: s
   return { fileName: `${stem}.pdf`, mimeType: "application/pdf", size: body.length, sha256: sha256(body), buffer: body };
 }
 
-export async function uploadPartnerResume(input: { id: string; uploadToken?: string; fileName?: string; mimeType?: string; body: Buffer }) {
+export async function uploadPartnerResume(input: { id: string; uploadToken?: string; fileName?: string; mimeType?: string; body: unknown }) {
   if (!input.uploadToken || !/^[a-f0-9]{64}$/.test(input.uploadToken)) throw new HttpError(403, "A valid resume upload receipt is required", { code: "PARTNER_RESUME_TOKEN_REQUIRED" });
   const tokenHash = sha256(input.uploadToken);
   const target = await prisma.partnerApplication.findFirst({ where: { id: input.id, resumeUploadTokenHash: tokenHash, resumeUploadExpiresAt: { gt: new Date() } }, select: { id: true, resumeSha256: true, resumeFileName: true } });

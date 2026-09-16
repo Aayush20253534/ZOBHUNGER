@@ -53,7 +53,7 @@ export const importTechnicalInstitutePortalStudentsController: RequestHandler = 
   const data = await importTechnicalInstitutePortalStudents({
     userId: userId(res),
     mode: query.mode,
-    buffer: Buffer.isBuffer(req.body) ? req.body : Buffer.from([]),
+    buffer: req.body,
     mimeType: req.get("content-type")?.split(";")[0],
     fileName: req.get("x-file-name")?.slice(0, 180),
     ...auditContext(req, res),

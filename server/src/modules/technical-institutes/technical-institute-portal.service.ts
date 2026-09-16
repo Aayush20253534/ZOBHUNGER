@@ -70,7 +70,7 @@ export async function setTechnicalInstitutePortalStudentStatus(
 export async function importTechnicalInstitutePortalStudents(input: {
   userId: string;
   mode: TechnicalStudentImportQuery["mode"];
-  buffer: Buffer;
+  buffer: unknown;
   mimeType?: string;
   fileName?: string;
   actorUserId: string;

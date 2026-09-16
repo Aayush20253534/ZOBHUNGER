@@ -79,6 +79,17 @@ test("private uploads are malware-scanned before storage and fail closed per-upl
   assert.ok(scanIndex >= 0 && uploadIndex > scanIndex, "scan must run before Cloudinary upload");
   assert.match(scanner, /FILE_MALWARE_DETECTED/);
   assert.match(scanner, /FILE_SCAN_UNAVAILABLE/);
+  assert.match(storage, /Buffer\.isBuffer\(input\.buffer\)/);
+  assert.match(storage, /const buffer = Buffer\.from\(input\.buffer\)/);
+  assert.match(scanner, /Buffer\.isBuffer\(input\.buffer\)/);
+  assert.match(scanner, /const safeInput:[\s\S]*?Buffer\.from\(input\.buffer\)/);
+
+  const technicalStudents = read("server/src/modules/technical-institutes/technical-students.service.ts");
+  const technicalAdminController = read("server/src/modules/technical-institutes/technical-students.controller.ts");
+  const partnerController = read("server/src/modules/partners/partners.controller.ts");
+  assert.match(technicalStudents, /Buffer\.isBuffer\(input\.buffer\)/);
+  assert.doesNotMatch(technicalAdminController, /req\.body as Buffer/);
+  assert.doesNotMatch(partnerController, /req\.body as Buffer/);
 });
 
 test("paid providers have usage safety budgets and failure circuit breakers", () => {

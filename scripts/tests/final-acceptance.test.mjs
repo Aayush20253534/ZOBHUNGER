@@ -123,8 +123,11 @@ test("final acceptance catches broken responsive metadata and branded 404 behavi
 });
 
 test("repository final gate preserves secure cookies, error states and current chatbot release verification", async () => {
-  const [auth, rootError, rootNotFound, packageJson, releaseRoute, checker] = await Promise.all([
+  const [auth, serverEnv, serverApp, nextConfig, rootError, rootNotFound, packageJson, releaseRoute, checker] = await Promise.all([
     readFile(new URL("../../server/src/modules/auth/auth.controller.ts", import.meta.url), "utf8"),
+    readFile(new URL("../../server/src/config/env.ts", import.meta.url), "utf8"),
+    readFile(new URL("../../server/src/app.ts", import.meta.url), "utf8"),
+    readFile(new URL("../../client/next.config.ts", import.meta.url), "utf8"),
     readFile(new URL("../../client/src/app/error.tsx", import.meta.url), "utf8"),
     readFile(new URL("../../client/src/app/not-found.tsx", import.meta.url), "utf8"),
     readFile(new URL("../../package.json", import.meta.url), "utf8"),
@@ -132,9 +135,12 @@ test("repository final gate preserves secure cookies, error states and current c
     readFile(new URL("../check-final-acceptance.mjs", import.meta.url), "utf8"),
   ]);
 
-  for (const token of ["httpOnly: true", "secure: production", 'sameSite: "lax"']) {
+  for (const token of ["httpOnly: true", "secure: production", 'sameSite: production ? "strict"', 'priority: "high"']) {
     assert.ok(auth.includes(token), `auth cookie missing ${token}`);
   }
+  assert.ok(serverEnv.includes('AUTH_COOKIE_NAME must use the __Host- prefix in production'));
+  assert.ok(serverApp.includes('includeSubDomains: true'));
+  assert.ok(nextConfig.includes('max-age=31536000; includeSubDomains'));
   assert.ok(rootError.includes("Try again"));
   assert.ok(rootNotFound.includes("Page not found"));
   assert.ok(packageJson.includes('"test:acceptance"'));
