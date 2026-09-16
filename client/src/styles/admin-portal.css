@@ -1999,119 +1999,171 @@
 }
 
 .zbo-admin-content-inner .zb-admin-security-status {
+  position: relative;
   display: grid;
-  grid-template-columns: 3.35rem minmax(0, 1fr);
-  align-items: stretch;
-  width: min(100%, 22rem);
-  min-width: 18.5rem;
-  min-height: 0;
+  grid-template-columns: 3.15rem minmax(0, 1fr);
+  align-items: center;
+  width: min(100%, 21.5rem);
+  min-width: 19.25rem;
+  min-height: 5.15rem;
   flex: 0 0 auto;
   justify-self: end;
-  padding: 0;
+  padding: .7rem .8rem .7rem .72rem;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--zbo-red) 18%, #dfd5d8);
+  border: 1px solid #e5d7db;
   border-left: 4px solid var(--zbo-red);
-  border-radius: 1rem;
-  background: linear-gradient(180deg, #fff 0%, #fff7f8 100%);
-  box-shadow: 0 .8rem 2rem rgba(24, 28, 36, .08);
+  border-radius: .7rem;
+  background: #fff;
+  box-shadow: 0 .65rem 1.7rem rgba(45, 24, 31, .07);
+}
+
+.zbo-admin-content-inner .zb-admin-security-status::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 4.5rem;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(217, 39, 59, .035));
 }
 
 .zbo-admin-content-inner .zb-admin-security-status-icon {
+  position: relative;
+  z-index: 1;
   display: grid;
   place-items: center;
-  border-right: 1px solid color-mix(in srgb, var(--zbo-red) 10%, #ece7e9);
-  background: linear-gradient(180deg, #fff5f7 0%, #ffeff2 100%);
+  width: 2.45rem;
+  height: 2.45rem;
+  border: 1px solid #f0cdd3;
+  border-radius: .58rem;
+  background: #fff4f6;
   color: var(--zbo-red);
 }
 
 .zbo-admin-content-inner .zb-admin-security-status-icon svg {
-  width: 1.15rem;
-  height: 1.15rem;
-  stroke-width: 2.1;
+  width: 1.18rem;
+  height: 1.18rem;
+  stroke-width: 2;
 }
 
 .zbo-admin-content-inner .zb-admin-security-status-copy {
+  position: relative;
+  z-index: 1;
   display: grid;
   align-content: center;
-  gap: .22rem;
+  gap: .18rem;
   min-width: 0;
-  padding: .82rem .95rem .86rem;
+  padding: 0 0 0 .15rem;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .55rem;
+  min-width: 0;
 }
 
 .zbo-admin-content-inner .zb-admin-security-status-copy small {
   margin: 0;
-  color: #85666f;
-  font-size: .64rem;
-  font-weight: 800;
+  color: #7e6b71;
+  font-size: .58rem;
+  font-weight: 850;
   letter-spacing: .14em;
   line-height: 1;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.28rem;
+  padding: .15rem .42rem;
+  border: 1px solid #f0c8cf;
+  border-radius: .34rem;
+  background: #fff2f4;
+  color: #a91e33;
+  font-size: .52rem;
+  font-weight: 850;
+  letter-spacing: .045em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .zbo-admin-content-inner .zb-admin-security-status-copy strong {
-  margin: 0;
-  color: #b91f35;
-  font-size: .98rem;
+  margin: .04rem 0 0;
+  color: #2d2528;
+  font-size: .96rem;
   font-weight: 820;
-  line-height: 1.1;
+  line-height: 1.14;
   letter-spacing: -.018em;
 }
 
 .zbo-admin-content-inner .zb-admin-security-status-copy em {
   margin: 0;
-  color: #6d5c63;
-  font-size: .74rem;
+  color: #76686d;
+  font-size: .68rem;
   font-style: normal;
-  font-weight: 650;
-  line-height: 1.35;
+  font-weight: 620;
+  line-height: 1.32;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-required {
+  border-color: #e7d4d8;
+  border-left-color: var(--zbo-red);
 }
 
 .zbo-admin-content-inner .zb-admin-security-status.is-enabled {
-  border-color: #cfe5d8;
-  border-left-color: #20815c;
-  background: linear-gradient(180deg, #ffffff 0%, #f6fcf8 100%);
+  border-color: #d4e5db;
+  border-left-color: #23815e;
+  background: #fff;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-enabled::after {
+  background: linear-gradient(90deg, transparent, rgba(35, 129, 94, .035));
 }
 
 .zbo-admin-content-inner .zb-admin-security-status.is-enabled .zb-admin-security-status-icon {
-  border-right-color: #d9ece1;
-  background: linear-gradient(180deg, #f3fbf6 0%, #ebf8f0 100%);
-  color: #1b6f50;
+  border-color: #cfe5d8;
+  background: #f1faf5;
+  color: #1c7453;
 }
 
-.zbo-admin-content-inner .zb-admin-security-status.is-enabled .zb-admin-security-status-copy small {
-  color: #5f7a6d;
-}
-
-.zbo-admin-content-inner .zb-admin-security-status.is-enabled .zb-admin-security-status-copy strong {
+.zbo-admin-content-inner .zb-admin-security-status.is-enabled .zb-admin-security-status-badge {
+  border-color: #cce2d5;
+  background: #eef8f2;
   color: #196d4e;
 }
 
-.zbo-admin-content-inner .zb-admin-security-status.is-enabled .zb-admin-security-status-copy em {
-  color: #607268;
+.zbo-admin-content-inner .zb-admin-security-status.is-enabled .zb-admin-security-status-copy strong {
+  color: #26352e;
 }
 
 .zbo-admin-content-inner .zb-admin-security-status.is-inactive {
-  border-color: #e6e1e3;
+  border-color: #e4dfe1;
   border-left-color: #8a7c82;
-  background: linear-gradient(180deg, #fff 0%, #faf8f9 100%);
+  background: #fff;
+}
+
+.zbo-admin-content-inner .zb-admin-security-status.is-inactive::after {
+  background: linear-gradient(90deg, transparent, rgba(88, 77, 82, .025));
 }
 
 .zbo-admin-content-inner .zb-admin-security-status.is-inactive .zb-admin-security-status-icon {
-  border-right-color: #ebe7e8;
-  background: linear-gradient(180deg, #fbf9fa 0%, #f6f3f4 100%);
-  color: #75686e;
+  border-color: #e5dfe1;
+  background: #f8f6f7;
+  color: #71646a;
 }
 
-.zbo-admin-content-inner .zb-admin-security-status.is-inactive .zb-admin-security-status-copy small {
-  color: #83757b;
+.zbo-admin-content-inner .zb-admin-security-status.is-inactive .zb-admin-security-status-badge {
+  border-color: #e3dde0;
+  background: #f7f5f6;
+  color: #6f6268;
 }
 
 .zbo-admin-content-inner .zb-admin-security-status.is-inactive .zb-admin-security-status-copy strong {
-  color: #41393d;
-}
-
-.zbo-admin-content-inner .zb-admin-security-status.is-inactive .zb-admin-security-status-copy em {
-  color: #73676c;
+  color: #3f373a;
 }
 
 .zbo-admin-content-inner .zb-admin-security-state,
@@ -2258,6 +2310,11 @@
     width: 100%;
     min-width: 0;
     justify-self: stretch;
+  }
+
+  .zbo-admin-content-inner .zb-admin-security-status-meta {
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
   .zbo-admin-content-inner .zb-admin-security-state {

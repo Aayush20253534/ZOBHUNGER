@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Check, CheckCircle2, ClipboardCopy, KeyRound, LockKeyhole, QrCode, RefreshCw, ShieldCheck, ShieldOff, Smartphone } from "lucide-react";
+import { ArrowRight, Check, CheckCircle2, ClipboardCopy, KeyRound, LockKeyhole, QrCode, RefreshCw, ShieldAlert, ShieldCheck, ShieldOff, Smartphone } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { ApiError } from "@/lib/api";
 import { beginAdminMfa, changeAdminPassword, confirmAdminMfa, disableAdminMfa, getCurrentUser, requestAdminPasswordReset, rotateAdminMfa } from "@/services/auth.service";
@@ -70,9 +70,12 @@ export function AdminSecurity() {
         <span className="zb-admin-security-icon"><ShieldCheck /></span>
         <div><p className="zb-eyebrow">Administrator security</p><h1>Account protection</h1><p>Multi-factor authentication protects administrator access. In production it is mandatory before any administrator workspace can be opened.</p></div>
         <span className={statusClassName}>
-          <span className="zb-admin-security-status-icon">{enabled ? <CheckCircle2 /> : <ShieldOff />}</span>
+          <span className="zb-admin-security-status-icon">{enabled ? <CheckCircle2 /> : <ShieldAlert />}</span>
           <span className="zb-admin-security-status-copy">
-            <small>Security status</small>
+            <span className="zb-admin-security-status-meta">
+              <small>Security status</small>
+              <span className="zb-admin-security-status-badge">{enabled ? "Protected" : required ? "Action required" : "Not enabled"}</span>
+            </span>
             <strong>{statusTitle}</strong>
             <em>{statusDescription}</em>
           </span>
