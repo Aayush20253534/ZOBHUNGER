@@ -13,3 +13,4 @@ server/src/generated/prisma/
 notes.txt
 *.patch
 *.zip
+assets/
