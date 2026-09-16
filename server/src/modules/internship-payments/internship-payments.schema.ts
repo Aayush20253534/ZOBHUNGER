@@ -30,7 +30,11 @@ export const cashfreePaymentWebhookSchema = z.object({
       order_id: z.string().min(1),
       order_amount: amount,
       order_currency: z.string().min(3).max(8),
-      order_tags: z.object({ payment_id: stringish.optional(), application_id: stringish.optional() }).passthrough().nullable().optional(),
+      order_tags: z.object({
+        payment_id: stringish.optional(),
+        application_id: stringish.optional(),
+        checkout_version: stringish.optional(),
+      }).passthrough().nullable().optional(),
     }).passthrough(),
     payment: z.object({
       cf_payment_id: stringish,
@@ -43,7 +47,7 @@ export const cashfreePaymentWebhookSchema = z.object({
 }).passthrough();
 
 export const checkoutParamsSchema = z.object({
-  token: z.string().trim().min(76).max(180).regex(/^[A-Za-z0-9._-]+$/, "Invalid payment token"),
+  token: z.string().trim().min(76).max(260).regex(/^[A-Za-z0-9._-]+$/, "Invalid payment token"),
 }).strict();
 
 export const receiptParamsSchema = z.object({ id: z.string().trim().min(10).max(100) }).strict();

@@ -18,7 +18,7 @@ test("internship hard-copy payments use Cashfree order checkout instead of Payme
   assert.match(client, /return_url: input\.returnUrl/);
   assert.match(client, /notify_url: input\.notifyUrl/);
   assert.doesNotMatch(client, /cashfreeFetch<[^>]+>\("\/links"/);
-  assert.match(service, /paymentCheckoutUrl\(paymentId\)/);
+  assert.match(service, /paymentCheckoutUrl\(paymentId, linkVersion, expiresAt\)/);
   assert.match(service, /startPublicInternshipDocumentCheckout/);
   assert.match(checkoutUi, /https:\/\/sdk\.cashfree\.com\/js\/v3\/cashfree\.js/);
   assert.match(checkoutUi, /paymentSessionId: checkout\.paymentSessionId/);
@@ -63,13 +63,37 @@ test("public checkout is token-protected, no-indexed and creates Cashfree orders
   ]);
   assert.match(routes, /\/checkout\/:token\/order/);
   assert.match(routes, /\/checkout\/:token\/refresh/);
-  assert.match(service, /checkoutSignature/);
+  assert.match(service, /internship-document-checkout:v2:/);
   assert.match(service, /timingSafeEqual\(received, expected\)/);
+  assert.match(service, /payment\.cashfreeLinkId !== parsed\.checkoutVersion/);
+  assert.match(service, /storedCheckoutToken\(payment\.cashfreeLinkUrl\) !== token/);
   assert.match(service, /createCashfreeOrder/);
   assert.match(nextConfig, /https:\/\/sdk\.cashfree\.com/);
   assert.match(nextConfig, /form-action 'self' https:\/\/\*\.cashfree\.com/);
   assert.match(nextConfig, /source: "\/pay\/:path\*"/);
   assert.match(siteFrame, /pathname\.startsWith\("\/pay\/"\)/);
+});
+
+
+test("checkout links rotate on reissue/cancel and stale Cashfree orders cannot settle replacements", async () => {
+  const [service, schema, migration] = await Promise.all([
+    read("server/src/modules/internship-payments/internship-payments.service.ts"),
+    read("server/src/modules/internship-payments/internship-payments.schema.ts"),
+    read("server/prisma/migrations/20260921200000_internship_payment_link_rotation/migration.sql"),
+  ]);
+  assert.match(service, /cashfreeLinkId: linkVersion/);
+  assert.match(service, /cashfreeLinkId: revokedCheckoutLinkVersion\(\)/);
+  assert.match(service, /cashfreeLinkUrl: revokedCheckoutUrl\(\)/);
+  assert.match(service, /cashfreeOrderId\(payment\.id, payment\.cashfreeLinkId\)/);
+  assert.match(service, /checkout_version: payment\.cashfreeLinkId/);
+  assert.match(service, /cashfree\.webhook_stale_order/);
+  assert.match(service, /payment\.cashfreeOrderId !== event\.data\.order\.order_id/);
+  assert.match(service, /checkoutVersionMismatch/);
+  assert.match(service, /payment\.status === "CANCELLED"/);
+  assert.match(schema, /checkout_version: stringish\.optional\(\)/);
+  assert.match(schema, /token: z\.string\(\)\.trim\(\)\.min\(76\)\.max\(260\)/);
+  assert.doesNotMatch(service, /metadata: \{[^}]*paymentUrl:/);
+  assert.match(migration, /metadata.*- 'paymentUrl'/s);
 });
 
 test("successful Cashfree payment creates an auditable receipt lifecycle", async () => {

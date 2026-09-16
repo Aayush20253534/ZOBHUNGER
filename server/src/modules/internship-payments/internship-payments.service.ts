@@ -68,12 +68,21 @@ function normalizeCashfreePhone(value: string) {
   return digits;
 }
 
-function paymentRequestReference(requestKey: string) {
-  return `zbh_checkout_${requestKey.replaceAll("-", "").slice(0, 30)}`;
+function checkoutLinkVersion() {
+  return `zbh_checkout_${randomUUID().replaceAll("-", "")}`;
 }
 
-function cashfreeOrderId(paymentId: string) {
-  return `zbh_intdoc_${paymentId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 32)}`;
+function revokedCheckoutLinkVersion() {
+  return `zbh_revoked_${randomUUID().replaceAll("-", "")}`;
+}
+
+function cashfreeOrderId(paymentId: string, checkoutVersion: string) {
+  const paymentPart = paymentId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 20);
+  const revision = createHmac("sha256", env.JWT_SECRET)
+    .update(`internship-document-order:v2:${checkoutVersion}`)
+    .digest("hex")
+    .slice(0, 10);
+  return `zbh_intdoc_${paymentPart}_${revision}`;
 }
 
 function cashfreeCustomerId(applicationId: string) {
@@ -102,28 +111,69 @@ function receiptToken(paymentId: string, now = Date.now()) {
   return `${expiresAtSeconds}.${receiptSignature(paymentId, expiresAtSeconds)}`;
 }
 
-function checkoutSignature(paymentId: string) {
+function legacyCheckoutSignature(paymentId: string) {
   return createHmac("sha256", env.JWT_SECRET).update(`internship-document-checkout:${paymentId}`).digest("hex");
 }
 
-function checkoutToken(paymentId: string) {
-  return `${paymentId}.${checkoutSignature(paymentId)}`;
+function checkoutSignature(paymentId: string, expiresAtSeconds: number, checkoutVersion: string) {
+  return createHmac("sha256", env.JWT_SECRET)
+    .update(`internship-document-checkout:v2:${paymentId}:${expiresAtSeconds}:${checkoutVersion}`)
+    .digest("hex");
 }
 
-function paymentCheckoutUrl(paymentId: string) {
-  return publicUrl(`/pay/${encodeURIComponent(checkoutToken(paymentId))}`);
-}
-
-function paymentIdFromCheckoutToken(token: string) {
-  const separator = token.lastIndexOf(".");
-  if (separator < 10) return null;
-  const paymentId = token.slice(0, separator);
-  const signature = token.slice(separator + 1);
-  if (!/^[a-f0-9]{64}$/i.test(signature) || paymentId.length > 100) return null;
-  const expected = Buffer.from(checkoutSignature(paymentId), "hex");
+function validHexSignature(signature: string, expectedHex: string) {
+  if (!/^[a-f0-9]{64}$/i.test(signature)) return false;
+  const expected = Buffer.from(expectedHex, "hex");
   let received: Buffer;
-  try { received = Buffer.from(signature, "hex"); } catch { return null; }
-  return received.length === expected.length && timingSafeEqual(received, expected) ? paymentId : null;
+  try { received = Buffer.from(signature, "hex"); } catch { return false; }
+  return received.length === expected.length && timingSafeEqual(received, expected);
+}
+
+function checkoutToken(paymentId: string, checkoutVersion: string, expiresAt: Date) {
+  const expiresAtSeconds = Math.floor(expiresAt.getTime() / 1000);
+  const signature = checkoutSignature(paymentId, expiresAtSeconds, checkoutVersion);
+  return `${paymentId}.v2.${expiresAtSeconds}.${checkoutVersion}.${signature}`;
+}
+
+function paymentCheckoutUrl(paymentId: string, checkoutVersion: string, expiresAt: Date) {
+  return publicUrl(`/pay/${encodeURIComponent(checkoutToken(paymentId, checkoutVersion, expiresAt))}`);
+}
+
+function revokedCheckoutUrl() {
+  return publicUrl("/pay/revoked");
+}
+
+type ParsedCheckoutToken =
+  | { paymentId: string; legacy: true }
+  | { paymentId: string; legacy: false; expiresAtSeconds: number; checkoutVersion: string };
+
+function parseCheckoutToken(token: string): ParsedCheckoutToken | null {
+  const parts = token.split(".");
+  if (parts.length === 2) {
+    const [paymentId, signature] = parts;
+    if (!paymentId || paymentId.length < 10 || paymentId.length > 100 || !signature) return null;
+    return validHexSignature(signature, legacyCheckoutSignature(paymentId)) ? { paymentId, legacy: true } : null;
+  }
+  if (parts.length !== 5 || parts[1] !== "v2") return null;
+  const [paymentId, _version, expiryValue, checkoutVersion, signature] = parts;
+  if (!paymentId || paymentId.length < 10 || paymentId.length > 100) return null;
+  if (!/^\d{10,12}$/.test(expiryValue ?? "") || !/^zbh_checkout_[a-f0-9]{32}$/i.test(checkoutVersion ?? "") || !signature) return null;
+  const expiresAtSeconds = Number(expiryValue);
+  if (!Number.isSafeInteger(expiresAtSeconds)) return null;
+  return validHexSignature(signature, checkoutSignature(paymentId, expiresAtSeconds, checkoutVersion))
+    ? { paymentId, legacy: false, expiresAtSeconds, checkoutVersion }
+    : null;
+}
+
+function storedCheckoutToken(url: string) {
+  try {
+    const parsed = new URL(url);
+    const marker = "/pay/";
+    if (!parsed.pathname.startsWith(marker)) return null;
+    return decodeURIComponent(parsed.pathname.slice(marker.length));
+  } catch {
+    return null;
+  }
 }
 
 export function internshipDocumentReceiptUrl(paymentId: string) {
@@ -146,11 +196,33 @@ async function findPaymentByApplication(careerApplicationId: string) {
 }
 
 async function findPaymentFromCheckoutToken(token: string) {
-  const paymentId = paymentIdFromCheckoutToken(token);
-  if (!paymentId) throw new HttpError(404, "Payment request not found", { code: "PAYMENT_CHECKOUT_NOT_FOUND" });
-  const payment = await prisma.internshipDocumentPayment.findUnique({ where: { id: paymentId }, select: paymentSelect });
+  const parsed = parseCheckoutToken(token);
+  if (!parsed) throw new HttpError(404, "Payment request not found", { code: "PAYMENT_CHECKOUT_NOT_FOUND" });
+  const payment = await prisma.internshipDocumentPayment.findUnique({ where: { id: parsed.paymentId }, select: paymentSelect });
   if (!payment) throw new HttpError(404, "Payment request not found", { code: "PAYMENT_CHECKOUT_NOT_FOUND" });
-  return expireIfNeeded(payment);
+
+  if (parsed.legacy) {
+    // Legacy links remain usable only while they are still the exact current URL
+    // stored on the payment row. Reissue/cancellation changes that URL, so a
+    // previously shared v1 token can never become valid again.
+    if (storedCheckoutToken(payment.cashfreeLinkUrl) !== token) {
+      throw new HttpError(404, "Payment request not found", { code: "PAYMENT_CHECKOUT_NOT_FOUND" });
+    }
+  } else {
+    const storedExpirySeconds = payment.linkExpiresAt ? Math.floor(payment.linkExpiresAt.getTime() / 1000) : null;
+    if (payment.cashfreeLinkId !== parsed.checkoutVersion || storedExpirySeconds !== parsed.expiresAtSeconds) {
+      throw new HttpError(404, "Payment request not found", { code: "PAYMENT_CHECKOUT_NOT_FOUND" });
+    }
+  }
+
+  const current = await expireIfNeeded(payment);
+  const expiresAtSeconds = parsed.legacy
+    ? (current.linkExpiresAt ? Math.floor(current.linkExpiresAt.getTime() / 1000) : 0)
+    : parsed.expiresAtSeconds;
+  if (!expiresAtSeconds || expiresAtSeconds <= Math.floor(Date.now() / 1000)) {
+    throw new HttpError(410, "This payment request has expired. Ask the ZOBHUNGER team to issue a new one.", { code: "PAYMENT_CHECKOUT_EXPIRED" });
+  }
+  return current;
 }
 
 async function expireIfNeeded(payment: SavedPayment) {
@@ -308,7 +380,8 @@ export async function createInternshipDocumentPayment(applicationId: string, act
   const amountPaise = Math.round(input.amountRupees * 100);
   const expiresAt = new Date(Date.now() + input.expiryDays * 24 * 60 * 60_000);
   const paymentId = existing?.id ?? randomUUID();
-  const shareableUrl = paymentCheckoutUrl(paymentId);
+  const linkVersion = checkoutLinkVersion();
+  const shareableUrl = paymentCheckoutUrl(paymentId, linkVersion, expiresAt);
   const data = {
     requestKey: input.requestKey,
     createdByUserId: actorUserId,
@@ -324,9 +397,9 @@ export async function createInternshipDocumentPayment(applicationId: string, act
     courierNote: input.courierNote || null,
     amountPaise,
     currency: "INR",
-    // Legacy column names are intentionally retained to avoid a risky production
-    // migration. They now hold our stable ZOBHUNGER checkout request reference/URL.
-    cashfreeLinkId: paymentRequestReference(input.requestKey),
+    // Legacy column names are retained, but the ID is now a per-issuance checkout
+    // version. Rotating it makes every older signed link permanently invalid.
+    cashfreeLinkId: linkVersion,
     cashfreeCfLinkId: null,
     cashfreeLinkUrl: shareableUrl,
     cashfreeStatus: "NOT_STARTED",
@@ -350,7 +423,9 @@ export async function createInternshipDocumentPayment(applicationId: string, act
       action: "internship.document_payment_request_created",
       entityType: "CareerApplication",
       entityId: applicationId,
-      metadata: { paymentId: saved.id, amountPaise, paymentUrl: saved.cashfreeLinkUrl, documentDescription: saved.documentDescription },
+      // Never persist the bearer checkout URL in audit metadata. The payment row
+      // keeps the current link for the admin UI; audit history stores identifiers only.
+      metadata: { paymentId: saved.id, amountPaise, documentDescription: saved.documentDescription },
     },
   });
   void notifyInternshipDocumentPaymentLink({
@@ -394,7 +469,7 @@ export async function startPublicInternshipDocumentCheckout(token: string) {
     if (refreshed.status !== "ACTIVE") throw new HttpError(410, "This payment request is no longer payable. Contact the ZOBHUNGER team for a replacement.", { code: "PAYMENT_CHECKOUT_INACTIVE" });
   } else {
     order = await createCashfreeOrder({
-      orderId: cashfreeOrderId(payment.id),
+      orderId: cashfreeOrderId(payment.id, payment.cashfreeLinkId),
       amountRupees: payment.amountPaise / 100,
       purpose: `Printing and courier charges - ${payment.documentDescription}`,
       customerId: cashfreeCustomerId(payment.careerApplicationId),
@@ -405,7 +480,7 @@ export async function startPublicInternshipDocumentCheckout(token: string) {
       returnUrl: `${payment.cashfreeLinkUrl}?returned=1`,
       notifyUrl: publicUrl("/api/backend/payments/cashfree/webhook"),
       requestKey: payment.requestKey,
-      tags: { payment_id: payment.id, application_id: payment.careerApplicationId },
+      tags: { payment_id: payment.id, application_id: payment.careerApplicationId, checkout_version: payment.cashfreeLinkId },
     });
     assertOrderMatchesPayment(payment, order);
     await prisma.internshipDocumentPayment.update({
@@ -457,7 +532,14 @@ export async function cancelInternshipDocumentPayment(applicationId: string, act
   }
   const saved = await prisma.internshipDocumentPayment.update({
     where: { id: payment.id },
-    data: { status: "CANCELLED", cashfreeStatus: providerStatus },
+    data: {
+      status: "CANCELLED",
+      cashfreeStatus: providerStatus,
+      // Rotate both legacy link fields so every previously issued checkout URL is
+      // invalid immediately, even for rows created before v2 tokens existed.
+      cashfreeLinkId: revokedCheckoutLinkVersion(),
+      cashfreeLinkUrl: revokedCheckoutUrl(),
+    },
     select: paymentSelect,
   });
   await prisma.auditLog.create({
@@ -485,6 +567,20 @@ export async function processCashfreePaymentWebhook(event: CashfreePaymentWebhoo
   if (!payment) {
     logger.info("cashfree.webhook_unmatched_order", { paymentId: taggedPaymentId ? String(taggedPaymentId) : undefined, type: event.type, orderId: event.data.order.order_id });
     return { matched: false, paid: false };
+  }
+  const taggedCheckoutVersion = event.data.order.order_tags?.checkout_version;
+  const currentStoredToken = storedCheckoutToken(payment.cashfreeLinkUrl);
+  const currentLinkIsLegacy = Boolean(currentStoredToken && currentStoredToken.split(".").length === 2);
+  const checkoutVersionMismatch = taggedCheckoutVersion
+    ? String(taggedCheckoutVersion) !== payment.cashfreeLinkId
+    : !currentLinkIsLegacy;
+  if (!payment.cashfreeOrderId || payment.cashfreeOrderId !== event.data.order.order_id || checkoutVersionMismatch || payment.status === "CANCELLED") {
+    logger.warn("cashfree.webhook_stale_order", {
+      paymentId: payment.id,
+      eventOrderId: event.data.order.order_id,
+      currentOrderId: payment.cashfreeOrderId,
+    });
+    return { matched: true, paid: payment.status === "PAID" };
   }
   if (event.type !== "PAYMENT_SUCCESS_WEBHOOK" || event.data.payment.payment_status !== "SUCCESS") {
     return { matched: true, paid: payment.status === "PAID" };
