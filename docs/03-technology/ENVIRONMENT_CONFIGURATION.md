@@ -46,16 +46,14 @@ Use sandbox credentials outside production. Cashfree webhook verification depend
 
 Settings cover assistant enablement, rate limits, memory/cache, grounding/reranking, Groq generation and optional Gemini vector retrieval. Provider budgets cap daily requests/tokens or embedding characters.
 
-## File security and operations
+## File and operational limits
 
-- malware scanner provider (`disabled`, `clamav`, `http`)
-- scanner connection/token/timeout
 - export/matching row caps
 - slow-request threshold
 - external error-monitoring webhook/token
 - provider circuit-breaker threshold/cooldown
 
-Production protected uploads require a working malware scanner. The API may boot with the scanner disabled so non-upload features remain available, but protected uploads fail closed with HTTP 503 until ClamAV or an HTTP scanner is configured.
+Upload handlers still enforce their feature-specific size, media-type and structural validation before private storage or parsing.
 
 ## Backup automation (GitHub Actions only)
 

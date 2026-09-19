@@ -6,7 +6,7 @@
 - Express API deployed separately (current operational setup uses Render-style Node hosting).
 - managed PostgreSQL database;
 - Redis when enabled/required;
-- external Resend, Cloudinary, Cashfree, Groq/Gemini and malware-scanner services according to feature enablement.
+- external Resend, Cloudinary, Cashfree and Groq/Gemini services according to feature enablement.
 
 ## Backend build
 

@@ -106,12 +106,6 @@ const envSchema = z.object({
   TECHNICAL_MATCH_SCAN_LIMIT: z.coerce.number().int().min(100).max(10_000).default(2_000),
   TECHNICAL_REPORT_EXPORT_MAX_ROWS: z.coerce.number().int().min(100).max(20_000).default(5_000),
   COMPLIANCE_EXPORT_MAX_ROWS: z.coerce.number().int().min(100).max(10_000).default(2_000),
-  FILE_MALWARE_SCAN_PROVIDER: z.enum(["disabled", "clamav", "http"]).default("disabled"),
-  FILE_MALWARE_SCAN_TIMEOUT_MS: z.coerce.number().int().min(1_000).max(60_000).default(15_000),
-  CLAMAV_HOST: optionalSetting(z.string().trim().min(1).max(253)),
-  CLAMAV_PORT: z.coerce.number().int().min(1).max(65_535).default(3310),
-  FILE_MALWARE_SCAN_HTTP_URL: optionalSetting(httpUrl),
-  FILE_MALWARE_SCAN_TOKEN: optionalSetting(z.string().trim().min(8).max(1024)),
   SLOW_REQUEST_MS: z.coerce.number().int().min(100).max(120_000).default(1_500),
   ERROR_MONITORING_WEBHOOK_URL: optionalSetting(httpUrl),
   ERROR_MONITORING_TOKEN: optionalSetting(z.string().trim().min(8).max(1024)),
@@ -233,16 +227,6 @@ function productionProblems() {
   if (!parsedData.CLOUDINARY_CLOUD_NAME) problems.push("CLOUDINARY_CLOUD_NAME is required in production");
   if (!parsedData.CLOUDINARY_API_KEY) problems.push("CLOUDINARY_API_KEY is required in production");
   if (!parsedData.CLOUDINARY_API_SECRET) problems.push("CLOUDINARY_API_SECRET is required in production");
-
-  // A missing malware provider must not take the whole API offline. The upload
-  // service itself fails closed in production while the provider is disabled.
-  // When a provider is explicitly selected, however, incomplete configuration
-  // is still a startup error because that would otherwise look operational.
-  if (parsedData.FILE_MALWARE_SCAN_PROVIDER === "clamav" && !parsedData.CLAMAV_HOST) {
-    problems.push("CLAMAV_HOST is required when FILE_MALWARE_SCAN_PROVIDER=clamav");
-  } else if (parsedData.FILE_MALWARE_SCAN_PROVIDER === "http" && !parsedData.FILE_MALWARE_SCAN_HTTP_URL) {
-    problems.push("FILE_MALWARE_SCAN_HTTP_URL is required when FILE_MALWARE_SCAN_PROVIDER=http");
-  }
 
   if (parsedData.REDIS_ENABLED && !parsedData.REDIS_URL) problems.push("REDIS_URL is required when REDIS_ENABLED=true in production");
   if (parsedData.PROVIDER_BUDGETS_ENABLED && !parsedData.REDIS_ENABLED) problems.push("REDIS_ENABLED=true is required when PROVIDER_BUDGETS_ENABLED=true in production so provider budgets are shared across instances");

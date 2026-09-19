@@ -26,10 +26,6 @@ Used for the internship document-payment checkout. The server creates/reconciles
 
 Groq supplies assistant generation. Gemini embeddings are optional for vector retrieval. Both have timeouts, budget controls and circuit-breaker behavior; assistant retrieval falls back according to feature logic when dense retrieval is unavailable.
 
-## Malware scanning
-
-`FILE_MALWARE_SCAN_PROVIDER` selects ClamAV or an HTTP scanning service. Supported upload paths are scanned before acceptance/storage or parsing. If production starts with scanning disabled, non-upload API features remain available while protected uploads fail closed with HTTP 503 until a scanner is configured. Scanner/provider failures are also handled conservatively.
-
 ## External error monitoring
 
 An optional generic webhook can receive sanitized error events. It is not a replacement for application logs or metrics and must never receive raw credentials/PII.

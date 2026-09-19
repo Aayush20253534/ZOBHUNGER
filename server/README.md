@@ -29,7 +29,7 @@ For the complete monorepo verification run `npm run verify` from the repository 
 ```text
 src/modules/        domain routes/controllers/services/repositories/schemas
 src/middlewares/    auth/RBAC/MFA/validation/rate limits/errors/compression
-src/services/       email/storage/malware/common provider services
+src/services/       email/storage/common provider services
 src/observability/  metrics and error monitoring
 src/config/         environment/database/redis/CORS
 prisma/             schema/migrations/seed

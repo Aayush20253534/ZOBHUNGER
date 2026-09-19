@@ -3,7 +3,6 @@ import { env } from "../config/env.js";
 import { HttpError } from "../utils/http-error.js";
 import { consumeProviderBudget, ProviderBudgetExceededError } from "../operations/provider-budget.js";
 import { guardedProviderRequest, ProviderCircuitOpenError } from "../operations/provider-circuit.js";
-import { scanUploadedFile } from "./malware-scan.service.js";
 
 export interface PrivateFileAsset {
   publicId: string;
@@ -91,7 +90,6 @@ export async function uploadPrivateFile(input: UploadPrivateFileInput): Promise<
   // Treat every service boundary as untrusted at runtime. TypeScript annotations
   // disappear in production, so keep a fresh Buffer copy after narrowing.
   const buffer = Buffer.from(input.buffer);
-  await scanUploadedFile({ fileName: input.fileName, mimeType: input.mimeType, buffer, sha256: input.sha256 });
   try {
     await consumeProviderBudget("cloudinary", "upload_bytes", buffer.length, env.CLOUDINARY_DAILY_UPLOAD_BYTES_LIMIT);
   } catch (error) {

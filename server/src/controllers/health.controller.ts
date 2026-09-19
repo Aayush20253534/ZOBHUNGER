@@ -8,7 +8,6 @@ import { missingResendSettings } from "../services/resend.client.js";
 import { chatbotOperationalStatus } from "../modules/chatbot/chatbot.runtime.js";
 import { providerBudgetStatus } from "../operations/provider-budget.js";
 import { providerCircuitStatus } from "../operations/provider-circuit.js";
-import { malwareScannerStatus } from "../services/malware-scan.service.js";
 import { errorMonitoringStatus } from "../observability/error-monitor.js";
 import { httpMetricsSnapshot } from "../observability/http-metrics.js";
 import { operationMetricsSnapshot } from "../observability/operation-metrics.js";
@@ -88,7 +87,6 @@ export const getDetailedHealth: RequestHandler = async (_req, res) => {
     safeguards: {
       providerBudgets: providerBudgetStatus(),
       providerCircuits: providerCircuitStatus(),
-      malwareScanner: malwareScannerStatus(),
       errorMonitoring: errorMonitoringStatus(),
     },
     features: {

@@ -23,7 +23,6 @@ flowchart TB
     Files[Cloudinary private storage]
     AI[Groq + Gemini]
     Pay[Cashfree]
-    Scan[ClamAV or HTTP malware scanner]
 
     Public --> Proxy
     Portals --> Proxy
@@ -35,7 +34,6 @@ flowchart TB
     Domain --> Files
     Domain --> AI
     Domain --> Pay
-    Domain --> Scan
     Routes --> Obs
 ```
 
@@ -52,7 +50,7 @@ The backend is organized by domain under `server/src/modules/`. Modules include 
 Shared cross-cutting code lives in:
 
 - `server/src/middlewares/` for request/security policies;
-- `server/src/services/` for email, storage, malware scanning and reusable provider logic;
+- `server/src/services/` for email, storage and reusable provider logic;
 - `server/src/observability/` for metrics/error reporting;
 - `server/src/config/` for environment, database, Redis and CORS configuration;
 - `server/src/utils/` for response/error/JWT/password/logging utilities.

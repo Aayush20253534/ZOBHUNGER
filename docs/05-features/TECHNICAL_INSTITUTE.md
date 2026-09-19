@@ -6,7 +6,7 @@ The technical-institute workflow supports ITI/polytechnic-style institutional pa
 
 ## Student management
 
-Institutes can manage students through portal APIs, including supported import flows. Spreadsheet imports are malware-scanned before parsing in production security configurations.
+Institutes can manage students through portal APIs, including supported import flows. Spreadsheet imports enforce supported file types, bounded workbook processing and row-level schema validation before records are accepted.
 
 Student records have verification/status concepts rather than being treated as anonymous job-board applicants.
 

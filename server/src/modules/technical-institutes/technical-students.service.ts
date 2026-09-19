@@ -1,7 +1,5 @@
-import { createHash } from "node:crypto";
 import { Prisma, TechnicalStudentStatus } from "../../generated/prisma/client.js";
 import { HttpError } from "../../utils/http-error.js";
-import { scanUploadedFile } from "../../services/malware-scan.service.js";
 import { getTechnicalInstituteForAdmin } from "./technical-institutes.service.js";
 import { parseTechnicalStudentSpreadsheet } from "./technical-student-import.js";
 import {
@@ -151,12 +149,6 @@ export async function importTechnicalStudentsForAdmin(input: {
     throw new HttpError(415, "Upload a valid CSV or XLSX file", { code: "TECHNICAL_STUDENT_IMPORT_BODY_INVALID" });
   }
   const buffer = Buffer.from(input.buffer);
-  await scanUploadedFile({
-    fileName: input.fileName ?? "technical-students-import.xlsx",
-    mimeType: input.mimeType ?? "application/octet-stream",
-    buffer,
-    sha256: createHash("sha256").update(buffer).digest("hex"),
-  });
   const parsed = parseTechnicalStudentSpreadsheet({ buffer, mimeType: input.mimeType, fileName: input.fileName });
   const existing = parsed.rows.length ? await existingTechnicalStudentKeys(input.instituteId, parsed.rows) : [];
   const existingEmails = new Set(existing.map((row) => row.email.toLowerCase()));

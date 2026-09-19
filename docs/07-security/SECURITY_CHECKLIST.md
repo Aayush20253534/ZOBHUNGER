@@ -12,7 +12,7 @@ Use this checklist when adding a new backend feature.
 - [ ] Are exports/matching operations bounded before expensive decrypt/render work?
 - [ ] Could logs contain tokens, PII, uploaded data or provider errors?
 - [ ] Are new credential names recognized by the log sanitizer/secret scanner?
-- [ ] Are uploaded files validated and scanned before trust/storage/parsing?
+- [ ] Are uploaded files validated and bounded before trust/storage/parsing?
 - [ ] Does the provider call have a timeout, budget and circuit behavior if needed?
 - [ ] Does a payment/write retry preserve idempotency?
 - [ ] Are new secrets backend-only and documented with safe `.env.example` placeholders?
@@ -24,7 +24,6 @@ Use this checklist when adding a new backend feature.
 - [ ] production admin MFA tested;
 - [ ] CORS/public origin exactly configured;
 - [ ] Redis/provider-budget expectations satisfied;
-- [ ] malware scanner configured;
 - [ ] email/storage/payment/AI secrets scoped correctly;
 - [ ] no secrets committed;
 - [ ] security CI/CodeQL green;

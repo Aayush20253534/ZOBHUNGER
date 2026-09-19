@@ -14,7 +14,7 @@ Security is layered; no single middleware or provider is treated as sufficient.
 8. **Data protection**: AES-GCM HR PII encryption and private document storage.
 9. **Payment integrity**: idempotency/reconciliation plus raw-body webhook signature verification.
 10. **Logging safety**: sensitive URL/context redaction and production-safe errors.
-11. **File security**: MIME/magic-byte/size checks plus malware scanning in production.
+11. **File security**: MIME/magic-byte/size checks, bounded parsers and private authenticated storage.
 12. **Operational limits**: provider budgets, circuit breakers, export/matching ceilings and timeouts.
 13. **CI security**: secret scan, runtime-aware dependency audit, CodeQL and regression gates.
 

@@ -15,7 +15,6 @@
 - [ ] Redis configured when enabled/provider budgets require it;
 - [ ] Resend sender domain/config validated;
 - [ ] Cloudinary private-storage config validated;
-- [ ] malware scanner set to `clamav` or `http`;
 - [ ] Cashfree uses correct sandbox/production credentials and environment;
 - [ ] chatbot provider keys/models are current if enabled.
 
@@ -34,7 +33,7 @@
 - [ ] authenticated detailed health/metrics reviewed;
 - [ ] business login/core portal smoke-tested;
 - [ ] admin MFA and permission boundary smoke-tested;
-- [ ] file upload/download and malware-scanner behavior checked;
+- [ ] file upload/download and file-validation behavior checked;
 - [ ] Resend test/live email evidence collected;
 - [ ] Cashfree webhook/order reconciliation checked if payments enabled;
 - [ ] real-device responsive review completed for critical flows;

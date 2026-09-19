@@ -38,7 +38,6 @@
 | Cashfree | Hosted checkout for internship document-payment workflow |
 | Groq | Chat-completion generation for the assistant |
 | Gemini embeddings | Optional vector embeddings for dense retrieval |
-| ClamAV or HTTP scanner | Production malware scanning of supported uploads |
 | External monitoring webhook | Optional sanitized application-error forwarding |
 
 ## Delivery and quality tooling

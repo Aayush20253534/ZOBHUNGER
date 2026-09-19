@@ -1,7 +1,7 @@
 import { env } from "../config/env.js";
 import { logger } from "../utils/logger.js";
 
-export type CircuitProvider = "groq" | "gemini" | "resend" | "cloudinary" | "file_scan";
+export type CircuitProvider = "groq" | "gemini" | "resend" | "cloudinary";
 
 type CircuitState = { consecutiveFailures: number; openedUntil: number; lastFailureAt: number };
 const states = new Map<CircuitProvider, CircuitState>();
@@ -55,7 +55,7 @@ export function recordProviderFailure(provider: CircuitProvider, status?: number
 
 export function providerCircuitStatus() {
   const now = Date.now();
-  return Object.fromEntries((["groq", "gemini", "resend", "cloudinary", "file_scan"] as CircuitProvider[]).map((provider) => {
+  return Object.fromEntries((["groq", "gemini", "resend", "cloudinary"] as CircuitProvider[]).map((provider) => {
     const current = state(provider);
     return [provider, {
       state: current.openedUntil > now ? "open" : "closed",

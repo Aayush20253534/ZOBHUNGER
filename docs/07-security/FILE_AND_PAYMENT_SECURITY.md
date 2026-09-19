@@ -2,13 +2,9 @@
 
 ## Upload validation
 
-Supported upload handlers enforce explicit size limits and allowed media types. PDF/image paths verify file signatures/magic bytes rather than trusting only an extension or browser-provided MIME type.
+Supported upload handlers enforce explicit size limits and allowed media types. PDF/image paths verify file signatures/magic bytes rather than trusting only an extension or browser-provided MIME type. Spreadsheet imports enforce supported file types, bounded workbook processing and row-level validation before records are accepted.
 
-## Malware scanning
-
-Production protected-file workflows use the configured ClamAV or HTTP scanner. Technical student spreadsheet imports are scanned before parsing. If no scanner is configured, the API can remain online but protected uploads are rejected with HTTP 503; scanner/provider failures follow the same fail-closed behavior.
-
-A structurally valid PDF or spreadsheet is not assumed safe merely because its header bytes are correct.
+These structural checks reduce malformed or disguised uploads, but they are not malware detection. Uploaded documents should still be treated as untrusted content when opened outside the application.
 
 ## Private storage
 

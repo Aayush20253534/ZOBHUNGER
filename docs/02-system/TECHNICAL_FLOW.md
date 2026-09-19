@@ -14,7 +14,7 @@ flowchart LR
     SVC --> REPO[Repository / Prisma]
     REPO --> PG[(PostgreSQL)]
     SVC <--> REDIS[(Redis)]
-    SVC --> EXT[Resend / Cloudinary / Groq / Gemini / Cashfree / scanner]
+    SVC --> EXT[Resend / Cloudinary / Groq / Gemini / Cashfree]
     CTRL --> RESP[Normalized response]
     RESP --> UI
 ```
@@ -54,7 +54,7 @@ The permission mapper is fail-closed for protected admin route families. Adding 
 
 ## File flow
 
-Uploads are size/MIME/signature checked by feature-specific handlers. Production file workflows that pass through private storage invoke malware scanning before a file becomes an accepted private asset. Private Cloudinary downloads are delivered through short-lived authenticated URLs rather than public asset URLs.
+Uploads are size/MIME/signature checked by feature-specific handlers. Private Cloudinary downloads are delivered through short-lived authenticated URLs rather than public asset URLs.
 
 ## Error/telemetry flow
 

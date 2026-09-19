@@ -21,7 +21,7 @@ Portal writes use the `portalWrite` guard, which requires a browser request shap
 - Browser API calls use a shared default timeout for ordinary requests.
 - Uploads and exports receive longer bounded timeouts.
 - Streaming chatbot requests are handled as a deliberate long-lived exception.
-- Provider clients such as Cashfree, Resend, Cloudinary, Groq, Gemini, malware scanning and error monitoring have their own server-side timeouts.
+- Provider clients such as Cashfree, Resend, Cloudinary, Groq, Gemini and error monitoring have their own server-side timeouts.
 
 ## Compression
 

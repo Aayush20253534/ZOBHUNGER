@@ -32,7 +32,6 @@
 - PostgreSQL persistence through Prisma
 - Redis cache/budget counters with defined fallbacks
 - private Cloudinary document storage
-- malware scanning for supported uploads in production
 - Resend operational email
 - Cashfree internship-document checkout
 - structured logging, redaction and request IDs
