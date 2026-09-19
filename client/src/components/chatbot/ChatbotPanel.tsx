@@ -16,6 +16,8 @@ import {
   Plus,
   RotateCcw,
   Send,
+  ShieldAlert,
+  ShieldCheck,
   Trash2,
   X,
 } from "lucide-react";
@@ -93,6 +95,7 @@ export function ChatbotPanel({
   onLeadSubmitted,
 }: ChatbotPanelProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [safetyNoticeOpen, setSafetyNoticeOpen] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -121,6 +124,11 @@ export function ChatbotPanel({
     onDraftChange(textarea.value);
     textarea.style.height = "auto";
     textarea.style.height = `${Math.min(textarea.scrollHeight, 112)}px`;
+  };
+
+  const continueFromSafetyNotice = () => {
+    setSafetyNoticeOpen(false);
+    window.setTimeout(() => inputRef.current?.focus(), 0);
   };
 
   return (
@@ -193,12 +201,74 @@ export function ChatbotPanel({
       <div
         ref={bodyRef}
         className="zb-chatbot-body"
-        role="log"
-        aria-live="polite"
+        role={safetyNoticeOpen ? "region" : "log"}
+        aria-label={safetyNoticeOpen ? "Important recruitment and payment safety notice" : undefined}
+        aria-live={safetyNoticeOpen ? undefined : "polite"}
         aria-relevant="additions text"
         onScroll={onBodyScroll}
       >
-        {leadRequest ? (
+        {safetyNoticeOpen ? (
+          <div className="zb-chatbot-safety-notice">
+            <div className="zb-chatbot-safety-hero">
+              <span className="zb-chatbot-safety-icon" aria-hidden="true">
+                <ShieldAlert />
+              </span>
+              <div>
+                <span className="zb-chatbot-safety-eyebrow">Important safety notice</span>
+                <h3>Stay alert to recruitment &amp; payment fraud</h3>
+              </div>
+            </div>
+
+            <p className="zb-chatbot-safety-intro">
+              Fraudsters sometimes impersonate recruiters or companies and use urgent payment requests or unofficial messages to pressure candidates. Before discussing jobs, payments, or personal details with anyone claiming to represent ZOBHUNGER, keep these safeguards in mind.
+            </p>
+
+            <div className="zb-chatbot-safety-list" aria-label="Fraud prevention safeguards">
+              <div className="zb-chatbot-safety-item">
+                <span aria-hidden="true">01</span>
+                <div>
+                  <strong>Pause before any payment</strong>
+                  <p>Treat any request to pay for a job offer, interview, onboarding, or guaranteed employment as suspicious. Verify it through official ZOBHUNGER channels before paying anything.</p>
+                </div>
+              </div>
+              <div className="zb-chatbot-safety-item">
+                <span aria-hidden="true">02</span>
+                <div>
+                  <strong>Protect sensitive financial details</strong>
+                  <p>Never share OTPs, UPI PINs, card PINs, passwords, or full banking credentials with a recruiter, agent, or chatbot.</p>
+                </div>
+              </div>
+              <div className="zb-chatbot-safety-item">
+                <span aria-hidden="true">03</span>
+                <div>
+                  <strong>Independently verify the sender</strong>
+                  <p>If a message comes from an unknown number, personal email, or unofficial social account, confirm the person through ZOBHUNGER&apos;s official website or contact page.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="zb-chatbot-safety-callout">
+              <ShieldCheck aria-hidden="true" />
+              <p><strong>When in doubt, stop and verify.</strong> Do not make a payment or disclose sensitive financial information until you have independently confirmed the request.</p>
+            </div>
+
+            <div className="zb-chatbot-safety-actions">
+              <button
+                type="button"
+                onClick={continueFromSafetyNotice}
+                aria-label="Acknowledge safety notice and continue to Aarohi"
+              >
+                I understand
+                <span>Continue to Aarohi</span>
+              </button>
+              <a href="/contact">Verify or report a suspicious request</a>
+            </div>
+
+            <p className="zb-chatbot-safety-footnote">
+              Keep screenshots, phone numbers, payment requests, and other evidence if you need to report suspected fraud.
+            </p>
+          </div>
+        ) : leadRequest ? (
           <ChatbotLeadForm
             audience={leadRequest.audience}
             handover={leadRequest.handover}
@@ -273,14 +343,14 @@ export function ChatbotPanel({
         </>)}
       </div>
 
-      {showJumpToLatest ? (
+      {!safetyNoticeOpen && showJumpToLatest ? (
         <button type="button" className="zb-chatbot-jump-latest" onClick={onJumpToLatest}>
           <ArrowDown aria-hidden="true" />
           Latest
         </button>
       ) : null}
 
-      {!leadRequest ? <form className="zb-chatbot-composer" onSubmit={submit}>
+      {!leadRequest && !safetyNoticeOpen ? <form className="zb-chatbot-composer" onSubmit={submit}>
         <label htmlFor="zb-chatbot-input" className="sr-only">Ask Aarohi about ZOBHUNGER</label>
         <div className="zb-chatbot-input-wrap">
           <textarea

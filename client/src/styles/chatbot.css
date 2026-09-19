@@ -1710,3 +1710,258 @@
   background-color: #fff5f7;
   box-shadow: 0 0.16rem 0.45rem rgba(58, 4, 15, 0.08);
 }
+
+/* High-visibility recruitment/payment fraud notice shown before Aarohi becomes interactive. */
+.zb-chatbot-safety-notice {
+  display: grid;
+  align-content: start;
+  gap: 0.72rem;
+  min-height: 100%;
+  padding: 0.9rem;
+  border: 1px solid #ebcdd4;
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 100% 0, rgba(217, 39, 59, 0.09), transparent 9.5rem),
+    linear-gradient(180deg, #ffffff 0%, #fff8f9 100%);
+  box-shadow:
+    0 0.6rem 1.7rem rgba(82, 8, 23, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.zb-chatbot-safety-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.72rem;
+}
+
+.zb-chatbot-safety-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 0.82rem;
+  background: linear-gradient(145deg, #e42b43, #9e1730);
+  color: #fff;
+  box-shadow: 0 0.45rem 1rem rgba(133, 22, 45, 0.2);
+}
+
+.zb-chatbot-safety-icon svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.zb-chatbot-safety-eyebrow {
+  display: block;
+  margin-bottom: 0.18rem;
+  color: #a51f38;
+  font-size: 0.57rem;
+  font-weight: 840;
+  letter-spacing: 0.085em;
+  text-transform: uppercase;
+}
+
+.zb-chatbot-safety-hero h3 {
+  margin: 0;
+  color: #33242a;
+  font-size: 1rem;
+  font-weight: 840;
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+}
+
+.zb-chatbot-safety-intro,
+.zb-chatbot-safety-footnote {
+  margin: 0;
+  color: #705a61;
+  font-size: 0.66rem;
+  line-height: 1.5;
+}
+
+.zb-chatbot-safety-list {
+  display: grid;
+  gap: 0.48rem;
+}
+
+.zb-chatbot-safety-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.58rem;
+  padding: 0.58rem 0.62rem;
+  border: 1px solid #efdee2;
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.zb-chatbot-safety-item > span {
+  display: grid;
+  place-items: center;
+  min-width: 1.8rem;
+  height: 1.45rem;
+  padding: 0 0.34rem;
+  border-radius: 999px;
+  background: #fff0f3;
+  color: #a12038;
+  font-size: 0.52rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+}
+
+.zb-chatbot-safety-item strong {
+  display: block;
+  color: #452f36;
+  font-size: 0.68rem;
+  line-height: 1.28;
+}
+
+.zb-chatbot-safety-item p {
+  margin: 0.14rem 0 0;
+  color: #756168;
+  font-size: 0.61rem;
+  line-height: 1.44;
+}
+
+.zb-chatbot-safety-callout {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: start;
+  padding: 0.62rem 0.66rem;
+  border: 1px solid #e8c3cc;
+  border-left: 3px solid #b11d38;
+  border-radius: 0.68rem;
+  background: #fff3f5;
+  color: #624c53;
+}
+
+.zb-chatbot-safety-callout svg {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.08rem;
+  color: #a21f37;
+}
+
+.zb-chatbot-safety-callout p {
+  margin: 0;
+  font-size: 0.63rem;
+  line-height: 1.46;
+}
+
+.zb-chatbot-safety-callout strong {
+  color: #4c3038;
+}
+
+.zb-chatbot-safety-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.52rem;
+  align-items: stretch;
+}
+
+.zb-chatbot-safety-actions button,
+.zb-chatbot-safety-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.45rem;
+  border-radius: 0.68rem;
+  font: inherit;
+  font-size: 0.62rem;
+  font-weight: 820;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.zb-chatbot-safety-actions button {
+  gap: 0.32rem;
+  padding: 0.48rem 0.68rem;
+  border: 0;
+  background: linear-gradient(145deg, #d9273b, #8d1830);
+  color: #fff;
+  box-shadow: 0 0.42rem 0.9rem rgba(116, 19, 39, 0.19);
+  cursor: pointer;
+}
+
+.zb-chatbot-safety-actions button span {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.56rem;
+  font-weight: 690;
+}
+
+.zb-chatbot-safety-actions a {
+  padding: 0.48rem 0.62rem;
+  border: 1px solid #dfc5cb;
+  background: #fff;
+  color: #8f2035;
+}
+
+.zb-chatbot-safety-actions button:hover,
+.zb-chatbot-safety-actions a:hover {
+  transform: translateY(-1px);
+}
+
+.zb-chatbot-safety-actions button:hover {
+  box-shadow: 0 0.58rem 1.1rem rgba(116, 19, 39, 0.24);
+}
+
+.zb-chatbot-safety-actions a:hover {
+  border-color: #c98d9a;
+  background: #fff7f8;
+}
+
+.zb-chatbot-safety-actions button:focus-visible,
+.zb-chatbot-safety-actions a:focus-visible {
+  outline: 3px solid rgba(217, 39, 59, 0.2);
+  outline-offset: 2px;
+}
+
+.zb-chatbot-safety-footnote {
+  padding-top: 0.02rem;
+  color: #8d777e;
+  font-size: 0.56rem;
+}
+
+@media (max-width: 640px) {
+  .zb-chatbot-safety-notice {
+    gap: 0.64rem;
+    padding: 0.76rem;
+    border-radius: 0.88rem;
+  }
+
+  .zb-chatbot-safety-hero h3 {
+    font-size: 0.93rem;
+  }
+
+  .zb-chatbot-safety-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .zb-chatbot-safety-actions button,
+  .zb-chatbot-safety-actions a {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .zb-chatbot-safety-notice {
+    padding: 0.68rem;
+  }
+
+  .zb-chatbot-safety-icon {
+    width: 2.45rem;
+    height: 2.45rem;
+  }
+
+  .zb-chatbot-safety-intro {
+    font-size: 0.62rem;
+  }
+
+  .zb-chatbot-safety-item {
+    gap: 0.48rem;
+    padding: 0.52rem;
+  }
+}

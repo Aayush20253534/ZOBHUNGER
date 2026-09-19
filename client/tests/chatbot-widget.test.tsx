@@ -58,9 +58,16 @@ async function renderWidget() {
   await flush(() => root.render(<ChatbotWidget />));
 }
 
-async function openWidget() {
+async function openWidget({ dismissNotice = true }: { dismissNotice?: boolean } = {}) {
   await renderWidget();
   await flush(() => (container.querySelector("button[aria-label^='Open Aarohi']") as HTMLButtonElement).click());
+
+  if (dismissNotice) {
+    const continueButton = container.querySelector(
+      "button[aria-label='Acknowledge safety notice and continue to Aarohi']",
+    ) as HTMLButtonElement | null;
+    if (continueButton) await flush(() => continueButton.click());
+  }
 }
 
 async function sendTypedMessage(message: string) {
@@ -70,6 +77,23 @@ async function sendTypedMessage(message: string) {
 }
 
 describe("advanced public chatbot widget", () => {
+  it("shows the recruitment-fraud safety notice before chat starts", async () => {
+    await openWidget({ dismissNotice: false });
+
+    expect(container.textContent).toContain("Stay alert to recruitment & payment fraud");
+    expect(container.textContent).toContain("When in doubt, stop and verify.");
+    expect(container.querySelector("textarea")).toBeNull();
+    expect(container.querySelector("a[href='/contact']")?.textContent).toContain("Verify or report");
+
+    const continueButton = container.querySelector(
+      "button[aria-label='Acknowledge safety notice and continue to Aarohi']",
+    ) as HTMLButtonElement;
+    await flush(() => continueButton.click());
+
+    expect(container.textContent).not.toContain("Stay alert to recruitment & payment fraud");
+    expect(container.querySelector("textarea")).not.toBeNull();
+  });
+
   it("opens with page-aware service suggestions", async () => {
     await openWidget();
     expect(container.querySelector("[role='dialog']")).not.toBeNull();

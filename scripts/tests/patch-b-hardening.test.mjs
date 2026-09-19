@@ -68,26 +68,32 @@ test("CSV exports neutralize spreadsheet formulas and reject silent 5,000-row tr
   assert.match(employeeJoining, /EMPLOYEE_JOINING_EXPORT_TOO_LARGE/);
 });
 
-test("private uploads are malware-scanned before storage and fail closed per-upload when scanning is unavailable", () => {
+test("private uploads retain validation and bounded storage controls without malware scanning", () => {
   const env = read("server/src/config/env.ts");
   const storage = read("server/src/services/private-file-storage.ts");
-  const scanner = read("server/src/services/malware-scan.service.ts");
-  assert.doesNotMatch(env, /FILE_MALWARE_SCAN_PROVIDER must be clamav or http in production/);
-  assert.match(scanner, /env\.NODE_ENV === "production"[\s\S]*?scannerUnavailable\(\)/);
-  const scanIndex = storage.indexOf("await scanUploadedFile");
-  const uploadIndex = storage.indexOf('storageProviderRequest(() => fetch(cloudinaryApi("raw", "upload")');
-  assert.ok(scanIndex >= 0 && uploadIndex > scanIndex, "scan must run before Cloudinary upload");
-  assert.match(scanner, /FILE_MALWARE_DETECTED/);
-  assert.match(scanner, /FILE_SCAN_UNAVAILABLE/);
-  assert.match(storage, /Buffer\.isBuffer\(input\.buffer\)/);
-  assert.match(storage, /const buffer = Buffer\.from\(input\.buffer\)/);
-  assert.match(scanner, /Buffer\.isBuffer\(input\.buffer\)/);
-  assert.match(scanner, /const safeInput:[\s\S]*?Buffer\.from\(input\.buffer\)/);
-
   const technicalStudents = read("server/src/modules/technical-institutes/technical-students.service.ts");
   const technicalAdminController = read("server/src/modules/technical-institutes/technical-students.controller.ts");
   const partnerController = read("server/src/modules/partners/partners.controller.ts");
+
+  // Malware scanning was intentionally removed from the upload flow. Keep this
+  // regression test aligned with the current architecture instead of requiring
+  // a deleted service and making Security gates fail with ENOENT.
+  assert.doesNotMatch(env, /FILE_MALWARE_SCAN_|CLAMAV_/);
+  assert.doesNotMatch(storage, /scanUploadedFile|malware-scan\.service/);
+  assert.doesNotMatch(technicalStudents, /scanUploadedFile|malware-scan\.service/);
+
+  // Removing the external scanner must not weaken the remaining file boundary:
+  // runtime Buffer narrowing/copying, provider budgets, authenticated storage,
+  // provider timeouts and bounded spreadsheet parsing all remain enforced.
+  assert.match(storage, /Buffer\.isBuffer\(input\.buffer\)/);
+  assert.match(storage, /const buffer = Buffer\.from\(input\.buffer\)/);
+  assert.match(storage, /CLOUDINARY_DAILY_UPLOAD_BYTES_LIMIT/);
+  assert.match(storage, /type:\s*"authenticated"/);
+  assert.match(storage, /AbortSignal\.timeout\(env\.CLOUDINARY_TIMEOUT_MS\)/);
+
   assert.match(technicalStudents, /Buffer\.isBuffer\(input\.buffer\)/);
+  assert.match(technicalStudents, /const buffer = Buffer\.from\(input\.buffer\)/);
+  assert.match(technicalStudents, /parseTechnicalStudentSpreadsheet\(\{ buffer,/);
   assert.doesNotMatch(technicalAdminController, /req\.body as Buffer/);
   assert.doesNotMatch(partnerController, /req\.body as Buffer/);
 });
