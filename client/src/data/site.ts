@@ -22,7 +22,7 @@ function publicBaseUrl(value: string | undefined, fallback: string) {
 const publicEmail = "help@zobhungr.com";
 
 const footerContacts = {
-  business: { label: "For Businesses", email: "business@zobhungr.com" },
+  business: { label: "For Businesses", email: "sales@zobhungr.com" },
   careers: { label: "For Careers", email: "hr@zobhungr.com" },
   queries: { label: "For Queries", email: "support@zobhungr.com" },
   legal: { label: "For Legal", email: "legal@zobhungr.com" },

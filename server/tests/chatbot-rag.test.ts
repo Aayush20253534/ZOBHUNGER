@@ -129,7 +129,7 @@ test("RAG context formatter produces bounded citation-labelled context", async (
 
   assert.match(context, /\[S1\]/);
   assert.match(context, /URL: \/contact/);
-  assert.match(context, /business@zobhungr\.com|help@zobhungr\.com/i);
+  assert.match(context, /sales@zobhungr\.com|help@zobhungr\.com/i);
   assert.ok(context.length <= 5000);
 });
 

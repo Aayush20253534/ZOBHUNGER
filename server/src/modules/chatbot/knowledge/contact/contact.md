@@ -27,7 +27,7 @@ updatedAt: 2026-09-12
 
 ## Department email channels
 
-- For Businesses: business@zobhungr.com.
+- For Businesses: sales@zobhungr.com.
 - For Careers: hr@zobhungr.com.
 - For Queries: support@zobhungr.com.
 - For Legal: legal@zobhungr.com.
