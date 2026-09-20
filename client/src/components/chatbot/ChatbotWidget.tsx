@@ -30,6 +30,7 @@ import {
 } from "@/lib/chatbot-storage";
 import { ChatbotLauncher } from "./ChatbotLauncher";
 import { ChatbotPanel } from "./ChatbotPanel";
+import { ChatbotSafetyNotice } from "./ChatbotSafetyNotice";
 import "@/styles/chatbot.css";
 
 const welcomeMessage: ChatbotUiMessage = {
@@ -93,6 +94,7 @@ async function copyTextToClipboard(text: string): Promise<void> {
 export function ChatbotWidget() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [safetyNoticeOpen, setSafetyNoticeOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [messages, setMessages] = useState<ChatbotUiMessage[]>([welcomeMessage]);
   const [loading, setLoading] = useState(false);
@@ -116,6 +118,7 @@ export function ChatbotWidget() {
   const bodyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
+  const safetyNoticeCloseRef = useRef<HTMLButtonElement>(null);
   const messagesRef = useRef(messages);
   const openRef = useRef(open);
   const autoScrollRef = useRef(true);
@@ -165,13 +168,20 @@ export function ChatbotWidget() {
 
   const closePanel = useCallback(() => {
     openRef.current = false;
+    setSafetyNoticeOpen(false);
     setOpen(false);
     window.setTimeout(() => launcherRef.current?.focus(), 0);
+  }, []);
+
+  const dismissSafetyNotice = useCallback(() => {
+    setSafetyNoticeOpen(false);
+    window.setTimeout(() => inputRef.current?.focus(), 0);
   }, []);
 
   const openPanel = useCallback(() => {
     openRef.current = true;
     setOpen(true);
+    setSafetyNoticeOpen(true);
     setUnreadCount(0);
     autoScrollRef.current = true;
     setShowJumpToLatest(false);
@@ -223,16 +233,30 @@ export function ChatbotWidget() {
 
   useEffect(() => {
     if (!open) return;
-    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 0);
+    const focusTimer = window.setTimeout(() => {
+      if (safetyNoticeOpen) safetyNoticeCloseRef.current?.focus();
+      else inputRef.current?.focus();
+    }, 0);
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closePanel();
+      if (event.key !== "Escape") return;
+      if (safetyNoticeOpen) dismissSafetyNotice();
+      else closePanel();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [closePanel, open]);
+  }, [closePanel, dismissSafetyNotice, open, safetyNoticeOpen]);
+
+  useEffect(() => {
+    if (!open || !safetyNoticeOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open, safetyNoticeOpen]);
 
   useEffect(() => {
     if (!open || !autoScrollRef.current) return;
@@ -409,7 +433,17 @@ export function ChatbotWidget() {
   }, [nextId]);
 
   return (
-    <aside className="zb-chatbot-root" aria-label="ZOBHUNGER website assistant">
+    <aside
+      className={`zb-chatbot-root${open && safetyNoticeOpen ? " zb-chatbot-root--notice-open" : ""}`}
+      aria-label="ZOBHUNGER website assistant"
+    >
+      {open && safetyNoticeOpen ? (
+        <ChatbotSafetyNotice
+          onDismiss={dismissSafetyNotice}
+          closeButtonRef={safetyNoticeCloseRef}
+        />
+      ) : null}
+
       {open ? (
         <ChatbotPanel
           messages={messages}

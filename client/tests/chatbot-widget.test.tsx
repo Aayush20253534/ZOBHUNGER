@@ -77,12 +77,15 @@ async function sendTypedMessage(message: string) {
 }
 
 describe("advanced public chatbot widget", () => {
-  it("shows the recruitment-fraud safety notice before chat starts", async () => {
+  it("shows the recruitment-fraud notice on the main screen while the chatbot stays open", async () => {
     await openWidget({ dismissNotice: false });
 
+    expect(container.querySelector(".zb-chatbot-safety-overlay")).not.toBeNull();
+    expect(container.querySelector("[role='alertdialog']")).not.toBeNull();
+    expect(container.querySelector(".zb-chatbot-panel")).not.toBeNull();
     expect(container.textContent).toContain("Stay alert to recruitment & payment fraud");
     expect(container.textContent).toContain("When in doubt, stop and verify.");
-    expect(container.querySelector("textarea")).toBeNull();
+    expect(container.querySelector("textarea")).not.toBeNull();
     expect(container.querySelector("a[href='/contact']")?.textContent).toContain("Verify or report");
 
     const continueButton = container.querySelector(
@@ -90,7 +93,8 @@ describe("advanced public chatbot widget", () => {
     ) as HTMLButtonElement;
     await flush(() => continueButton.click());
 
-    expect(container.textContent).not.toContain("Stay alert to recruitment & payment fraud");
+    expect(container.querySelector(".zb-chatbot-safety-overlay")).toBeNull();
+    expect(container.querySelector(".zb-chatbot-panel")).not.toBeNull();
     expect(container.querySelector("textarea")).not.toBeNull();
   });
 
