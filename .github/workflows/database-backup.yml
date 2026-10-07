@@ -71,7 +71,7 @@ jobs:
 
       - name: Upload non-secret backup report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: database-backup-report-${{ github.run_id }}
           path: .release-artifacts/database-backup-report.json
